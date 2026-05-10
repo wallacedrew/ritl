@@ -1,0 +1,12 @@
+[
+  {
+    "name": "Mysterious Name",
+    "symptom": "Identifiers that don't reveal intent — names like aFunc(), x, theData, temp, or one-letter loop variables that force every reader to reverse-engineer the code's purpose.",
+    "risk": "Every reading is a re-comprehension cost; bugs sneak in because what code does diverges from what its name suggests. Compounds in proportion to how many readers (humans + LLMs) touch the file.",
+    "refactoring": "Rename Variable",
+    "goal": "Names read as the domain — a function's purpose, a variable's role, a class's responsibility — visible in one glance.",
+    "savings": "Reduces onboarding time, accelerates code review, and lets future-you skim instead of decode.",
+    "before": "function calc(d, t) {\n  return d * t;\n}",
+    "after": "function distance(speed, time) {\n  return speed * time;\n}"
+  }
+]
