@@ -1,0 +1,7 @@
+/* Global resets and palette come from MUI's <CssBaseline /> via ThemeRegistry. */
+/* This file exists for app-wide CSS overrides outside of MUI's reach. */
+
+html,
+body {
+  height: 100%;
+}

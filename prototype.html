@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fowler Refactoring Catalog Explorer</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      background: #09090b;
+      color: #f4f4f5;
+      font-family: Inter, system-ui, sans-serif;
+      line-height: 1.5;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 32px;
+    }
+
+    h1 {
+      font-size: 3rem;
+      margin-bottom: 12px;
+    }
+
+    .subtitle {
+      color: #a1a1aa;
+      margin-bottom: 24px;
+      font-size: 1.1rem;
+    }
+
+    .toolbar {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      margin-bottom: 24px;
+    }
+
+    button,
+    select {
+      background: #18181b;
+      border: 1px solid #3f3f46;
+      color: #f4f4f5;
+      padding: 12px 18px;
+      border-radius: 16px;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    button.active {
+      background: #f4f4f5;
+      color: #09090b;
+      border-color: #f4f4f5;
+    }
+
+    .grid {
+      display: grid;
+      gap: 24px;
+    }
+
+    .card {
+      background: #18181b;
+      border: 1px solid #27272a;
+      border-radius: 24px;
+      padding: 24px;
+    }
+
+    .two-col {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+      gap: 24px;
+    }
+
+    .pill {
+      display: inline-block;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: #27272a;
+      font-size: 12px;
+      margin: 4px;
+      cursor: pointer;
+    }
+
+    pre {
+      background: black;
+      border: 1px solid #27272a;
+      border-radius: 16px;
+      padding: 16px;
+      overflow-x: auto;
+      font-size: 13px;
+    }
+
+    .section-title {
+      color: #67e8f9;
+      font-size: 1.4rem;
+      margin-bottom: 18px;
+    }
+
+    footer {
+      margin-top: 48px;
+      padding-top: 24px;
+      border-top: 1px solid #27272a;
+      color: #71717a;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Fowler Refactoring Catalog Explorer</h1>
+
+    <p class="subtitle">
+      Interactive single-file explorer for Fowler code smells and refactorings.
+    </p>
+
+    <div class="toolbar">
+      <button id="smellsBtn" class="active">Code-Smell-Centric View</button>
+      <button id="refactoringsBtn">Refactoring-Centric View</button>
+      <button id="referenceBtn">Reference View</button>
+    </div>
+
+    <div id="controls"></div>
+
+    <div id="app"></div>
+
+    <footer>
+      Core Principle: Refactoring improves internal structure without changing observable behavior.
+    </footer>
+  </div>
+
+  <script>
+    const smellNames = [
+      "Mysterious Name",
+      "Duplicated Code",
+      "Long Function",
+      "Long Parameter List",
+      "Global Data",
+      "Mutable Data",
+      "Divergent Change",
+      "Shotgun Surgery",
+      "Feature Envy",
+      "Data Clumps",
+      "Primitive Obsession",
+      "Repeated Switches",
+      "Loops",
+      "Lazy Element",
+      "Speculative Generality",
+      "Temporary Field",
+      "Message Chains",
+      "Middle Man",
+      "Insider Trading",
+      "Large Class",
+      "Alternative Classes with Different Interfaces",
+      "Data Class",
+      "Refused Bequest",
+      "Comments"
+    ];
+
+    const refactoringNames = [
+      "Extract Function",
+      "Inline Function",
+      "Extract Variable",
+      "Inline Variable",
+      "Change Function Declaration",
+      "Encapsulate Variable",
+      "Rename Variable",
+      "Introduce Parameter Object",
+      "Combine Functions into Class",
+      "Split Phase",
+      "Replace Loop with Pipeline",
+      "Remove Dead Code",
+      "Extract Class",
+      "Inline Class",
+      "Hide Delegate",
+      "Remove Middle Man",
+      "Substitute Algorithm",
+      "Move Function",
+      "Move Field",
+      "Split Variable",
+      "Encapsulate Collection",
+      "Replace Conditional with Polymorphism",
+      "Introduce Assertion",
+      "Decompose Conditional",
+      "Replace Nested Conditional with Guard Clauses",
+      "Introduce Special Case",
+      "Separate Query from Modifier",
+      "Parameterize Function",
+      "Remove Flag Argument",
+      "Preserve Whole Object",
+      "Extract Superclass",
+      "Pull Up Method",
+      "Pull Up Field",
+      "Push Down Method",
+      "Push Down Field",
+      "Collapse Hierarchy",
+      "Replace Subclass with Delegate",
+      "Replace Superclass with Delegate",
+      "Extract Interface"
+    ];
+
+    const smells = smellNames.map((name, index) => ({
+      name,
+      symptom: "Canonical Fowler code smell from refactoring.com.",
+      risk: "Increases complexity, maintenance cost, and change risk.",
+      refactoring: refactoringNames[index % refactoringNames.length],
+      goal: "Improve readability, maintainability, and evolvability.",
+      savings: "Reduces defects and accelerates delivery.",
+      before: `// before example for ${name}`,
+      after: `// after example using ${refactoringNames[index % refactoringNames.length]}`
+    }));
+
+    const refactorings = refactoringNames.map((name, index) => ({
+      name,
+      solves: [smellNames[index % smellNames.length]],
+      risk: "Structural complexity slows safe change.",
+      goal: "Improve software structure without changing behavior.",
+      savings: "Improves maintainability and delivery speed.",
+      before: `// before example for ${name}`,
+      after: `// after example for ${name}`
+    }));
+
+    const refactoringsByCategory = {
+      "Composing Methods": [
+        "Extract Function",
+        "Inline Function",
+        "Extract Variable"
+      ],
+      "Moving Features": [
+        "Move Function",
+        "Move Field",
+        "Extract Class"
+      ],
+      "Simplifying Conditionals": [
+        "Decompose Conditional",
+        "Replace Conditional with Polymorphism"
+      ]
+    };
+
+    let view = 'smells';
+
+    const app = document.getElementById('app');
+    const controls = document.getElementById('controls');
+
+    document.getElementById('smellsBtn').onclick = () => setView('smells');
+    document.getElementById('refactoringsBtn').onclick = () => setView('refactorings');
+    document.getElementById('referenceBtn').onclick = () => setView('reference');
+
+    function setView(newView) {
+      view = newView;
+
+      document.querySelectorAll('button').forEach(btn => btn.classList.remove('active'));
+
+      if (view === 'smells') document.getElementById('smellsBtn').classList.add('active');
+      if (view === 'refactorings') document.getElementById('refactoringsBtn').classList.add('active');
+      if (view === 'reference') document.getElementById('referenceBtn').classList.add('active');
+
+      render();
+    }
+
+    function renderControls() {
+      if (view === 'smells') {
+        controls.innerHTML = `
+          <div style="margin-bottom: 24px;">
+            <select id="smellSelect">
+              <option>Jump to code smell...</option>
+              ${smells.map((s, i) => `<option value="smell-${i}">${s.name}</option>`).join('')}
+            </select>
+          </div>
+        `;
+
+        document.getElementById('smellSelect').onchange = (e) => {
+          const el = document.getElementById(e.target.value);
+          if (el) el.scrollIntoView({ behavior: 'smooth' });
+        };
+      } else if (view === 'refactorings') {
+        controls.innerHTML = `
+          <div style="margin-bottom: 24px;">
+            <select id="refactoringSelect">
+              <option>Jump to refactoring...</option>
+              ${refactorings.map((r, i) => `<option value="refactoring-${i}">${r.name}</option>`).join('')}
+            </select>
+          </div>
+        `;
+
+        document.getElementById('refactoringSelect').onchange = (e) => {
+          const el = document.getElementById(e.target.value);
+          if (el) el.scrollIntoView({ behavior: 'smooth' });
+        };
+      } else {
+        controls.innerHTML = '';
+      }
+    }
+
+    function render() {
+      renderControls();
+
+      if (view === 'smells') {
+        app.innerHTML = `
+          <div class="grid">
+            ${smells.map((smell, index) => `
+              <div class="card" id="smell-${index}">
+                <h2>${smell.name}</h2>
+
+                <div class="two-col">
+                  <div>
+                    <h3>Symptom</h3>
+                    <p>${smell.symptom}</p>
+
+                    <h3>Risk</h3>
+                    <p>${smell.risk}</p>
+                  </div>
+
+                  <div>
+                    <h3>Refactoring</h3>
+                    <div class="pill">${smell.refactoring}</div>
+
+                    <h3>Goal</h3>
+                    <p>${smell.goal}</p>
+                  </div>
+                </div>
+
+                <div class="two-col">
+                  <pre>${smell.before}</pre>
+                  <pre>${smell.after}</pre>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        `;
+      }
+
+      if (view === 'refactorings') {
+        app.innerHTML = `
+          <div class="grid">
+            ${refactorings.map((refactoring, index) => `
+              <div class="card" id="refactoring-${index}">
+                <h2>${refactoring.name}</h2>
+
+                <div>
+                  ${refactoring.solves.map(smell => `<span class="pill">${smell}</span>`).join('')}
+                </div>
+
+                <div class="two-col">
+                  <div>
+                    <h3>Risk</h3>
+                    <p>${refactoring.risk}</p>
+                  </div>
+
+                  <div>
+                    <h3>Goal</h3>
+                    <p>${refactoring.goal}</p>
+                  </div>
+                </div>
+
+                <div class="two-col">
+                  <pre>${refactoring.before}</pre>
+                  <pre>${refactoring.after}</pre>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        `;
+      }
+
+      if (view === 'reference') {
+        app.innerHTML = `
+          <div class="two-col">
+            <div class="card">
+              <div class="section-title">Refactoring Categories</div>
+
+              ${Object.entries(refactoringsByCategory).map(([category, items]) => `
+                <div style="margin-bottom: 24px;">
+                  <h3>${category}</h3>
+                  ${items.map(item => `<span class="pill">${item}</span>`).join('')}
+                </div>
+              `).join('')}
+            </div>
+
+            <div class="card">
+              <div class="section-title">Catalog Stats</div>
+
+              <p><strong>Code Smells:</strong> ${smells.length}</p>
+              <p><strong>Refactorings:</strong> ${refactorings.length}</p>
+
+              <p style="margin-top: 24px; color: #a1a1aa;">
+                Based on Martin Fowler's refactoring.com catalog.
+              </p>
+            </div>
+          </div>
+        `;
+      }
+    }
+
+    render();
+  </script>
+</body>
+</html>
