@@ -344,5 +344,41 @@
     "savings": "Variants can be combined or swapped at runtime; Liskov violations vanish; the hierarchy tree flattens.",
     "before": "class Booking { /* ... */ }\nclass PremiumBooking extends Booking {\n  /* overrides several methods */\n}",
     "after": "class Booking {\n  type; // 'standard' | premium delegate\n  charge() { return this.type.charge(this); }\n}"
+  },
+  {
+    "name": "Extract Class",
+    "solves": ["Data Clumps", "Temporary Field", "Large Class", "Primitive Obsession"],
+    "risk": "Premature class extraction adds ceremony — extract when 3+ fields and at least one operation cluster around a single concept that the parent class doesn't own.",
+    "goal": "A cohesive sub-concept inside a class becomes its own class with its own name, fields, and methods.",
+    "savings": "Each class has one purpose; tests target the small unit; the parent class shrinks.",
+    "before": "class Person {\n  name;\n  officeAreaCode;\n  officeNumber;\n  telephoneNumber() { return `(${this.officeAreaCode}) ${this.officeNumber}`; }\n}",
+    "after": "class Phone {\n  areaCode;\n  number;\n  toString() { return `(${this.areaCode}) ${this.number}`; }\n}\nclass Person { name; phone; }"
+  },
+  {
+    "name": "Replace Primitive with Object",
+    "solves": ["Primitive Obsession"],
+    "risk": "Wrapping every primitive is overkill — wrap when the concept needs validation, formatting, or domain-specific behavior beyond what the primitive offers.",
+    "goal": "Each domain concept has a small typed home — Money, PhoneNumber, OrderId — that knows its rules.",
+    "savings": "Misuse becomes a type error; behavior accretes around the concept; refactoring is local to the wrapper.",
+    "before": "function priceFor(cents, currency) {\n  // ...\n}",
+    "after": "class Money { /* amount + currency, with arithmetic */ }\nfunction priceFor(money) {\n  // ...\n}"
+  },
+  {
+    "name": "Hide Delegate",
+    "solves": ["Message Chains"],
+    "risk": "Adds a passthrough method on the parent for every delegated operation — only worth it for operations that are repeated across consumers.",
+    "goal": "Callers ask the closest object for what they want; the object delegates internally without exposing its collaborators.",
+    "savings": "Encapsulation tightens; intermediate objects can change shape without breaking callers.",
+    "before": "const street = order.customer.address.street;",
+    "after": "// inside Order: customerStreet() { return this.customer.address.street; }\nconst street = order.customerStreet();"
+  },
+  {
+    "name": "Remove Middle Man",
+    "solves": ["Middle Man"],
+    "risk": "Direct access to the delegate exposes its surface to every consumer — only remove the middle man when most of its methods are passthroughs.",
+    "goal": "Callers talk directly to the real object; trivial passthroughs are deleted.",
+    "savings": "Fewer files, shorter call stacks, the implementation's location is obvious.",
+    "before": "class Manager {\n  reports() { return this.team.members(); }\n}",
+    "after": "// Expose team directly when the wrapper adds nothing.\nmanager.team.members();"
   }
 ]

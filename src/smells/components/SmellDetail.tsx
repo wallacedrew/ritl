@@ -1,10 +1,11 @@
-import Chip from "@mui/material/Chip";
 import Container from "@mui/material/Container";
 import Divider from "@mui/material/Divider";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 
 import CodeBlock from "@/shared/components/CodeBlock";
+import LinkedChip from "@/shared/components/LinkedChip";
+import { slugify } from "@/shared/lib/slugify";
 
 import type { Smell } from "../lib/Smell";
 import SmellSection from "./SmellSection";
@@ -21,7 +22,13 @@ export default function SmellDetail({ smell }: SmellDetailProps) {
           <Typography component="h1" variant="h3" sx={{ fontWeight: 600 }}>
             {smell.name}
           </Typography>
-          <Chip label={smell.refactoring} color="primary" sx={{ alignSelf: "flex-start" }} />
+          <LinkedChip
+            label={smell.refactoring}
+            href={`/refactorings/${slugify(smell.refactoring)}`}
+            color="primary"
+            size="medium"
+            sx={{ alignSelf: "flex-start" }}
+          />
         </Stack>
         <Divider />
         <SmellSection label="Symptom" body={smell.symptom} />

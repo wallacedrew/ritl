@@ -14,6 +14,12 @@ const baseRefactoring: Refactoring = {
 };
 
 describe("toRefactoringListItem", () => {
+  it("derives a slug-based href to the refactoring's detail page", () => {
+    const item = toRefactoringListItem(baseRefactoring);
+
+    expect(item.href).toBe("/refactorings/extract-function");
+  });
+
   it("preserves name, solves, and goal for the list view", () => {
     const item = toRefactoringListItem(baseRefactoring);
 

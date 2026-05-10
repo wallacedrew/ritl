@@ -1,0 +1,52 @@
+import Container from "@mui/material/Container";
+import Divider from "@mui/material/Divider";
+import Stack from "@mui/material/Stack";
+import Typography from "@mui/material/Typography";
+
+import CodeBlock from "@/shared/components/CodeBlock";
+import LinkedChip from "@/shared/components/LinkedChip";
+import { slugify } from "@/shared/lib/slugify";
+
+import type { Refactoring } from "../lib/Refactoring";
+import RefactoringSection from "./RefactoringSection";
+
+interface RefactoringDetailProps {
+  refactoring: Refactoring;
+}
+
+export default function RefactoringDetail({ refactoring }: RefactoringDetailProps) {
+  return (
+    <Container maxWidth="md" sx={{ py: 4 }}>
+      <Stack spacing={3}>
+        <Stack spacing={1.5}>
+          <Typography component="h1" variant="h3" sx={{ fontWeight: 600 }}>
+            {refactoring.name}
+          </Typography>
+          <Stack direction="row" sx={{ flexWrap: "wrap", gap: 1 }}>
+            {refactoring.solves.map((smellName) => (
+              <LinkedChip
+                key={smellName}
+                label={smellName}
+                href={`/smells/${slugify(smellName)}`}
+              />
+            ))}
+          </Stack>
+        </Stack>
+        <Divider />
+        <RefactoringSection label="Risk" body={refactoring.risk} />
+        <RefactoringSection label="Goal" body={refactoring.goal} />
+        <RefactoringSection label="Savings" body={refactoring.savings} />
+        <Stack spacing={2}>
+          <Typography variant="overline" color="text.secondary">
+            Before
+          </Typography>
+          <CodeBlock code={refactoring.before} />
+          <Typography variant="overline" color="text.secondary">
+            After
+          </Typography>
+          <CodeBlock code={refactoring.after} />
+        </Stack>
+      </Stack>
+    </Container>
+  );
+}
