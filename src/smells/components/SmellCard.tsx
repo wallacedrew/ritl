@@ -4,28 +4,28 @@ import Chip from "@mui/material/Chip";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 
-import type { Smell } from "../lib/Smell";
+import type { SmellListItem } from "../lib/SmellListItem";
 
 interface SmellCardProps {
-  smell: Smell;
+  item: SmellListItem;
 }
 
-export default function SmellCard({ smell }: SmellCardProps) {
+export default function SmellCard({ item }: SmellCardProps) {
   return (
     <Card variant="outlined" sx={{ height: "100%" }}>
       <CardContent>
         <Stack spacing={1.5}>
           <Typography component="h2" variant="h6">
-            {smell.name}
+            {item.name}
           </Typography>
           <Chip
-            label={smell.refactoring}
+            label={item.refactoring}
             color="primary"
             size="small"
             sx={{ alignSelf: "flex-start" }}
           />
           <Typography variant="body2" color="text.secondary">
-            {smell.symptom}
+            {item.symptom}
           </Typography>
         </Stack>
       </CardContent>

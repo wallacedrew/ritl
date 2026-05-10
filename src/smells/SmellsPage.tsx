@@ -4,9 +4,10 @@ import Typography from "@mui/material/Typography";
 
 import SmellList from "./components/SmellList";
 import { loadSmells } from "./lib/loadSmells";
+import { toSmellListItem } from "./lib/toSmellListItem";
 
 export default function SmellsPage() {
-  const smells = loadSmells();
+  const items = loadSmells().map(toSmellListItem);
 
   return (
     <Container maxWidth="lg" sx={{ py: 4 }}>
@@ -19,7 +20,7 @@ export default function SmellsPage() {
             Canonical Fowler smells and the refactorings that address them.
           </Typography>
         </Stack>
-        <SmellList smells={smells} />
+        <SmellList items={items} />
       </Stack>
     </Container>
   );

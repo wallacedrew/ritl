@@ -1,13 +1,13 @@
 import Box from "@mui/material/Box";
 
-import type { Smell } from "../lib/Smell";
+import type { SmellListItem } from "../lib/SmellListItem";
 import SmellCard from "./SmellCard";
 
 interface SmellListProps {
-  smells: Smell[];
+  items: SmellListItem[];
 }
 
-export default function SmellList({ smells }: SmellListProps) {
+export default function SmellList({ items }: SmellListProps) {
   return (
     <Box
       sx={{
@@ -16,8 +16,8 @@ export default function SmellList({ smells }: SmellListProps) {
         gridTemplateColumns: { xs: "1fr", sm: "repeat(auto-fit, minmax(320px, 1fr))" },
       }}
     >
-      {smells.map((smell) => (
-        <SmellCard key={smell.name} smell={smell} />
+      {items.map((item) => (
+        <SmellCard key={item.name} item={item} />
       ))}
     </Box>
   );
