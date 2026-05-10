@@ -15,6 +15,12 @@ const baseSmell: Smell = {
 };
 
 describe("toSmellListItem", () => {
+  it("derives a slug-based href to the smell's detail page", () => {
+    const item = toSmellListItem(baseSmell);
+
+    expect(item.href).toBe("/smells/mysterious-name");
+  });
+
   it("preserves name, refactoring, and symptom for the list view", () => {
     const item = toSmellListItem(baseSmell);
 
