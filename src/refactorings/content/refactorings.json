@@ -1,0 +1,11 @@
+[
+  {
+    "name": "Extract Function",
+    "solves": ["Long Function", "Duplicated Code", "Comments"],
+    "risk": "Over-eager extraction can produce a maze of one-line functions; aim for extractions that earn their name with at least one decision or one transformation.",
+    "goal": "Each function reads as a single named domain step — what it does, not how.",
+    "savings": "Calling code becomes a sequence of named intentions; bugs concentrate inside the now-named subroutines.",
+    "before": "function ship(order) {\n  if (!order.id) throw new Error('missing id');\n  const grand = order.total * 1.1;\n  email(order.user, `Total ${grand}`);\n}",
+    "after": "function ship(order) {\n  validate(order);\n  const grand = withTax(order);\n  notify(order, grand);\n}"
+  }
+]
