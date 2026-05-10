@@ -7,5 +7,342 @@
     "savings": "Calling code becomes a sequence of named intentions; bugs concentrate inside the now-named subroutines.",
     "before": "function ship(order) {\n  if (!order.id) throw new Error('missing id');\n  const grand = order.total * 1.1;\n  email(order.user, `Total ${grand}`);\n}",
     "after": "function ship(order) {\n  validate(order);\n  const grand = withTax(order);\n  notify(order, grand);\n}"
+  },
+  {
+    "name": "Inline Function",
+    "solves": ["Lazy Element", "Speculative Generality"],
+    "risk": "If the function had a meaningful name covering several call sites, inlining can scatter the intent — only inline when the body is as clear as the wrapper.",
+    "goal": "Trivial wrappers vanish; the call site reads as exactly what's happening.",
+    "savings": "One fewer indirection to follow when reading; smaller surface to maintain.",
+    "before": "function getRating(driver) {\n  return moreThanFiveLateDeliveries(driver) ? 2 : 1;\n}\nfunction moreThanFiveLateDeliveries(driver) {\n  return driver.numberOfLateDeliveries > 5;\n}",
+    "after": "function getRating(driver) {\n  return driver.numberOfLateDeliveries > 5 ? 2 : 1;\n}"
+  },
+  {
+    "name": "Extract Variable",
+    "solves": ["Mysterious Name", "Comments"],
+    "risk": "Over-extracting tiny expressions clutters scope with one-shot names; extract when the expression carries domain meaning the surrounding code can't speak.",
+    "goal": "A complex expression earns a name that says what it represents in the domain.",
+    "savings": "Reusable in nearby code; debugging shows the intermediate value; comments explaining the expression become unnecessary.",
+    "before": "if (order.qty * order.price - Math.max(0, order.qty - 500) * order.price * 0.05 > 1000) { /* ... */ }",
+    "after": "const basePrice = order.qty * order.price;\nconst discount  = Math.max(0, order.qty - 500) * order.price * 0.05;\nif (basePrice - discount > 1000) { /* ... */ }"
+  },
+  {
+    "name": "Inline Variable",
+    "solves": ["Lazy Element"],
+    "risk": "Inlining a name that did carry domain meaning costs readability — only inline when the expression is already self-explanatory.",
+    "goal": "Single-use variables that just rename their right-hand side disappear; the expression speaks for itself.",
+    "savings": "Less local clutter, fewer redundant names, smaller scopes to track.",
+    "before": "const basePrice = order.basePrice;\nreturn basePrice > 1000;",
+    "after": "return order.basePrice > 1000;"
+  },
+  {
+    "name": "Change Function Declaration",
+    "solves": [
+      "Mysterious Name",
+      "Long Parameter List",
+      "Alternative Classes with Different Interfaces"
+    ],
+    "risk": "Mass renames or signature shifts ripple to every caller; refactor in tooling-supported steps and update tests with each batch.",
+    "goal": "Function names match what they actually do; parameter lists carry only what the function needs, in the order callers expect.",
+    "savings": "Call sites read fluently; mismatches between expectation and behavior surface immediately at the boundary.",
+    "before": "function circum(radius) {\n  return 2 * Math.PI * radius;\n}",
+    "after": "function circumference(radius) {\n  return 2 * Math.PI * radius;\n}"
+  },
+  {
+    "name": "Encapsulate Variable",
+    "solves": ["Global Data", "Mutable Data"],
+    "risk": "Adds a layer of indirection that pays off only when every access goes through the wrapper — leakage of direct access undoes the benefit.",
+    "goal": "All reads and writes pass through a small named function that owns validation, logging, and invariants.",
+    "savings": "A bug fix or audit becomes a one-line addition inside the wrapper; consumers never need to change.",
+    "before": "let defaultOwner = { firstName: 'Martin', lastName: 'Fowler' };",
+    "after": "let _defaultOwner = { firstName: 'Martin', lastName: 'Fowler' };\nfunction defaultOwner() { return _defaultOwner; }\nfunction setDefaultOwner(o) { _defaultOwner = o; }"
+  },
+  {
+    "name": "Rename Variable",
+    "solves": ["Mysterious Name"],
+    "risk": "A rename is small but cross-file; ensure your tooling catches every reference (including string templates and comments).",
+    "goal": "Variable names match the domain role they play, not their implementation type or scratch nature.",
+    "savings": "Reading the variable's name tells you everything you need without checking its definition.",
+    "before": "const a = height * width;",
+    "after": "const area = height * width;"
+  },
+  {
+    "name": "Introduce Parameter Object",
+    "solves": ["Long Parameter List", "Data Clumps"],
+    "risk": "Premature parameter objects hide which fields are actually needed by which method — wait until the clump appears in 3+ places before extracting.",
+    "goal": "Related arguments travel together as one well-named value object that the function (and callers) refer to by name.",
+    "savings": "Adding a related field is one type change instead of touching every call site; intent is named.",
+    "before": "function record(low, high, value) {\n  // ...\n}",
+    "after": "class NumberRange { /* low, high */ }\nfunction record(range, value) {\n  // ...\n}"
+  },
+  {
+    "name": "Combine Functions into Class",
+    "solves": ["Data Clumps", "Primitive Obsession"],
+    "risk": "Wrapping passive data in a class that nobody else uses adds ceremony — only combine when 2+ functions take the same data and would benefit from co-located behavior.",
+    "goal": "Functions that all act on the same data live alongside it as methods; calls become method calls on a domain object.",
+    "savings": "Encapsulation tightens; tests target the class; new operations land in one obvious place.",
+    "before": "function baseCharge(reading)    { /* uses reading */ }\nfunction taxableCharge(reading) { /* uses reading */ }",
+    "after": "class Reading {\n  baseCharge()    { /* ... */ }\n  taxableCharge() { /* ... */ }\n}"
+  },
+  {
+    "name": "Combine Functions into Transform",
+    "solves": ["Data Clumps", "Mutable Data"],
+    "risk": "Building a transform up-front when only one derivation exists is BDUF — wait for the second derivation before introducing the transform.",
+    "goal": "Multiple derived values from the same source come from one transform that produces an enriched record.",
+    "savings": "Derivations stay consistent (no two callers compute slightly different versions); cache invalidation becomes obvious.",
+    "before": "function base(reading)    { /* ... */ }\nfunction taxable(reading) { /* ... */ }",
+    "after": "function enrich(reading) {\n  return { ...reading, base: base(reading), taxable: taxable(reading) };\n}"
+  },
+  {
+    "name": "Split Phase",
+    "solves": ["Divergent Change", "Long Function"],
+    "risk": "An intermediate data structure between the phases is overhead — earn it by separating two clearly different concerns.",
+    "goal": "Each phase reads and writes its own well-defined inputs and outputs; the seam between them is data, not control flow.",
+    "savings": "Phases evolve independently; tests target each phase in isolation; the intermediate shape becomes a documented contract.",
+    "before": "function priceAndRender(input) {\n  const price = computePrice(input);\n  return renderHTML(input, price);\n}",
+    "after": "function pricing(input) { return { ...input, price: computePrice(input) }; }\nfunction render(priced)  { return renderHTML(priced); }"
+  },
+  {
+    "name": "Move Function",
+    "solves": ["Feature Envy", "Shotgun Surgery", "Insider Trading", "Divergent Change"],
+    "risk": "Moving a function across modules can pull dependencies with it — confirm the new home actually has access to everything the function needs.",
+    "goal": "Each function lives where its data lives; coupling between modules drops.",
+    "savings": "Modules become more cohesive; tests stay focused; feature-envy patterns disappear.",
+    "before": "class Order { totalPriority() { return this.account.priority(); } }",
+    "after": "class Account { priority() { /* ... */ } }\nclass Order   { /* asks account directly when needed */ }"
+  },
+  {
+    "name": "Move Field",
+    "solves": ["Shotgun Surgery", "Insider Trading"],
+    "risk": "Moving a field disturbs every reader — refactor in tooling-supported steps and add a temporary accessor on the original class while migrating.",
+    "goal": "Each field belongs to the class that owns its lifecycle; cross-class reaching disappears.",
+    "savings": "Class boundaries align with data ownership; mutations are local; refactoring becomes safer.",
+    "before": "class Customer { plan; discountRate; }",
+    "after": "class Plan     { discountRate; }\nclass Customer { plan; /* discountRate accessed via plan */ }"
+  },
+  {
+    "name": "Slide Statements",
+    "solves": ["Long Function", "Comments"],
+    "risk": "Reordering can change behavior if statements aren't actually independent — verify side effects and dependencies before sliding.",
+    "goal": "Related statements sit next to each other; the function reads as a sequence of cohesive sub-steps that are easy to extract.",
+    "savings": "Setup for Extract Function becomes trivial; the implicit grouping inside the function becomes explicit.",
+    "before": "const basePrice = qty * itemPrice;\nlogPriceCalc(basePrice);\nconst tax = basePrice * 0.1;\nlogTaxCalc(tax);",
+    "after": "const basePrice = qty * itemPrice;\nconst tax = basePrice * 0.1;\nlogPriceCalc(basePrice);\nlogTaxCalc(tax);"
+  },
+  {
+    "name": "Split Loop",
+    "solves": ["Long Function", "Loops"],
+    "risk": "Two loops over the same collection are slower than one — only split when the doubled cost is dwarfed by the readability gain (which it usually is).",
+    "goal": "Each loop does one thing; mixed-purpose loops separate into named single-purpose passes.",
+    "savings": "Each loop can then be replaced by a pipeline or extracted by name; bugs concentrate in one purpose at a time.",
+    "before": "let totalSalary = 0;\nlet youngest = Infinity;\nfor (const p of people) {\n  if (p.age < youngest) youngest = p.age;\n  totalSalary += p.salary;\n}",
+    "after": "const totalSalary = people.reduce((s, p) => s + p.salary, 0);\nconst youngest    = Math.min(...people.map(p => p.age));"
+  },
+  {
+    "name": "Replace Loop with Pipeline",
+    "solves": ["Loops"],
+    "risk": "Pipelines add a tiny per-element function-call overhead — usually negligible, but profile if you're in a hot path.",
+    "goal": "Filter / map / reduce expresses the transformation as a sequence of named operations; intent jumps off the page.",
+    "savings": "Off-by-one and accumulator bugs vanish; each step is independently testable.",
+    "before": "const seniors = [];\nfor (const u of users) {\n  if (u.age >= 65) seniors.push(u.name);\n}",
+    "after": "const seniors = users\n  .filter(u => u.age >= 65)\n  .map(u => u.name);"
+  },
+  {
+    "name": "Remove Dead Code",
+    "solves": ["Speculative Generality", "Comments"],
+    "risk": "Code that looks dead may be reachable via reflection, dynamic dispatch, or external callers — delete in version control where it can be recovered.",
+    "goal": "Every line in the codebase is reachable and used; readers don't waste cycles on phantom branches.",
+    "savings": "Smaller surface, faster reading, fewer false leads when debugging.",
+    "before": "function legacyDiscount(order) { /* unused since 2018 */ }\nfunction modernDiscount(order) { /* the real one */ }",
+    "after": "function discount(order) { /* the real one */ }"
+  },
+  {
+    "name": "Split Variable",
+    "solves": ["Mysterious Name", "Mutable Data"],
+    "risk": "Two distinct uses of one variable share a single update pattern that may have hidden coupling — verify each use is genuinely independent.",
+    "goal": "Each variable has one role; reassignment patterns reflect distinct purposes rather than reused storage.",
+    "savings": "Names match purpose; the type system can narrow each role; refactoring each use becomes local.",
+    "before": "let temp = 2 * (height + width);\nconsole.log(temp);\ntemp = height * width;\nconsole.log(temp);",
+    "after": "const perimeter = 2 * (height + width);\nconsole.log(perimeter);\nconst area = height * width;\nconsole.log(area);"
+  },
+  {
+    "name": "Rename Field",
+    "solves": ["Mysterious Name"],
+    "risk": "Field renames cross every reader/writer of the class — refactor in tooling-supported steps and update tests with each batch.",
+    "goal": "Field names match the domain role they play; readers don't need to inspect usage to know what a field means.",
+    "savings": "Stronger encapsulation; future-you reads the class definition and immediately understands its shape.",
+    "before": "class Org { name; }",
+    "after": "class Org { title; }"
+  },
+  {
+    "name": "Replace Derived Variable with Query",
+    "solves": ["Mutable Data"],
+    "risk": "If the derivation is expensive and the source rarely changes, recomputing on every read may be wasteful — measure before deciding.",
+    "goal": "Values computed from other state are computed on demand; no separate field needs to be kept in sync.",
+    "savings": "Mutation scope shrinks; reasoning about state is simpler; no chance of the derived field drifting from its source.",
+    "before": "class Order {\n  items;\n  total;\n  add(item) { this.items.push(item); this.total += item.price; }\n}",
+    "after": "class Order {\n  items;\n  add(item)  { this.items.push(item); }\n  total()    { return this.items.reduce((s, i) => s + i.price, 0); }\n}"
+  },
+  {
+    "name": "Decompose Conditional",
+    "solves": ["Long Function", "Comments"],
+    "risk": "Names that aren't crisper than the underlying condition add ceremony — only extract when the named function/variable says something the condition can't.",
+    "goal": "Conditions and their consequents read as named domain decisions: isInSummer(), discountFor(date), etc.",
+    "savings": "The branching logic reads top-to-bottom as a story; bugs concentrate in the named pieces.",
+    "before": "if (date < SUMMER_START || date > SUMMER_END) {\n  charge = qty * winterRate + winterFee;\n} else {\n  charge = qty * summerRate;\n}",
+    "after": "charge = isSummer(date)\n  ? summerCharge(qty)\n  : winterCharge(qty);"
+  },
+  {
+    "name": "Consolidate Conditional Expression",
+    "solves": ["Duplicated Code"],
+    "risk": "Combining conditions can hide their independent reasons — only consolidate when they truly express the same business rule.",
+    "goal": "Multiple conditions leading to the same action collapse into one named predicate.",
+    "savings": "The shared rationale becomes visible and namable; new conditions extend one place instead of N.",
+    "before": "if (employee.seniority < 2)        return 0;\nif (employee.monthsDisabled > 12)  return 0;\nif (employee.isPartTime)           return 0;",
+    "after": "if (isIneligibleForBonus(employee)) return 0;"
+  },
+  {
+    "name": "Replace Nested Conditional with Guard Clauses",
+    "solves": ["Long Function", "Comments"],
+    "risk": "If multiple paths share work, premature returns can duplicate that work — extract first, then guard.",
+    "goal": "Edge cases bail out early at the top of the function; the main flow is unindented and tells the happy path linearly.",
+    "savings": "Indentation drops; the dominant case is obvious; new edge cases land at the top without disturbing the rest.",
+    "before": "function payAmount(employee) {\n  if (employee.isSeparated) {\n    return separationPay(employee);\n  } else {\n    if (employee.isRetired) {\n      return retirementPay(employee);\n    } else {\n      return regularPay(employee);\n    }\n  }\n}",
+    "after": "function payAmount(employee) {\n  if (employee.isSeparated) return separationPay(employee);\n  if (employee.isRetired)   return retirementPay(employee);\n  return regularPay(employee);\n}"
+  },
+  {
+    "name": "Replace Conditional with Polymorphism",
+    "solves": ["Repeated Switches", "Primitive Obsession"],
+    "risk": "If only one switch on the type code exists, polymorphism is overkill — wait for the second or third repeat before extracting subclasses.",
+    "goal": "Each case becomes a class implementing a shared interface; dispatch happens once via virtual call.",
+    "savings": "Adding a new case is one new class; the type system tells you what's missing.",
+    "before": "switch (event.kind) {\n  case 'click': return onClick(event);\n  case 'key':   return onKey(event);\n}",
+    "after": "event.handle(); // ClickEvent and KeyEvent each implement handle()"
+  },
+  {
+    "name": "Introduce Special Case",
+    "solves": ["Repeated Switches", "Comments"],
+    "risk": "Adds a tiny class for one case; only worthwhile when the special case appears in 2+ consumers.",
+    "goal": "A repeating null-or-special check becomes a Null Object (or Special Case) that responds sensibly to the same interface.",
+    "savings": "Callers stop branching on identity; the special behavior lives in one place.",
+    "before": "const name = customer === 'unknown' ? 'occupant' : customer.name;",
+    "after": "const name = customer.name; // UnknownCustomer.name returns 'occupant'"
+  },
+  {
+    "name": "Introduce Assertion",
+    "solves": ["Comments", "Mutable Data"],
+    "risk": "Assertions used as control flow couple production behavior to debug-mode invariants — keep them as runtime contracts that should never fire.",
+    "goal": "Invariants the code assumes are stated explicitly; readers don't need to deduce them.",
+    "savings": "Bugs that violate the invariant fail loudly at the source instead of bubbling out as mysterious downstream errors.",
+    "before": "// rate must be positive\nconst tax = base * rate;",
+    "after": "if (rate <= 0) throw new Error('rate must be positive');\nconst tax = base * rate;"
+  },
+  {
+    "name": "Separate Query from Modifier",
+    "solves": ["Mutable Data"],
+    "risk": "If the modification and the query truly cannot be separated (e.g. find-and-remove on a queue), the constraint is fundamental — leave the combined operation but document it.",
+    "goal": "Functions either return a value or mutate state, never both — callers can compose them without surprise.",
+    "savings": "Reasoning about side effects is local; tests target each shape independently.",
+    "before": "function findMiscreant(people) {\n  for (const p of people) {\n    if (p.isMiscreant) { alert(p); return p; }\n  }\n}",
+    "after": "function findMiscreant(people) { return people.find(p => p.isMiscreant); }\nfunction alertMiscreant(people) {\n  const m = findMiscreant(people);\n  if (m) alert(m);\n}"
+  },
+  {
+    "name": "Parameterize Function",
+    "solves": ["Duplicated Code"],
+    "risk": "If the variations are conceptually different operations, one parameterized function will accumulate flags and special cases — keep them separate then.",
+    "goal": "Two near-identical functions that differ only in literal values combine into one with a parameter.",
+    "savings": "One canonical implementation; new variations are new parameter values, not new functions.",
+    "before": "function tenPercentRaise(person)  { person.salary *= 1.10; }\nfunction fivePercentRaise(person) { person.salary *= 1.05; }",
+    "after": "function raise(person, factor) { person.salary *= 1 + factor; }"
+  },
+  {
+    "name": "Remove Flag Argument",
+    "solves": ["Long Parameter List"],
+    "risk": "Two replacement functions with similar bodies introduce duplication — pair this with Extract Function for shared internals.",
+    "goal": "Each flag value becomes its own well-named function; callers say what they mean rather than passing booleans.",
+    "savings": "Call sites read fluently; new variations land as new functions instead of new switch cases.",
+    "before": "function setDimension(name, value) {\n  if (name === 'height') /* ... */\n  else if (name === 'width') /* ... */\n}",
+    "after": "function setHeight(value) { /* ... */ }\nfunction setWidth(value)  { /* ... */ }"
+  },
+  {
+    "name": "Preserve Whole Object",
+    "solves": ["Long Parameter List", "Data Clumps"],
+    "risk": "Passing the whole object adds coupling to its full surface — only do this when the called function might reasonably need other parts of the object.",
+    "goal": "Instead of pulling several values out of an object to pass them in, pass the object itself.",
+    "savings": "Signatures shrink; adding a needed field is internal; consumers don't have to plumb new arguments through.",
+    "before": "if (room.lowTemp < range.low || room.highTemp > range.high) { /* ... */ }",
+    "after": "if (range.includes(room)) { /* ... */ }"
+  },
+  {
+    "name": "Replace Parameter with Query",
+    "solves": ["Long Parameter List"],
+    "risk": "If the query has side effects or is expensive, passing the value is genuinely better — only replace when the query is pure and cheap.",
+    "goal": "When a function can compute its own answer from already-available state, callers don't have to pre-compute it.",
+    "savings": "Signatures shrink; consumers stop doing the function's homework.",
+    "before": "const basePrice = order.qty * order.itemPrice;\nconst level = discountLevel(order);\nconst final = discounted(order, basePrice, level);",
+    "after": "const final = discounted(order); // computes basePrice and level itself"
+  },
+  {
+    "name": "Replace Constructor with Factory Function",
+    "solves": ["Primitive Obsession", "Speculative Generality"],
+    "risk": "Hides the actual class from callers — make sure your factory's name still expresses the produced shape clearly.",
+    "goal": "Object creation goes through a named function that can validate, choose subclasses, or return cached instances.",
+    "savings": "Construction can vary per case; consumers don't depend on which concrete class they're getting.",
+    "before": "const employee = new Employee(name, 'engineer', salary);",
+    "after": "function createEngineer(name, salary) {\n  return new Employee(name, 'engineer', salary);\n}\nconst employee = createEngineer(name, salary);"
+  },
+  {
+    "name": "Pull Up Method",
+    "solves": ["Duplicated Code", "Alternative Classes with Different Interfaces"],
+    "risk": "If the methods only superficially resemble each other, pulling up creates a fake-shared abstraction — unify only when behavior is actually identical.",
+    "goal": "Methods that subclasses implement identically move to the shared superclass.",
+    "savings": "One implementation, one place to fix; subclasses focus on what's actually different.",
+    "before": "class Manager  extends Employee { name() { return this._name; } }\nclass Engineer extends Employee { name() { return this._name; } }",
+    "after": "class Employee { name() { return this._name; } }\nclass Manager  extends Employee {}\nclass Engineer extends Employee {}"
+  },
+  {
+    "name": "Push Down Method",
+    "solves": ["Refused Bequest", "Large Class"],
+    "risk": "If the method is occasionally needed in the parent, pushing it down forces awkward type checks back at consumers — verify usage first.",
+    "goal": "Methods used by only one subclass live with that subclass, not on the shared superclass.",
+    "savings": "The superclass surface shrinks; subclasses that don't need the method aren't burdened by it.",
+    "before": "class Employee {\n  quota() { /* used only by Salesperson */ }\n}",
+    "after": "class Salesperson extends Employee {\n  quota() { /* ... */ }\n}"
+  },
+  {
+    "name": "Replace Type Code with Subclasses",
+    "solves": ["Repeated Switches", "Primitive Obsession"],
+    "risk": "If only one or two switches exist on the type code, subclassing is over-design; combine with Replace Conditional with Polymorphism only when dispatch repeats.",
+    "goal": "A 'kind' string field becomes a real subclass type; the type system enforces the legal set.",
+    "savings": "Compile-time checks that no kind is missed; per-kind behavior lives where it belongs.",
+    "before": "class Employee {\n  type; // 'engineer' | 'manager'\n}",
+    "after": "class Employee {}\nclass Engineer extends Employee {}\nclass Manager  extends Employee {}"
+  },
+  {
+    "name": "Extract Superclass",
+    "solves": ["Duplicated Code", "Alternative Classes with Different Interfaces"],
+    "risk": "Inheritance is inflexible — if the duplication is shallow, prefer Extract Class (composition) over Extract Superclass.",
+    "goal": "Two classes with substantial shared structure get a common parent that owns the shared bits.",
+    "savings": "Bug fixes and new shared behavior land in one place; the relationship between the classes is documented in code.",
+    "before": "class Employee   { name; id; salary; }\nclass Department { name; id; budget; }",
+    "after": "class Party       { name; id; }\nclass Employee   extends Party { salary; }\nclass Department extends Party { budget; }"
+  },
+  {
+    "name": "Collapse Hierarchy",
+    "solves": ["Lazy Element", "Speculative Generality"],
+    "risk": "Collapsing too eagerly destroys an extension point you'll later want — only collapse when the variant has been zero-sum for a sustained period.",
+    "goal": "A subclass that no longer differs meaningfully from its parent merges back in.",
+    "savings": "Smaller hierarchy, less ceremony, fewer files to navigate.",
+    "before": "class Employee {}\nclass FullTimeEmployee extends Employee {}",
+    "after": "class Employee {}"
+  },
+  {
+    "name": "Replace Subclass with Delegate",
+    "solves": ["Refused Bequest", "Insider Trading"],
+    "risk": "Composition is more verbose at construction sites — accept the verbosity in exchange for the flexibility.",
+    "goal": "Behavior that varied via inheritance now varies via a delegate object that implements the variant interface.",
+    "savings": "Variants can be combined or swapped at runtime; Liskov violations vanish; the hierarchy tree flattens.",
+    "before": "class Booking { /* ... */ }\nclass PremiumBooking extends Booking {\n  /* overrides several methods */\n}",
+    "after": "class Booking {\n  type; // 'standard' | premium delegate\n  charge() { return this.type.charge(this); }\n}"
   }
 ]
