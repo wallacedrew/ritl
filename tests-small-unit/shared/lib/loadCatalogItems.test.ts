@@ -11,6 +11,15 @@ describe("loadCatalogItems", () => {
     expect(items.filter((i) => i.kind === "refactoring")).toHaveLength(66);
   });
 
+  it("lists refactorings before smells", () => {
+    const items = loadCatalogItems();
+
+    expect(items[0]?.kind).toBe("refactoring");
+    expect(items[65]?.kind).toBe("refactoring");
+    expect(items[66]?.kind).toBe("smell");
+    expect(items[89]?.kind).toBe("smell");
+  });
+
   it("assigns each entity its 1-based position as the catalog number", () => {
     const items = loadCatalogItems();
 

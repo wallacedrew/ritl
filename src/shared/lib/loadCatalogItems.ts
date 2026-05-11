@@ -19,5 +19,5 @@ export function loadCatalogItems(): CatalogItem[] {
     href: `/refactorings/${slugify(refactoring.name)}`,
   }));
 
-  return [...smells, ...refactorings];
+  return [...refactorings, ...smells];
 }
