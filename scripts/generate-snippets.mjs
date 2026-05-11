@@ -293,7 +293,7 @@ for (const dest of ["docs/snippets", "public/snippets"]) {
   mkdirSync(resolve(root, dest), { recursive: true });
   writeFileSync(resolve(root, `${dest}/refactorings.md`), refactoringsMd);
   writeFileSync(resolve(root, `${dest}/smells.md`), smellsMd);
-  writeFileSync(resolve(root, `${dest}/combined.md`), combinedMd);
+  writeFileSync(resolve(root, `${dest}/refactoring_catalog.md`), combinedMd);
 
   mkdirSync(resolve(root, `${dest}/refactorings`), { recursive: true });
   for (const r of refactorings) {

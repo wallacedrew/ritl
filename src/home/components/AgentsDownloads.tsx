@@ -20,8 +20,8 @@ const SNIPPETS: readonly SnippetDownload[] = [
     hint: "24 patterns to refuse",
   },
   {
-    href: "/snippets/combined.md",
-    label: "combined.md",
+    href: "/snippets/refactoring_catalog.md",
+    label: "refactoring_catalog.md",
     hint: "single-paste digest",
   },
 ];
