@@ -17,6 +17,7 @@ import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import { useEffect, useState } from "react";
 
+import SnippetInstallBanner from "@/shared/components/SnippetInstallBanner";
 import { MONOSPACE_FONT } from "@/shared/theme/monospace";
 
 interface SnippetPreviewButtonProps {
@@ -132,24 +133,7 @@ export default function SnippetPreviewButton({ href, label, hint }: SnippetPrevi
           </IconButton>
         </DialogTitle>
         <DialogContent dividers>
-          {skillSlug && (
-            <Alert severity="info" icon={false} sx={{ mb: 2 }}>
-              <Typography variant="body2" sx={{ fontWeight: 600, mb: 0.5 }}>
-                Install as a Claude skill
-              </Typography>
-              <Typography
-                component="pre"
-                variant="caption"
-                sx={{
-                  fontFamily: MONOSPACE_FONT,
-                  whiteSpace: "pre-wrap",
-                  m: 0,
-                }}
-              >
-                {`mkdir -p ~/.claude/skills/${skillSlug}\nmv ${skillSlug}.md ~/.claude/skills/${skillSlug}/SKILL.md`}
-              </Typography>
-            </Alert>
-          )}
+          <SnippetInstallBanner slug={skillSlug} />
           {content === null && !error && (
             <Stack sx={{ alignItems: "center", py: 4 }}>
               <CircularProgress size={24} />
