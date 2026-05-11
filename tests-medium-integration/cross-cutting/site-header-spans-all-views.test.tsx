@@ -24,9 +24,9 @@ describe("site header spans every catalog view", () => {
     expect(smellsTab).toHaveAttribute("href", "/smells");
 
     const refactoringsTab = screen.getByRole("tab", { name: /Refactorings/ });
-    expect(refactoringsTab).toHaveAttribute("href", "/refactorings");
+    expect(refactoringsTab).toHaveAttribute("href", "/");
 
     const referenceTab = screen.getByRole("tab", { name: /Reference/ });
-    expect(referenceTab).toHaveAttribute("href", "/");
+    expect(referenceTab).toHaveAttribute("href", "/reference");
   });
 });

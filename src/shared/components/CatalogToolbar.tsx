@@ -9,8 +9,9 @@ type CatalogView = "smells" | "refactorings" | "reference";
 
 function deriveActiveView(pathname: string): CatalogView {
   if (pathname.startsWith("/smells")) return "smells";
-  if (pathname.startsWith("/refactorings")) return "refactorings";
-  return "reference";
+  if (pathname.startsWith("/reference")) return "reference";
+  // "/" and "/refactorings/*" both show the refactorings list.
+  return "refactorings";
 }
 
 export default function CatalogToolbar() {
@@ -28,9 +29,9 @@ export default function CatalogToolbar() {
         "& .MuiTab-root.Mui-selected": { fontWeight: 700 },
       }}
     >
-      <Tab label="Refactorings" component={NextLink} href="/refactorings" value="refactorings" />
+      <Tab label="Refactorings" component={NextLink} href="/" value="refactorings" />
       <Tab label="Smells" component={NextLink} href="/smells" value="smells" />
-      <Tab label="Reference" component={NextLink} href="/" value="reference" />
+      <Tab label="Reference" component={NextLink} href="/reference" value="reference" />
     </Tabs>
   );
 }
