@@ -1,0 +1,20 @@
+### Apply: 24 — Replace Conditional with Polymorphism
+
+**Target state:** Each case becomes a class implementing a shared interface; dispatch happens once via virtual call.
+
+**Why apply it:** Adding a new case is one new class; the type system tells you what's missing.
+
+**Pitfall:** If only one switch on the type code exists, polymorphism is overkill — wait for the second or third repeat before extracting subclasses.
+
+```js
+// Avoid:
+switch (event.kind) {
+  case 'click': return onClick(event);
+  case 'key':   return onKey(event);
+}
+
+// Prefer:
+event.handle(); // ClickEvent and KeyEvent each implement handle()
+```
+
+**Removes smells:** Repeated Switches, Primitive Obsession

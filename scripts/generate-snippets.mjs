@@ -105,6 +105,15 @@ const REFACTORING_CATEGORIES = {
 // JSON-order numbering (1-based) — matches the in-app catalog badges.
 const refactoringNumberByName = new Map(refactorings.map((r, i) => [r.name, i + 1]));
 
+// Mirrors src/shared/lib/slugify.ts (duplicated for plain-Node script).
+function slugify(name) {
+  return name
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9\s-]/g, "")
+    .replace(/\s+/g, "-");
+}
+
 // First sentence of a paragraph — trims to a one-liner for tables / digests.
 function firstSentence(text) {
   const trimmed = text.trim();
@@ -285,9 +294,22 @@ for (const dest of ["docs/snippets", "public/snippets"]) {
   writeFileSync(resolve(root, `${dest}/refactorings.md`), refactoringsMd);
   writeFileSync(resolve(root, `${dest}/smells.md`), smellsMd);
   writeFileSync(resolve(root, `${dest}/combined.md`), combinedMd);
+
+  mkdirSync(resolve(root, `${dest}/refactorings`), { recursive: true });
+  for (const r of refactorings) {
+    writeFileSync(
+      resolve(root, `${dest}/refactorings/${slugify(r.name)}.md`),
+      formatRefactoring(r),
+    );
+  }
+
+  mkdirSync(resolve(root, `${dest}/smells`), { recursive: true });
+  smells.forEach((s, i) => {
+    writeFileSync(resolve(root, `${dest}/smells/${slugify(s.name)}.md`), formatSmell(s, i));
+  });
 }
 
 console.log("Generated snippets in docs/snippets/ and public/snippets/");
-console.log(`  ${refactorings.length} refactoring sections`);
-console.log(`  ${smells.length} smell sections`);
+console.log(`  ${refactorings.length} refactoring sections (bulk + per-entity)`);
+console.log(`  ${smells.length} smell sections (bulk + per-entity)`);
 console.log(`  1 combined digest`);

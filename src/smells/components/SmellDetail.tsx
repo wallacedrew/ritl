@@ -1,3 +1,5 @@
+import FileDownloadIcon from "@mui/icons-material/FileDownload";
+import Button from "@mui/material/Button";
 import Container from "@mui/material/Container";
 import Divider from "@mui/material/Divider";
 import Stack from "@mui/material/Stack";
@@ -36,6 +38,17 @@ export default function SmellDetail({ smell, number }: SmellDetailProps) {
               />
             ))}
           </Stack>
+          <Button
+            component="a"
+            href={`/snippets/smells/${slugify(smell.name)}.md`}
+            download
+            startIcon={<FileDownloadIcon />}
+            variant="outlined"
+            size="small"
+            sx={{ alignSelf: "flex-start" }}
+          >
+            Download snippet for AGENTS.md
+          </Button>
         </Stack>
         <Divider />
         <SmellSection label="Symptom" body={smell.symptom} />
