@@ -1,6 +1,6 @@
 {
   "name": "refactor",
-  "description": "90 SKILL.md skills — apply Fowler refactorings when their preconditions appear; refuse known code smells. Source: https://refactoring.com/catalog/",
+  "description": "91 SKILL.md skills — 1 workflow orchestrator + 66 refactorings + 24 smells. Apply Fowler refactorings when their preconditions appear; refuse known code smells. Source: https://refactoring.com/catalog/",
   "author": {
     "name": "Wallace Drew"
   },

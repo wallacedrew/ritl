@@ -13,7 +13,7 @@
 // is the centralized view of the same material.
 
 import { execSync } from "node:child_process";
-import { existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -324,16 +324,25 @@ for (const dest of ["docs/snippets", "public/snippets"]) {
 const PLUGIN_NAME = "refactor";
 const MARKETPLACE_NAME = "ritl";
 const PLUGIN_DESCRIPTION =
-  "90 SKILL.md skills — apply Fowler refactorings when their preconditions appear; refuse known code smells. Source: https://refactoring.com/catalog/";
+  "91 SKILL.md skills — 1 workflow orchestrator + 66 refactorings + 24 smells. Apply Fowler refactorings when their preconditions appear; refuse known code smells. Source: https://refactoring.com/catalog/";
 
 const pluginRoot = resolve(root, `plugin/${PLUGIN_NAME}`);
 const pluginSkillsRoot = resolve(pluginRoot, "skills");
 const marketplaceDir = resolve(root, ".claude-plugin");
 
-// Clean the plugin skills tree before regenerating so stale slugs (after a
-// catalog rename) don't linger as half-skills under the new plugin.
+// Scope the wipe to catalog-derived slugs only. Hand-authored skills
+// in this folder (like `workflow/`) live outside the catalog and must
+// survive every regen.
+const expectedCatalogSlugs = new Set([
+  ...refactorings.map((r) => slugify(r.name)),
+  ...smells.map((s) => slugify(s.name)),
+]);
 if (existsSync(pluginSkillsRoot)) {
-  rmSync(pluginSkillsRoot, { recursive: true, force: true });
+  for (const entry of readdirSync(pluginSkillsRoot)) {
+    if (expectedCatalogSlugs.has(entry)) {
+      rmSync(resolve(pluginSkillsRoot, entry), { recursive: true, force: true });
+    }
+  }
 }
 mkdirSync(pluginSkillsRoot, { recursive: true });
 mkdirSync(resolve(pluginRoot, ".claude-plugin"), { recursive: true });
