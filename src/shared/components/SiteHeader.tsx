@@ -6,6 +6,7 @@ import Typography from "@mui/material/Typography";
 import { loadCatalogItems } from "../lib/loadCatalogItems";
 import CatalogSearch from "./CatalogSearch";
 import CatalogToolbar from "./CatalogToolbar";
+import ColorModeToggle from "./ColorModeToggle";
 
 export default function SiteHeader() {
   const items = loadCatalogItems();
@@ -21,13 +22,19 @@ export default function SiteHeader() {
     >
       <Container maxWidth="lg" sx={{ py: 4 }}>
         <Stack spacing={3}>
-          <Stack spacing={1}>
-            <Typography variant="h4" component="div" sx={{ fontWeight: 600 }}>
-              Refactoring in the Large
-            </Typography>
-            <Typography variant="body1" color="text.secondary">
-              A catalog explorer for code smells and the Fowler refactorings that address them.
-            </Typography>
+          <Stack
+            direction="row"
+            sx={{ alignItems: "flex-start", justifyContent: "space-between", gap: 2 }}
+          >
+            <Stack spacing={1}>
+              <Typography variant="h4" component="div" sx={{ fontWeight: 600 }}>
+                Refactoring in the Large
+              </Typography>
+              <Typography variant="body1" color="text.secondary">
+                A catalog explorer for code smells and the Fowler refactorings that address them.
+              </Typography>
+            </Stack>
+            <ColorModeToggle />
           </Stack>
           <CatalogSearch items={items} />
           <CatalogToolbar />
