@@ -38,9 +38,6 @@ export default function RefactoringDetail({ refactoring, number }: RefactoringDe
           </Stack>
         </Stack>
         <Divider />
-        <RefactoringSection label="Risk" body={refactoring.risk} />
-        <RefactoringSection label="Goal" body={refactoring.goal} />
-        <RefactoringSection label="Savings" body={refactoring.savings} />
         <Stack spacing={2}>
           <Typography variant="overline" color="text.secondary">
             Before
@@ -51,6 +48,9 @@ export default function RefactoringDetail({ refactoring, number }: RefactoringDe
           </Typography>
           <CodeBlock code={refactoring.after} />
         </Stack>
+        <RefactoringSection label="Risk" body={refactoring.risk} />
+        <RefactoringSection label="Goal" body={refactoring.goal} />
+        <RefactoringSection label="Savings" body={refactoring.savings} />
       </Stack>
     </Container>
   );
