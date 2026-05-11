@@ -39,6 +39,9 @@ yarn-error.log*
 # claude code project-local skills/cache (track per-file later if any project-specific config emerges)
 .claude/
 
+# generated plugin bundle — rebuilt by `npm run snippets` on every deploy
+/public/refactoring-in-the-loop.zip
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts

@@ -6,3 +6,5 @@ coverage
 package-lock.json
 prototype.html
 public
+docs/snippets
+plugin

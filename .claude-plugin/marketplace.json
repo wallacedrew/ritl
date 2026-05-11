@@ -1,0 +1,21 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "ritl",
+  "description": "Refactoring in the Loop — catalog tools for Claude Code",
+  "owner": {
+    "name": "Wallace Drew",
+    "email": "wallace.drew@gmail.com"
+  },
+  "plugins": [
+    {
+      "name": "refactoring-in-the-loop",
+      "description": "90 SKILL.md skills — apply Fowler refactorings when their preconditions appear; refuse known code smells. Source: https://refactoring.com/catalog/",
+      "author": {
+        "name": "Wallace Drew"
+      },
+      "category": "development",
+      "source": "./plugin/refactoring-in-the-loop",
+      "homepage": "https://refactoringintheloop.com"
+    }
+  ]
+}

@@ -12,7 +12,8 @@
 // The bulk file inlines the per-entity sections verbatim so its content
 // is the centralized view of the same material.
 
-import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
+import { execSync } from "node:child_process";
+import { existsSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -310,7 +311,89 @@ for (const dest of ["docs/snippets", "public/snippets"]) {
   });
 }
 
+// --- Plugin distribution ----------------------------------------------------
+//
+// Same 90 SKILL.md files in the canonical Claude Code plugin layout:
+//   plugin/refactoring-in-the-loop/
+//     .claude-plugin/plugin.json
+//     skills/<slug>/SKILL.md
+// Plus a one-plugin marketplace manifest at:
+//   .claude-plugin/marketplace.json
+// Plus a .zip download served from public/.
+
+const PLUGIN_NAME = "refactoring-in-the-loop";
+const MARKETPLACE_NAME = "ritl";
+const PLUGIN_DESCRIPTION =
+  "90 SKILL.md skills — apply Fowler refactorings when their preconditions appear; refuse known code smells. Source: https://refactoring.com/catalog/";
+
+const pluginRoot = resolve(root, `plugin/${PLUGIN_NAME}`);
+const pluginSkillsRoot = resolve(pluginRoot, "skills");
+const marketplaceDir = resolve(root, ".claude-plugin");
+
+// Clean the plugin skills tree before regenerating so stale slugs (after a
+// catalog rename) don't linger as half-skills under the new plugin.
+if (existsSync(pluginSkillsRoot)) {
+  rmSync(pluginSkillsRoot, { recursive: true, force: true });
+}
+mkdirSync(pluginSkillsRoot, { recursive: true });
+mkdirSync(resolve(pluginRoot, ".claude-plugin"), { recursive: true });
+mkdirSync(marketplaceDir, { recursive: true });
+
+const pluginManifest = {
+  name: PLUGIN_NAME,
+  description: PLUGIN_DESCRIPTION,
+  author: { name: "Wallace Drew" },
+  homepage: "https://refactoringintheloop.com",
+  repository: "https://github.com/wallacedrew/ritl",
+};
+writeFileSync(
+  resolve(pluginRoot, ".claude-plugin/plugin.json"),
+  JSON.stringify(pluginManifest, null, 2) + "\n",
+);
+
+const marketplaceManifest = {
+  $schema: "https://anthropic.com/claude-code/marketplace.schema.json",
+  name: MARKETPLACE_NAME,
+  description: "Refactoring in the Loop — catalog tools for Claude Code",
+  owner: { name: "Wallace Drew", email: "wallace.drew@gmail.com" },
+  plugins: [
+    {
+      name: PLUGIN_NAME,
+      description: PLUGIN_DESCRIPTION,
+      author: { name: "Wallace Drew" },
+      category: "development",
+      source: `./plugin/${PLUGIN_NAME}`,
+      homepage: "https://refactoringintheloop.com",
+    },
+  ],
+};
+writeFileSync(
+  resolve(marketplaceDir, "marketplace.json"),
+  JSON.stringify(marketplaceManifest, null, 2) + "\n",
+);
+
+for (const r of refactorings) {
+  const slug = slugify(r.name);
+  const dir = resolve(pluginSkillsRoot, slug);
+  mkdirSync(dir, { recursive: true });
+  writeFileSync(resolve(dir, "SKILL.md"), formatRefactoringSkill(r));
+}
+smells.forEach((s, i) => {
+  const slug = slugify(s.name);
+  const dir = resolve(pluginSkillsRoot, slug);
+  mkdirSync(dir, { recursive: true });
+  writeFileSync(resolve(dir, "SKILL.md"), formatSmellSkill(s, i));
+});
+
+const zipPath = resolve(root, "public/refactoring-in-the-loop.zip");
+if (existsSync(zipPath)) rmSync(zipPath);
+execSync(`zip -rq "${zipPath}" "plugin/${PLUGIN_NAME}"`, { cwd: root });
+
 console.log("Generated skill-shaped snippets in docs/snippets/ and public/snippets/");
 console.log(`  ${refactorings.length} refactoring SKILL.md files`);
 console.log(`  ${smells.length} smell SKILL.md files`);
 console.log("  1 consolidated refactoring-catalog.md");
+console.log(`Generated plugin '${PLUGIN_NAME}' at plugin/${PLUGIN_NAME}/`);
+console.log(`  marketplace.json at .claude-plugin/marketplace.json`);
+console.log(`  ${refactorings.length + smells.length} skill folders under skills/`);
+console.log(`  bundle at public/refactoring-in-the-loop.zip`);
