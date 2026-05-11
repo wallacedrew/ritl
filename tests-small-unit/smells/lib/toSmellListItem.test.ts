@@ -15,14 +15,20 @@ const baseSmell: Smell = {
 };
 
 describe("toSmellListItem", () => {
+  it("attaches the catalog number passed in", () => {
+    const item = toSmellListItem(baseSmell, 7);
+
+    expect(item.number).toBe(7);
+  });
+
   it("derives a slug-based href to the smell's detail page", () => {
-    const item = toSmellListItem(baseSmell);
+    const item = toSmellListItem(baseSmell, 1);
 
     expect(item.href).toBe("/smells/mysterious-name");
   });
 
   it("preserves name, refactorings, and symptom for the list view", () => {
-    const item = toSmellListItem(baseSmell);
+    const item = toSmellListItem(baseSmell, 1);
 
     expect(item.name).toBe("Mysterious Name");
     expect(item.refactorings).toEqual(["Rename Variable"]);
@@ -30,7 +36,7 @@ describe("toSmellListItem", () => {
   });
 
   it("does not leak detail-only fields onto the list item", () => {
-    const item = toSmellListItem(baseSmell);
+    const item = toSmellListItem(baseSmell, 1);
 
     expect(item).not.toHaveProperty("risk");
     expect(item).not.toHaveProperty("goal");

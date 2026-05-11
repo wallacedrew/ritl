@@ -1,0 +1,27 @@
+import Typography from "@mui/material/Typography";
+
+interface CatalogNumberProps {
+  value: number;
+  size?: "small" | "large";
+}
+
+export default function CatalogNumber({ value, size = "small" }: CatalogNumberProps) {
+  const formatted = String(value).padStart(2, "0");
+
+  return (
+    <Typography
+      component="span"
+      variant={size === "large" ? "h5" : "overline"}
+      color="text.secondary"
+      sx={{
+        fontFamily:
+          'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace',
+        fontVariantNumeric: "tabular-nums",
+        flexShrink: 0,
+        lineHeight: 1,
+      }}
+    >
+      {formatted}
+    </Typography>
+  );
+}

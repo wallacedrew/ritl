@@ -8,6 +8,8 @@ import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import NextLink from "next/link";
 
+import CatalogNumber from "@/shared/components/CatalogNumber";
+
 import type { RefactoringListItem } from "../lib/RefactoringListItem";
 
 interface RefactoringCardProps {
@@ -20,9 +22,12 @@ export default function RefactoringCard({ item }: RefactoringCardProps) {
       <CardActionArea component={NextLink} href={item.href} sx={{ height: "100%" }}>
         <CardContent>
           <Stack spacing={1.5}>
-            <Typography component="h2" variant="h6">
-              {item.name}
-            </Typography>
+            <Stack direction="row" spacing={1.5} sx={{ alignItems: "baseline" }}>
+              <CatalogNumber value={item.number} />
+              <Typography component="h2" variant="h6">
+                {item.name}
+              </Typography>
+            </Stack>
             <Stack direction="row" sx={{ flexWrap: "wrap", gap: 1 }}>
               {item.solves.map((smellName) => (
                 <Chip key={smellName} label={smellName} size="small" variant="outlined" />

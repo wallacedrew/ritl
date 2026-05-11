@@ -11,13 +11,15 @@ interface RefactoringDetailPageProps {
 
 export default async function RefactoringDetailPage({ params }: RefactoringDetailPageProps) {
   const { slug } = await params;
-  const refactoring = loadRefactorings().find((candidate) => slugify(candidate.name) === slug);
+  const refactorings = loadRefactorings();
+  const index = refactorings.findIndex((candidate) => slugify(candidate.name) === slug);
+  const refactoring = refactorings[index];
 
   if (!refactoring) {
     notFound();
   }
 
-  return <RefactoringDetail refactoring={refactoring} />;
+  return <RefactoringDetail refactoring={refactoring} number={index + 1} />;
 }
 
 export function generateStaticParams() {

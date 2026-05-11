@@ -9,13 +9,19 @@ export interface RefactoringCategoryGroup {
 }
 
 export function getRefactoringsByCategory(): RefactoringCategoryGroup[] {
-  const byName = new Map(loadRefactorings().map((r) => [r.name, r]));
+  const allRefactorings = loadRefactorings();
+  const byName = new Map(
+    allRefactorings.map((refactoring, index) => [
+      refactoring.name,
+      { refactoring, number: index + 1 },
+    ]),
+  );
 
   return Object.entries(REFACTORING_CATEGORIES).map(([category, names]) => ({
     category,
     items: names.flatMap((name) => {
-      const refactoring = byName.get(name);
-      return refactoring ? [toRefactoringListItem(refactoring)] : [];
+      const entry = byName.get(name);
+      return entry ? [toRefactoringListItem(entry.refactoring, entry.number)] : [];
     }),
   }));
 }

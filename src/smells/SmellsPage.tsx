@@ -7,7 +7,7 @@ import { loadSmells } from "./lib/loadSmells";
 import { toSmellListItem } from "./lib/toSmellListItem";
 
 export default function SmellsPage() {
-  const items = loadSmells().map(toSmellListItem);
+  const items = loadSmells().map((smell, index) => toSmellListItem(smell, index + 1));
 
   return (
     <Container maxWidth="lg" sx={{ py: 4 }}>

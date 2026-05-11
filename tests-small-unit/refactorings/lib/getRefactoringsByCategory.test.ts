@@ -28,13 +28,14 @@ describe("getRefactoringsByCategory", () => {
     ]);
   });
 
-  it("emits items as RefactoringListItem view models with pre-resolved hrefs", () => {
+  it("emits items as RefactoringListItem view models with pre-resolved hrefs and catalog numbers", () => {
     const groups = getRefactoringsByCategory();
 
     const composing = groups.find((g) => g.category === "Composing Methods");
     const extractFunction = composing?.items.find((i) => i.name === "Extract Function");
     expect(extractFunction?.href).toBe("/refactorings/extract-function");
     expect(extractFunction?.solves).toContain("Long Function");
+    expect(extractFunction?.number).toBe(1);
   });
 
   it("categorizes every refactoring in the catalog (no orphans)", () => {

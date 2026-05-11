@@ -14,14 +14,20 @@ const baseRefactoring: Refactoring = {
 };
 
 describe("toRefactoringListItem", () => {
+  it("attaches the catalog number passed in", () => {
+    const item = toRefactoringListItem(baseRefactoring, 13);
+
+    expect(item.number).toBe(13);
+  });
+
   it("derives a slug-based href to the refactoring's detail page", () => {
-    const item = toRefactoringListItem(baseRefactoring);
+    const item = toRefactoringListItem(baseRefactoring, 1);
 
     expect(item.href).toBe("/refactorings/extract-function");
   });
 
   it("preserves name, solves, and goal for the list view", () => {
-    const item = toRefactoringListItem(baseRefactoring);
+    const item = toRefactoringListItem(baseRefactoring, 1);
 
     expect(item.name).toBe("Extract Function");
     expect(item.solves).toEqual(["Long Function", "Duplicated Code"]);
@@ -29,7 +35,7 @@ describe("toRefactoringListItem", () => {
   });
 
   it("does not leak detail-only fields onto the list item", () => {
-    const item = toRefactoringListItem(baseRefactoring);
+    const item = toRefactoringListItem(baseRefactoring, 1);
 
     expect(item).not.toHaveProperty("risk");
     expect(item).not.toHaveProperty("savings");

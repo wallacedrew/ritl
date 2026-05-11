@@ -7,7 +7,9 @@ import { loadRefactorings } from "./lib/loadRefactorings";
 import { toRefactoringListItem } from "./lib/toRefactoringListItem";
 
 export default function RefactoringsPage() {
-  const items = loadRefactorings().map(toRefactoringListItem);
+  const items = loadRefactorings().map((refactoring, index) =>
+    toRefactoringListItem(refactoring, index + 1),
+  );
 
   return (
     <Container maxWidth="lg" sx={{ py: 4 }}>

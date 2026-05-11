@@ -3,6 +3,7 @@ import Divider from "@mui/material/Divider";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 
+import CatalogNumber from "@/shared/components/CatalogNumber";
 import CodeBlock from "@/shared/components/CodeBlock";
 import LinkedChip from "@/shared/components/LinkedChip";
 import { slugify } from "@/shared/lib/slugify";
@@ -12,16 +13,20 @@ import SmellSection from "./SmellSection";
 
 interface SmellDetailProps {
   smell: Smell;
+  number: number;
 }
 
-export default function SmellDetail({ smell }: SmellDetailProps) {
+export default function SmellDetail({ smell, number }: SmellDetailProps) {
   return (
     <Container maxWidth="md" sx={{ py: 4 }}>
       <Stack spacing={3}>
         <Stack spacing={1.5}>
-          <Typography component="h1" variant="h3" sx={{ fontWeight: 600 }}>
-            {smell.name}
-          </Typography>
+          <Stack direction="row" spacing={2} sx={{ alignItems: "baseline" }}>
+            <CatalogNumber value={number} size="large" />
+            <Typography component="h1" variant="h3" sx={{ fontWeight: 600 }}>
+              {smell.name}
+            </Typography>
+          </Stack>
           <Stack direction="row" sx={{ flexWrap: "wrap", gap: 1 }}>
             {smell.refactorings.map((refactoringName) => (
               <LinkedChip
