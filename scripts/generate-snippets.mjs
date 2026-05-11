@@ -274,12 +274,20 @@ function renderCombinedFile() {
   return lines.join("\n");
 }
 
-mkdirSync(resolve(root, "docs/snippets"), { recursive: true });
-writeFileSync(resolve(root, "docs/snippets/refactorings.md"), renderRefactoringsFile());
-writeFileSync(resolve(root, "docs/snippets/smells.md"), renderSmellsFile());
-writeFileSync(resolve(root, "docs/snippets/combined.md"), renderCombinedFile());
+// Outputs go to both docs/snippets/ (human-browsable in the repo) and
+// public/snippets/ (served by Next so the app can offer downloads).
+const refactoringsMd = renderRefactoringsFile();
+const smellsMd = renderSmellsFile();
+const combinedMd = renderCombinedFile();
 
-console.log("Generated docs/snippets/{refactorings,smells,combined}.md");
+for (const dest of ["docs/snippets", "public/snippets"]) {
+  mkdirSync(resolve(root, dest), { recursive: true });
+  writeFileSync(resolve(root, `${dest}/refactorings.md`), refactoringsMd);
+  writeFileSync(resolve(root, `${dest}/smells.md`), smellsMd);
+  writeFileSync(resolve(root, `${dest}/combined.md`), combinedMd);
+}
+
+console.log("Generated snippets in docs/snippets/ and public/snippets/");
 console.log(`  ${refactorings.length} refactoring sections`);
 console.log(`  ${smells.length} smell sections`);
 console.log(`  1 combined digest`);

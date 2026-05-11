@@ -8,6 +8,7 @@ import { getRefactoringsByCategory } from "@/refactorings/lib/getRefactoringsByC
 import ReferenceView from "@/refactorings/components/ReferenceView";
 import { loadSmells } from "@/smells/lib/loadSmells";
 
+import AgentsDownloads from "./components/AgentsDownloads";
 import CatalogStats from "./components/CatalogStats";
 
 export default function HomePage() {
@@ -32,6 +33,7 @@ export default function HomePage() {
           refactoringCount={refactoringCount}
           categoryCount={categoryCount}
         />
+        <AgentsDownloads />
         <Divider />
         <ReferenceView groups={groups} />
       </Stack>
