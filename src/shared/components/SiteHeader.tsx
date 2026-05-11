@@ -1,5 +1,6 @@
 import Box from "@mui/material/Box";
 import Container from "@mui/material/Container";
+import Link from "@mui/material/Link";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 
@@ -31,7 +32,18 @@ export default function SiteHeader() {
                 Refactoring in the Loop
               </Typography>
               <Typography variant="body2" color="text.secondary">
-                A catalog explorer for code smells and the Fowler refactorings that address them.
+                A catalog explorer for the{" "}
+                <Link
+                  href="https://refactoring.com/catalog/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  underline="hover"
+                  color="inherit"
+                  sx={{ textDecorationStyle: "dotted" }}
+                >
+                  canonical refactorings and code smells
+                </Link>
+                .
               </Typography>
             </Stack>
             <ColorModeToggle />
