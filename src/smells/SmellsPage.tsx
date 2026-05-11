@@ -1,3 +1,5 @@
+import FileDownloadIcon from "@mui/icons-material/FileDownload";
+import Button from "@mui/material/Button";
 import Container from "@mui/material/Container";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
@@ -20,6 +22,17 @@ export default function SmellsPage() {
           <Typography variant="body1" color="text.secondary">
             Canonical Fowler smells and the refactorings that address them.
           </Typography>
+          <Button
+            component="a"
+            href="/snippets/smells.md"
+            download
+            startIcon={<FileDownloadIcon />}
+            variant="outlined"
+            size="small"
+            sx={{ alignSelf: "flex-start" }}
+          >
+            Download all 24 as snippets for AGENTS.md
+          </Button>
         </Stack>
         <SmellList items={items} />
       </Stack>
