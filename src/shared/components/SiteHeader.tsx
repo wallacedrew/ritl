@@ -29,14 +29,11 @@ export default function SiteHeader() {
             sx={{ alignItems: "flex-start", justifyContent: "space-between", gap: 2 }}
           >
             <Stack spacing={1}>
-              <Typography
-                component={NextLink}
-                href="/"
-                variant="h6"
-                sx={{ fontWeight: 600, color: "text.primary", textDecoration: "none" }}
-              >
-                Refactoring in the Loop
-              </Typography>
+              <NextLink href="/" style={{ color: "inherit", textDecoration: "none" }}>
+                <Typography variant="h6" component="span" sx={{ fontWeight: 600 }}>
+                  Refactoring in the Loop
+                </Typography>
+              </NextLink>
               <Typography variant="body2" color="text.secondary">
                 A catalog explorer for the{" "}
                 <Link
