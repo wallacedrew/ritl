@@ -11,8 +11,8 @@ describe("user browses the refactorings list", () => {
     expect(screen.getByRole("heading", { name: "Extract Function" })).toBeInTheDocument();
     expect(screen.getAllByText("Long Function").length).toBeGreaterThanOrEqual(1);
 
-    const downloadLink = screen.getByRole("link", { name: /snippets for AGENTS\.md/i });
-    expect(downloadLink).toHaveAttribute("href", "/snippets/refactorings.md");
-    expect(downloadLink).toHaveAttribute("download");
+    expect(
+      screen.getByRole("button", { name: /preview all 66 snippets for AGENTS\.md/i }),
+    ).toBeInTheDocument();
   });
 });

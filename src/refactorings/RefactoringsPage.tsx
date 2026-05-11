@@ -1,9 +1,9 @@
-import FileDownloadIcon from "@mui/icons-material/FileDownload";
-import Button from "@mui/material/Button";
 import Container from "@mui/material/Container";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import { visuallyHidden } from "@mui/utils";
+
+import SnippetPreviewButton from "@/shared/components/SnippetPreviewButton";
 
 import RefactoringList from "./components/RefactoringList";
 import { loadRefactorings } from "./lib/loadRefactorings";
@@ -24,17 +24,10 @@ export default function RefactoringsPage() {
           <Typography variant="body1" color="text.secondary">
             Canonical Fowler refactorings and the smells they address.
           </Typography>
-          <Button
-            component="a"
+          <SnippetPreviewButton
             href="/snippets/refactorings.md"
-            download
-            startIcon={<FileDownloadIcon />}
-            variant="outlined"
-            size="small"
-            sx={{ alignSelf: "flex-start" }}
-          >
-            Download all 66 as snippets for AGENTS.md
-          </Button>
+            label="Preview all 66 snippets for AGENTS.md"
+          />
         </Stack>
         <RefactoringList items={items} />
       </Stack>

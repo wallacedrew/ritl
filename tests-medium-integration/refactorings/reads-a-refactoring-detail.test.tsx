@@ -26,8 +26,8 @@ describe("user reads a refactoring detail with smell cross-links", () => {
     expect(screen.getByText(/missing id/)).toBeInTheDocument();
     expect(screen.getByText(/withTax/)).toBeInTheDocument();
 
-    const downloadLink = screen.getByRole("link", { name: /snippet for AGENTS\.md/i });
-    expect(downloadLink).toHaveAttribute("href", "/snippets/refactorings/extract-function.md");
-    expect(downloadLink).toHaveAttribute("download");
+    expect(
+      screen.getByRole("button", { name: /preview snippet for AGENTS\.md/i }),
+    ).toBeInTheDocument();
   });
 });

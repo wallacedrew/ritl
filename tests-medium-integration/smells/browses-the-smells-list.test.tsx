@@ -11,8 +11,8 @@ describe("user browses the smells list", () => {
     expect(screen.getByRole("heading", { name: "Mysterious Name" })).toBeInTheDocument();
     expect(screen.getByText(/identifiers that don.{0,3}t reveal intent/i)).toBeInTheDocument();
 
-    const downloadLink = screen.getByRole("link", { name: /snippets for AGENTS\.md/i });
-    expect(downloadLink).toHaveAttribute("href", "/snippets/smells.md");
-    expect(downloadLink).toHaveAttribute("download");
+    expect(
+      screen.getByRole("button", { name: /preview all 24 snippets for AGENTS\.md/i }),
+    ).toBeInTheDocument();
   });
 });

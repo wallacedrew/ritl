@@ -1,7 +1,7 @@
-import FileDownloadIcon from "@mui/icons-material/FileDownload";
-import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
+
+import SnippetPreviewButton from "@/shared/components/SnippetPreviewButton";
 
 interface SnippetDownload {
   href: string;
@@ -35,26 +35,18 @@ export default function AgentsDownloads() {
           For AGENTS.md
         </Typography>
         <Typography variant="body2" color="text.secondary">
-          Download the catalog as directive-voiced markdown ready to paste into your coding-agent
-          guidance file.
+          Preview the catalog as directive-voiced markdown — copy or download to paste into your
+          coding-agent guidance file.
         </Typography>
       </Stack>
       <Stack direction="row" sx={{ flexWrap: "wrap", gap: 1 }}>
         {SNIPPETS.map((snippet) => (
-          <Button
+          <SnippetPreviewButton
             key={snippet.href}
-            component="a"
             href={snippet.href}
-            download
-            startIcon={<FileDownloadIcon />}
-            variant="outlined"
-            size="small"
-          >
-            {snippet.label}
-            <Typography component="span" variant="caption" color="text.secondary" sx={{ ml: 1 }}>
-              · {snippet.hint}
-            </Typography>
-          </Button>
+            label={snippet.label}
+            hint={snippet.hint}
+          />
         ))}
       </Stack>
     </Stack>

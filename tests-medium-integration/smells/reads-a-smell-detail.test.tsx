@@ -20,8 +20,8 @@ describe("user reads a smell detail", () => {
     expect(screen.getByText(/function calc/)).toBeInTheDocument();
     expect(screen.getByText(/function distance/)).toBeInTheDocument();
 
-    const downloadLink = screen.getByRole("link", { name: /snippet for AGENTS\.md/i });
-    expect(downloadLink).toHaveAttribute("href", "/snippets/smells/mysterious-name.md");
-    expect(downloadLink).toHaveAttribute("download");
+    expect(
+      screen.getByRole("button", { name: /preview snippet for AGENTS\.md/i }),
+    ).toBeInTheDocument();
   });
 });
