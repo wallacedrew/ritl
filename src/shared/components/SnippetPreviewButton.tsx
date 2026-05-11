@@ -13,12 +13,11 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import IconButton from "@mui/material/IconButton";
 import Stack from "@mui/material/Stack";
-import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import { useEffect, useState } from "react";
 
+import SnippetEditor from "@/shared/components/SnippetEditor";
 import SnippetInstallBanner from "@/shared/components/SnippetInstallBanner";
-import { MONOSPACE_FONT } from "@/shared/theme/monospace";
 
 interface SnippetPreviewButtonProps {
   href: string;
@@ -140,29 +139,7 @@ export default function SnippetPreviewButton({ href, label, hint }: SnippetPrevi
             </Stack>
           )}
           {error && <Alert severity="error">Failed to load snippet: {error}</Alert>}
-          {content !== null && (
-            <TextField
-              fullWidth
-              multiline
-              minRows={15}
-              maxRows={30}
-              value={content}
-              onChange={(event) => setContent(event.target.value)}
-              variant="outlined"
-              aria-label="Snippet content (editable)"
-              sx={(theme) => ({
-                "& .MuiInputBase-root": {
-                  bgcolor: theme.palette.mode === "dark" ? "#0a0a0a" : "#f4f4f5",
-                  alignItems: "flex-start",
-                },
-                "& .MuiInputBase-input": {
-                  fontFamily: MONOSPACE_FONT,
-                  fontSize: "0.8rem",
-                  lineHeight: 1.5,
-                },
-              })}
-            />
-          )}
+          {content !== null && <SnippetEditor value={content} onChange={setContent} />}
         </DialogContent>
         <DialogActions>
           <Button
