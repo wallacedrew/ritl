@@ -1,14 +1,11 @@
 "use client";
 
 import CloseIcon from "@mui/icons-material/Close";
-import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import FileDownloadIcon from "@mui/icons-material/FileDownload";
-import RestartAltIcon from "@mui/icons-material/RestartAlt";
 import Alert from "@mui/material/Alert";
 import Button from "@mui/material/Button";
 import CircularProgress from "@mui/material/CircularProgress";
 import Dialog from "@mui/material/Dialog";
-import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import IconButton from "@mui/material/IconButton";
@@ -16,6 +13,7 @@ import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import { useEffect, useState } from "react";
 
+import SnippetDialogActions from "@/shared/components/SnippetDialogActions";
 import SnippetEditor from "@/shared/components/SnippetEditor";
 import SnippetInstallBanner from "@/shared/components/SnippetInstallBanner";
 
@@ -141,27 +139,14 @@ export default function SnippetPreviewButton({ href, label, hint }: SnippetPrevi
           {error && <Alert severity="error">Failed to load snippet: {error}</Alert>}
           {content !== null && <SnippetEditor value={content} onChange={setContent} />}
         </DialogContent>
-        <DialogActions>
-          <Button
-            onClick={handleReset}
-            startIcon={<RestartAltIcon />}
-            disabled={!isEdited}
-            sx={{ mr: "auto" }}
-          >
-            Reset
-          </Button>
-          <Button onClick={handleCopy} startIcon={<ContentCopyIcon />} disabled={content === null}>
-            {copied ? "Copied!" : "Copy"}
-          </Button>
-          <Button
-            onClick={handleDownload}
-            startIcon={<FileDownloadIcon />}
-            variant="contained"
-            disabled={content === null}
-          >
-            Download
-          </Button>
-        </DialogActions>
+        <SnippetDialogActions
+          isEdited={isEdited}
+          copied={copied}
+          disabled={content === null}
+          onReset={handleReset}
+          onCopy={handleCopy}
+          onDownload={handleDownload}
+        />
       </Dialog>
     </>
   );
