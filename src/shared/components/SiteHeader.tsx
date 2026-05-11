@@ -3,6 +3,7 @@ import Container from "@mui/material/Container";
 import Link from "@mui/material/Link";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
+import NextLink from "next/link";
 
 import { loadCatalogItems } from "../lib/loadCatalogItems";
 import CatalogSearch from "./CatalogSearch";
@@ -28,7 +29,12 @@ export default function SiteHeader() {
             sx={{ alignItems: "flex-start", justifyContent: "space-between", gap: 2 }}
           >
             <Stack spacing={1}>
-              <Typography variant="h6" component="div" sx={{ fontWeight: 600 }}>
+              <Typography
+                component={NextLink}
+                href="/"
+                variant="h6"
+                sx={{ fontWeight: 600, color: "text.primary", textDecoration: "none" }}
+              >
                 Refactoring in the Loop
               </Typography>
               <Typography variant="body2" color="text.secondary">
