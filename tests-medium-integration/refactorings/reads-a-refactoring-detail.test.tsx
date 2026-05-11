@@ -26,8 +26,6 @@ describe("user reads a refactoring detail with smell cross-links", () => {
     expect(screen.getByText(/missing id/)).toBeInTheDocument();
     expect(screen.getByText(/withTax/)).toBeInTheDocument();
 
-    expect(
-      screen.getByRole("button", { name: /preview snippet for AGENTS\.md/i }),
-    ).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /preview SKILL\.md/i })).toBeInTheDocument();
   });
 });

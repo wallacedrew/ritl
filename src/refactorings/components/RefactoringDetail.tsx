@@ -39,7 +39,7 @@ export default function RefactoringDetail({ refactoring, number }: RefactoringDe
           </Stack>
           <SnippetPreviewButton
             href={`/snippets/refactorings/${slugify(refactoring.name)}.md`}
-            label="Preview snippet for AGENTS.md"
+            label="Preview SKILL.md"
           />
         </Stack>
         <Divider />

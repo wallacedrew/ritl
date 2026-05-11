@@ -39,7 +39,7 @@ export default function SmellDetail({ smell, number }: SmellDetailProps) {
           </Stack>
           <SnippetPreviewButton
             href={`/snippets/smells/${slugify(smell.name)}.md`}
-            label="Preview snippet for AGENTS.md"
+            label="Preview SKILL.md"
           />
         </Stack>
         <Divider />
