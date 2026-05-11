@@ -8,21 +8,18 @@ import IconButton from "@mui/material/IconButton";
 import Stack from "@mui/material/Stack";
 import Tooltip from "@mui/material/Tooltip";
 import Typography from "@mui/material/Typography";
-import { useState } from "react";
-
 import SnippetPreviewButton from "@/shared/components/SnippetPreviewButton";
+import { useClipboardCopy } from "@/shared/hooks/useClipboardCopy";
 import { MONOSPACE_FONT } from "@/shared/theme/monospace";
 
 const CLI_INSTALL_COMMAND = `/plugin marketplace add wallacedrew/ritl
 /plugin install refactoring-in-the-loop@ritl`;
 
 export default function AgentsDownloads() {
-  const [copied, setCopied] = useState(false);
+  const { copied, copy } = useClipboardCopy();
 
   async function handleCopyCommand() {
-    await navigator.clipboard.writeText(CLI_INSTALL_COMMAND);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 1500);
+    await copy(CLI_INSTALL_COMMAND);
   }
 
   return (

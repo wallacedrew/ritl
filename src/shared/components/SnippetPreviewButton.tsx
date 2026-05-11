@@ -16,6 +16,7 @@ import { useState } from "react";
 import SnippetDialogActions from "@/shared/components/SnippetDialogActions";
 import SnippetEditor from "@/shared/components/SnippetEditor";
 import SnippetInstallBanner from "@/shared/components/SnippetInstallBanner";
+import { useClipboardCopy } from "@/shared/hooks/useClipboardCopy";
 import { useSnippetFetch } from "@/shared/hooks/useSnippetFetch";
 
 interface SnippetPreviewButtonProps {
@@ -38,14 +39,11 @@ function skillSlugFromHref(href: string): string | null {
 
 export default function SnippetPreviewButton({ href, label, hint }: SnippetPreviewButtonProps) {
   const [open, setOpen] = useState(false);
-  const [copied, setCopied] = useState(false);
   const { content, error, isEdited, setContent, resetContent } = useSnippetFetch(href, open);
+  const { copied, copy } = useClipboardCopy();
 
   async function handleCopy() {
-    if (content === null) return;
-    await navigator.clipboard.writeText(content);
-    setCopied(true);
-    setTimeout(() => setCopied(false), 1500);
+    if (content !== null) await copy(content);
   }
 
   function handleDownload() {
