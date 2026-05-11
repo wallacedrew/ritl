@@ -29,15 +29,15 @@ describe("ritl marketplace manifest", () => {
     expect(manifest.owner.name.length).toBeGreaterThan(0);
   });
 
-  it("lists exactly one plugin: refactoring-in-the-loop", () => {
+  it("lists exactly one plugin: refactor", () => {
     expect(manifest.plugins).toHaveLength(1);
     const plugin = manifest.plugins[0];
     expect(plugin).toBeDefined();
-    expect(plugin!.name).toBe("refactoring-in-the-loop");
+    expect(plugin!.name).toBe("refactor");
   });
 
   it("points the plugin source at the in-repo path", () => {
     const plugin = manifest.plugins[0];
-    expect(plugin!.source).toBe("./plugin/refactoring-in-the-loop");
+    expect(plugin!.source).toBe("./plugin/refactor");
   });
 });

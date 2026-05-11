@@ -30,14 +30,14 @@ describe("user reads the reference view at the home page", () => {
   it("offers the plugin .zip download alongside the catalog snippet and the CLI install command", () => {
     renderWithTheme(<HomePage />);
 
-    const pluginDownload = screen.getByRole("link", { name: /refactoring-in-the-loop\.zip/i });
-    expect(pluginDownload).toHaveAttribute("href", "/refactoring-in-the-loop.zip");
+    const pluginDownload = screen.getByRole("link", { name: /refactor\.zip/i });
+    expect(pluginDownload).toHaveAttribute("href", "/refactor.zip");
     expect(pluginDownload).toHaveAttribute("download");
 
     const catalogButton = screen.getByRole("button", { name: /refactoring-catalog\.md/i });
     expect(catalogButton).toBeInTheDocument();
 
     expect(screen.getByText(/plugin marketplace add wallacedrew\/ritl/)).toBeInTheDocument();
-    expect(screen.getByText(/plugin install refactoring-in-the-loop@ritl/)).toBeInTheDocument();
+    expect(screen.getByText(/plugin install refactor@ritl/)).toBeInTheDocument();
   });
 });

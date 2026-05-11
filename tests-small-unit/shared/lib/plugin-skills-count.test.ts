@@ -4,13 +4,13 @@ import { resolve } from "node:path";
 import { describe, expect, it } from "vitest";
 
 const projectRoot = resolve(__dirname, "../../..");
-const skillsRoot = resolve(projectRoot, "plugin/refactoring-in-the-loop/skills");
+const skillsRoot = resolve(projectRoot, "plugin/refactor/skills");
 
 function isSkillDirectory(name: string): boolean {
   return statSync(resolve(skillsRoot, name)).isDirectory();
 }
 
-describe("refactoring-in-the-loop plugin skills folder", () => {
+describe("refactor plugin skills folder", () => {
   const skillFolders = readdirSync(skillsRoot).filter(isSkillDirectory);
 
   it("contains exactly 90 skill folders (66 refactorings + 24 smells)", () => {

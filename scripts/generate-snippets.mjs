@@ -314,14 +314,14 @@ for (const dest of ["docs/snippets", "public/snippets"]) {
 // --- Plugin distribution ----------------------------------------------------
 //
 // Same 90 SKILL.md files in the canonical Claude Code plugin layout:
-//   plugin/refactoring-in-the-loop/
+//   plugin/refactor/
 //     .claude-plugin/plugin.json
 //     skills/<slug>/SKILL.md
 // Plus a one-plugin marketplace manifest at:
 //   .claude-plugin/marketplace.json
 // Plus a .zip download served from public/.
 
-const PLUGIN_NAME = "refactoring-in-the-loop";
+const PLUGIN_NAME = "refactor";
 const MARKETPLACE_NAME = "ritl";
 const PLUGIN_DESCRIPTION =
   "90 SKILL.md skills — apply Fowler refactorings when their preconditions appear; refuse known code smells. Source: https://refactoring.com/catalog/";
@@ -385,7 +385,7 @@ smells.forEach((s, i) => {
   writeFileSync(resolve(dir, "SKILL.md"), formatSmellSkill(s, i));
 });
 
-const zipPath = resolve(root, "public/refactoring-in-the-loop.zip");
+const zipPath = resolve(root, `public/${PLUGIN_NAME}.zip`);
 if (existsSync(zipPath)) rmSync(zipPath);
 execSync(`zip -rq "${zipPath}" "plugin/${PLUGIN_NAME}"`, { cwd: root });
 
@@ -396,4 +396,4 @@ console.log("  1 consolidated refactoring-catalog.md");
 console.log(`Generated plugin '${PLUGIN_NAME}' at plugin/${PLUGIN_NAME}/`);
 console.log(`  marketplace.json at .claude-plugin/marketplace.json`);
 console.log(`  ${refactorings.length + smells.length} skill folders under skills/`);
-console.log(`  bundle at public/refactoring-in-the-loop.zip`);
+console.log(`  bundle at public/${PLUGIN_NAME}.zip`);

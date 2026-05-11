@@ -13,7 +13,7 @@ import { useClipboardCopy } from "@/shared/hooks/useClipboardCopy";
 import { MONOSPACE_FONT } from "@/shared/theme/monospace";
 
 const CLI_INSTALL_COMMAND = `/plugin marketplace add wallacedrew/ritl
-/plugin install refactoring-in-the-loop@ritl`;
+/plugin install refactor@ritl`;
 
 export default function AgentsDownloads() {
   const { copied, copy } = useClipboardCopy();
@@ -32,14 +32,14 @@ export default function AgentsDownloads() {
         />
         <Button
           component="a"
-          href="/refactoring-in-the-loop.zip"
+          href="/refactor.zip"
           download
           startIcon={<FileDownloadIcon />}
           variant="outlined"
           size="small"
           sx={{ alignSelf: "flex-start", textTransform: "none" }}
         >
-          refactoring-in-the-loop.zip
+          refactor.zip
           <Typography component="span" variant="caption" color="text.secondary" sx={{ ml: 1 }}>
             · 90-skill plugin
           </Typography>

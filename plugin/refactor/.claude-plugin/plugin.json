@@ -1,5 +1,5 @@
 {
-  "name": "refactoring-in-the-loop",
+  "name": "refactor",
   "description": "90 SKILL.md skills — apply Fowler refactorings when their preconditions appear; refuse known code smells. Source: https://refactoring.com/catalog/",
   "author": {
     "name": "Wallace Drew"

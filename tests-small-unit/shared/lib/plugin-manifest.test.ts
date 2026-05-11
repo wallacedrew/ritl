@@ -5,15 +5,12 @@ import { describe, expect, it } from "vitest";
 
 const projectRoot = resolve(__dirname, "../../..");
 
-describe("refactoring-in-the-loop plugin manifest", () => {
-  const manifestPath = resolve(
-    projectRoot,
-    "plugin/refactoring-in-the-loop/.claude-plugin/plugin.json",
-  );
+describe("refactor plugin manifest", () => {
+  const manifestPath = resolve(projectRoot, "plugin/refactor/.claude-plugin/plugin.json");
   const manifest = JSON.parse(readFileSync(manifestPath, "utf-8"));
 
   it("declares the plugin name", () => {
-    expect(manifest.name).toBe("refactoring-in-the-loop");
+    expect(manifest.name).toBe("refactor");
   });
 
   it("carries a non-empty description naming the catalog", () => {
