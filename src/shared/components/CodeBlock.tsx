@@ -1,3 +1,5 @@
+"use client";
+
 import Box from "@mui/material/Box";
 
 interface CodeBlockProps {
@@ -8,11 +10,11 @@ export default function CodeBlock({ code }: CodeBlockProps) {
   return (
     <Box
       component="pre"
-      sx={{
+      sx={(theme) => ({
         margin: 0,
         padding: 2,
         borderRadius: 1,
-        bgcolor: "#0a0a0a",
+        bgcolor: theme.palette.mode === "dark" ? "#0a0a0a" : "#f4f4f5",
         color: "text.primary",
         border: 1,
         borderColor: "divider",
@@ -21,7 +23,7 @@ export default function CodeBlock({ code }: CodeBlockProps) {
         fontSize: "0.875rem",
         lineHeight: 1.5,
         overflowX: "auto",
-      }}
+      })}
     >
       <code>{code}</code>
     </Box>
