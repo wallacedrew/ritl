@@ -28,7 +28,7 @@ export default function SiteHeader() {
           >
             <Stack spacing={1}>
               <Typography variant="h6" component="div" sx={{ fontWeight: 600 }}>
-                Refactoring in the Large
+                Refactoring in the Loop
               </Typography>
               <Typography variant="body2" color="text.secondary">
                 A catalog explorer for code smells and the Fowler refactorings that address them.
