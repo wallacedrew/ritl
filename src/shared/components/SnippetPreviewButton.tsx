@@ -18,6 +18,7 @@ import SnippetEditor from "@/shared/components/SnippetEditor";
 import SnippetInstallBanner from "@/shared/components/SnippetInstallBanner";
 import { useClipboardCopy } from "@/shared/hooks/useClipboardCopy";
 import { useSnippetFetch } from "@/shared/hooks/useSnippetFetch";
+import { downloadMarkdown } from "@/shared/lib/downloadMarkdown";
 
 interface SnippetPreviewButtonProps {
   href: string;
@@ -47,16 +48,7 @@ export default function SnippetPreviewButton({ href, label, hint }: SnippetPrevi
   }
 
   function handleDownload() {
-    if (content === null) return;
-    const blob = new Blob([content], { type: "text/markdown;charset=utf-8" });
-    const url = URL.createObjectURL(blob);
-    const anchor = document.createElement("a");
-    anchor.href = url;
-    anchor.download = filenameFromHref(href);
-    document.body.appendChild(anchor);
-    anchor.click();
-    document.body.removeChild(anchor);
-    URL.revokeObjectURL(url);
+    if (content !== null) downloadMarkdown(content, filenameFromHref(href));
   }
 
   const skillSlug = skillSlugFromHref(href);
