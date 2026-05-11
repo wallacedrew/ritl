@@ -25,8 +25,8 @@ export default function CatalogToolbar() {
       indicatorColor="primary"
       aria-label="catalog view"
     >
-      <Tab label="Smells" component={NextLink} href="/smells" value="smells" />
       <Tab label="Refactorings" component={NextLink} href="/refactorings" value="refactorings" />
+      <Tab label="Smells" component={NextLink} href="/smells" value="smells" />
       <Tab label="Reference" component={NextLink} href="/" value="reference" />
     </Tabs>
   );
