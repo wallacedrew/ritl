@@ -1,6 +1,7 @@
 import Container from "@mui/material/Container";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
+import { visuallyHidden } from "@mui/utils";
 
 import RefactoringList from "./components/RefactoringList";
 import { loadRefactorings } from "./lib/loadRefactorings";
@@ -15,7 +16,7 @@ export default function RefactoringsPage() {
     <Container maxWidth="lg" sx={{ py: 4 }}>
       <Stack spacing={4}>
         <Stack spacing={1}>
-          <Typography component="h1" variant="h4" sx={{ fontWeight: 600 }}>
+          <Typography component="h1" sx={visuallyHidden}>
             Refactorings
           </Typography>
           <Typography variant="body1" color="text.secondary">

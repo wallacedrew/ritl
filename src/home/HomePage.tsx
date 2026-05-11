@@ -2,6 +2,7 @@ import Container from "@mui/material/Container";
 import Divider from "@mui/material/Divider";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
+import { visuallyHidden } from "@mui/utils";
 
 import { getRefactoringsByCategory } from "@/refactorings/lib/getRefactoringsByCategory";
 import ReferenceView from "@/refactorings/components/ReferenceView";
@@ -19,7 +20,7 @@ export default function HomePage() {
     <Container maxWidth="lg" sx={{ py: 4 }}>
       <Stack spacing={4}>
         <Stack spacing={1}>
-          <Typography component="h1" variant="h4" sx={{ fontWeight: 600 }}>
+          <Typography component="h1" sx={visuallyHidden}>
             Reference
           </Typography>
           <Typography variant="body1" color="text.secondary">
