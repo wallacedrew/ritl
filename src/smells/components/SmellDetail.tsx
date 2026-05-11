@@ -39,19 +39,19 @@ export default function SmellDetail({ smell, number }: SmellDetailProps) {
         </Stack>
         <Divider />
         <SmellSection label="Symptom" body={smell.symptom} />
-        <SmellSection label="Risk" body={smell.risk} />
         <SmellSection label="Goal" body={smell.goal} />
-        <SmellSection label="Savings" body={smell.savings} />
         <Stack spacing={2}>
           <Typography variant="overline" color="text.secondary">
-            Before
+            Before the refactoring
           </Typography>
           <CodeBlock code={smell.before} />
           <Typography variant="overline" color="text.secondary">
-            After
+            After the refactoring
           </Typography>
           <CodeBlock code={smell.after} />
         </Stack>
+        <SmellSection label="Savings" body={smell.savings} />
+        <SmellSection label="Note" body={smell.risk} />
       </Stack>
     </Container>
   );
