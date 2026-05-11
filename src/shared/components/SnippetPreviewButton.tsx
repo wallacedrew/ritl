@@ -17,14 +17,13 @@ import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import { useEffect, useState } from "react";
 
+import { MONOSPACE_FONT } from "@/shared/theme/monospace";
+
 interface SnippetPreviewButtonProps {
   href: string;
   label: string;
   hint?: string;
 }
-
-const MONOSPACE_FONT =
-  'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace';
 
 const PER_ENTITY_SNIPPET_HREF = /^\/snippets\/(refactorings|smells)\//;
 

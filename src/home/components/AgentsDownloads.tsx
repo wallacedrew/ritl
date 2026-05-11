@@ -11,9 +11,7 @@ import Typography from "@mui/material/Typography";
 import { useState } from "react";
 
 import SnippetPreviewButton from "@/shared/components/SnippetPreviewButton";
-
-const MONOSPACE_FONT =
-  'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace';
+import { MONOSPACE_FONT } from "@/shared/theme/monospace";
 
 const CLI_INSTALL_COMMAND = `/plugin marketplace add wallacedrew/ritl
 /plugin install refactoring-in-the-loop@ritl`;
