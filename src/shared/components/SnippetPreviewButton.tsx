@@ -11,11 +11,12 @@ import DialogTitle from "@mui/material/DialogTitle";
 import IconButton from "@mui/material/IconButton";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 import SnippetDialogActions from "@/shared/components/SnippetDialogActions";
 import SnippetEditor from "@/shared/components/SnippetEditor";
 import SnippetInstallBanner from "@/shared/components/SnippetInstallBanner";
+import { useSnippetFetch } from "@/shared/hooks/useSnippetFetch";
 
 interface SnippetPreviewButtonProps {
   href: string;
@@ -37,31 +38,8 @@ function skillSlugFromHref(href: string): string | null {
 
 export default function SnippetPreviewButton({ href, label, hint }: SnippetPreviewButtonProps) {
   const [open, setOpen] = useState(false);
-  const [original, setOriginal] = useState<string | null>(null);
-  const [content, setContent] = useState<string | null>(null);
-  const [error, setError] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
-
-  useEffect(() => {
-    if (!open || original !== null) return;
-    let cancelled = false;
-    fetch(href)
-      .then((response) => {
-        if (!response.ok) throw new Error(`HTTP ${response.status}`);
-        return response.text();
-      })
-      .then((text) => {
-        if (cancelled) return;
-        setOriginal(text);
-        setContent(text);
-      })
-      .catch((err) => {
-        if (!cancelled) setError(err instanceof Error ? err.message : String(err));
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, [open, original, href]);
+  const { content, error, isEdited, setContent, resetContent } = useSnippetFetch(href, open);
 
   async function handleCopy() {
     if (content === null) return;
@@ -83,11 +61,6 @@ export default function SnippetPreviewButton({ href, label, hint }: SnippetPrevi
     URL.revokeObjectURL(url);
   }
 
-  function handleReset() {
-    setContent(original);
-  }
-
-  const isEdited = content !== null && original !== null && content !== original;
   const skillSlug = skillSlugFromHref(href);
 
   return (
@@ -143,7 +116,7 @@ export default function SnippetPreviewButton({ href, label, hint }: SnippetPrevi
           isEdited={isEdited}
           copied={copied}
           disabled={content === null}
-          onReset={handleReset}
+          onReset={resetContent}
           onCopy={handleCopy}
           onDownload={handleDownload}
         />
