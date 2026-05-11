@@ -24,6 +24,9 @@ export default function CatalogToolbar() {
       textColor="primary"
       indicatorColor="primary"
       aria-label="catalog view"
+      sx={{
+        "& .MuiTab-root.Mui-selected": { fontWeight: 700 },
+      }}
     >
       <Tab label="Refactorings" component={NextLink} href="/refactorings" value="refactorings" />
       <Tab label="Smells" component={NextLink} href="/smells" value="smells" />
