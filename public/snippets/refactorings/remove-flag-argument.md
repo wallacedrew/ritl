@@ -1,4 +1,9 @@
-### Apply: 29 — Remove Flag Argument
+---
+name: remove-flag-argument
+description: Apply Remove Flag Argument when you see Long Parameter List. Each flag value becomes its own well-named function; callers say what they mean rather than passing booleans.
+---
+
+# Apply: 29 — Remove Flag Argument
 
 **Target state:** Each flag value becomes its own well-named function; callers say what they mean rather than passing booleans.
 

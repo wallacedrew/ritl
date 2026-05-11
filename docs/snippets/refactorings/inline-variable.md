@@ -1,4 +1,9 @@
-### Apply: 04 — Inline Variable
+---
+name: inline-variable
+description: Apply Inline Variable when you see Lazy Element. Single-use variables that just rename their right-hand side disappear; the expression speaks for itself.
+---
+
+# Apply: 04 — Inline Variable
 
 **Target state:** Single-use variables that just rename their right-hand side disappear; the expression speaks for itself.
 

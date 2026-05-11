@@ -1,4 +1,9 @@
-### Apply: 25 — Introduce Special Case
+---
+name: introduce-special-case
+description: Apply Introduce Special Case when you see Repeated Switches, Comments. A repeating null-or-special check becomes a Null Object (or Special Case) that responds sensibly to the same interface.
+---
+
+# Apply: 25 — Introduce Special Case
 
 **Target state:** A repeating null-or-special check becomes a Null Object (or Special Case) that responds sensibly to the same interface.
 

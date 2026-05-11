@@ -1,4 +1,9 @@
-### Apply: 66 — Replace Superclass with Delegate
+---
+name: replace-superclass-with-delegate
+description: Apply Replace Superclass with Delegate when you see Refused Bequest, Insider Trading. Inheritance from a superclass that doesn't really fit (Liskov violations, awkward methods) becomes composition; the former subclass holds an instance and delegates explicitly.
+---
+
+# Apply: 66 — Replace Superclass with Delegate
 
 **Target state:** Inheritance from a superclass that doesn't really fit (Liskov violations, awkward methods) becomes composition: the former subclass holds an instance and delegates explicitly.
 

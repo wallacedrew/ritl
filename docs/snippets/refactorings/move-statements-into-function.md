@@ -1,4 +1,9 @@
-### Apply: 44 — Move Statements into Function
+---
+name: move-statements-into-function
+description: Apply Move Statements into Function when you see Duplicated Code. Setup or follow-up that happens around every call to a function moves inside the function, so the caller's contract shrinks.
+---
+
+# Apply: 44 — Move Statements into Function
 
 **Target state:** Setup or follow-up that happens around every call to a function moves inside the function, so the caller's contract shrinks.
 

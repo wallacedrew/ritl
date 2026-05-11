@@ -1,4 +1,9 @@
-### Apply: 49 — Replace Command with Function
+---
+name: replace-command-with-function
+description: Apply Replace Command with Function when you see Speculative Generality, Lazy Element. A command object whose execute() does everything in one shot collapses back to a plain function.
+---
+
+# Apply: 49 — Replace Command with Function
 
 **Target state:** A command object whose execute() does everything in one shot collapses back to a plain function.
 

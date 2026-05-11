@@ -23,9 +23,9 @@ export default function SmellsPage() {
             Canonical Fowler smells and the refactorings that address them.
           </Typography>
           <SnippetPreviewButton
-            href="/snippets/smells.md"
-            label="smells.md"
-            hint="24 patterns to refuse"
+            href="/snippets/refactoring-catalog.md"
+            label="refactoring-catalog.md"
+            hint="90 SKILL.md sections in one paste"
           />
         </Stack>
         <SmellList items={items} />

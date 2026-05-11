@@ -1,4 +1,9 @@
-### Apply: 61 — Replace Exception with Precheck
+---
+name: replace-exception-with-precheck
+description: Apply Replace Exception with Precheck when you see Comments. Exceptions used for predictable, checkable conditions become an explicit precheck the caller can perform, leaving exceptions for truly exceptional cases.
+---
+
+# Apply: 61 — Replace Exception with Precheck
 
 **Target state:** Exceptions used for predictable, checkable conditions become an explicit precheck the caller can perform, leaving exceptions for truly exceptional cases.
 

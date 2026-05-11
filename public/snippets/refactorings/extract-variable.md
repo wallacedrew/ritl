@@ -1,4 +1,9 @@
-### Apply: 03 — Extract Variable
+---
+name: extract-variable
+description: Apply Extract Variable when you see Mysterious Name, Comments. A complex expression earns a name that says what it represents in the domain.
+---
+
+# Apply: 03 — Extract Variable
 
 **Target state:** A complex expression earns a name that says what it represents in the domain.
 

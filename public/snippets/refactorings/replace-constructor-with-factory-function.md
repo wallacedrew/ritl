@@ -1,4 +1,9 @@
-### Apply: 32 — Replace Constructor with Factory Function
+---
+name: replace-constructor-with-factory-function
+description: Apply Replace Constructor with Factory Function when you see Primitive Obsession, Speculative Generality. Object creation goes through a named function that can validate, choose subclasses, or return cached instances.
+---
+
+# Apply: 32 — Replace Constructor with Factory Function
 
 **Target state:** Object creation goes through a named function that can validate, choose subclasses, or return cached instances.
 

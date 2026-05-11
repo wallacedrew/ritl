@@ -1,4 +1,9 @@
-### Refuse: 03 — Long Function
+---
+name: long-function
+description: Refuse Long Function when functions whose body has dozens of lines and a mix of concerns — fetching, calculating, formatting, and logging all interwoven. Apply Extract Function, Replace Temp with Query.
+---
+
+# Refuse: 03 — Long Function
 
 **Trigger (refuse when you see):** Functions whose body has dozens of lines and a mix of concerns — fetching, calculating, formatting, and logging all interwoven.
 

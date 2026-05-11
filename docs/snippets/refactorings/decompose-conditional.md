@@ -1,4 +1,9 @@
-### Apply: 21 — Decompose Conditional
+---
+name: decompose-conditional
+description: Apply Decompose Conditional when you see Long Function, Comments. Conditions and their consequents read as named domain decisions; isInSummer(), discountFor(date), etc.
+---
+
+# Apply: 21 — Decompose Conditional
 
 **Target state:** Conditions and their consequents read as named domain decisions: isInSummer(), discountFor(date), etc.
 

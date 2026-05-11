@@ -1,4 +1,9 @@
-### Apply: 02 — Inline Function
+---
+name: inline-function
+description: Apply Inline Function when you see Lazy Element, Speculative Generality. Trivial wrappers vanish; the call site reads as exactly what's happening.
+---
+
+# Apply: 02 — Inline Function
 
 **Target state:** Trivial wrappers vanish; the call site reads as exactly what's happening.
 

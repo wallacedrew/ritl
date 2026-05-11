@@ -25,9 +25,9 @@ export default function RefactoringsPage() {
             Canonical Fowler refactorings and the smells they address.
           </Typography>
           <SnippetPreviewButton
-            href="/snippets/refactorings.md"
-            label="refactorings.md"
-            hint="66 patterns to apply"
+            href="/snippets/refactoring-catalog.md"
+            label="refactoring-catalog.md"
+            hint="90 SKILL.md sections in one paste"
           />
         </Stack>
         <RefactoringList items={items} />

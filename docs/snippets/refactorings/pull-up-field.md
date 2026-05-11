@@ -1,4 +1,9 @@
-### Apply: 63 — Pull Up Field
+---
+name: pull-up-field
+description: Apply Pull Up Field when you see Duplicated Code. A field declared identically in two or more subclasses moves to the shared superclass.
+---
+
+# Apply: 63 — Pull Up Field
 
 **Target state:** A field declared identically in two or more subclasses moves to the shared superclass.
 

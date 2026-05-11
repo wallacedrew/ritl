@@ -1,4 +1,9 @@
-### Apply: 54 — Remove Setting Method
+---
+name: remove-setting-method
+description: Apply Remove Setting Method when you see Mutable Data, Data Class. Fields whose values should only be set at construction lose their setters; callers either construct a new object or call a domain method that changes the field as a side effect of doing real work.
+---
+
+# Apply: 54 — Remove Setting Method
 
 **Target state:** Fields whose values should only be set at construction lose their setters; callers either construct a new object or call a domain method that changes the field as a side effect of doing real work.
 

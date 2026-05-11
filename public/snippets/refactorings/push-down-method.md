@@ -1,4 +1,9 @@
-### Apply: 34 — Push Down Method
+---
+name: push-down-method
+description: Apply Push Down Method when you see Refused Bequest, Large Class. Methods used by only one subclass live with that subclass, not on the shared superclass.
+---
+
+# Apply: 34 — Push Down Method
 
 **Target state:** Methods used by only one subclass live with that subclass, not on the shared superclass.
 

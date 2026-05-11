@@ -1,4 +1,9 @@
-### Refuse: 05 — Global Data
+---
+name: global-data
+description: Refuse Global Data when module-level variables, singletons, or shared mutable state that any code can read or mutate from anywhere. Apply Encapsulate Variable.
+---
+
+# Refuse: 05 — Global Data
 
 **Trigger (refuse when you see):** Module-level variables, singletons, or shared mutable state that any code can read or mutate from anywhere.
 

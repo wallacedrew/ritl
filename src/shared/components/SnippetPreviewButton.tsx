@@ -26,9 +26,16 @@ interface SnippetPreviewButtonProps {
 const MONOSPACE_FONT =
   'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace';
 
+const PER_ENTITY_SNIPPET_HREF = /^\/snippets\/(refactorings|smells)\//;
+
 function filenameFromHref(href: string): string {
   const last = href.split("/").pop();
   return last && last.length > 0 ? last : "snippet.md";
+}
+
+function skillSlugFromHref(href: string): string | null {
+  if (!PER_ENTITY_SNIPPET_HREF.test(href)) return null;
+  return filenameFromHref(href).replace(/\.md$/, "");
 }
 
 export default function SnippetPreviewButton({ href, label, hint }: SnippetPreviewButtonProps) {
@@ -84,6 +91,7 @@ export default function SnippetPreviewButton({ href, label, hint }: SnippetPrevi
   }
 
   const isEdited = content !== null && original !== null && content !== original;
+  const skillSlug = skillSlugFromHref(href);
 
   return (
     <>
@@ -125,6 +133,24 @@ export default function SnippetPreviewButton({ href, label, hint }: SnippetPrevi
           </IconButton>
         </DialogTitle>
         <DialogContent dividers>
+          {skillSlug && (
+            <Alert severity="info" icon={false} sx={{ mb: 2 }}>
+              <Typography variant="body2" sx={{ fontWeight: 600, mb: 0.5 }}>
+                Install as a Claude skill
+              </Typography>
+              <Typography
+                component="pre"
+                variant="caption"
+                sx={{
+                  fontFamily: MONOSPACE_FONT,
+                  whiteSpace: "pre-wrap",
+                  m: 0,
+                }}
+              >
+                {`mkdir -p ~/.claude/skills/${skillSlug}\nmv ${skillSlug}.md ~/.claude/skills/${skillSlug}/SKILL.md`}
+              </Typography>
+            </Alert>
+          )}
           {content === null && !error && (
             <Stack sx={{ alignItems: "center", py: 4 }}>
               <CircularProgress size={24} />

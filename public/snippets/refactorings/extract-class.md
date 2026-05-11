@@ -1,4 +1,9 @@
-### Apply: 39 — Extract Class
+---
+name: extract-class
+description: Apply Extract Class when you see Data Clumps, Temporary Field, Large Class, Primitive Obsession. A cohesive sub-concept inside a class becomes its own class with its own name, fields, and methods.
+---
+
+# Apply: 39 — Extract Class
 
 **Target state:** A cohesive sub-concept inside a class becomes its own class with its own name, fields, and methods.
 

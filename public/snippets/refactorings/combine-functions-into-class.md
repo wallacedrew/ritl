@@ -1,4 +1,9 @@
-### Apply: 09 — Combine Functions into Class
+---
+name: combine-functions-into-class
+description: Apply Combine Functions into Class when you see Data Clumps, Primitive Obsession. Functions that all act on the same data live alongside it as methods; calls become method calls on a domain object.
+---
+
+# Apply: 09 — Combine Functions into Class
 
 **Target state:** Functions that all act on the same data live alongside it as methods; calls become method calls on a domain object.
 

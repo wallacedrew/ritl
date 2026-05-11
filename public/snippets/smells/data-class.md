@@ -1,4 +1,9 @@
-### Refuse: 22 — Data Class
+---
+name: data-class
+description: Refuse Data Class when a class that holds fields with getters and setters but no behavior — and consumers do all the operations on it externally. Apply Encapsulate Record, Remove Setting Method.
+---
+
+# Refuse: 22 — Data Class
 
 **Trigger (refuse when you see):** A class that holds fields with getters and setters but no behavior — and consumers do all the operations on it externally.
 

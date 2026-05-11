@@ -1,4 +1,9 @@
-### Apply: 23 — Replace Nested Conditional with Guard Clauses
+---
+name: replace-nested-conditional-with-guard-clauses
+description: Apply Replace Nested Conditional with Guard Clauses when you see Long Function, Comments. Edge cases bail out early at the top of the function; the main flow is unindented and tells the happy path linearly.
+---
+
+# Apply: 23 — Replace Nested Conditional with Guard Clauses
 
 **Target state:** Edge cases bail out early at the top of the function; the main flow is unindented and tells the happy path linearly.
 

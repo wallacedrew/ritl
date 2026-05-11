@@ -1,4 +1,9 @@
-### Refuse: 06 — Mutable Data
+---
+name: mutable-data
+description: Refuse Mutable Data when data structures whose fields are reassigned across the codebase, with no clear owner of the mutation. Apply Encapsulate Variable, Split Variable.
+---
+
+# Refuse: 06 — Mutable Data
 
 **Trigger (refuse when you see):** Data structures whose fields are reassigned across the codebase, with no clear owner of the mutation.
 

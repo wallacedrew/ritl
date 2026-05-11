@@ -1,4 +1,9 @@
-### Apply: 24 — Replace Conditional with Polymorphism
+---
+name: replace-conditional-with-polymorphism
+description: Apply Replace Conditional with Polymorphism when you see Repeated Switches, Primitive Obsession. Each case becomes a class implementing a shared interface; dispatch happens once via virtual call.
+---
+
+# Apply: 24 — Replace Conditional with Polymorphism
 
 **Target state:** Each case becomes a class implementing a shared interface; dispatch happens once via virtual call.
 

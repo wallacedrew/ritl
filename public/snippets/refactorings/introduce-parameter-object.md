@@ -1,4 +1,9 @@
-### Apply: 08 — Introduce Parameter Object
+---
+name: introduce-parameter-object
+description: Apply Introduce Parameter Object when you see Long Parameter List, Data Clumps. Related arguments travel together as one well-named value object that the function (and callers) refer to by name.
+---
+
+# Apply: 08 — Introduce Parameter Object
 
 **Target state:** Related arguments travel together as one well-named value object that the function (and callers) refer to by name.
 

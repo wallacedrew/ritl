@@ -1,4 +1,9 @@
-### Refuse: 07 — Divergent Change
+---
+name: divergent-change
+description: Refuse Divergent Change when one module changes for many unrelated reasons — one part for tax law updates, another for UI changes, another for API shape drift. Apply Split Phase, Move Function.
+---
+
+# Refuse: 07 — Divergent Change
 
 **Trigger (refuse when you see):** One module changes for many unrelated reasons — one part for tax law updates, another for UI changes, another for API shape drift.
 

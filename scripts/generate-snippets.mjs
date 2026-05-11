@@ -1,11 +1,16 @@
 #!/usr/bin/env node
-// Generates AGENTS.md-ready markdown snippets from the catalog JSON.
+// Generates Claude-skill-shaped markdown snippets from the catalog JSON.
 //
-// Output: docs/snippets/{refactorings,smells,combined}.md
-// Tuning: directive voice for AI coding agents — imperative section
-// headers (Apply / Refuse), action-shaped labels (Trigger / Pitfall),
-// concrete Before/After code blocks. See feedback memory
-// "AGENTS.md snippets: directive voice".
+// Output layout:
+//   docs/snippets/refactoring-catalog.md             (single bulk reference)
+//   docs/snippets/refactorings/<slug>.md             (one valid SKILL.md per refactoring)
+//   docs/snippets/smells/<slug>.md                   (one valid SKILL.md per smell)
+//   public/snippets/*                                (identical, served by Next)
+//
+// Per-entity files are well-formed Claude skills: bare-scalar YAML
+// frontmatter (`name`, `description`) followed by the Apply/Refuse body.
+// The bulk file inlines the per-entity sections verbatim so its content
+// is the centralized view of the same material.
 
 import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
@@ -102,10 +107,8 @@ const REFACTORING_CATEGORIES = {
   ],
 };
 
-// JSON-order numbering (1-based) — matches the in-app catalog badges.
 const refactoringNumberByName = new Map(refactorings.map((r, i) => [r.name, i + 1]));
 
-// Mirrors src/shared/lib/slugify.ts (duplicated for plain-Node script).
 function slugify(name) {
   return name
     .toLowerCase()
@@ -114,21 +117,78 @@ function slugify(name) {
     .replace(/\s+/g, "-");
 }
 
-// First sentence of a paragraph — trims to a one-liner for tables / digests.
 function firstSentence(text) {
   const trimmed = text.trim();
   const dot = trimmed.indexOf(". ");
   return dot === -1 ? trimmed : trimmed.slice(0, dot + 1);
 }
 
-function escapePipes(text) {
-  return text.replace(/\|/g, "\\|");
+// Bare YAML scalars accept commas, em-dashes, parens, double quotes,
+// and apostrophes without escaping — the on-disk skills (tcr, tdd,
+// tidy-first, business-analysis) all rely on this. The two failure
+// modes are (a) ": " (colon-space) inside the value, which YAML parses
+// as a nested key, and (b) a forbidden lead character. Assert both at
+// generate time so a future catalog edit cannot silently break a skill.
+const FORBIDDEN_LEAD_CHARS = new Set([
+  "-",
+  "?",
+  ",",
+  "[",
+  "]",
+  "{",
+  "}",
+  "#",
+  "&",
+  "*",
+  "!",
+  "|",
+  ">",
+  "'",
+  '"',
+  "%",
+  "@",
+  "`",
+]);
+
+function assertSafeBareYamlScalar(value, label) {
+  if (value.includes(": ")) {
+    throw new Error(
+      `Description for ${label} contains ": " (colon-space). Rephrase. Value: ${value}`,
+    );
+  }
+  if (FORBIDDEN_LEAD_CHARS.has(value.charAt(0))) {
+    throw new Error(
+      `Description for ${label} starts with forbidden YAML char "${value.charAt(0)}". Value: ${value}`,
+    );
+  }
 }
 
-function formatRefactoring(r) {
+// Bare YAML scalars reject ": " (colon-space) — the parser would treat
+// it as a nested key. Source catalog prose sometimes uses a colon to
+// introduce examples ("named domain decisions: isInSummer(), ..."). We
+// rewrite those to semicolons in the routing description only; the
+// per-entity body retains the original prose verbatim.
+function neutralizeColonSpace(text) {
+  return text.replace(/: /g, "; ");
+}
+
+function routingDescriptionForRefactoring(r) {
+  const triggers = r.solves.join(", ");
+  const goal = neutralizeColonSpace(firstSentence(r.goal));
+  return `Apply ${r.name} when you see ${triggers}. ${goal}`;
+}
+
+function routingDescriptionForSmell(s) {
+  const symptomLead = neutralizeColonSpace(firstSentence(s.symptom));
+  const symptomClause = symptomLead.replace(/^[A-Z]/, (c) => c.toLowerCase());
+  const apply = s.refactorings.slice(0, 2).join(", ");
+  return `Refuse ${s.name} when ${symptomClause} Apply ${apply}.`;
+}
+
+function formatRefactoringBody(r) {
   const num = String(refactoringNumberByName.get(r.name)).padStart(2, "0");
   return [
-    `### Apply: ${num} — ${r.name}`,
+    `# Apply: ${num} — ${r.name}`,
     "",
     `**Target state:** ${r.goal}`,
     "",
@@ -149,10 +209,10 @@ function formatRefactoring(r) {
   ].join("\n");
 }
 
-function formatSmell(s, index) {
+function formatSmellBody(s, index) {
   const num = String(index + 1).padStart(2, "0");
   return [
-    `### Refuse: ${num} — ${s.name}`,
+    `# Refuse: ${num} — ${s.name}`,
     "",
     `**Trigger (refuse when you see):** ${s.symptom}`,
     "",
@@ -173,143 +233,84 @@ function formatSmell(s, index) {
   ].join("\n");
 }
 
-function renderRefactoringsFile() {
+function frontmatter(name, description) {
+  return ["---", `name: ${name}`, `description: ${description}`, "---", "", ""].join("\n");
+}
+
+function formatRefactoringSkill(r) {
+  const slug = slugify(r.name);
+  const description = routingDescriptionForRefactoring(r);
+  assertSafeBareYamlScalar(description, r.name);
+  return frontmatter(slug, description) + formatRefactoringBody(r);
+}
+
+function formatSmellSkill(s, index) {
+  const slug = slugify(s.name);
+  const description = routingDescriptionForSmell(s);
+  assertSafeBareYamlScalar(description, s.name);
+  return frontmatter(slug, description) + formatSmellBody(s, index);
+}
+
+function renderCatalogFile() {
   const byName = new Map(refactorings.map((r) => [r.name, r]));
 
-  const header = `# Refactorings — patterns to apply
+  const header = `# Refactoring catalog
 
-Paste any of these sections into AGENTS.md to tell Claude Code (or any
-coding agent reading AGENTS-style guidance) to **apply** the named
-refactoring when its preconditions appear. Each section opens with a
-directive (\`### Apply: NN — Name\`), labels the target state and
-pitfall, and gives a Before/Prefer code example.
+Centralized view of the 90 catalog skills. Each section below is the
+full SKILL.md content of the matching per-entity download — the
+content is identical at the section level. Use this single paste when
+you want the whole vocabulary loaded; use the per-entity downloads
+when you want auto-invocable skills under \`~/.claude/skills/<slug>/SKILL.md\`.
 
-Source: https://refactoring.com/catalog/ (Fowler 2e). Regenerate after
-catalog edits via \`npm run snippets\`.
+Source: https://refactoring.com/catalog/ (Fowler 2e). Regenerate with
+\`npm run snippets\`.
 
 `;
 
-  const sections = [];
+  const parts = [header, "---", "", "## Refactorings", ""];
+
   for (const [category, names] of Object.entries(REFACTORING_CATEGORIES)) {
-    sections.push(`## ${category}`);
-    sections.push("");
-    const blocks = names
-      .map((name) => byName.get(name))
-      .filter(Boolean)
-      .map(formatRefactoring);
-    sections.push(blocks.join("\n---\n\n"));
-    sections.push("");
-  }
-
-  return header + sections.join("\n");
-}
-
-function renderSmellsFile() {
-  const header = `# Code smells — patterns to refuse
-
-Paste any of these sections into AGENTS.md to tell Claude Code (or any
-coding agent reading AGENTS-style guidance) to **refuse** the named
-antipattern when writing new code and to flag + refactor it when found
-in existing code. Each section opens with a directive
-(\`### Refuse: NN — Name\`), labels the trigger and cost, and gives a
-Smellier/Fresher code example.
-
-Source: https://refactoring.com/catalog/ + Fowler 2e chapter 3.
-Regenerate after catalog edits via \`npm run snippets\`.
-
-`;
-
-  const blocks = smells.map((s, i) => formatSmell(s, i));
-  return header + blocks.join("\n---\n\n");
-}
-
-function renderCombinedFile() {
-  const lines = [];
-
-  lines.push("# Refactoring catalog — agent guidance");
-  lines.push("");
-  lines.push(
-    "Paste this whole section into AGENTS.md to give a coding agent the catalog vocabulary and cross-references in one block.",
-  );
-  lines.push("");
-  lines.push("**How to use this:**");
-  lines.push("");
-  lines.push(
-    "- When writing new code in this project, **refuse** to introduce any pattern listed under **Code smells** below.",
-  );
-  lines.push(
-    "- When the trigger of a smell appears in code you're editing, **apply** one of the named refactorings before adding new behavior.",
-  );
-  lines.push(
-    "- For Before/After code on any entry, see `docs/snippets/refactorings.md` and `docs/snippets/smells.md`.",
-  );
-  lines.push("");
-  lines.push("Source: https://refactoring.com/catalog/ (Fowler 2e).");
-  lines.push("");
-  lines.push("---");
-  lines.push("");
-  lines.push("## Code smells — refuse these patterns");
-  lines.push("");
-  lines.push("| # | Smell | Trigger (refuse when you see) | Apply |");
-  lines.push("|---|-------|-------------------------------|-------|");
-  smells.forEach((s, i) => {
-    const num = String(i + 1).padStart(2, "0");
-    const trigger = escapePipes(firstSentence(s.symptom));
-    const apply = s.refactorings.join(", ");
-    lines.push(`| ${num} | **${s.name}** | ${trigger} | ${apply} |`);
-  });
-  lines.push("");
-  lines.push("---");
-  lines.push("");
-  lines.push("## Refactorings — apply these patterns");
-  lines.push("");
-  lines.push("Grouped by Fowler chapter. Numbers match the in-app catalog ordering.");
-  lines.push("");
-
-  const byName = new Map(refactorings.map((r) => [r.name, r]));
-  for (const [category, names] of Object.entries(REFACTORING_CATEGORIES)) {
-    lines.push(`### ${category}`);
-    lines.push("");
+    parts.push(`### ${category}`);
+    parts.push("");
     for (const name of names) {
-      const r = byName.get(name);
-      if (!r) continue;
-      const num = String(refactoringNumberByName.get(name)).padStart(2, "0");
-      const goal = firstSentence(r.goal);
-      lines.push(`- **${num} ${r.name}** — ${goal}`);
+      const refactoring = byName.get(name);
+      if (!refactoring) continue;
+      parts.push(formatRefactoringSkill(refactoring));
     }
-    lines.push("");
   }
 
-  return lines.join("\n");
+  parts.push("---");
+  parts.push("");
+  parts.push("## Code smells");
+  parts.push("");
+  smells.forEach((smell, index) => {
+    parts.push(formatSmellSkill(smell, index));
+  });
+
+  return parts.join("\n");
 }
 
-// Outputs go to both docs/snippets/ (human-browsable in the repo) and
-// public/snippets/ (served by Next so the app can offer downloads).
-const refactoringsMd = renderRefactoringsFile();
-const smellsMd = renderSmellsFile();
-const combinedMd = renderCombinedFile();
+const catalogMd = renderCatalogFile();
 
 for (const dest of ["docs/snippets", "public/snippets"]) {
   mkdirSync(resolve(root, dest), { recursive: true });
-  writeFileSync(resolve(root, `${dest}/refactorings.md`), refactoringsMd);
-  writeFileSync(resolve(root, `${dest}/smells.md`), smellsMd);
-  writeFileSync(resolve(root, `${dest}/refactoring_catalog.md`), combinedMd);
+  writeFileSync(resolve(root, `${dest}/refactoring-catalog.md`), catalogMd);
 
   mkdirSync(resolve(root, `${dest}/refactorings`), { recursive: true });
   for (const r of refactorings) {
     writeFileSync(
       resolve(root, `${dest}/refactorings/${slugify(r.name)}.md`),
-      formatRefactoring(r),
+      formatRefactoringSkill(r),
     );
   }
 
   mkdirSync(resolve(root, `${dest}/smells`), { recursive: true });
   smells.forEach((s, i) => {
-    writeFileSync(resolve(root, `${dest}/smells/${slugify(s.name)}.md`), formatSmell(s, i));
+    writeFileSync(resolve(root, `${dest}/smells/${slugify(s.name)}.md`), formatSmellSkill(s, i));
   });
 }
 
-console.log("Generated snippets in docs/snippets/ and public/snippets/");
-console.log(`  ${refactorings.length} refactoring sections (bulk + per-entity)`);
-console.log(`  ${smells.length} smell sections (bulk + per-entity)`);
-console.log(`  1 combined digest`);
+console.log("Generated skill-shaped snippets in docs/snippets/ and public/snippets/");
+console.log(`  ${refactorings.length} refactoring SKILL.md files`);
+console.log(`  ${smells.length} smell SKILL.md files`);
+console.log("  1 consolidated refactoring-catalog.md");

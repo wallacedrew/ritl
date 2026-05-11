@@ -1,4 +1,9 @@
-### Apply: 27 — Separate Query from Modifier
+---
+name: separate-query-from-modifier
+description: Apply Separate Query from Modifier when you see Mutable Data. Functions either return a value or mutate state, never both — callers can compose them without surprise.
+---
+
+# Apply: 27 — Separate Query from Modifier
 
 **Target state:** Functions either return a value or mutate state, never both — callers can compose them without surprise.
 

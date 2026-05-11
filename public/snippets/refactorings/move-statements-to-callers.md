@@ -1,4 +1,9 @@
-### Apply: 45 — Move Statements to Callers
+---
+name: move-statements-to-callers
+description: Apply Move Statements to Callers when you see Divergent Change. Statements that vary by caller move out of the function so each caller chooses its own setup or follow-up.
+---
+
+# Apply: 45 — Move Statements to Callers
 
 **Target state:** Statements that vary by caller move out of the function so each caller chooses its own setup or follow-up.
 

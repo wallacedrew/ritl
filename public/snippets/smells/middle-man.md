@@ -1,4 +1,9 @@
-### Refuse: 18 — Middle Man
+---
+name: middle-man
+description: Refuse Middle Man when a class whose methods all delegate straight through to another object — no decisions, no transformations. Apply Remove Middle Man, Inline Function.
+---
+
+# Refuse: 18 — Middle Man
 
 **Trigger (refuse when you see):** A class whose methods all delegate straight through to another object — no decisions, no transformations.
 

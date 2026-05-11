@@ -1,4 +1,9 @@
-### Refuse: 14 — Lazy Element
+---
+name: lazy-element
+description: Refuse Lazy Element when a class, function, or namespace that exists but does nothing meaningful — a one-line wrapper, an empty subclass, a passthrough method. Apply Inline Function, Inline Class.
+---
+
+# Refuse: 14 — Lazy Element
 
 **Trigger (refuse when you see):** A class, function, or namespace that exists but does nothing meaningful — a one-line wrapper, an empty subclass, a passthrough method.
 

@@ -1,4 +1,9 @@
-### Refuse: 23 — Refused Bequest
+---
+name: refused-bequest
+description: Refuse Refused Bequest when a subclass inherits methods or fields it doesn't actually use — overriding to no-ops, throwing 'unsupported', or just ignoring the inheritance. Apply Push Down Method, Push Down Field.
+---
+
+# Refuse: 23 — Refused Bequest
 
 **Trigger (refuse when you see):** A subclass inherits methods or fields it doesn't actually use — overriding to no-ops, throwing 'unsupported', or just ignoring the inheritance.
 

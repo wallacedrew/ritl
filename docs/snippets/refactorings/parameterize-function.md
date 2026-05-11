@@ -1,4 +1,9 @@
-### Apply: 28 — Parameterize Function
+---
+name: parameterize-function
+description: Apply Parameterize Function when you see Duplicated Code. Two near-identical functions that differ only in literal values combine into one with a parameter.
+---
+
+# Apply: 28 — Parameterize Function
 
 **Target state:** Two near-identical functions that differ only in literal values combine into one with a parameter.
 

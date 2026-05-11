@@ -1,4 +1,9 @@
-### Apply: 37 — Collapse Hierarchy
+---
+name: collapse-hierarchy
+description: Apply Collapse Hierarchy when you see Lazy Element, Speculative Generality. A subclass that no longer differs meaningfully from its parent merges back in.
+---
+
+# Apply: 37 — Collapse Hierarchy
 
 **Target state:** A subclass that no longer differs meaningfully from its parent merges back in.
 

@@ -1,4 +1,9 @@
-### Apply: 19 — Rename Field
+---
+name: rename-field
+description: Apply Rename Field when you see Mysterious Name. Field names match the domain role they play; readers don't need to inspect usage to know what a field means.
+---
+
+# Apply: 19 — Rename Field
 
 **Target state:** Field names match the domain role they play; readers don't need to inspect usage to know what a field means.
 

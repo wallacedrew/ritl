@@ -1,4 +1,9 @@
-### Refuse: 24 — Comments
+---
+name: comments
+description: Refuse Comments when comments explaining what the next block of code does, what a function returns, or how a parameter is meant to be used. Apply Extract Function, Change Function Declaration.
+---
+
+# Refuse: 24 — Comments
 
 **Trigger (refuse when you see):** Comments explaining what the next block of code does, what a function returns, or how a parameter is meant to be used.
 

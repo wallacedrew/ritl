@@ -1,4 +1,9 @@
-### Apply: 48 — Replace Function with Command
+---
+name: replace-function-with-command
+description: Apply Replace Function with Command when you see Long Function. A function with rich internal state becomes an object whose methods can share that state — easier to extract, name, and test in pieces.
+---
+
+# Apply: 48 — Replace Function with Command
 
 **Target state:** A function with rich internal state becomes an object whose methods can share that state — easier to extract, name, and test in pieces.
 

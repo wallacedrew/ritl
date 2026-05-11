@@ -1,4 +1,9 @@
-### Refuse: 16 — Temporary Field
+---
+name: temporary-field
+description: Refuse Temporary Field when a class field used by only one method, set to null or default the rest of the time. Apply Extract Class, Move Function.
+---
+
+# Refuse: 16 — Temporary Field
 
 **Trigger (refuse when you see):** A class field used by only one method, set to null or default the rest of the time.
 

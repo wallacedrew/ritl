@@ -1,4 +1,9 @@
-### Apply: 26 — Introduce Assertion
+---
+name: introduce-assertion
+description: Apply Introduce Assertion when you see Comments, Mutable Data. Invariants the code assumes are stated explicitly; readers don't need to deduce them.
+---
+
+# Apply: 26 — Introduce Assertion
 
 **Target state:** Invariants the code assumes are stated explicitly; readers don't need to deduce them.
 

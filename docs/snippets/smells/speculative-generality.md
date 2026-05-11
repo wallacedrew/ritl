@@ -1,4 +1,9 @@
-### Refuse: 15 — Speculative Generality
+---
+name: speculative-generality
+description: Refuse Speculative Generality when hooks, abstract base classes, configuration knobs, and parameters added 'in case we need them' — but no real call site uses them. Apply Collapse Hierarchy, Inline Function.
+---
+
+# Refuse: 15 — Speculative Generality
 
 **Trigger (refuse when you see):** Hooks, abstract base classes, configuration knobs, and parameters added 'in case we need them' — but no real call site uses them.
 

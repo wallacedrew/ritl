@@ -1,4 +1,9 @@
-### Refuse: 10 — Data Clumps
+---
+name: data-clumps
+description: Refuse Data Clumps when the same group of fields travels together everywhere — (street, city, zip), (start, end), (firstName, lastName) — appearing as parameters, fields, or method args. Apply Extract Class, Introduce Parameter Object.
+---
+
+# Refuse: 10 — Data Clumps
 
 **Trigger (refuse when you see):** The same group of fields travels together everywhere — (street, city, zip), (start, end), (firstName, lastName) — appearing as parameters, fields, or method args.
 

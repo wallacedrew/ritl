@@ -1,4 +1,9 @@
-### Apply: 65 — Remove Subclass
+---
+name: remove-subclass
+description: Apply Remove Subclass when you see Lazy Element, Speculative Generality. A subclass whose only purpose was to encode a type code or add nothing collapses back into a field on the parent.
+---
+
+# Apply: 65 — Remove Subclass
 
 **Target state:** A subclass whose only purpose was to encode a type code or add nothing collapses back into a field on the parent.
 

@@ -1,4 +1,9 @@
-### Apply: 30 — Preserve Whole Object
+---
+name: preserve-whole-object
+description: Apply Preserve Whole Object when you see Long Parameter List, Data Clumps. Instead of pulling several values out of an object to pass them in, pass the object itself.
+---
+
+# Apply: 30 — Preserve Whole Object
 
 **Target state:** Instead of pulling several values out of an object to pass them in, pass the object itself.
 

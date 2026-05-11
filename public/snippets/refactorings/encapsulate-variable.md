@@ -1,4 +1,9 @@
-### Apply: 06 — Encapsulate Variable
+---
+name: encapsulate-variable
+description: Apply Encapsulate Variable when you see Global Data, Mutable Data. All reads and writes pass through a small named function that owns validation, logging, and invariants.
+---
+
+# Apply: 06 — Encapsulate Variable
 
 **Target state:** All reads and writes pass through a small named function that owns validation, logging, and invariants.
 

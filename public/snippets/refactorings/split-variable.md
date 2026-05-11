@@ -1,4 +1,9 @@
-### Apply: 18 — Split Variable
+---
+name: split-variable
+description: Apply Split Variable when you see Mysterious Name, Mutable Data. Each variable has one role; reassignment patterns reflect distinct purposes rather than reused storage.
+---
+
+# Apply: 18 — Split Variable
 
 **Target state:** Each variable has one role; reassignment patterns reflect distinct purposes rather than reused storage.
 

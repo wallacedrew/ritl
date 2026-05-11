@@ -1,4 +1,9 @@
-### Refuse: 01 — Mysterious Name
+---
+name: mysterious-name
+description: Refuse Mysterious Name when identifiers that don't reveal intent — names like aFunc(), x, theData, temp, or one-letter loop variables that force every reader to reverse-engineer the code's purpose. Apply Change Function Declaration, Rename Variable.
+---
+
+# Refuse: 01 — Mysterious Name
 
 **Trigger (refuse when you see):** Identifiers that don't reveal intent — names like aFunc(), x, theData, temp, or one-letter loop variables that force every reader to reverse-engineer the code's purpose.
 

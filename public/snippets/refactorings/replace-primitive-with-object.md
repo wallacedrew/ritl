@@ -1,4 +1,9 @@
-### Apply: 40 — Replace Primitive with Object
+---
+name: replace-primitive-with-object
+description: Apply Replace Primitive with Object when you see Primitive Obsession. Each domain concept has a small typed home — Money, PhoneNumber, OrderId — that knows its rules.
+---
+
+# Apply: 40 — Replace Primitive with Object
 
 **Target state:** Each domain concept has a small typed home — Money, PhoneNumber, OrderId — that knows its rules.
 

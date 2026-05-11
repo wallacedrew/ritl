@@ -1,4 +1,9 @@
-### Refuse: 13 — Loops
+---
+name: loops
+description: Refuse Loops when imperative for/while loops obscuring what the loop is producing — filter, map, reduce mixed together by hand. Apply Replace Loop with Pipeline.
+---
+
+# Refuse: 13 — Loops
 
 **Trigger (refuse when you see):** Imperative for/while loops obscuring what the loop is producing — filter, map, reduce mixed together by hand.
 

@@ -1,4 +1,9 @@
-### Apply: 13 — Move Field
+---
+name: move-field
+description: Apply Move Field when you see Shotgun Surgery, Insider Trading. Each field belongs to the class that owns its lifecycle; cross-class reaching disappears.
+---
+
+# Apply: 13 — Move Field
 
 **Target state:** Each field belongs to the class that owns its lifecycle; cross-class reaching disappears.
 

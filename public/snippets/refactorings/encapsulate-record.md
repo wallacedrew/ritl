@@ -1,4 +1,9 @@
-### Apply: 53 — Encapsulate Record
+---
+name: encapsulate-record
+description: Apply Encapsulate Record when you see Data Class, Primitive Obsession. A bare record (plain object with public fields) becomes a class whose properties are accessed through methods that can validate, log, or derive.
+---
+
+# Apply: 53 — Encapsulate Record
 
 **Target state:** A bare record (plain object with public fields) becomes a class whose properties are accessed through methods that can validate, log, or derive.
 

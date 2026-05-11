@@ -1,4 +1,9 @@
-### Apply: 55 — Inline Class
+---
+name: inline-class
+description: Apply Inline Class when you see Lazy Element, Speculative Generality. A class with too few responsibilities to deserve its own file folds into a class it collaborates with most.
+---
+
+# Apply: 55 — Inline Class
 
 **Target state:** A class with too few responsibilities to deserve its own file folds into a class it collaborates with most.
 

@@ -1,4 +1,9 @@
-### Apply: 52 — Encapsulate Collection
+---
+name: encapsulate-collection
+description: Apply Encapsulate Collection when you see Mutable Data, Insider Trading. A class's internal collection is never returned directly; callers add or remove via methods on the class, and reads return a snapshot or iterator.
+---
+
+# Apply: 52 — Encapsulate Collection
 
 **Target state:** A class's internal collection is never returned directly; callers add or remove via methods on the class, and reads return a snapshot or iterator.
 

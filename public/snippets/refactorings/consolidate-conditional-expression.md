@@ -1,4 +1,9 @@
-### Apply: 22 — Consolidate Conditional Expression
+---
+name: consolidate-conditional-expression
+description: Apply Consolidate Conditional Expression when you see Duplicated Code. Multiple conditions leading to the same action collapse into one named predicate.
+---
+
+# Apply: 22 — Consolidate Conditional Expression
 
 **Target state:** Multiple conditions leading to the same action collapse into one named predicate.
 

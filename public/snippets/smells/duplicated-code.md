@@ -1,4 +1,9 @@
-### Refuse: 02 — Duplicated Code
+---
+name: duplicated-code
+description: Refuse Duplicated Code when the same code structure appears in two or more places — same shape with cosmetic variations, or copy-paste-modify patterns that drift over time. Apply Extract Function, Slide Statements.
+---
+
+# Refuse: 02 — Duplicated Code
 
 **Trigger (refuse when you see):** The same code structure appears in two or more places — same shape with cosmetic variations, or copy-paste-modify patterns that drift over time.
 

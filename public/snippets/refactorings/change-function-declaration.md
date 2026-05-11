@@ -1,4 +1,9 @@
-### Apply: 05 — Change Function Declaration
+---
+name: change-function-declaration
+description: Apply Change Function Declaration when you see Mysterious Name, Long Parameter List, Alternative Classes with Different Interfaces. Function names match what they actually do; parameter lists carry only what the function needs, in the order callers expect.
+---
+
+# Apply: 05 — Change Function Declaration
 
 **Target state:** Function names match what they actually do; parameter lists carry only what the function needs, in the order callers expect.
 

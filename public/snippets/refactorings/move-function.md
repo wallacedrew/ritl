@@ -1,4 +1,9 @@
-### Apply: 12 — Move Function
+---
+name: move-function
+description: Apply Move Function when you see Feature Envy, Shotgun Surgery, Insider Trading, Divergent Change. Each function lives where its data lives; coupling between modules drops.
+---
+
+# Apply: 12 — Move Function
 
 **Target state:** Each function lives where its data lives; coupling between modules drops.
 

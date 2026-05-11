@@ -1,4 +1,9 @@
-### Apply: 07 — Rename Variable
+---
+name: rename-variable
+description: Apply Rename Variable when you see Mysterious Name. Variable names match the domain role they play, not their implementation type or scratch nature.
+---
+
+# Apply: 07 — Rename Variable
 
 **Target state:** Variable names match the domain role they play, not their implementation type or scratch nature.
 

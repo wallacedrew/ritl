@@ -1,4 +1,9 @@
-### Apply: 15 — Split Loop
+---
+name: split-loop
+description: Apply Split Loop when you see Long Function, Loops. Each loop does one thing; mixed-purpose loops separate into named single-purpose passes.
+---
+
+# Apply: 15 — Split Loop
 
 **Target state:** Each loop does one thing; mixed-purpose loops separate into named single-purpose passes.
 

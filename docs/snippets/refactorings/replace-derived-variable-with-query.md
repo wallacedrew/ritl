@@ -1,4 +1,9 @@
-### Apply: 20 — Replace Derived Variable with Query
+---
+name: replace-derived-variable-with-query
+description: Apply Replace Derived Variable with Query when you see Mutable Data. Values computed from other state are computed on demand; no separate field needs to be kept in sync.
+---
+
+# Apply: 20 — Replace Derived Variable with Query
 
 **Target state:** Values computed from other state are computed on demand; no separate field needs to be kept in sync.
 

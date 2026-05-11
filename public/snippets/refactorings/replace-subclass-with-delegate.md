@@ -1,4 +1,9 @@
-### Apply: 38 — Replace Subclass with Delegate
+---
+name: replace-subclass-with-delegate
+description: Apply Replace Subclass with Delegate when you see Refused Bequest, Insider Trading. Behavior that varied via inheritance now varies via a delegate object that implements the variant interface.
+---
+
+# Apply: 38 — Replace Subclass with Delegate
 
 **Target state:** Behavior that varied via inheritance now varies via a delegate object that implements the variant interface.
 

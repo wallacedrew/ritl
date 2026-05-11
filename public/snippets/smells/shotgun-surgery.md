@@ -1,4 +1,9 @@
-### Refuse: 08 — Shotgun Surgery
+---
+name: shotgun-surgery
+description: Refuse Shotgun Surgery when a single conceptual change forces edits in many small places — adding a logging field means touching 17 files. Apply Move Function, Move Field.
+---
+
+# Refuse: 08 — Shotgun Surgery
 
 **Trigger (refuse when you see):** A single conceptual change forces edits in many small places — adding a logging field means touching 17 files.
 

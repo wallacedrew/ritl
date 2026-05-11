@@ -1,4 +1,9 @@
-### Refuse: 04 — Long Parameter List
+---
+name: long-parameter-list
+description: Refuse Long Parameter List when functions taking five, six, or more parameters — especially when several travel together as a logical group. Apply Replace Parameter with Query, Preserve Whole Object.
+---
+
+# Refuse: 04 — Long Parameter List
 
 **Trigger (refuse when you see):** Functions taking five, six, or more parameters — especially when several travel together as a logical group.
 

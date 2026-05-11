@@ -1,4 +1,9 @@
-### Refuse: 17 — Message Chains
+---
+name: message-chains
+description: Refuse Message Chains when long dotted access paths; a.b.c.d.e — every callsite walks the entire object graph. Apply Hide Delegate, Extract Function.
+---
+
+# Refuse: 17 — Message Chains
 
 **Trigger (refuse when you see):** Long dotted access paths: a.b.c.d.e — every callsite walks the entire object graph.
 

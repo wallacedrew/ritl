@@ -1,4 +1,9 @@
-### Apply: 56 — Change Reference to Value
+---
+name: change-reference-to-value
+description: Apply Change Reference to Value when you see Mutable Data. An object treated as a sharable record (with setters) becomes a value object — immutable, equal by content, replaced rather than mutated.
+---
+
+# Apply: 56 — Change Reference to Value
 
 **Target state:** An object treated as a sharable record (with setters) becomes a value object — immutable, equal by content, replaced rather than mutated.
 

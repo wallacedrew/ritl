@@ -1,4 +1,9 @@
-### Refuse: 21 — Alternative Classes with Different Interfaces
+---
+name: alternative-classes-with-different-interfaces
+description: Refuse Alternative Classes with Different Interfaces when two classes do similar things but with mismatched method names and signatures — sortBy() vs orderUsing(), valueOf() vs evaluate(). Apply Change Function Declaration, Move Function.
+---
+
+# Refuse: 21 — Alternative Classes with Different Interfaces
 
 **Trigger (refuse when you see):** Two classes do similar things but with mismatched method names and signatures — sortBy() vs orderUsing(), valueOf() vs evaluate().
 

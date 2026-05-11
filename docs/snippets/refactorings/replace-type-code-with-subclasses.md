@@ -1,4 +1,9 @@
-### Apply: 35 — Replace Type Code with Subclasses
+---
+name: replace-type-code-with-subclasses
+description: Apply Replace Type Code with Subclasses when you see Repeated Switches, Primitive Obsession. A 'kind' string field becomes a real subclass type; the type system enforces the legal set.
+---
+
+# Apply: 35 — Replace Type Code with Subclasses
 
 **Target state:** A 'kind' string field becomes a real subclass type; the type system enforces the legal set.
 

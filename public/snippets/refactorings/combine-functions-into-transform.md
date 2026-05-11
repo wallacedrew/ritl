@@ -1,4 +1,9 @@
-### Apply: 10 — Combine Functions into Transform
+---
+name: combine-functions-into-transform
+description: Apply Combine Functions into Transform when you see Data Clumps, Mutable Data. Multiple derived values from the same source come from one transform that produces an enriched record.
+---
+
+# Apply: 10 — Combine Functions into Transform
 
 **Target state:** Multiple derived values from the same source come from one transform that produces an enriched record.
 

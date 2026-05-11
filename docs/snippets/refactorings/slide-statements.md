@@ -1,4 +1,9 @@
-### Apply: 14 — Slide Statements
+---
+name: slide-statements
+description: Apply Slide Statements when you see Long Function, Comments. Related statements sit next to each other; the function reads as a sequence of cohesive sub-steps that are easy to extract.
+---
+
+# Apply: 14 — Slide Statements
 
 **Target state:** Related statements sit next to each other; the function reads as a sequence of cohesive sub-steps that are easy to extract.
 

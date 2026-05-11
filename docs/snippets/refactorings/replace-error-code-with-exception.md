@@ -1,4 +1,9 @@
-### Apply: 60 — Replace Error Code with Exception
+---
+name: replace-error-code-with-exception
+description: Apply Replace Error Code with Exception when you see Comments. Numeric or string error codes that callers must remember to check are replaced with exceptions that propagate by default.
+---
+
+# Apply: 60 — Replace Error Code with Exception
 
 **Target state:** Numeric or string error codes that callers must remember to check are replaced with exceptions that propagate by default.
 

@@ -1,4 +1,9 @@
-### Apply: 17 — Remove Dead Code
+---
+name: remove-dead-code
+description: Apply Remove Dead Code when you see Speculative Generality, Comments. Every line in the codebase is reachable and used; readers don't waste cycles on phantom branches.
+---
+
+# Apply: 17 — Remove Dead Code
 
 **Target state:** Every line in the codebase is reachable and used; readers don't waste cycles on phantom branches.
 

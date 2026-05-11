@@ -1,4 +1,9 @@
-### Refuse: 19 — Insider Trading
+---
+name: insider-trading
+description: Refuse Insider Trading when modules reach into each other's internals to coordinate behavior, bypassing public interfaces. Apply Move Function, Move Field.
+---
+
+# Refuse: 19 — Insider Trading
 
 **Trigger (refuse when you see):** Modules reach into each other's internals to coordinate behavior, bypassing public interfaces.
 

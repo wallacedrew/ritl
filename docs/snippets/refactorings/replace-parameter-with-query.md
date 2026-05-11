@@ -1,4 +1,9 @@
-### Apply: 31 — Replace Parameter with Query
+---
+name: replace-parameter-with-query
+description: Apply Replace Parameter with Query when you see Long Parameter List. When a function can compute its own answer from already-available state, callers don't have to pre-compute it.
+---
+
+# Apply: 31 — Replace Parameter with Query
 
 **Target state:** When a function can compute its own answer from already-available state, callers don't have to pre-compute it.
 

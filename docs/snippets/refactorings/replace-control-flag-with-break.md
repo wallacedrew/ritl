@@ -1,4 +1,9 @@
-### Apply: 58 — Replace Control Flag with Break
+---
+name: replace-control-flag-with-break
+description: Apply Replace Control Flag with Break when you see Loops, Long Function. Loops that maintain a boolean to decide when to stop replace it with a direct `break`, `return`, or `continue`.
+---
+
+# Apply: 58 — Replace Control Flag with Break
 
 **Target state:** Loops that maintain a boolean to decide when to stop replace it with a direct `break`, `return`, or `continue`.
 

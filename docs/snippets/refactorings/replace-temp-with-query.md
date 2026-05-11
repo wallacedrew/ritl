@@ -1,4 +1,9 @@
-### Apply: 47 — Replace Temp with Query
+---
+name: replace-temp-with-query
+description: Apply Replace Temp with Query when you see Long Function, Mutable Data. A local variable assigned once from a computation becomes a function that returns that computation on demand.
+---
+
+# Apply: 47 — Replace Temp with Query
 
 **Target state:** A local variable assigned once from a computation becomes a function that returns that computation on demand.
 

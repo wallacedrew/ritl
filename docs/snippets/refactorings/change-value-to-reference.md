@@ -1,4 +1,9 @@
-### Apply: 57 — Change Value to Reference
+---
+name: change-value-to-reference
+description: Apply Change Value to Reference when you see Duplicated Code. Duplicate copies of a logically-single entity collapse into one shared object that everyone references.
+---
+
+# Apply: 57 — Change Value to Reference
 
 **Target state:** Duplicate copies of a logically-single entity collapse into one shared object that everyone references.
 

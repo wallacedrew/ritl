@@ -1,4 +1,9 @@
-### Apply: 11 — Split Phase
+---
+name: split-phase
+description: Apply Split Phase when you see Divergent Change, Long Function. Each phase reads and writes its own well-defined inputs and outputs; the seam between them is data, not control flow.
+---
+
+# Apply: 11 — Split Phase
 
 **Target state:** Each phase reads and writes its own well-defined inputs and outputs; the seam between them is data, not control flow.
 

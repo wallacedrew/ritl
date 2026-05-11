@@ -1,17 +1,27 @@
-# Refactorings — patterns to apply
+# Refactoring catalog
 
-Paste any of these sections into AGENTS.md to tell Claude Code (or any
-coding agent reading AGENTS-style guidance) to **apply** the named
-refactoring when its preconditions appear. Each section opens with a
-directive (`### Apply: NN — Name`), labels the target state and
-pitfall, and gives a Before/Prefer code example.
+Centralized view of the 90 catalog skills. Each section below is the
+full SKILL.md content of the matching per-entity download — the
+content is identical at the section level. Use this single paste when
+you want the whole vocabulary loaded; use the per-entity downloads
+when you want auto-invocable skills under `~/.claude/skills/<slug>/SKILL.md`.
 
-Source: https://refactoring.com/catalog/ (Fowler 2e). Regenerate after
-catalog edits via `npm run snippets`.
+Source: https://refactoring.com/catalog/ (Fowler 2e). Regenerate with
+`npm run snippets`.
 
-## Basic Refactorings
 
-### Apply: 07 — Rename Variable
+---
+
+## Refactorings
+
+### Basic Refactorings
+
+---
+name: rename-variable
+description: Apply Rename Variable when you see Mysterious Name. Variable names match the domain role they play, not their implementation type or scratch nature.
+---
+
+# Apply: 07 — Rename Variable
 
 **Target state:** Variable names match the domain role they play, not their implementation type or scratch nature.
 
@@ -30,8 +40,11 @@ const area = height * width;
 **Removes smells:** Mysterious Name
 
 ---
+name: rename-field
+description: Apply Rename Field when you see Mysterious Name. Field names match the domain role they play; readers don't need to inspect usage to know what a field means.
+---
 
-### Apply: 19 — Rename Field
+# Apply: 19 — Rename Field
 
 **Target state:** Field names match the domain role they play; readers don't need to inspect usage to know what a field means.
 
@@ -50,8 +63,11 @@ class Org { title; }
 **Removes smells:** Mysterious Name
 
 ---
+name: remove-dead-code
+description: Apply Remove Dead Code when you see Speculative Generality, Comments. Every line in the codebase is reachable and used; readers don't waste cycles on phantom branches.
+---
 
-### Apply: 17 — Remove Dead Code
+# Apply: 17 — Remove Dead Code
 
 **Target state:** Every line in the codebase is reachable and used; readers don't waste cycles on phantom branches.
 
@@ -71,8 +87,11 @@ function discount(order) { /* the real one */ }
 **Removes smells:** Speculative Generality, Comments
 
 ---
+name: replace-magic-literal
+description: Apply Replace Magic Literal when you see Mysterious Name, Comments. Bare numbers and strings that encode domain concepts become named constants whose name says what the value represents.
+---
 
-### Apply: 43 — Replace Magic Literal
+# Apply: 43 — Replace Magic Literal
 
 **Target state:** Bare numbers and strings that encode domain concepts become named constants whose name says what the value represents.
 
@@ -95,10 +114,14 @@ function trip(distance) {
 
 **Removes smells:** Mysterious Name, Comments
 
+### Composing Methods
 
-## Composing Methods
+---
+name: extract-function
+description: Apply Extract Function when you see Long Function, Duplicated Code, Comments. Each function reads as a single named domain step — what it does, not how.
+---
 
-### Apply: 01 — Extract Function
+# Apply: 01 — Extract Function
 
 **Target state:** Each function reads as a single named domain step — what it does, not how.
 
@@ -125,8 +148,11 @@ function ship(order) {
 **Removes smells:** Long Function, Duplicated Code, Comments
 
 ---
+name: inline-function
+description: Apply Inline Function when you see Lazy Element, Speculative Generality. Trivial wrappers vanish; the call site reads as exactly what's happening.
+---
 
-### Apply: 02 — Inline Function
+# Apply: 02 — Inline Function
 
 **Target state:** Trivial wrappers vanish; the call site reads as exactly what's happening.
 
@@ -152,8 +178,11 @@ function getRating(driver) {
 **Removes smells:** Lazy Element, Speculative Generality
 
 ---
+name: extract-variable
+description: Apply Extract Variable when you see Mysterious Name, Comments. A complex expression earns a name that says what it represents in the domain.
+---
 
-### Apply: 03 — Extract Variable
+# Apply: 03 — Extract Variable
 
 **Target state:** A complex expression earns a name that says what it represents in the domain.
 
@@ -174,8 +203,11 @@ if (basePrice - discount > 1000) { /* ... */ }
 **Removes smells:** Mysterious Name, Comments
 
 ---
+name: inline-variable
+description: Apply Inline Variable when you see Lazy Element. Single-use variables that just rename their right-hand side disappear; the expression speaks for itself.
+---
 
-### Apply: 04 — Inline Variable
+# Apply: 04 — Inline Variable
 
 **Target state:** Single-use variables that just rename their right-hand side disappear; the expression speaks for itself.
 
@@ -195,8 +227,11 @@ return order.basePrice > 1000;
 **Removes smells:** Lazy Element
 
 ---
+name: combine-functions-into-class
+description: Apply Combine Functions into Class when you see Data Clumps, Primitive Obsession. Functions that all act on the same data live alongside it as methods; calls become method calls on a domain object.
+---
 
-### Apply: 09 — Combine Functions into Class
+# Apply: 09 — Combine Functions into Class
 
 **Target state:** Functions that all act on the same data live alongside it as methods; calls become method calls on a domain object.
 
@@ -219,8 +254,11 @@ class Reading {
 **Removes smells:** Data Clumps, Primitive Obsession
 
 ---
+name: combine-functions-into-transform
+description: Apply Combine Functions into Transform when you see Data Clumps, Mutable Data. Multiple derived values from the same source come from one transform that produces an enriched record.
+---
 
-### Apply: 10 — Combine Functions into Transform
+# Apply: 10 — Combine Functions into Transform
 
 **Target state:** Multiple derived values from the same source come from one transform that produces an enriched record.
 
@@ -242,8 +280,11 @@ function enrich(reading) {
 **Removes smells:** Data Clumps, Mutable Data
 
 ---
+name: split-phase
+description: Apply Split Phase when you see Divergent Change, Long Function. Each phase reads and writes its own well-defined inputs and outputs; the seam between them is data, not control flow.
+---
 
-### Apply: 11 — Split Phase
+# Apply: 11 — Split Phase
 
 **Target state:** Each phase reads and writes its own well-defined inputs and outputs; the seam between them is data, not control flow.
 
@@ -266,8 +307,11 @@ function render(priced)  { return renderHTML(priced); }
 **Removes smells:** Divergent Change, Long Function
 
 ---
+name: slide-statements
+description: Apply Slide Statements when you see Long Function, Comments. Related statements sit next to each other; the function reads as a sequence of cohesive sub-steps that are easy to extract.
+---
 
-### Apply: 14 — Slide Statements
+# Apply: 14 — Slide Statements
 
 **Target state:** Related statements sit next to each other; the function reads as a sequence of cohesive sub-steps that are easy to extract.
 
@@ -292,8 +336,11 @@ logTaxCalc(tax);
 **Removes smells:** Long Function, Comments
 
 ---
+name: split-loop
+description: Apply Split Loop when you see Long Function, Loops. Each loop does one thing; mixed-purpose loops separate into named single-purpose passes.
+---
 
-### Apply: 15 — Split Loop
+# Apply: 15 — Split Loop
 
 **Target state:** Each loop does one thing; mixed-purpose loops separate into named single-purpose passes.
 
@@ -318,8 +365,11 @@ const youngest    = Math.min(...people.map(p => p.age));
 **Removes smells:** Long Function, Loops
 
 ---
+name: replace-loop-with-pipeline
+description: Apply Replace Loop with Pipeline when you see Loops. Filter / map / reduce expresses the transformation as a sequence of named operations; intent jumps off the page.
+---
 
-### Apply: 16 — Replace Loop with Pipeline
+# Apply: 16 — Replace Loop with Pipeline
 
 **Target state:** Filter / map / reduce expresses the transformation as a sequence of named operations; intent jumps off the page.
 
@@ -343,8 +393,11 @@ const seniors = users
 **Removes smells:** Loops
 
 ---
+name: replace-derived-variable-with-query
+description: Apply Replace Derived Variable with Query when you see Mutable Data. Values computed from other state are computed on demand; no separate field needs to be kept in sync.
+---
 
-### Apply: 20 — Replace Derived Variable with Query
+# Apply: 20 — Replace Derived Variable with Query
 
 **Target state:** Values computed from other state are computed on demand; no separate field needs to be kept in sync.
 
@@ -371,8 +424,11 @@ class Order {
 **Removes smells:** Mutable Data
 
 ---
+name: split-variable
+description: Apply Split Variable when you see Mysterious Name, Mutable Data. Each variable has one role; reassignment patterns reflect distinct purposes rather than reused storage.
+---
 
-### Apply: 18 — Split Variable
+# Apply: 18 — Split Variable
 
 **Target state:** Each variable has one role; reassignment patterns reflect distinct purposes rather than reused storage.
 
@@ -397,8 +453,11 @@ console.log(area);
 **Removes smells:** Mysterious Name, Mutable Data
 
 ---
+name: move-statements-into-function
+description: Apply Move Statements into Function when you see Duplicated Code. Setup or follow-up that happens around every call to a function moves inside the function, so the caller's contract shrinks.
+---
 
-### Apply: 44 — Move Statements into Function
+# Apply: 44 — Move Statements into Function
 
 **Target state:** Setup or follow-up that happens around every call to a function moves inside the function, so the caller's contract shrinks.
 
@@ -423,8 +482,11 @@ function fetchLogged(url) {
 **Removes smells:** Duplicated Code
 
 ---
+name: move-statements-to-callers
+description: Apply Move Statements to Callers when you see Divergent Change. Statements that vary by caller move out of the function so each caller chooses its own setup or follow-up.
+---
 
-### Apply: 45 — Move Statements to Callers
+# Apply: 45 — Move Statements to Callers
 
 **Target state:** Statements that vary by caller move out of the function so each caller chooses its own setup or follow-up.
 
@@ -448,8 +510,11 @@ metrics.tick();
 **Removes smells:** Divergent Change
 
 ---
+name: replace-inline-code-with-function-call
+description: Apply Replace Inline Code with Function Call when you see Duplicated Code. When inline code reproduces what a named function already does, the inline copy is replaced by a call.
+---
 
-### Apply: 46 — Replace Inline Code with Function Call
+# Apply: 46 — Replace Inline Code with Function Call
 
 **Target state:** When inline code reproduces what a named function already does, the inline copy is replaced by a call.
 
@@ -468,8 +533,11 @@ const inRange = between(candidate, low, high);
 **Removes smells:** Duplicated Code
 
 ---
+name: replace-temp-with-query
+description: Apply Replace Temp with Query when you see Long Function, Mutable Data. A local variable assigned once from a computation becomes a function that returns that computation on demand.
+---
 
-### Apply: 47 — Replace Temp with Query
+# Apply: 47 — Replace Temp with Query
 
 **Target state:** A local variable assigned once from a computation becomes a function that returns that computation on demand.
 
@@ -496,8 +564,11 @@ function basePrice() { return qty * itemPrice; }
 **Removes smells:** Long Function, Mutable Data
 
 ---
+name: replace-function-with-command
+description: Apply Replace Function with Command when you see Long Function. A function with rich internal state becomes an object whose methods can share that state — easier to extract, name, and test in pieces.
+---
 
-### Apply: 48 — Replace Function with Command
+# Apply: 48 — Replace Function with Command
 
 **Target state:** A function with rich internal state becomes an object whose methods can share that state — easier to extract, name, and test in pieces.
 
@@ -522,8 +593,11 @@ class Scorer {
 **Removes smells:** Long Function
 
 ---
+name: replace-command-with-function
+description: Apply Replace Command with Function when you see Speculative Generality, Lazy Element. A command object whose execute() does everything in one shot collapses back to a plain function.
+---
 
-### Apply: 49 — Replace Command with Function
+# Apply: 49 — Replace Command with Function
 
 **Target state:** A command object whose execute() does everything in one shot collapses back to a plain function.
 
@@ -547,8 +621,11 @@ charge(c, o);
 **Removes smells:** Speculative Generality, Lazy Element
 
 ---
+name: return-modified-value
+description: Apply Return Modified Value when you see Mutable Data. Instead of mutating a parameter in place, the function returns the modified value so the caller reassigns.
+---
 
-### Apply: 50 — Return Modified Value
+# Apply: 50 — Return Modified Value
 
 **Target state:** Instead of mutating a parameter in place, the function returns the modified value so the caller reassigns.
 
@@ -573,8 +650,11 @@ order = withTax(order);
 **Removes smells:** Mutable Data
 
 ---
+name: substitute-algorithm
+description: Apply Substitute Algorithm when you see Long Function, Loops. An opaque or convoluted algorithm gets replaced by a clearer one (often from a library or well-known pattern) that produces the same outputs.
+---
 
-### Apply: 51 — Substitute Algorithm
+# Apply: 51 — Substitute Algorithm
 
 **Target state:** An opaque or convoluted algorithm gets replaced by a clearer one (often from a library or well-known pattern) that produces the same outputs.
 
@@ -597,10 +677,14 @@ function found(people, n) {
 
 **Removes smells:** Long Function, Loops
 
+### Encapsulation
 
-## Encapsulation
+---
+name: encapsulate-variable
+description: Apply Encapsulate Variable when you see Global Data, Mutable Data. All reads and writes pass through a small named function that owns validation, logging, and invariants.
+---
 
-### Apply: 06 — Encapsulate Variable
+# Apply: 06 — Encapsulate Variable
 
 **Target state:** All reads and writes pass through a small named function that owns validation, logging, and invariants.
 
@@ -621,8 +705,11 @@ function setDefaultOwner(o) { _defaultOwner = o; }
 **Removes smells:** Global Data, Mutable Data
 
 ---
+name: hide-delegate
+description: Apply Hide Delegate when you see Message Chains. Callers ask the closest object for what they want; the object delegates internally without exposing its collaborators.
+---
 
-### Apply: 41 — Hide Delegate
+# Apply: 41 — Hide Delegate
 
 **Target state:** Callers ask the closest object for what they want; the object delegates internally without exposing its collaborators.
 
@@ -642,8 +729,11 @@ const street = order.customerStreet();
 **Removes smells:** Message Chains
 
 ---
+name: remove-middle-man
+description: Apply Remove Middle Man when you see Middle Man. Callers talk directly to the real object; trivial passthroughs are deleted.
+---
 
-### Apply: 42 — Remove Middle Man
+# Apply: 42 — Remove Middle Man
 
 **Target state:** Callers talk directly to the real object; trivial passthroughs are deleted.
 
@@ -665,8 +755,11 @@ manager.team.members();
 **Removes smells:** Middle Man
 
 ---
+name: encapsulate-collection
+description: Apply Encapsulate Collection when you see Mutable Data, Insider Trading. A class's internal collection is never returned directly; callers add or remove via methods on the class, and reads return a snapshot or iterator.
+---
 
-### Apply: 52 — Encapsulate Collection
+# Apply: 52 — Encapsulate Collection
 
 **Target state:** A class's internal collection is never returned directly; callers add or remove via methods on the class, and reads return a snapshot or iterator.
 
@@ -693,8 +786,11 @@ class Person {
 **Removes smells:** Mutable Data, Insider Trading
 
 ---
+name: encapsulate-record
+description: Apply Encapsulate Record when you see Data Class, Primitive Obsession. A bare record (plain object with public fields) becomes a class whose properties are accessed through methods that can validate, log, or derive.
+---
 
-### Apply: 53 — Encapsulate Record
+# Apply: 53 — Encapsulate Record
 
 **Target state:** A bare record (plain object with public fields) becomes a class whose properties are accessed through methods that can validate, log, or derive.
 
@@ -719,8 +815,11 @@ console.log(new Org(org).name());
 **Removes smells:** Data Class, Primitive Obsession
 
 ---
+name: remove-setting-method
+description: Apply Remove Setting Method when you see Mutable Data, Data Class. Fields whose values should only be set at construction lose their setters; callers either construct a new object or call a domain method that changes the field as a side effect of doing real work.
+---
 
-### Apply: 54 — Remove Setting Method
+# Apply: 54 — Remove Setting Method
 
 **Target state:** Fields whose values should only be set at construction lose their setters; callers either construct a new object or call a domain method that changes the field as a side effect of doing real work.
 
@@ -743,10 +842,14 @@ class Person {
 
 **Removes smells:** Mutable Data, Data Class
 
+### Moving Features
 
-## Moving Features
+---
+name: move-function
+description: Apply Move Function when you see Feature Envy, Shotgun Surgery, Insider Trading, Divergent Change. Each function lives where its data lives; coupling between modules drops.
+---
 
-### Apply: 12 — Move Function
+# Apply: 12 — Move Function
 
 **Target state:** Each function lives where its data lives; coupling between modules drops.
 
@@ -766,8 +869,11 @@ class Order   { /* asks account directly when needed */ }
 **Removes smells:** Feature Envy, Shotgun Surgery, Insider Trading, Divergent Change
 
 ---
+name: move-field
+description: Apply Move Field when you see Shotgun Surgery, Insider Trading. Each field belongs to the class that owns its lifecycle; cross-class reaching disappears.
+---
 
-### Apply: 13 — Move Field
+# Apply: 13 — Move Field
 
 **Target state:** Each field belongs to the class that owns its lifecycle; cross-class reaching disappears.
 
@@ -787,8 +893,11 @@ class Customer { plan; /* discountRate accessed via plan */ }
 **Removes smells:** Shotgun Surgery, Insider Trading
 
 ---
+name: extract-class
+description: Apply Extract Class when you see Data Clumps, Temporary Field, Large Class, Primitive Obsession. A cohesive sub-concept inside a class becomes its own class with its own name, fields, and methods.
+---
 
-### Apply: 39 — Extract Class
+# Apply: 39 — Extract Class
 
 **Target state:** A cohesive sub-concept inside a class becomes its own class with its own name, fields, and methods.
 
@@ -817,8 +926,11 @@ class Person { name; phone; }
 **Removes smells:** Data Clumps, Temporary Field, Large Class, Primitive Obsession
 
 ---
+name: inline-class
+description: Apply Inline Class when you see Lazy Element, Speculative Generality. A class with too few responsibilities to deserve its own file folds into a class it collaborates with most.
+---
 
-### Apply: 55 — Inline Class
+# Apply: 55 — Inline Class
 
 **Target state:** A class with too few responsibilities to deserve its own file folds into a class it collaborates with most.
 
@@ -845,10 +957,14 @@ class Shipment {
 
 **Removes smells:** Lazy Element, Speculative Generality
 
+### Organizing Data
 
-## Organizing Data
+---
+name: replace-primitive-with-object
+description: Apply Replace Primitive with Object when you see Primitive Obsession. Each domain concept has a small typed home — Money, PhoneNumber, OrderId — that knows its rules.
+---
 
-### Apply: 40 — Replace Primitive with Object
+# Apply: 40 — Replace Primitive with Object
 
 **Target state:** Each domain concept has a small typed home — Money, PhoneNumber, OrderId — that knows its rules.
 
@@ -872,8 +988,11 @@ function priceFor(money) {
 **Removes smells:** Primitive Obsession
 
 ---
+name: change-reference-to-value
+description: Apply Change Reference to Value when you see Mutable Data. An object treated as a sharable record (with setters) becomes a value object — immutable, equal by content, replaced rather than mutated.
+---
 
-### Apply: 56 — Change Reference to Value
+# Apply: 56 — Change Reference to Value
 
 **Target state:** An object treated as a sharable record (with setters) becomes a value object — immutable, equal by content, replaced rather than mutated.
 
@@ -900,8 +1019,11 @@ class Phone {
 **Removes smells:** Mutable Data
 
 ---
+name: change-value-to-reference
+description: Apply Change Value to Reference when you see Duplicated Code. Duplicate copies of a logically-single entity collapse into one shared object that everyone references.
+---
 
-### Apply: 57 — Change Value to Reference
+# Apply: 57 — Change Value to Reference
 
 **Target state:** Duplicate copies of a logically-single entity collapse into one shared object that everyone references.
 
@@ -921,10 +1043,14 @@ orders.forEach(o => o.customer = acme);
 
 **Removes smells:** Duplicated Code
 
+### Simplifying Conditional Logic
 
-## Simplifying Conditional Logic
+---
+name: decompose-conditional
+description: Apply Decompose Conditional when you see Long Function, Comments. Conditions and their consequents read as named domain decisions; isInSummer(), discountFor(date), etc.
+---
 
-### Apply: 21 — Decompose Conditional
+# Apply: 21 — Decompose Conditional
 
 **Target state:** Conditions and their consequents read as named domain decisions: isInSummer(), discountFor(date), etc.
 
@@ -949,8 +1075,11 @@ charge = isSummer(date)
 **Removes smells:** Long Function, Comments
 
 ---
+name: consolidate-conditional-expression
+description: Apply Consolidate Conditional Expression when you see Duplicated Code. Multiple conditions leading to the same action collapse into one named predicate.
+---
 
-### Apply: 22 — Consolidate Conditional Expression
+# Apply: 22 — Consolidate Conditional Expression
 
 **Target state:** Multiple conditions leading to the same action collapse into one named predicate.
 
@@ -971,8 +1100,11 @@ if (isIneligibleForBonus(employee)) return 0;
 **Removes smells:** Duplicated Code
 
 ---
+name: replace-nested-conditional-with-guard-clauses
+description: Apply Replace Nested Conditional with Guard Clauses when you see Long Function, Comments. Edge cases bail out early at the top of the function; the main flow is unindented and tells the happy path linearly.
+---
 
-### Apply: 23 — Replace Nested Conditional with Guard Clauses
+# Apply: 23 — Replace Nested Conditional with Guard Clauses
 
 **Target state:** Edge cases bail out early at the top of the function; the main flow is unindented and tells the happy path linearly.
 
@@ -1005,8 +1137,11 @@ function payAmount(employee) {
 **Removes smells:** Long Function, Comments
 
 ---
+name: replace-conditional-with-polymorphism
+description: Apply Replace Conditional with Polymorphism when you see Repeated Switches, Primitive Obsession. Each case becomes a class implementing a shared interface; dispatch happens once via virtual call.
+---
 
-### Apply: 24 — Replace Conditional with Polymorphism
+# Apply: 24 — Replace Conditional with Polymorphism
 
 **Target state:** Each case becomes a class implementing a shared interface; dispatch happens once via virtual call.
 
@@ -1028,8 +1163,11 @@ event.handle(); // ClickEvent and KeyEvent each implement handle()
 **Removes smells:** Repeated Switches, Primitive Obsession
 
 ---
+name: introduce-special-case
+description: Apply Introduce Special Case when you see Repeated Switches, Comments. A repeating null-or-special check becomes a Null Object (or Special Case) that responds sensibly to the same interface.
+---
 
-### Apply: 25 — Introduce Special Case
+# Apply: 25 — Introduce Special Case
 
 **Target state:** A repeating null-or-special check becomes a Null Object (or Special Case) that responds sensibly to the same interface.
 
@@ -1048,8 +1186,11 @@ const name = customer.name; // UnknownCustomer.name returns 'occupant'
 **Removes smells:** Repeated Switches, Comments
 
 ---
+name: replace-control-flag-with-break
+description: Apply Replace Control Flag with Break when you see Loops, Long Function. Loops that maintain a boolean to decide when to stop replace it with a direct `break`, `return`, or `continue`.
+---
 
-### Apply: 58 — Replace Control Flag with Break
+# Apply: 58 — Replace Control Flag with Break
 
 **Target state:** Loops that maintain a boolean to decide when to stop replace it with a direct `break`, `return`, or `continue`.
 
@@ -1078,10 +1219,14 @@ for (const p of people) {
 
 **Removes smells:** Loops, Long Function
 
+### Refactoring APIs
 
-## Refactoring APIs
+---
+name: change-function-declaration
+description: Apply Change Function Declaration when you see Mysterious Name, Long Parameter List, Alternative Classes with Different Interfaces. Function names match what they actually do; parameter lists carry only what the function needs, in the order callers expect.
+---
 
-### Apply: 05 — Change Function Declaration
+# Apply: 05 — Change Function Declaration
 
 **Target state:** Function names match what they actually do; parameter lists carry only what the function needs, in the order callers expect.
 
@@ -1104,8 +1249,11 @@ function circumference(radius) {
 **Removes smells:** Mysterious Name, Long Parameter List, Alternative Classes with Different Interfaces
 
 ---
+name: introduce-parameter-object
+description: Apply Introduce Parameter Object when you see Long Parameter List, Data Clumps. Related arguments travel together as one well-named value object that the function (and callers) refer to by name.
+---
 
-### Apply: 08 — Introduce Parameter Object
+# Apply: 08 — Introduce Parameter Object
 
 **Target state:** Related arguments travel together as one well-named value object that the function (and callers) refer to by name.
 
@@ -1129,8 +1277,11 @@ function record(range, value) {
 **Removes smells:** Long Parameter List, Data Clumps
 
 ---
+name: introduce-assertion
+description: Apply Introduce Assertion when you see Comments, Mutable Data. Invariants the code assumes are stated explicitly; readers don't need to deduce them.
+---
 
-### Apply: 26 — Introduce Assertion
+# Apply: 26 — Introduce Assertion
 
 **Target state:** Invariants the code assumes are stated explicitly; readers don't need to deduce them.
 
@@ -1151,8 +1302,11 @@ const tax = base * rate;
 **Removes smells:** Comments, Mutable Data
 
 ---
+name: separate-query-from-modifier
+description: Apply Separate Query from Modifier when you see Mutable Data. Functions either return a value or mutate state, never both — callers can compose them without surprise.
+---
 
-### Apply: 27 — Separate Query from Modifier
+# Apply: 27 — Separate Query from Modifier
 
 **Target state:** Functions either return a value or mutate state, never both — callers can compose them without surprise.
 
@@ -1179,8 +1333,11 @@ function alertMiscreant(people) {
 **Removes smells:** Mutable Data
 
 ---
+name: parameterize-function
+description: Apply Parameterize Function when you see Duplicated Code. Two near-identical functions that differ only in literal values combine into one with a parameter.
+---
 
-### Apply: 28 — Parameterize Function
+# Apply: 28 — Parameterize Function
 
 **Target state:** Two near-identical functions that differ only in literal values combine into one with a parameter.
 
@@ -1200,8 +1357,11 @@ function raise(person, factor) { person.salary *= 1 + factor; }
 **Removes smells:** Duplicated Code
 
 ---
+name: remove-flag-argument
+description: Apply Remove Flag Argument when you see Long Parameter List. Each flag value becomes its own well-named function; callers say what they mean rather than passing booleans.
+---
 
-### Apply: 29 — Remove Flag Argument
+# Apply: 29 — Remove Flag Argument
 
 **Target state:** Each flag value becomes its own well-named function; callers say what they mean rather than passing booleans.
 
@@ -1224,8 +1384,11 @@ function setWidth(value)  { /* ... */ }
 **Removes smells:** Long Parameter List
 
 ---
+name: preserve-whole-object
+description: Apply Preserve Whole Object when you see Long Parameter List, Data Clumps. Instead of pulling several values out of an object to pass them in, pass the object itself.
+---
 
-### Apply: 30 — Preserve Whole Object
+# Apply: 30 — Preserve Whole Object
 
 **Target state:** Instead of pulling several values out of an object to pass them in, pass the object itself.
 
@@ -1244,8 +1407,11 @@ if (range.includes(room)) { /* ... */ }
 **Removes smells:** Long Parameter List, Data Clumps
 
 ---
+name: replace-parameter-with-query
+description: Apply Replace Parameter with Query when you see Long Parameter List. When a function can compute its own answer from already-available state, callers don't have to pre-compute it.
+---
 
-### Apply: 31 — Replace Parameter with Query
+# Apply: 31 — Replace Parameter with Query
 
 **Target state:** When a function can compute its own answer from already-available state, callers don't have to pre-compute it.
 
@@ -1266,8 +1432,11 @@ const final = discounted(order); // computes basePrice and level itself
 **Removes smells:** Long Parameter List
 
 ---
+name: replace-query-with-parameter
+description: Apply Replace Query with Parameter when you see Mutable Data, Insider Trading. A function that reads from a query (global, singleton, instance state) instead accepts the value as a parameter and becomes referentially transparent.
+---
 
-### Apply: 59 — Replace Query with Parameter
+# Apply: 59 — Replace Query with Parameter
 
 **Target state:** A function that reads from a query (global, singleton, instance state) instead accepts the value as a parameter and becomes referentially transparent.
 
@@ -1290,8 +1459,11 @@ function rebate(order, rate) {
 **Removes smells:** Mutable Data, Insider Trading
 
 ---
+name: replace-constructor-with-factory-function
+description: Apply Replace Constructor with Factory Function when you see Primitive Obsession, Speculative Generality. Object creation goes through a named function that can validate, choose subclasses, or return cached instances.
+---
 
-### Apply: 32 — Replace Constructor with Factory Function
+# Apply: 32 — Replace Constructor with Factory Function
 
 **Target state:** Object creation goes through a named function that can validate, choose subclasses, or return cached instances.
 
@@ -1313,8 +1485,11 @@ const employee = createEngineer(name, salary);
 **Removes smells:** Primitive Obsession, Speculative Generality
 
 ---
+name: replace-error-code-with-exception
+description: Apply Replace Error Code with Exception when you see Comments. Numeric or string error codes that callers must remember to check are replaced with exceptions that propagate by default.
+---
 
-### Apply: 60 — Replace Error Code with Exception
+# Apply: 60 — Replace Error Code with Exception
 
 **Target state:** Numeric or string error codes that callers must remember to check are replaced with exceptions that propagate by default.
 
@@ -1340,8 +1515,11 @@ function withdraw(amount) {
 **Removes smells:** Comments
 
 ---
+name: replace-exception-with-precheck
+description: Apply Replace Exception with Precheck when you see Comments. Exceptions used for predictable, checkable conditions become an explicit precheck the caller can perform, leaving exceptions for truly exceptional cases.
+---
 
-### Apply: 61 — Replace Exception with Precheck
+# Apply: 61 — Replace Exception with Precheck
 
 **Target state:** Exceptions used for predictable, checkable conditions become an explicit precheck the caller can perform, leaving exceptions for truly exceptional cases.
 
@@ -1364,10 +1542,14 @@ return amounts[i] / 100;
 
 **Removes smells:** Comments
 
+### Dealing with Inheritance
 
-## Dealing with Inheritance
+---
+name: pull-up-method
+description: Apply Pull Up Method when you see Duplicated Code, Alternative Classes with Different Interfaces. Methods that subclasses implement identically move to the shared superclass.
+---
 
-### Apply: 33 — Pull Up Method
+# Apply: 33 — Pull Up Method
 
 **Target state:** Methods that subclasses implement identically move to the shared superclass.
 
@@ -1389,8 +1571,11 @@ class Engineer extends Employee {}
 **Removes smells:** Duplicated Code, Alternative Classes with Different Interfaces
 
 ---
+name: push-down-method
+description: Apply Push Down Method when you see Refused Bequest, Large Class. Methods used by only one subclass live with that subclass, not on the shared superclass.
+---
 
-### Apply: 34 — Push Down Method
+# Apply: 34 — Push Down Method
 
 **Target state:** Methods used by only one subclass live with that subclass, not on the shared superclass.
 
@@ -1413,8 +1598,11 @@ class Salesperson extends Employee {
 **Removes smells:** Refused Bequest, Large Class
 
 ---
+name: replace-type-code-with-subclasses
+description: Apply Replace Type Code with Subclasses when you see Repeated Switches, Primitive Obsession. A 'kind' string field becomes a real subclass type; the type system enforces the legal set.
+---
 
-### Apply: 35 — Replace Type Code with Subclasses
+# Apply: 35 — Replace Type Code with Subclasses
 
 **Target state:** A 'kind' string field becomes a real subclass type; the type system enforces the legal set.
 
@@ -1437,8 +1625,11 @@ class Manager  extends Employee {}
 **Removes smells:** Repeated Switches, Primitive Obsession
 
 ---
+name: extract-superclass
+description: Apply Extract Superclass when you see Duplicated Code, Alternative Classes with Different Interfaces. Two classes with substantial shared structure get a common parent that owns the shared bits.
+---
 
-### Apply: 36 — Extract Superclass
+# Apply: 36 — Extract Superclass
 
 **Target state:** Two classes with substantial shared structure get a common parent that owns the shared bits.
 
@@ -1460,8 +1651,11 @@ class Department extends Party { budget; }
 **Removes smells:** Duplicated Code, Alternative Classes with Different Interfaces
 
 ---
+name: collapse-hierarchy
+description: Apply Collapse Hierarchy when you see Lazy Element, Speculative Generality. A subclass that no longer differs meaningfully from its parent merges back in.
+---
 
-### Apply: 37 — Collapse Hierarchy
+# Apply: 37 — Collapse Hierarchy
 
 **Target state:** A subclass that no longer differs meaningfully from its parent merges back in.
 
@@ -1481,8 +1675,11 @@ class Employee {}
 **Removes smells:** Lazy Element, Speculative Generality
 
 ---
+name: replace-subclass-with-delegate
+description: Apply Replace Subclass with Delegate when you see Refused Bequest, Insider Trading. Behavior that varied via inheritance now varies via a delegate object that implements the variant interface.
+---
 
-### Apply: 38 — Replace Subclass with Delegate
+# Apply: 38 — Replace Subclass with Delegate
 
 **Target state:** Behavior that varied via inheritance now varies via a delegate object that implements the variant interface.
 
@@ -1507,8 +1704,11 @@ class Booking {
 **Removes smells:** Refused Bequest, Insider Trading
 
 ---
+name: pull-up-constructor-body
+description: Apply Pull Up Constructor Body when you see Duplicated Code. Initialization code repeated across subclass constructors moves into the parent class's constructor and is called via super.
+---
 
-### Apply: 62 — Pull Up Constructor Body
+# Apply: 62 — Pull Up Constructor Body
 
 **Target state:** Initialization code repeated across subclass constructors moves into the parent class's constructor and is called via super.
 
@@ -1532,8 +1732,11 @@ class Engineer extends Employee {}
 **Removes smells:** Duplicated Code
 
 ---
+name: pull-up-field
+description: Apply Pull Up Field when you see Duplicated Code. A field declared identically in two or more subclasses moves to the shared superclass.
+---
 
-### Apply: 63 — Pull Up Field
+# Apply: 63 — Pull Up Field
 
 **Target state:** A field declared identically in two or more subclasses moves to the shared superclass.
 
@@ -1555,8 +1758,11 @@ class Engineer extends Employee {}
 **Removes smells:** Duplicated Code
 
 ---
+name: push-down-field
+description: Apply Push Down Field when you see Refused Bequest, Large Class. A field used by only one subclass moves out of the parent and into that subclass.
+---
 
-### Apply: 64 — Push Down Field
+# Apply: 64 — Push Down Field
 
 **Target state:** A field used by only one subclass moves out of the parent and into that subclass.
 
@@ -1578,8 +1784,11 @@ class Salesperson extends Employee { quota; }
 **Removes smells:** Refused Bequest, Large Class
 
 ---
+name: remove-subclass
+description: Apply Remove Subclass when you see Lazy Element, Speculative Generality. A subclass whose only purpose was to encode a type code or add nothing collapses back into a field on the parent.
+---
 
-### Apply: 65 — Remove Subclass
+# Apply: 65 — Remove Subclass
 
 **Target state:** A subclass whose only purpose was to encode a type code or add nothing collapses back into a field on the parent.
 
@@ -1602,8 +1811,11 @@ class Person {
 **Removes smells:** Lazy Element, Speculative Generality
 
 ---
+name: replace-superclass-with-delegate
+description: Apply Replace Superclass with Delegate when you see Refused Bequest, Insider Trading. Inheritance from a superclass that doesn't really fit (Liskov violations, awkward methods) becomes composition; the former subclass holds an instance and delegates explicitly.
+---
 
-### Apply: 66 — Replace Superclass with Delegate
+# Apply: 66 — Replace Superclass with Delegate
 
 **Target state:** Inheritance from a superclass that doesn't really fit (Liskov violations, awkward methods) becomes composition: the former subclass holds an instance and delegates explicitly.
 
@@ -1626,3 +1838,671 @@ class CategoryItem {
 
 **Removes smells:** Refused Bequest, Insider Trading
 
+---
+
+## Code smells
+
+---
+name: mysterious-name
+description: Refuse Mysterious Name when identifiers that don't reveal intent — names like aFunc(), x, theData, temp, or one-letter loop variables that force every reader to reverse-engineer the code's purpose. Apply Change Function Declaration, Rename Variable.
+---
+
+# Refuse: 01 — Mysterious Name
+
+**Trigger (refuse when you see):** Identifiers that don't reveal intent — names like aFunc(), x, theData, temp, or one-letter loop variables that force every reader to reverse-engineer the code's purpose.
+
+**Cost of leaving it in:** Every reading is a re-comprehension cost; bugs sneak in because what code does diverges from what its name suggests. Compounds in proportion to how many readers (humans + LLMs) touch the file.
+
+**Target shape after refactoring:** Names read as the domain — a function's purpose, a variable's role, a class's responsibility — visible in one glance.
+
+```js
+// Smellier:
+function calc(d, t) {
+  return d * t;
+}
+
+// Fresher:
+function distance(speed, time) {
+  return speed * time;
+}
+```
+
+**Apply refactorings:** Change Function Declaration, Rename Variable, Rename Field
+
+---
+name: duplicated-code
+description: Refuse Duplicated Code when the same code structure appears in two or more places — same shape with cosmetic variations, or copy-paste-modify patterns that drift over time. Apply Extract Function, Slide Statements.
+---
+
+# Refuse: 02 — Duplicated Code
+
+**Trigger (refuse when you see):** The same code structure appears in two or more places — same shape with cosmetic variations, or copy-paste-modify patterns that drift over time.
+
+**Cost of leaving it in:** Bugs need to be fixed in every copy; behavior diverges as copies age, multiplying maintenance cost.
+
+**Target shape after refactoring:** One canonical home per behavior, with parameters for the variations.
+
+```js
+// Smellier:
+function totalUSD(items) {
+  return items.reduce((s, i) => s + i.price * i.qty, 0);
+}
+function totalEUR(items) {
+  return items.reduce((s, i) => s + i.price * i.qty, 0);
+}
+
+// Fresher:
+function lineTotal(items) {
+  return items.reduce((s, i) => s + i.price * i.qty, 0);
+}
+```
+
+**Apply refactorings:** Extract Function, Slide Statements, Pull Up Method
+
+---
+name: long-function
+description: Refuse Long Function when functions whose body has dozens of lines and a mix of concerns — fetching, calculating, formatting, and logging all interwoven. Apply Extract Function, Replace Temp with Query.
+---
+
+# Refuse: 03 — Long Function
+
+**Trigger (refuse when you see):** Functions whose body has dozens of lines and a mix of concerns — fetching, calculating, formatting, and logging all interwoven.
+
+**Cost of leaving it in:** Each line is an opportunity for the reader to lose context; understanding requires holding the whole function in working memory.
+
+**Target shape after refactoring:** Each function reads as a sequence of named single-responsibility steps; nothing does more than its name advertises.
+
+```js
+// Smellier:
+function ship(order) {
+  if (!order.id) throw new Error('missing id');
+  const tax = order.total * 0.1;
+  const grand = order.total + tax;
+  email(order.user, `Total ${grand}`);
+  log(order);
+}
+
+// Fresher:
+function ship(order) {
+  validate(order);
+  const grand = withTax(order);
+  notify(order, grand);
+}
+```
+
+**Apply refactorings:** Extract Function, Replace Temp with Query, Introduce Parameter Object, Preserve Whole Object, Replace Function with Command, Decompose Conditional, Split Loop, Replace Loop with Pipeline, Replace Control Flag with Break
+
+---
+name: long-parameter-list
+description: Refuse Long Parameter List when functions taking five, six, or more parameters — especially when several travel together as a logical group. Apply Replace Parameter with Query, Preserve Whole Object.
+---
+
+# Refuse: 04 — Long Parameter List
+
+**Trigger (refuse when you see):** Functions taking five, six, or more parameters — especially when several travel together as a logical group.
+
+**Cost of leaving it in:** Callers must remember argument order and meaning; refactoring becomes a coordination exercise across every call site.
+
+**Target shape after refactoring:** Related parameters travel together as one well-named value object that the function (and its callers) refer to by domain meaning.
+
+```js
+// Smellier:
+function book(name, email, street, city, zip, depart, arrive, seat) {
+  // ...
+}
+
+// Fresher:
+function book(traveler, address, trip) {
+  // ...
+}
+```
+
+**Apply refactorings:** Replace Parameter with Query, Preserve Whole Object, Introduce Parameter Object, Remove Flag Argument, Combine Functions into Class
+
+---
+name: global-data
+description: Refuse Global Data when module-level variables, singletons, or shared mutable state that any code can read or mutate from anywhere. Apply Encapsulate Variable.
+---
+
+# Refuse: 05 — Global Data
+
+**Trigger (refuse when you see):** Module-level variables, singletons, or shared mutable state that any code can read or mutate from anywhere.
+
+**Cost of leaving it in:** The blast radius of any change is the whole codebase; behavior depends on hidden write order between unrelated callers.
+
+**Target shape after refactoring:** Access goes through a small named function that owns the read/write contract — and ideally narrows it (read-only, validated).
+
+```js
+// Smellier:
+let currentUser = null;
+// ...some files later...
+currentUser = newUser;
+
+// Fresher:
+function setCurrentUser(user) {
+  currentUser = validate(user);
+}
+function getCurrentUser() {
+  return currentUser;
+}
+```
+
+**Apply refactorings:** Encapsulate Variable
+
+---
+name: mutable-data
+description: Refuse Mutable Data when data structures whose fields are reassigned across the codebase, with no clear owner of the mutation. Apply Encapsulate Variable, Split Variable.
+---
+
+# Refuse: 06 — Mutable Data
+
+**Trigger (refuse when you see):** Data structures whose fields are reassigned across the codebase, with no clear owner of the mutation.
+
+**Cost of leaving it in:** Reasoning about state at any moment requires tracing every writer; concurrent code becomes a hazard area.
+
+**Target shape after refactoring:** Mutation happens in one place behind a named function (or returns a new value), so the moment of change is clear.
+
+```js
+// Smellier:
+const order = { total: 100 };
+applyDiscount(order); // mutates total
+addTax(order);        // mutates total
+
+// Fresher:
+const order = { total: 100 };
+const final = addTax(applyDiscount(order));
+```
+
+**Apply refactorings:** Encapsulate Variable, Split Variable, Slide Statements, Extract Function, Separate Query from Modifier, Remove Setting Method, Replace Derived Variable with Query, Combine Functions into Class, Combine Functions into Transform, Change Reference to Value
+
+---
+name: divergent-change
+description: Refuse Divergent Change when one module changes for many unrelated reasons — one part for tax law updates, another for UI changes, another for API shape drift. Apply Split Phase, Move Function.
+---
+
+# Refuse: 07 — Divergent Change
+
+**Trigger (refuse when you see):** One module changes for many unrelated reasons — one part for tax law updates, another for UI changes, another for API shape drift.
+
+**Cost of leaving it in:** Every team's churn lands in the same file; merges become contentious; testing one concern requires understanding all of them.
+
+**Target shape after refactoring:** Each module changes for one reason — the kinds of changes that touch it cluster around a single axis of variation.
+
+```js
+// Smellier:
+function checkout(cart) {
+  const tax = computeTax(cart, jurisdiction); // tax churn
+  const html = renderInvoice(cart, tax);      // UI churn
+  return postToGateway(html);                 // API churn
+}
+
+// Fresher:
+function priced(cart) { return { ...cart, tax: computeTax(cart) }; }
+function rendered(cart) { return renderInvoice(cart); }
+function sent(html)    { return postToGateway(html); }
+```
+
+**Apply refactorings:** Split Phase, Move Function, Extract Function, Extract Class
+
+---
+name: shotgun-surgery
+description: Refuse Shotgun Surgery when a single conceptual change forces edits in many small places — adding a logging field means touching 17 files. Apply Move Function, Move Field.
+---
+
+# Refuse: 08 — Shotgun Surgery
+
+**Trigger (refuse when you see):** A single conceptual change forces edits in many small places — adding a logging field means touching 17 files.
+
+**Cost of leaving it in:** Easy to miss a site; reviewers can't easily verify completeness; small changes feel disproportionately risky.
+
+**Target shape after refactoring:** All code that varies together lives together. Adding a new field is one change in one module.
+
+```js
+// Smellier:
+// Five files each have:
+log(`event=${event}, user=${user}`);
+
+// Fresher:
+// One file:
+function logEvent({ event, user }) {
+  // one place to evolve
+}
+```
+
+**Apply refactorings:** Move Function, Move Field, Combine Functions into Class, Combine Functions into Transform, Split Phase, Inline Function, Inline Class
+
+---
+name: feature-envy
+description: Refuse Feature Envy when a method on class A reaches deeply into class B's data via getters, then computes something B should compute. Apply Move Function, Extract Function.
+---
+
+# Refuse: 09 — Feature Envy
+
+**Trigger (refuse when you see):** A method on class A reaches deeply into class B's data via getters, then computes something B should compute.
+
+**Cost of leaving it in:** Domain logic lives where it's least expected; B's internals leak through public surfaces just to support A's method.
+
+**Target shape after refactoring:** Methods live with the data they care about — B owns the logic over B's fields.
+
+```js
+// Smellier:
+class Order {
+  totalWeight() {
+    return this.items.reduce((s, i) => s + i.unitWeight * i.qty, 0);
+  }
+}
+
+// Fresher:
+class Item  { weight()      { return this.unitWeight * this.qty; } }
+class Order { totalWeight() { return this.items.reduce((s, i) => s + i.weight(), 0); } }
+```
+
+**Apply refactorings:** Move Function, Extract Function
+
+---
+name: data-clumps
+description: Refuse Data Clumps when the same group of fields travels together everywhere — (street, city, zip), (start, end), (firstName, lastName) — appearing as parameters, fields, or method args. Apply Extract Class, Introduce Parameter Object.
+---
+
+# Refuse: 10 — Data Clumps
+
+**Trigger (refuse when you see):** The same group of fields travels together everywhere — (street, city, zip), (start, end), (firstName, lastName) — appearing as parameters, fields, or method args.
+
+**Cost of leaving it in:** Adding or removing a field of the clump means touching every site; the clump's identity is invisible.
+
+**Target shape after refactoring:** The clump becomes a value object with its own name and its own behavior.
+
+```js
+// Smellier:
+function send(name, email, street, city, zip) {
+  // ...
+}
+
+// Fresher:
+class Address { /* street, city, zip */ }
+function send(name, email, address) {
+  // ...
+}
+```
+
+**Apply refactorings:** Extract Class, Introduce Parameter Object, Preserve Whole Object
+
+---
+name: primitive-obsession
+description: Refuse Primitive Obsession when domain concepts represented as raw strings, numbers, or booleans — phone number is a string, money is a number, status is a code. Apply Replace Primitive with Object, Replace Type Code with Subclasses.
+---
+
+# Refuse: 11 — Primitive Obsession
+
+**Trigger (refuse when you see):** Domain concepts represented as raw strings, numbers, or booleans — phone number is a string, money is a number, status is a code.
+
+**Cost of leaving it in:** Validation and formatting scatter across every consumer; the type system can't catch wrong primitives in the wrong slot.
+
+**Target shape after refactoring:** Each domain concept has a small typed home — Money, PhoneNumber, OrderId, Status — that knows its rules.
+
+```js
+// Smellier:
+function priceFor(cents, currency) {
+  // ...
+}
+
+// Fresher:
+class Money { /* amount + currency, with arithmetic */ }
+function priceFor(money) {
+  // ...
+}
+```
+
+**Apply refactorings:** Replace Primitive with Object, Replace Type Code with Subclasses, Replace Conditional with Polymorphism, Extract Class, Introduce Parameter Object
+
+---
+name: repeated-switches
+description: Refuse Repeated Switches when the same switch (or if/else chain) over a type code appears in multiple places — adding a new case means hunting them all down. Apply Replace Conditional with Polymorphism.
+---
+
+# Refuse: 12 — Repeated Switches
+
+**Trigger (refuse when you see):** The same switch (or if/else chain) over a type code appears in multiple places — adding a new case means hunting them all down.
+
+**Cost of leaving it in:** Dispatch logic is duplicated across the codebase; new cases are easy to miss; the type-code couple amplifies.
+
+**Target shape after refactoring:** Each case is a class implementing a shared interface; dispatch happens once via a virtual call.
+
+```js
+// Smellier:
+switch (event.kind) {
+  case 'click': return onClick(event);
+  case 'key':   return onKey(event);
+  case 'drag':  return onDrag(event);
+}
+
+// Fresher:
+event.handle(); // ClickEvent, KeyEvent, DragEvent each implement handle()
+```
+
+**Apply refactorings:** Replace Conditional with Polymorphism
+
+---
+name: loops
+description: Refuse Loops when imperative for/while loops obscuring what the loop is producing — filter, map, reduce mixed together by hand. Apply Replace Loop with Pipeline.
+---
+
+# Refuse: 13 — Loops
+
+**Trigger (refuse when you see):** Imperative for/while loops obscuring what the loop is producing — filter, map, reduce mixed together by hand.
+
+**Cost of leaving it in:** Reader must mentally execute the loop to learn the result; off-by-one errors and accumulator bugs hide in the body.
+
+**Target shape after refactoring:** The transformation reads as a sequence of named operations: filter, map, reduce.
+
+```js
+// Smellier:
+const seniors = [];
+for (const u of users) {
+  if (u.age >= 65) seniors.push(u.name);
+}
+
+// Fresher:
+const seniors = users
+  .filter(u => u.age >= 65)
+  .map(u => u.name);
+```
+
+**Apply refactorings:** Replace Loop with Pipeline
+
+---
+name: lazy-element
+description: Refuse Lazy Element when a class, function, or namespace that exists but does nothing meaningful — a one-line wrapper, an empty subclass, a passthrough method. Apply Inline Function, Inline Class.
+---
+
+# Refuse: 14 — Lazy Element
+
+**Trigger (refuse when you see):** A class, function, or namespace that exists but does nothing meaningful — a one-line wrapper, an empty subclass, a passthrough method.
+
+**Cost of leaving it in:** Reader pays a navigation cost to discover the wrapper adds nothing; future changes are tempted to add real work to it.
+
+**Target shape after refactoring:** Trivial wrappers disappear; the call site says exactly what's happening.
+
+```js
+// Smellier:
+function getName(user) {
+  return user.name;
+}
+const n = getName(user);
+
+// Fresher:
+const n = user.name;
+```
+
+**Apply refactorings:** Inline Function, Inline Class, Collapse Hierarchy
+
+---
+name: speculative-generality
+description: Refuse Speculative Generality when hooks, abstract base classes, configuration knobs, and parameters added 'in case we need them' — but no real call site uses them. Apply Collapse Hierarchy, Inline Function.
+---
+
+# Refuse: 15 — Speculative Generality
+
+**Trigger (refuse when you see):** Hooks, abstract base classes, configuration knobs, and parameters added 'in case we need them' — but no real call site uses them.
+
+**Cost of leaving it in:** Tests are forced to cover branches no one exercises; readers learn a vocabulary they don't need; YAGNI debt compounds.
+
+**Target shape after refactoring:** The code expresses exactly what it does today — abstraction earns its keep when a real second user shows up.
+
+```js
+// Smellier:
+class Strategy { execute() {} }
+class OnlyStrategy extends Strategy { execute() { /* the real one */ } }
+new OnlyStrategy().execute();
+
+// Fresher:
+function execute() {
+  // the real one
+}
+execute();
+```
+
+**Apply refactorings:** Collapse Hierarchy, Inline Function, Inline Class, Change Function Declaration, Remove Dead Code
+
+---
+name: temporary-field
+description: Refuse Temporary Field when a class field used by only one method, set to null or default the rest of the time. Apply Extract Class, Move Function.
+---
+
+# Refuse: 16 — Temporary Field
+
+**Trigger (refuse when you see):** A class field used by only one method, set to null or default the rest of the time.
+
+**Cost of leaving it in:** Reader must trace the conditions under which the field is meaningful; null-checks scatter; the field's role is unclear.
+
+**Target shape after refactoring:** The temporary state moves to a dedicated class that exists only when it's relevant.
+
+```js
+// Smellier:
+class Order {
+  shippingTrack = null;
+  ship() {
+    this.shippingTrack = computeTrack();
+  }
+}
+
+// Fresher:
+class Order    { ship() { return new Shipment(this); } }
+class Shipment { /* owns the track */ }
+```
+
+**Apply refactorings:** Extract Class, Move Function, Introduce Special Case
+
+---
+name: message-chains
+description: Refuse Message Chains when long dotted access paths; a.b.c.d.e — every callsite walks the entire object graph. Apply Hide Delegate, Extract Function.
+---
+
+# Refuse: 17 — Message Chains
+
+**Trigger (refuse when you see):** Long dotted access paths: a.b.c.d.e — every callsite walks the entire object graph.
+
+**Cost of leaving it in:** Every link in the chain is a coupling point; renaming any intermediate field breaks every consumer.
+
+**Target shape after refactoring:** Callers ask the closest object for what they want; the object delegates internally.
+
+```js
+// Smellier:
+const street = order.customer.address.street;
+
+// Fresher:
+const street = order.customerStreet();
+```
+
+**Apply refactorings:** Hide Delegate, Extract Function, Move Function
+
+---
+name: middle-man
+description: Refuse Middle Man when a class whose methods all delegate straight through to another object — no decisions, no transformations. Apply Remove Middle Man, Inline Function.
+---
+
+# Refuse: 18 — Middle Man
+
+**Trigger (refuse when you see):** A class whose methods all delegate straight through to another object — no decisions, no transformations.
+
+**Cost of leaving it in:** An entire layer of indirection that adds no value; readers must follow every call to the real implementation.
+
+**Target shape after refactoring:** Callers talk directly to the real object; trivial passthroughs are deleted.
+
+```js
+// Smellier:
+class Manager {
+  reports() {
+    return this.team.members();
+  }
+}
+
+// Fresher:
+// Expose team directly when the wrapper adds nothing.
+manager.team.members();
+```
+
+**Apply refactorings:** Remove Middle Man, Inline Function, Replace Superclass with Delegate, Replace Subclass with Delegate
+
+---
+name: insider-trading
+description: Refuse Insider Trading when modules reach into each other's internals to coordinate behavior, bypassing public interfaces. Apply Move Function, Move Field.
+---
+
+# Refuse: 19 — Insider Trading
+
+**Trigger (refuse when you see):** Modules reach into each other's internals to coordinate behavior, bypassing public interfaces.
+
+**Cost of leaving it in:** Coupling at the implementation level — refactoring one breaks the other in non-obvious ways.
+
+**Target shape after refactoring:** Cooperation happens through narrow, explicit interfaces; secrets stay secret.
+
+```js
+// Smellier:
+class A { _data; }
+class B {
+  read(a) {
+    return a._data.value;
+  }
+}
+
+// Fresher:
+class A { value() { return this._data.value; } }
+class B { read(a) { return a.value(); } }
+```
+
+**Apply refactorings:** Move Function, Move Field, Hide Delegate, Replace Subclass with Delegate, Replace Superclass with Delegate
+
+---
+name: large-class
+description: Refuse Large Class when a class with too many fields and methods — multiple unrelated responsibilities under one type. Apply Extract Class, Extract Superclass.
+---
+
+# Refuse: 20 — Large Class
+
+**Trigger (refuse when you see):** A class with too many fields and methods — multiple unrelated responsibilities under one type.
+
+**Cost of leaving it in:** Cognitive load: every reader pays for fields they don't care about; merge conflicts spike; testing is unfocused.
+
+**Target shape after refactoring:** Each class has one cohesive purpose; methods cluster around fields they actually use.
+
+```js
+// Smellier:
+class Order {
+  // lineItems, totals, customer info, shipping address, audit log, ...
+}
+
+// Fresher:
+class Order    { /* lineItems, totals */ }
+class Customer { /* name, email */ }
+class Shipping { /* address, track */ }
+```
+
+**Apply refactorings:** Extract Class, Extract Superclass, Replace Type Code with Subclasses
+
+---
+name: alternative-classes-with-different-interfaces
+description: Refuse Alternative Classes with Different Interfaces when two classes do similar things but with mismatched method names and signatures — sortBy() vs orderUsing(), valueOf() vs evaluate(). Apply Change Function Declaration, Move Function.
+---
+
+# Refuse: 21 — Alternative Classes with Different Interfaces
+
+**Trigger (refuse when you see):** Two classes do similar things but with mismatched method names and signatures — sortBy() vs orderUsing(), valueOf() vs evaluate().
+
+**Cost of leaving it in:** Substitution becomes copy-paste; consumers can't treat the two interchangeably; abstraction over them is impossible.
+
+**Target shape after refactoring:** Equivalent operations have equivalent signatures; a shared superclass or interface emerges naturally.
+
+```js
+// Smellier:
+class CSVExporter  { writeAll(rows) {} }
+class JSONExporter { dump(data)     {} }
+
+// Fresher:
+class CSVExporter  implements Exporter { write(rows) {} }
+class JSONExporter implements Exporter { write(rows) {} }
+```
+
+**Apply refactorings:** Change Function Declaration, Move Function, Extract Superclass
+
+---
+name: data-class
+description: Refuse Data Class when a class that holds fields with getters and setters but no behavior — and consumers do all the operations on it externally. Apply Encapsulate Record, Remove Setting Method.
+---
+
+# Refuse: 22 — Data Class
+
+**Trigger (refuse when you see):** A class that holds fields with getters and setters but no behavior — and consumers do all the operations on it externally.
+
+**Cost of leaving it in:** Domain logic gets scattered to consumers; the class's data invariants aren't enforced; encapsulation is theater.
+
+**Target shape after refactoring:** Behavior that belongs with the data lives on the class; the class becomes a real domain object.
+
+```js
+// Smellier:
+class Address { street; city; zip; }
+function format(a) {
+  return `${a.street}, ${a.city} ${a.zip}`;
+}
+
+// Fresher:
+class Address {
+  format() {
+    return `${this.street}, ${this.city} ${this.zip}`;
+  }
+}
+```
+
+**Apply refactorings:** Encapsulate Record, Remove Setting Method, Move Function, Extract Function, Split Phase
+
+---
+name: refused-bequest
+description: Refuse Refused Bequest when a subclass inherits methods or fields it doesn't actually use — overriding to no-ops, throwing 'unsupported', or just ignoring the inheritance. Apply Push Down Method, Push Down Field.
+---
+
+# Refuse: 23 — Refused Bequest
+
+**Trigger (refuse when you see):** A subclass inherits methods or fields it doesn't actually use — overriding to no-ops, throwing 'unsupported', or just ignoring the inheritance.
+
+**Cost of leaving it in:** Liskov violations: callers can't trust subclass instances to honor the parent contract; polymorphism becomes a trap.
+
+**Target shape after refactoring:** Sharing happens through composition (a delegate object) rather than forced inheritance.
+
+```js
+// Smellier:
+class Animal { fly() {} swim() {} }
+class Dog extends Animal {
+  fly() { throw new Error('no'); }
+}
+
+// Fresher:
+class Dog {
+  // composes a Mover delegate that knows it's a swimmer
+}
+```
+
+**Apply refactorings:** Push Down Method, Push Down Field, Replace Subclass with Delegate, Replace Superclass with Delegate
+
+---
+name: comments
+description: Refuse Comments when comments explaining what the next block of code does, what a function returns, or how a parameter is meant to be used. Apply Extract Function, Change Function Declaration.
+---
+
+# Refuse: 24 — Comments
+
+**Trigger (refuse when you see):** Comments explaining what the next block of code does, what a function returns, or how a parameter is meant to be used.
+
+**Cost of leaving it in:** The code didn't reveal its intent — the comment is patching an unnamed function or unclear variable; comment and code drift over time.
+
+**Target shape after refactoring:** Names of functions, variables, and types tell the reader what the comment was trying to say. Comments survive only when WHY is non-obvious.
+
+```js
+// Smellier:
+// charge the customer's stored payment method, including tax
+charge(c, t * 1.1);
+
+// Fresher:
+chargeWithTax(customer, total);
+```
+
+**Apply refactorings:** Extract Function, Change Function Declaration, Introduce Assertion

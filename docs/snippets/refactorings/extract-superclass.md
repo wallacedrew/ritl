@@ -1,4 +1,9 @@
-### Apply: 36 — Extract Superclass
+---
+name: extract-superclass
+description: Apply Extract Superclass when you see Duplicated Code, Alternative Classes with Different Interfaces. Two classes with substantial shared structure get a common parent that owns the shared bits.
+---
+
+# Apply: 36 — Extract Superclass
 
 **Target state:** Two classes with substantial shared structure get a common parent that owns the shared bits.
 

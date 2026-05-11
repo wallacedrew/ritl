@@ -1,4 +1,9 @@
-### Apply: 51 — Substitute Algorithm
+---
+name: substitute-algorithm
+description: Apply Substitute Algorithm when you see Long Function, Loops. An opaque or convoluted algorithm gets replaced by a clearer one (often from a library or well-known pattern) that produces the same outputs.
+---
+
+# Apply: 51 — Substitute Algorithm
 
 **Target state:** An opaque or convoluted algorithm gets replaced by a clearer one (often from a library or well-known pattern) that produces the same outputs.
 

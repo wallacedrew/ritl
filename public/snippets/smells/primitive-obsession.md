@@ -1,4 +1,9 @@
-### Refuse: 11 — Primitive Obsession
+---
+name: primitive-obsession
+description: Refuse Primitive Obsession when domain concepts represented as raw strings, numbers, or booleans — phone number is a string, money is a number, status is a code. Apply Replace Primitive with Object, Replace Type Code with Subclasses.
+---
+
+# Refuse: 11 — Primitive Obsession
 
 **Trigger (refuse when you see):** Domain concepts represented as raw strings, numbers, or booleans — phone number is a string, money is a number, status is a code.
 

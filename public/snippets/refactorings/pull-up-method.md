@@ -1,4 +1,9 @@
-### Apply: 33 — Pull Up Method
+---
+name: pull-up-method
+description: Apply Pull Up Method when you see Duplicated Code, Alternative Classes with Different Interfaces. Methods that subclasses implement identically move to the shared superclass.
+---
+
+# Apply: 33 — Pull Up Method
 
 **Target state:** Methods that subclasses implement identically move to the shared superclass.
 

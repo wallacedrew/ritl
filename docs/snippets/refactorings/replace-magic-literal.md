@@ -1,4 +1,9 @@
-### Apply: 43 — Replace Magic Literal
+---
+name: replace-magic-literal
+description: Apply Replace Magic Literal when you see Mysterious Name, Comments. Bare numbers and strings that encode domain concepts become named constants whose name says what the value represents.
+---
+
+# Apply: 43 — Replace Magic Literal
 
 **Target state:** Bare numbers and strings that encode domain concepts become named constants whose name says what the value represents.
 

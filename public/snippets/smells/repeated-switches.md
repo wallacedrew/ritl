@@ -1,4 +1,9 @@
-### Refuse: 12 — Repeated Switches
+---
+name: repeated-switches
+description: Refuse Repeated Switches when the same switch (or if/else chain) over a type code appears in multiple places — adding a new case means hunting them all down. Apply Replace Conditional with Polymorphism.
+---
+
+# Refuse: 12 — Repeated Switches
 
 **Trigger (refuse when you see):** The same switch (or if/else chain) over a type code appears in multiple places — adding a new case means hunting them all down.
 

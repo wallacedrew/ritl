@@ -1,4 +1,9 @@
-### Apply: 62 — Pull Up Constructor Body
+---
+name: pull-up-constructor-body
+description: Apply Pull Up Constructor Body when you see Duplicated Code. Initialization code repeated across subclass constructors moves into the parent class's constructor and is called via super.
+---
+
+# Apply: 62 — Pull Up Constructor Body
 
 **Target state:** Initialization code repeated across subclass constructors moves into the parent class's constructor and is called via super.
 

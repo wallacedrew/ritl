@@ -1,4 +1,9 @@
-### Refuse: 20 — Large Class
+---
+name: large-class
+description: Refuse Large Class when a class with too many fields and methods — multiple unrelated responsibilities under one type. Apply Extract Class, Extract Superclass.
+---
+
+# Refuse: 20 — Large Class
 
 **Trigger (refuse when you see):** A class with too many fields and methods — multiple unrelated responsibilities under one type.
 

@@ -1,4 +1,9 @@
-### Apply: 50 — Return Modified Value
+---
+name: return-modified-value
+description: Apply Return Modified Value when you see Mutable Data. Instead of mutating a parameter in place, the function returns the modified value so the caller reassigns.
+---
+
+# Apply: 50 — Return Modified Value
 
 **Target state:** Instead of mutating a parameter in place, the function returns the modified value so the caller reassigns.
 

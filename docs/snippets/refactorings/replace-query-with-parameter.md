@@ -1,4 +1,9 @@
-### Apply: 59 — Replace Query with Parameter
+---
+name: replace-query-with-parameter
+description: Apply Replace Query with Parameter when you see Mutable Data, Insider Trading. A function that reads from a query (global, singleton, instance state) instead accepts the value as a parameter and becomes referentially transparent.
+---
+
+# Apply: 59 — Replace Query with Parameter
 
 **Target state:** A function that reads from a query (global, singleton, instance state) instead accepts the value as a parameter and becomes referentially transparent.
 

@@ -1,4 +1,9 @@
-### Apply: 16 — Replace Loop with Pipeline
+---
+name: replace-loop-with-pipeline
+description: Apply Replace Loop with Pipeline when you see Loops. Filter / map / reduce expresses the transformation as a sequence of named operations; intent jumps off the page.
+---
+
+# Apply: 16 — Replace Loop with Pipeline
 
 **Target state:** Filter / map / reduce expresses the transformation as a sequence of named operations; intent jumps off the page.
 

@@ -1,4 +1,9 @@
-### Refuse: 09 — Feature Envy
+---
+name: feature-envy
+description: Refuse Feature Envy when a method on class A reaches deeply into class B's data via getters, then computes something B should compute. Apply Move Function, Extract Function.
+---
+
+# Refuse: 09 — Feature Envy
 
 **Trigger (refuse when you see):** A method on class A reaches deeply into class B's data via getters, then computes something B should compute.
 

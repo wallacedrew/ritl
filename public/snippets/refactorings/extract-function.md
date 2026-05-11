@@ -1,4 +1,9 @@
-### Apply: 01 — Extract Function
+---
+name: extract-function
+description: Apply Extract Function when you see Long Function, Duplicated Code, Comments. Each function reads as a single named domain step — what it does, not how.
+---
+
+# Apply: 01 — Extract Function
 
 **Target state:** Each function reads as a single named domain step — what it does, not how.
 

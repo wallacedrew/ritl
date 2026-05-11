@@ -10,19 +10,9 @@ interface SnippetDownload {
 
 const SNIPPETS: readonly SnippetDownload[] = [
   {
-    href: "/snippets/refactorings.md",
-    label: "refactorings.md",
-    hint: "66 patterns to apply",
-  },
-  {
-    href: "/snippets/smells.md",
-    label: "smells.md",
-    hint: "24 patterns to refuse",
-  },
-  {
-    href: "/snippets/refactoring_catalog.md",
-    label: "refactoring_catalog.md",
-    hint: "single-paste digest",
+    href: "/snippets/refactoring-catalog.md",
+    label: "refactoring-catalog.md",
+    hint: "90 SKILL.md sections in one paste",
   },
 ];
 

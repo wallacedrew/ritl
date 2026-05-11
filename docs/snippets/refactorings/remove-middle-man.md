@@ -1,4 +1,9 @@
-### Apply: 42 — Remove Middle Man
+---
+name: remove-middle-man
+description: Apply Remove Middle Man when you see Middle Man. Callers talk directly to the real object; trivial passthroughs are deleted.
+---
+
+# Apply: 42 — Remove Middle Man
 
 **Target state:** Callers talk directly to the real object; trivial passthroughs are deleted.
 
