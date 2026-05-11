@@ -11,8 +11,6 @@ describe("user browses the smells list", () => {
     expect(screen.getByRole("heading", { name: "Mysterious Name" })).toBeInTheDocument();
     expect(screen.getByText(/identifiers that don.{0,3}t reveal intent/i)).toBeInTheDocument();
 
-    expect(
-      screen.getByRole("button", { name: /preview all 24 snippets for AGENTS\.md/i }),
-    ).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /smells\.md/i })).toBeInTheDocument();
   });
 });

@@ -24,7 +24,8 @@ export default function SmellsPage() {
           </Typography>
           <SnippetPreviewButton
             href="/snippets/smells.md"
-            label="Preview all 24 snippets for AGENTS.md"
+            label="smells.md"
+            hint="24 patterns to refuse"
           />
         </Stack>
         <SmellList items={items} />

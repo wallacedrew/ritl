@@ -26,7 +26,8 @@ export default function RefactoringsPage() {
           </Typography>
           <SnippetPreviewButton
             href="/snippets/refactorings.md"
-            label="Preview all 66 snippets for AGENTS.md"
+            label="refactorings.md"
+            hint="66 patterns to apply"
           />
         </Stack>
         <RefactoringList items={items} />
