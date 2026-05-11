@@ -42,11 +42,11 @@ export default function SmellDetail({ smell, number }: SmellDetailProps) {
         <SmellSection label="Goal" body={smell.goal} />
         <Stack spacing={2}>
           <Typography variant="overline" color="text.secondary">
-            Before the refactoring
+            Smellier version
           </Typography>
           <CodeBlock code={smell.before} />
           <Typography variant="overline" color="text.secondary">
-            After the refactoring
+            Fresher version
           </Typography>
           <CodeBlock code={smell.after} />
         </Stack>
