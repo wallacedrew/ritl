@@ -7,7 +7,7 @@ const sharedTypography = {
 export const darkTheme = createTheme({
   palette: {
     mode: "dark",
-    primary: { main: "#67e8f9" },
+    primary: { main: "#ef4444" },
     background: {
       default: "#09090b",
       paper: "#18181b",
@@ -23,7 +23,7 @@ export const darkTheme = createTheme({
 export const lightTheme = createTheme({
   palette: {
     mode: "light",
-    primary: { main: "#0891b2" },
+    primary: { main: "#dc2626" },
     background: {
       default: "#fafafa",
       paper: "#ffffff",
