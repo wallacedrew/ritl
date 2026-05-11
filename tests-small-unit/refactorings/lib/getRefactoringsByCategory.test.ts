@@ -17,13 +17,14 @@ describe("getRefactoringsByCategory", () => {
     const groups = getRefactoringsByCategory();
 
     expect(groups.map((g) => g.category)).toEqual([
+      "Basic Refactorings",
       "Composing Methods",
       "Encapsulation",
       "Moving Features",
       "Organizing Data",
       "Simplifying Conditional Logic",
       "Refactoring APIs",
-      "Inheritance",
+      "Dealing with Inheritance",
     ]);
   });
 

@@ -5,11 +5,11 @@ import { renderWithTheme } from "../../tests-small-unit/_helpers/renderWithTheme
 import HomePage from "@/home/HomePage";
 
 describe("user reads the reference view at the home page", () => {
-  it("shows catalog stats — 24 smells, 42 refactorings", () => {
+  it("shows catalog stats — 24 smells, 66 refactorings", () => {
     renderWithTheme(<HomePage />);
 
     expect(screen.getByText("24")).toBeInTheDocument();
-    expect(screen.getByText("42")).toBeInTheDocument();
+    expect(screen.getByText("66")).toBeInTheDocument();
     expect(screen.getAllByText(/smells/i).length).toBeGreaterThanOrEqual(1);
     expect(screen.getAllByText(/refactorings/i).length).toBeGreaterThanOrEqual(1);
   });

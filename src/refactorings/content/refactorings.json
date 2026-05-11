@@ -380,5 +380,221 @@
     "savings": "Fewer files, shorter call stacks, the implementation's location is obvious.",
     "before": "class Manager {\n  reports() { return this.team.members(); }\n}",
     "after": "// Expose team directly when the wrapper adds nothing.\nmanager.team.members();"
+  },
+  {
+    "name": "Replace Magic Literal",
+    "solves": ["Mysterious Name", "Comments"],
+    "risk": "Naming every literal can drown the file in trivia — only name literals that carry domain meaning the surrounding code can't speak.",
+    "goal": "Bare numbers and strings that encode domain concepts become named constants whose name says what the value represents.",
+    "savings": "Searches by domain term find every callsite; changing the value is one edit; the constant invites code-side documentation when it's truly load-bearing.",
+    "before": "function trip(distance) {\n  return distance * 1.609;\n}",
+    "after": "const KM_PER_MILE = 1.609;\nfunction trip(distance) {\n  return distance * KM_PER_MILE;\n}"
+  },
+  {
+    "name": "Move Statements into Function",
+    "solves": ["Duplicated Code"],
+    "risk": "If the moved statements aren't always wanted, the function grows a flag argument — verify every caller really needs the moved behavior.",
+    "goal": "Setup or follow-up that happens around every call to a function moves inside the function, so the caller's contract shrinks.",
+    "savings": "One fewer thing to remember at the call site; consistency is enforced by the function's definition, not by convention.",
+    "before": "log('start fetch');\nconst data  = fetch(url);\nlog('start fetch');\nconst data2 = fetch(url2);",
+    "after": "function fetchLogged(url) {\n  log('start fetch');\n  return fetch(url);\n}"
+  },
+  {
+    "name": "Move Statements to Callers",
+    "solves": ["Divergent Change"],
+    "risk": "If most callers want the moved statements, you've created duplication — the inverse of Move Statements into Function is only an improvement when callers genuinely differ.",
+    "goal": "Statements that vary by caller move out of the function so each caller chooses its own setup or follow-up.",
+    "savings": "The function's body becomes about its single responsibility; callers express their differences directly.",
+    "before": "function emit(line) {\n  log.write(line);\n  metrics.tick();\n}",
+    "after": "function emit(line) { log.write(line); }\nemit('startup');\nmetrics.tick();"
+  },
+  {
+    "name": "Replace Inline Code with Function Call",
+    "solves": ["Duplicated Code"],
+    "risk": "If the existing function's name doesn't quite match the local intent, the call site reads as a near-miss; consider Change Function Declaration first.",
+    "goal": "When inline code reproduces what a named function already does, the inline copy is replaced by a call.",
+    "savings": "One canonical implementation; the name labels the intent; future improvements to the function reach every site that used to inline.",
+    "before": "const inRange = candidate >= low && candidate <= high;",
+    "after": "const inRange = between(candidate, low, high);"
+  },
+  {
+    "name": "Replace Temp with Query",
+    "solves": ["Long Function", "Mutable Data"],
+    "risk": "If the temp wraps an expensive calculation called many times, naive replacement may multiply cost — measure or cache before deciding.",
+    "goal": "A local variable assigned once from a computation becomes a function that returns that computation on demand.",
+    "savings": "Extract Function becomes easier (the query has a name and stable scope); the temp's lifetime no longer constrains how the surrounding function is split.",
+    "before": "function bill() {\n  const basePrice = qty * itemPrice;\n  if (basePrice > 1000) return basePrice * 0.95;\n  return basePrice;\n}",
+    "after": "function bill() {\n  if (basePrice() > 1000) return basePrice() * 0.95;\n  return basePrice();\n}\nfunction basePrice() { return qty * itemPrice; }"
+  },
+  {
+    "name": "Replace Function with Command",
+    "solves": ["Long Function"],
+    "risk": "Promoting a function to a command adds ceremony (constructor, method calls). Only worth it when the function genuinely needs its own intermediate state or multiple entry points.",
+    "goal": "A function with rich internal state becomes an object whose methods can share that state — easier to extract, name, and test in pieces.",
+    "savings": "Long sequences become labeled steps; tests target each step on the command; subclasses or strategies can vary parts of the algorithm.",
+    "before": "function score(c) {\n  // fifty lines using ten locals\n}",
+    "after": "class Scorer {\n  constructor(c) { /* fields */ }\n  execute()      { return this.compose(); }\n  // named private steps\n}"
+  },
+  {
+    "name": "Replace Command with Function",
+    "solves": ["Speculative Generality", "Lazy Element"],
+    "risk": "If the command holds genuinely useful intermediate state, flattening to a function regrows the temps it eliminated — confirm there's no real reuse first.",
+    "goal": "A command object whose execute() does everything in one shot collapses back to a plain function.",
+    "savings": "Fewer files, fewer constructors, less indirection — the caller sees one function instead of build-then-execute.",
+    "before": "class ChargeCalculator {\n  constructor(c, o) { this.c = c; this.o = o; }\n  execute() { return this.c.base + this.o.tax; }\n}\nnew ChargeCalculator(c, o).execute();",
+    "after": "function charge(c, o) { return c.base + o.tax; }\ncharge(c, o);"
+  },
+  {
+    "name": "Return Modified Value",
+    "solves": ["Mutable Data"],
+    "risk": "Callers must remember to capture the returned value; if any forget, they keep the unmodified original. Mark the parameter readonly so the type system helps.",
+    "goal": "Instead of mutating a parameter in place, the function returns the modified value so the caller reassigns.",
+    "savings": "Side effects on inputs disappear; the function reads as a transformation; equality and snapshotting become possible.",
+    "before": "function addTax(order) {\n  order.total *= 1.1;\n}\naddTax(order);",
+    "after": "function withTax(order) {\n  return { ...order, total: order.total * 1.1 };\n}\norder = withTax(order);"
+  },
+  {
+    "name": "Substitute Algorithm",
+    "solves": ["Long Function", "Loops"],
+    "risk": "Swapping algorithms wholesale forfeits behavioral safety — characterize the function with tests at every input boundary you care about before substituting.",
+    "goal": "An opaque or convoluted algorithm gets replaced by a clearer one (often from a library or well-known pattern) that produces the same outputs.",
+    "savings": "Future maintainers read the well-known pattern instead of decoding the bespoke implementation; performance and correctness usually improve.",
+    "before": "function found(people, n) {\n  for (const p of people) if (p.name === n) return p;\n  return null;\n}",
+    "after": "function found(people, n) {\n  return people.find(p => p.name === n) ?? null;\n}"
+  },
+  {
+    "name": "Encapsulate Collection",
+    "solves": ["Mutable Data", "Insider Trading"],
+    "risk": "Returning a shallow copy on every read can hide bugs where callers expected mutation to be reflected — be explicit about the contract.",
+    "goal": "A class's internal collection is never returned directly; callers add or remove via methods on the class, and reads return a snapshot or iterator.",
+    "savings": "The owner can enforce invariants (uniqueness, ordering, max size); refactoring the collection's internal shape is local.",
+    "before": "class Person {\n  courses;\n  getCourses() { return this.courses; }\n}",
+    "after": "class Person {\n  #courses = [];\n  courses()       { return [...this.#courses]; }\n  enroll(course)  { this.#courses.push(course); }\n  drop(course)    { this.#courses = this.#courses.filter(c => c !== course); }\n}"
+  },
+  {
+    "name": "Encapsulate Record",
+    "solves": ["Data Class", "Primitive Obsession"],
+    "risk": "Wrapping every record adds ceremony — only worth it when behavior or validation will accrete around the data.",
+    "goal": "A bare record (plain object with public fields) becomes a class whose properties are accessed through methods that can validate, log, or derive.",
+    "savings": "Field renames stay internal; invariants can be enforced on every read or write; the record becomes a real domain object.",
+    "before": "const org = { name: 'Acme', country: 'US' };\nconsole.log(org.name);",
+    "after": "class Org {\n  constructor({ name, country }) { this._name = name; this._country = country; }\n  name()    { return this._name; }\n  country() { return this._country; }\n}\nconsole.log(new Org(org).name());"
+  },
+  {
+    "name": "Remove Setting Method",
+    "solves": ["Mutable Data", "Data Class"],
+    "risk": "Removing a setter forces every legitimate update through a more meaningful method — verify there's a domain action behind every setter call before deleting it.",
+    "goal": "Fields whose values should only be set at construction lose their setters; callers either construct a new object or call a domain method that changes the field as a side effect of doing real work.",
+    "savings": "Immutable-by-default classes; bugs from late mutation vanish; the API expresses what users can actually do.",
+    "before": "class Person {\n  setName(n) { this._name = n; }\n}",
+    "after": "class Person {\n  constructor(name) { this._name = name; }\n  name() { return this._name; }\n}"
+  },
+  {
+    "name": "Inline Class",
+    "solves": ["Lazy Element", "Speculative Generality"],
+    "risk": "If the absorbing class was already large, inlining piles more onto it — fold in only when the absorber stays under its complexity budget afterward.",
+    "goal": "A class with too few responsibilities to deserve its own file folds into a class it collaborates with most.",
+    "savings": "Fewer files, fewer constructors, shorter call paths; the absorbing class's coherence improves when it gains the methods it was already orchestrating.",
+    "before": "class TrackingInformation {\n  shippingCompany;\n  trackingNumber;\n  display() { return `${this.shippingCompany}: ${this.trackingNumber}`; }\n}\nclass Shipment { tracking; }",
+    "after": "class Shipment {\n  shippingCompany;\n  trackingNumber;\n  display() { return `${this.shippingCompany}: ${this.trackingNumber}`; }\n}"
+  },
+  {
+    "name": "Change Reference to Value",
+    "solves": ["Mutable Data"],
+    "risk": "Comparison semantics shift from identity to equality — every call site that depended on `===` or identity caches needs review.",
+    "goal": "An object treated as a sharable record (with setters) becomes a value object — immutable, equal by content, replaced rather than mutated.",
+    "savings": "Concurrency hazards disappear; the type system can mark fields readonly; the object can travel safely across boundaries.",
+    "before": "class Phone {\n  constructor() { this.area = null; this.number = null; }\n}\nphone.area = '617';",
+    "after": "class Phone {\n  constructor(area, number) { this._area = area; this._number = number; }\n  area()         { return this._area; }\n  number()       { return this._number; }\n  withArea(area) { return new Phone(area, this._number); }\n}"
+  },
+  {
+    "name": "Change Value to Reference",
+    "solves": ["Duplicated Code"],
+    "risk": "Sharing introduces the question 'who owns this?' — make sure the lifetime and visibility of the shared reference are well-defined.",
+    "goal": "Duplicate copies of a logically-single entity collapse into one shared object that everyone references.",
+    "savings": "Updates to the entity are visible everywhere; storage shrinks; identity becomes meaningful again.",
+    "before": "// every order carries its own Customer copy\norders.forEach(o => o.customer = { name: 'Acme' });",
+    "after": "const acme = customerRepository.find('Acme');\norders.forEach(o => o.customer = acme);"
+  },
+  {
+    "name": "Replace Control Flag with Break",
+    "solves": ["Loops", "Long Function"],
+    "risk": "If the loop body is large, the break can hide the early-exit semantics — extract a function around the loop's body to keep the exit obvious.",
+    "goal": "Loops that maintain a boolean to decide when to stop replace it with a direct `break`, `return`, or `continue`.",
+    "savings": "The exit condition appears at the moment it's decided, not as a delayed effect of a flag check; the loop's intent becomes literal.",
+    "before": "let found = false;\nfor (const p of people) {\n  if (!found && p.name === target) {\n    matched = p;\n    found = true;\n  }\n}",
+    "after": "for (const p of people) {\n  if (p.name === target) {\n    matched = p;\n    break;\n  }\n}"
+  },
+  {
+    "name": "Replace Query with Parameter",
+    "solves": ["Mutable Data", "Insider Trading"],
+    "risk": "Passing the value pushes the responsibility onto callers; for many call sites, signatures grow noisily — prefer this when the query touches global or volatile state.",
+    "goal": "A function that reads from a query (global, singleton, instance state) instead accepts the value as a parameter and becomes referentially transparent.",
+    "savings": "The function becomes testable in isolation; its dependencies are visible in its signature; pure-function reasoning becomes possible.",
+    "before": "function rebate(order) {\n  return order.total * currency().rate;\n}",
+    "after": "function rebate(order, rate) {\n  return order.total * rate;\n}"
+  },
+  {
+    "name": "Replace Error Code with Exception",
+    "solves": ["Comments"],
+    "risk": "Exceptions for predictable conditions misuse the mechanism — only convert codes that represent genuine, exceptional, unrecoverable failures.",
+    "goal": "Numeric or string error codes that callers must remember to check are replaced with exceptions that propagate by default.",
+    "savings": "Forgetting to check no longer silently swallows the error; the type system marks the failure path; cleanup happens via finally / try-with.",
+    "before": "function withdraw(amount) {\n  if (amount > balance) return -1;\n  balance -= amount;\n  return 0;\n}",
+    "after": "function withdraw(amount) {\n  if (amount > balance) throw new InsufficientFunds();\n  balance -= amount;\n}"
+  },
+  {
+    "name": "Replace Exception with Precheck",
+    "solves": ["Comments"],
+    "risk": "Race conditions: the precheck may pass and the operation still fail (TOCTOU). Use prechecks only for conditions the caller can verify without a race.",
+    "goal": "Exceptions used for predictable, checkable conditions become an explicit precheck the caller can perform, leaving exceptions for truly exceptional cases.",
+    "savings": "The error path is local and visible; reading code top-to-bottom describes the rules rather than the failure response; debuggers stop catching benign throws.",
+    "before": "try {\n  return amounts[i] / 100;\n} catch (e) {\n  return 0;\n}",
+    "after": "if (i >= amounts.length) return 0;\nreturn amounts[i] / 100;"
+  },
+  {
+    "name": "Pull Up Constructor Body",
+    "solves": ["Duplicated Code"],
+    "risk": "If only some subclasses share the init logic, pulling it up forces the others to opt out — verify the body is genuinely common.",
+    "goal": "Initialization code repeated across subclass constructors moves into the parent class's constructor and is called via super.",
+    "savings": "One canonical home for parent-state init; new subclasses inherit the setup for free; bug fixes apply uniformly.",
+    "before": "class Manager  extends Employee { constructor(n, s) { this.name = n; this.salary = s; } }\nclass Engineer extends Employee { constructor(n, s) { this.name = n; this.salary = s; } }",
+    "after": "class Employee {\n  constructor(name, salary) { this.name = name; this.salary = salary; }\n}\nclass Manager  extends Employee {}\nclass Engineer extends Employee {}"
+  },
+  {
+    "name": "Pull Up Field",
+    "solves": ["Duplicated Code"],
+    "risk": "Pulling up a field that subclasses use differently (different default, different visibility) creates surprise — verify the field semantics are identical.",
+    "goal": "A field declared identically in two or more subclasses moves to the shared superclass.",
+    "savings": "One source of truth for the field's type and default; subclasses focus on what they actually specialize.",
+    "before": "class Manager  extends Employee { _name; }\nclass Engineer extends Employee { _name; }",
+    "after": "class Employee { _name; }\nclass Manager  extends Employee {}\nclass Engineer extends Employee {}"
+  },
+  {
+    "name": "Push Down Field",
+    "solves": ["Refused Bequest", "Large Class"],
+    "risk": "If the field is occasionally consulted in the parent for type checks, pushing it down forces awkward downcasts — verify usage first.",
+    "goal": "A field used by only one subclass moves out of the parent and into that subclass.",
+    "savings": "Other subclasses no longer carry storage they ignore; the parent's surface shrinks; the field's meaning becomes local.",
+    "before": "class Employee {\n  quota; // only Salesperson uses this\n}",
+    "after": "class Employee {}\nclass Salesperson extends Employee { quota; }"
+  },
+  {
+    "name": "Remove Subclass",
+    "solves": ["Lazy Element", "Speculative Generality"],
+    "risk": "Removing a subclass referenced by name elsewhere (factories, registries) breaks those references — confirm no consumer is type-testing the subclass.",
+    "goal": "A subclass whose only purpose was to encode a type code or add nothing collapses back into a field on the parent.",
+    "savings": "Smaller hierarchy; new variants are field values instead of new files; the parent regains its variability point as data.",
+    "before": "class Person {}\nclass Female extends Person {}\nclass Male   extends Person {}",
+    "after": "class Person {\n  constructor(gender) { this.gender = gender; }\n}"
+  },
+  {
+    "name": "Replace Superclass with Delegate",
+    "solves": ["Refused Bequest", "Insider Trading"],
+    "risk": "Adds a forwarding method on the former subclass for every method the old superclass exposed — only worth it when the superclass relationship is misleading.",
+    "goal": "Inheritance from a superclass that doesn't really fit (Liskov violations, awkward methods) becomes composition: the former subclass holds an instance and delegates explicitly.",
+    "savings": "The misleading is-a relationship disappears; the former subclass can change its delegate's class without affecting its callers.",
+    "before": "class CategoryItem extends Scroll {\n  // uses some Scroll methods, refuses others\n}",
+    "after": "class CategoryItem {\n  constructor() { this.scroll = new Scroll(); }\n  date() { return this.scroll.date(); }\n}"
   }
 ]
