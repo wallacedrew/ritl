@@ -39,7 +39,7 @@ export default function SiteHeader() {
                   rel="noopener noreferrer"
                   underline="hover"
                   color="inherit"
-                  sx={{ textDecorationStyle: "dotted" }}
+                  sx={{ textDecorationStyle: "dotted", fontWeight: 700 }}
                 >
                   canonical refactorings and code smells
                 </Link>
