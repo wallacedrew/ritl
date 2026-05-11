@@ -27,13 +27,13 @@ export default function HomePage() {
           <Typography variant="body1" color="text.secondary">
             Fowler refactorings organized by chapter.
           </Typography>
+          <AgentsDownloads />
         </Stack>
         <CatalogStats
           smellCount={smellCount}
           refactoringCount={refactoringCount}
           categoryCount={categoryCount}
         />
-        <AgentsDownloads />
         <Divider />
         <ReferenceView groups={groups} />
       </Stack>
