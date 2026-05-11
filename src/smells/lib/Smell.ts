@@ -2,7 +2,7 @@ export type Smell = {
   name: string;
   symptom: string;
   risk: string;
-  refactoring: string;
+  refactorings: string[];
   goal: string;
   savings: string;
   before: string;

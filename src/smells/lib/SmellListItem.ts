@@ -1,6 +1,6 @@
 export interface SmellListItem {
   href: string;
   name: string;
-  refactoring: string;
+  refactorings: string[];
   symptom: string;
 }

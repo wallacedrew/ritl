@@ -7,7 +7,7 @@ const baseSmell: Smell = {
   name: "Mysterious Name",
   symptom: "Names that don't reveal intent.",
   risk: "Re-comprehension cost.",
-  refactoring: "Rename Variable",
+  refactorings: ["Rename Variable"],
   goal: "Names read as the domain.",
   savings: "Faster reading.",
   before: "x",
@@ -21,11 +21,11 @@ describe("toSmellListItem", () => {
     expect(item.href).toBe("/smells/mysterious-name");
   });
 
-  it("preserves name, refactoring, and symptom for the list view", () => {
+  it("preserves name, refactorings, and symptom for the list view", () => {
     const item = toSmellListItem(baseSmell);
 
     expect(item.name).toBe("Mysterious Name");
-    expect(item.refactoring).toBe("Rename Variable");
+    expect(item.refactorings).toEqual(["Rename Variable"]);
     expect(item.symptom).toContain("don't reveal intent");
   });
 

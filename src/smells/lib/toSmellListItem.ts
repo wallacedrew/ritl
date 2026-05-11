@@ -7,7 +7,7 @@ export function toSmellListItem(smell: Smell): SmellListItem {
   return {
     href: `/smells/${slugify(smell.name)}`,
     name: smell.name,
-    refactoring: smell.refactoring,
+    refactorings: smell.refactorings,
     symptom: smell.symptom,
   };
 }

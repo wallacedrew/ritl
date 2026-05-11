@@ -23,12 +23,16 @@ export default function SmellCard({ item }: SmellCardProps) {
             <Typography component="h2" variant="h6">
               {item.name}
             </Typography>
-            <Chip
-              label={item.refactoring}
-              color="primary"
-              size="small"
-              sx={{ alignSelf: "flex-start" }}
-            />
+            <Stack direction="row" sx={{ flexWrap: "wrap", gap: 1 }}>
+              {item.refactorings.map((refactoringName) => (
+                <Chip
+                  key={refactoringName}
+                  label={refactoringName}
+                  size="small"
+                  variant="outlined"
+                />
+              ))}
+            </Stack>
             <Typography variant="body2" color="text.secondary">
               {item.symptom}
             </Typography>

@@ -22,13 +22,15 @@ export default function SmellDetail({ smell }: SmellDetailProps) {
           <Typography component="h1" variant="h3" sx={{ fontWeight: 600 }}>
             {smell.name}
           </Typography>
-          <LinkedChip
-            label={smell.refactoring}
-            href={`/refactorings/${slugify(smell.refactoring)}`}
-            color="primary"
-            size="medium"
-            sx={{ alignSelf: "flex-start" }}
-          />
+          <Stack direction="row" sx={{ flexWrap: "wrap", gap: 1 }}>
+            {smell.refactorings.map((refactoringName) => (
+              <LinkedChip
+                key={refactoringName}
+                label={refactoringName}
+                href={`/refactorings/${slugify(refactoringName)}`}
+              />
+            ))}
+          </Stack>
         </Stack>
         <Divider />
         <SmellSection label="Symptom" body={smell.symptom} />

@@ -6,7 +6,7 @@ const validRaw = {
   name: "Mysterious Name",
   symptom: "Names that don't reveal intent.",
   risk: "Re-comprehension cost on every read.",
-  refactoring: "Rename Variable",
+  refactorings: ["Rename Variable"],
   goal: "Names read as the domain.",
   savings: "Faster onboarding and code review.",
   before: "function calc(d, t) { return d * t; }",
@@ -14,11 +14,11 @@ const validRaw = {
 };
 
 describe("parseSmell", () => {
-  it("returns a Smell when every required field is a string", () => {
+  it("returns a Smell when every required field is the right shape", () => {
     const smell = parseSmell(validRaw);
 
     expect(smell.name).toBe("Mysterious Name");
-    expect(smell.refactoring).toBe("Rename Variable");
+    expect(smell.refactorings).toEqual(["Rename Variable"]);
     expect(smell.symptom).toContain("don't reveal intent");
   });
 
@@ -46,7 +46,7 @@ describe("parseSmell", () => {
     const incomplete = {
       symptom: "x",
       risk: "x",
-      refactoring: "x",
+      refactorings: ["x"],
       goal: "x",
       savings: "x",
       before: "x",
@@ -56,9 +56,28 @@ describe("parseSmell", () => {
     expect(() => parseSmell(incomplete)).toThrow(/name.*string/i);
   });
 
-  it("rejects when a required field is the wrong type", () => {
+  it("rejects when a required string field is the wrong type", () => {
     const withBadRisk = { ...validRaw, risk: 99 };
 
     expect(() => parseSmell(withBadRisk)).toThrow(/risk.*string/i);
+  });
+
+  it("rejects when refactorings is missing", () => {
+    const withoutRefactorings = { ...validRaw } as Record<string, unknown>;
+    delete withoutRefactorings.refactorings;
+
+    expect(() => parseSmell(withoutRefactorings)).toThrow(/refactorings.*array/i);
+  });
+
+  it("rejects when refactorings is not an array", () => {
+    const withBadRefactorings = { ...validRaw, refactorings: "Rename Variable" };
+
+    expect(() => parseSmell(withBadRefactorings)).toThrow(/refactorings.*array/i);
+  });
+
+  it("rejects when refactorings contains a non-string", () => {
+    const withBadRefactorings = { ...validRaw, refactorings: ["Rename Variable", 42] };
+
+    expect(() => parseSmell(withBadRefactorings)).toThrow(/refactorings.*string/i);
   });
 });
