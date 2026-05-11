@@ -6,6 +6,7 @@ import SiteHeader from "@/shared/components/SiteHeader";
 
 vi.mock("next/navigation", () => ({
   usePathname: () => "/",
+  useRouter: () => ({ push: vi.fn() }),
 }));
 
 describe("site header spans every catalog view", () => {

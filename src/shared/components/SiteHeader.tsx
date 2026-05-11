@@ -3,9 +3,13 @@ import Container from "@mui/material/Container";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 
+import { loadCatalogItems } from "../lib/loadCatalogItems";
+import CatalogSearch from "./CatalogSearch";
 import CatalogToolbar from "./CatalogToolbar";
 
 export default function SiteHeader() {
+  const items = loadCatalogItems();
+
   return (
     <Box
       component="header"
@@ -25,6 +29,7 @@ export default function SiteHeader() {
               A catalog explorer for code smells and the Fowler refactorings that address them.
             </Typography>
           </Stack>
+          <CatalogSearch items={items} />
           <CatalogToolbar />
         </Stack>
       </Container>
