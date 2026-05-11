@@ -7,8 +7,10 @@ import CatalogSearch from "@/shared/components/CatalogSearch";
 import type { CatalogItem } from "@/shared/lib/CatalogItem";
 
 const pushMock = vi.fn();
+const pathnameMock = vi.fn<() => string>(() => "/");
 vi.mock("next/navigation", () => ({
   useRouter: () => ({ push: pushMock }),
+  usePathname: () => pathnameMock(),
 }));
 
 const items: CatalogItem[] = [
@@ -28,7 +30,26 @@ const items: CatalogItem[] = [
 ];
 
 describe("user searches the catalog", () => {
+  it("shows the current page's smell or refactoring as the selected value", () => {
+    pathnameMock.mockReturnValue("/smells/long-function");
+
+    renderWithTheme(<CatalogSearch items={items} />);
+
+    const combobox = screen.getByRole("combobox") as HTMLInputElement;
+    expect(combobox.value).toBe("Long Function");
+  });
+
+  it("shows nothing selected on routes that aren't a smell or refactoring detail", () => {
+    pathnameMock.mockReturnValue("/");
+
+    renderWithTheme(<CatalogSearch items={items} />);
+
+    const combobox = screen.getByRole("combobox") as HTMLInputElement;
+    expect(combobox.value).toBe("");
+  });
+
   it("filters options as the user types and navigates on selection", async () => {
+    pathnameMock.mockReturnValue("/");
     pushMock.mockClear();
     const user = userEvent.setup();
 

@@ -5,7 +5,7 @@ import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
 import type { CatalogItem } from "../lib/CatalogItem";
 import CatalogNumber from "./CatalogNumber";
@@ -16,10 +16,13 @@ interface CatalogSearchProps {
 
 export default function CatalogSearch({ items }: CatalogSearchProps) {
   const router = useRouter();
+  const pathname = usePathname();
+  const selected = items.find((item) => item.href === pathname) ?? null;
 
   return (
     <Autocomplete
       options={items}
+      value={selected}
       autoHighlight
       blurOnSelect
       clearOnEscape
