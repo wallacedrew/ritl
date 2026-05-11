@@ -27,10 +27,10 @@ export default function SiteHeader() {
             sx={{ alignItems: "flex-start", justifyContent: "space-between", gap: 2 }}
           >
             <Stack spacing={1}>
-              <Typography variant="h4" component="div" sx={{ fontWeight: 600 }}>
+              <Typography variant="h6" component="div" sx={{ fontWeight: 600 }}>
                 Refactoring in the Large
               </Typography>
-              <Typography variant="body1" color="text.secondary">
+              <Typography variant="body2" color="text.secondary">
                 A catalog explorer for code smells and the Fowler refactorings that address them.
               </Typography>
             </Stack>

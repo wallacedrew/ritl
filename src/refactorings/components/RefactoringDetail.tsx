@@ -23,7 +23,7 @@ export default function RefactoringDetail({ refactoring, number }: RefactoringDe
         <Stack spacing={1.5}>
           <Stack direction="row" spacing={2} sx={{ alignItems: "baseline" }}>
             <CatalogNumber value={number} size="large" />
-            <Typography component="h1" variant="h3" sx={{ fontWeight: 600 }}>
+            <Typography component="h1" variant="h4" sx={{ fontWeight: 600 }}>
               {refactoring.name}
             </Typography>
           </Stack>

@@ -15,7 +15,7 @@ export default function RefactoringsPage() {
     <Container maxWidth="lg" sx={{ py: 4 }}>
       <Stack spacing={4}>
         <Stack spacing={1}>
-          <Typography component="h1" variant="h3" sx={{ fontWeight: 600 }}>
+          <Typography component="h1" variant="h4" sx={{ fontWeight: 600 }}>
             Refactorings
           </Typography>
           <Typography variant="body1" color="text.secondary">

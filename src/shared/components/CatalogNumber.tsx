@@ -11,7 +11,7 @@ export default function CatalogNumber({ value, size = "small" }: CatalogNumberPr
   return (
     <Typography
       component="span"
-      variant={size === "large" ? "h5" : "overline"}
+      variant={size === "large" ? "h6" : "overline"}
       color="text.secondary"
       sx={{
         fontFamily:

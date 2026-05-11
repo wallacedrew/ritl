@@ -19,7 +19,7 @@ export default function HomePage() {
     <Container maxWidth="lg" sx={{ py: 4 }}>
       <Stack spacing={4}>
         <Stack spacing={1}>
-          <Typography component="h1" variant="h3" sx={{ fontWeight: 600 }}>
+          <Typography component="h1" variant="h4" sx={{ fontWeight: 600 }}>
             Reference
           </Typography>
           <Typography variant="body1" color="text.secondary">
