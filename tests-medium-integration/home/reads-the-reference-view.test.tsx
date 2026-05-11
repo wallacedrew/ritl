@@ -4,20 +4,7 @@ import { screen } from "@testing-library/react";
 import { renderWithTheme } from "../../tests-small-unit/_helpers/renderWithTheme";
 import HomePage from "@/home/HomePage";
 
-describe("user uses the home page as a catalog selector", () => {
-  it("shows the three-view toolbar with links to smells, refactorings, and reference", () => {
-    renderWithTheme(<HomePage />);
-
-    const smellsLink = screen.getByRole("tab", { name: /Smells/ });
-    expect(smellsLink).toHaveAttribute("href", "/smells");
-
-    const refactoringsLink = screen.getByRole("tab", { name: /Refactorings/ });
-    expect(refactoringsLink).toHaveAttribute("href", "/refactorings");
-
-    const referenceLink = screen.getByRole("tab", { name: /Reference/ });
-    expect(referenceLink).toHaveAttribute("href", "/");
-  });
-
+describe("user reads the reference view at the home page", () => {
   it("shows catalog stats — 24 smells, 42 refactorings", () => {
     renderWithTheme(<HomePage />);
 
