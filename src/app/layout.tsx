@@ -12,8 +12,6 @@ export const metadata: Metadata = {
   description: "A catalog explorer for code smells and Fowler refactorings.",
 };
 
-const CLOUDFLARE_BEACON_TOKEN = process.env.NEXT_PUBLIC_CF_BEACON_TOKEN;
-
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en">
@@ -29,13 +27,16 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
             </Box>
           </ThemeRegistry>
         </AnalyticsProvider>
-        {CLOUDFLARE_BEACON_TOKEN && (
-          <script
-            defer
-            src="https://static.cloudflareinsights.com/beacon.min.js"
-            data-cf-beacon={`{"token":"${CLOUDFLARE_BEACON_TOKEN}"}`}
-          />
-        )}
+        {/*
+          Pageviews + Core Web Vitals are auto-injected by Cloudflare Pages
+          (Web Analytics is on by default for refactoringintheloop.com).
+          We don't manually load the beacon script — doing so would
+          duplicate the request CF already makes server-side.
+
+          Custom user-action events (plugin install copy, snippet
+          download, etc.) are dispatched separately via the
+          AnalyticsProvider → BeaconAnalyticsTracker → /api/track flow.
+        */}
       </body>
     </html>
   );

@@ -38,12 +38,12 @@ jobs:
       - name: Build (static export)
         run: npm run build
         env:
-          # NEXT_PUBLIC_* vars are baked into the static bundle at build time
-          # and are public by design — fine to keep in plaintext here.
-          # The actual beacon token comes from a GitHub repo variable once
-          # the Web Analytics site is created in the Cloudflare dashboard.
+          # Switches the AnalyticsProvider from NoOp to BeaconAnalyticsTracker
+          # so custom user-action events POST to /api/track in production.
+          # Pageviews + Core Web Vitals are handled by Cloudflare's
+          # auto-injected Web Analytics beacon — no token needed in our
+          # bundle.
           NEXT_PUBLIC_ANALYTICS_ENABLED: "true"
-          NEXT_PUBLIC_CF_BEACON_TOKEN: ${{ vars.CF_BEACON_TOKEN }}
 
       - name: Deploy to Cloudflare Pages
         uses: cloudflare/wrangler-action@v3
