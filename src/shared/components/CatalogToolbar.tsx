@@ -1,13 +1,27 @@
 "use client";
 
-import Tab from "@mui/material/Tab";
-import Tabs from "@mui/material/Tabs";
+import Box from "@mui/material/Box";
+import Stack from "@mui/material/Stack";
 import NextLink from "next/link";
 import { usePathname } from "next/navigation";
 
 import { useAnalytics } from "@/shared/hooks/useAnalytics";
 
 type CatalogView = "smells" | "refactorings" | "reference" | "plugin";
+
+interface NavLink {
+  view: CatalogView;
+  label: string;
+  href: string;
+  hideOnMobile?: boolean;
+}
+
+const NAV_LINKS: readonly NavLink[] = [
+  { view: "refactorings", label: "Refactorings", href: "/" },
+  { view: "smells", label: "Smells", href: "/smells" },
+  { view: "reference", label: "Reference", href: "/reference" },
+  { view: "plugin", label: "Plugin", href: "/plugin", hideOnMobile: true },
+];
 
 function deriveActiveView(pathname: string): CatalogView {
   if (pathname.startsWith("/smells")) return "smells";
@@ -22,50 +36,53 @@ export default function CatalogToolbar() {
   const active = deriveActiveView(pathname);
   const analytics = useAnalytics();
 
-  function handleNavClick(tab: CatalogView) {
-    analytics.track({ event: "nav_clicked", properties: { tab } });
+  function handleNavClick(view: CatalogView) {
+    analytics.track({ event: "nav_clicked", properties: { tab: view } });
   }
 
   return (
-    <Tabs
-      value={active}
-      variant="fullWidth"
-      textColor="primary"
-      indicatorColor="primary"
-      aria-label="catalog view"
-      sx={{
-        "& .MuiTab-root.Mui-selected": { fontWeight: 700 },
-      }}
+    <Box
+      component="nav"
+      aria-label="catalog navigation"
+      sx={{ borderBottom: 1, borderColor: "divider" }}
     >
-      <Tab
-        label="Refactorings"
-        component={NextLink}
-        href="/"
-        value="refactorings"
-        onClick={() => handleNavClick("refactorings")}
-      />
-      <Tab
-        label="Smells"
-        component={NextLink}
-        href="/smells"
-        value="smells"
-        onClick={() => handleNavClick("smells")}
-      />
-      <Tab
-        label="Reference"
-        component={NextLink}
-        href="/reference"
-        value="reference"
-        onClick={() => handleNavClick("reference")}
-      />
-      <Tab
-        label="Plugin"
-        component={NextLink}
-        href="/plugin"
-        value="plugin"
-        onClick={() => handleNavClick("plugin")}
-        sx={{ display: { xs: "none", md: "inline-flex" } }}
-      />
-    </Tabs>
+      <Stack direction="row" sx={{ width: "100%" }}>
+        {NAV_LINKS.map((link) => {
+          const isActive = link.view === active;
+          return (
+            <Box
+              key={link.view}
+              component={NextLink}
+              href={link.href}
+              onClick={() => handleNavClick(link.view)}
+              aria-current={isActive ? "page" : undefined}
+              sx={(theme) => ({
+                flex: 1,
+                textAlign: "center",
+                py: 1.5,
+                color: isActive ? "primary.main" : "text.secondary",
+                fontSize: theme.typography.button.fontSize,
+                fontWeight: isActive ? 700 : 500,
+                textTransform: "uppercase",
+                letterSpacing: "0.08em",
+                textDecoration: "none",
+                borderBottom: 2,
+                borderColor: isActive ? "primary.main" : "transparent",
+                marginBottom: "-1px",
+                display: link.hideOnMobile ? { xs: "none", md: "block" } : "block",
+                transition: theme.transitions.create(["color", "border-color"], {
+                  duration: theme.transitions.duration.shortest,
+                }),
+                "&:hover": {
+                  color: isActive ? "primary.main" : "text.primary",
+                },
+              })}
+            >
+              {link.label}
+            </Box>
+          );
+        })}
+      </Stack>
+    </Box>
   );
 }

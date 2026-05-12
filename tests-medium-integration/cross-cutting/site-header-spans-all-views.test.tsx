@@ -19,26 +19,29 @@ describe("site header spans every catalog view", () => {
     expect(screen.getByText(/catalog explorer/i)).toBeInTheDocument();
   });
 
-  it("renders the three-tab catalog navigation with links to each view", () => {
+  it("renders the catalog navigation as a semantic nav with one link per view", () => {
     renderWithTheme(<SiteHeader />);
 
-    const smellsTab = screen.getByRole("tab", { name: /Smells/ });
-    expect(smellsTab).toHaveAttribute("href", "/smells");
+    const nav = screen.getByRole("navigation", { name: /catalog/i });
+    expect(nav).toBeInTheDocument();
 
-    const refactoringsTab = screen.getByRole("tab", { name: /Refactorings/ });
-    expect(refactoringsTab).toHaveAttribute("href", "/");
+    const refactoringsLink = screen.getByRole("link", { name: /^Refactorings$/ });
+    expect(refactoringsLink).toHaveAttribute("href", "/");
 
-    const referenceTab = screen.getByRole("tab", { name: /Reference/ });
-    expect(referenceTab).toHaveAttribute("href", "/reference");
+    const smellsLink = screen.getByRole("link", { name: /^Smells$/ });
+    expect(smellsLink).toHaveAttribute("href", "/smells");
+
+    const referenceLink = screen.getByRole("link", { name: /^Reference$/ });
+    expect(referenceLink).toHaveAttribute("href", "/reference");
   });
 
-  it("fires nav_clicked with the tab name when the user clicks a navigation tab", async () => {
+  it("fires nav_clicked with the link name when the user clicks a catalog nav link", async () => {
     const analytics = new RecordingAnalyticsTracker();
     const user = userEvent.setup();
 
     renderWithTheme(<SiteHeader />, { analytics });
 
-    await user.click(screen.getByRole("tab", { name: /Smells/ }));
+    await user.click(screen.getByRole("link", { name: /^Smells$/ }));
 
     expect(analytics.calls).toContainEqual({
       event: "nav_clicked",
