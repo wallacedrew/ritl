@@ -4,7 +4,7 @@ import Brightness4Icon from "@mui/icons-material/Brightness4";
 import Brightness7Icon from "@mui/icons-material/Brightness7";
 import IconButton from "@mui/material/IconButton";
 
-import { useColorMode } from "@/shared/theme/ColorModeContext";
+import { useColorMode } from "@/shared/hooks/useColorMode";
 
 export default function ColorModeToggle() {
   const { mode, toggleMode } = useColorMode();

@@ -1,25 +1,16 @@
 "use client";
 
 import { AppRouterCacheProvider } from "@mui/material-nextjs/v16-appRouter";
-import { ThemeProvider } from "@mui/material/styles";
-import CssBaseline from "@mui/material/CssBaseline";
 import type { ReactNode } from "react";
 
-import { ColorModeProvider, useColorMode } from "./ColorModeContext";
-import { darkTheme, lightTheme } from "./theme";
+import { ColorModeProvider } from "@/shared/theme/ColorModeContext";
+import ThemedShell from "@/shared/theme/ThemedShell";
 
-function ThemedShell({ children }: { children: ReactNode }) {
-  const { mode } = useColorMode();
-  const activeTheme = mode === "dark" ? darkTheme : lightTheme;
-  return (
-    <ThemeProvider theme={activeTheme}>
-      <CssBaseline />
-      {children}
-    </ThemeProvider>
-  );
+interface ThemeRegistryProps {
+  children: ReactNode;
 }
 
-export default function ThemeRegistry({ children }: { children: ReactNode }) {
+export default function ThemeRegistry({ children }: ThemeRegistryProps) {
   return (
     <AppRouterCacheProvider>
       <ColorModeProvider>

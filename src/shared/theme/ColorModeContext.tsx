@@ -1,17 +1,17 @@
 "use client";
 
-import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
+import { createContext, useCallback, useEffect, useMemo, useState } from "react";
 import type { ReactNode } from "react";
 
 export type ColorMode = "light" | "dark";
 
-interface ColorModeContextValue {
+export interface ColorModeContextValue {
   mode: ColorMode;
   toggleMode: () => void;
   setMode: (mode: ColorMode) => void;
 }
 
-const ColorModeContext = createContext<ColorModeContextValue | null>(null);
+export const ColorModeContext = createContext<ColorModeContextValue | null>(null);
 
 const STORAGE_KEY = "ritl-color-mode";
 
@@ -69,12 +69,4 @@ export function ColorModeProvider({ children, defaultMode = "dark" }: ColorModeP
   const value = useMemo(() => ({ mode, toggleMode, setMode }), [mode, toggleMode, setMode]);
 
   return <ColorModeContext.Provider value={value}>{children}</ColorModeContext.Provider>;
-}
-
-export function useColorMode(): ColorModeContextValue {
-  const ctx = useContext(ColorModeContext);
-  if (!ctx) {
-    throw new Error("useColorMode must be used within a ColorModeProvider");
-  }
-  return ctx;
 }
