@@ -9,8 +9,9 @@ import LinkedChip from "@/shared/components/LinkedChip";
 import SnippetPreviewButton from "@/shared/components/SnippetPreviewButton";
 import { Slug } from "@/shared/lib/Slug";
 
+import CatalogSection from "@/shared/components/CatalogSection";
+
 import type { Smell } from "../lib/Smell";
-import SmellSection from "./SmellSection";
 
 interface SmellDetailProps {
   smell: Smell;
@@ -43,16 +44,16 @@ export default function SmellDetail({ smell, number }: SmellDetailProps) {
           />
         </Stack>
         <Divider />
-        <SmellSection label="Symptom" body={smell.symptom} />
-        <SmellSection label="Goal" body={smell.goal} />
+        <CatalogSection label="Symptom" body={smell.symptom} />
+        <CatalogSection label="Goal" body={smell.goal} />
         <BeforeAfterCodeBlocks
           beforeLabel="Smellier version"
           afterLabel="Fresher version"
           beforeCode={smell.before}
           afterCode={smell.after}
         />
-        <SmellSection label="Savings" body={smell.savings} />
-        <SmellSection label="Note" body={smell.risk} />
+        <CatalogSection label="Savings" body={smell.savings} />
+        <CatalogSection label="Note" body={smell.risk} />
       </Stack>
     </Container>
   );

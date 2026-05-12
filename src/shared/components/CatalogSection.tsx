@@ -1,12 +1,12 @@
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 
-interface RefactoringSectionProps {
+interface CatalogSectionProps {
   label: string;
   body: string;
 }
 
-export default function RefactoringSection({ label, body }: RefactoringSectionProps) {
+export default function CatalogSection({ label, body }: CatalogSectionProps) {
   return (
     <Stack spacing={0.5}>
       <Typography variant="overline" color="text.secondary">

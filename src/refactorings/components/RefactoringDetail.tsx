@@ -9,8 +9,9 @@ import LinkedChip from "@/shared/components/LinkedChip";
 import SnippetPreviewButton from "@/shared/components/SnippetPreviewButton";
 import { Slug } from "@/shared/lib/Slug";
 
+import CatalogSection from "@/shared/components/CatalogSection";
+
 import type { Refactoring } from "../lib/Refactoring";
-import RefactoringSection from "./RefactoringSection";
 
 interface RefactoringDetailProps {
   refactoring: Refactoring;
@@ -43,15 +44,15 @@ export default function RefactoringDetail({ refactoring, number }: RefactoringDe
           />
         </Stack>
         <Divider />
-        <RefactoringSection label="Goal" body={refactoring.goal} />
+        <CatalogSection label="Goal" body={refactoring.goal} />
         <BeforeAfterCodeBlocks
           beforeLabel="Before the refactoring"
           afterLabel="After the refactoring"
           beforeCode={refactoring.before}
           afterCode={refactoring.after}
         />
-        <RefactoringSection label="Savings" body={refactoring.savings} />
-        <RefactoringSection label="Note" body={refactoring.risk} />
+        <CatalogSection label="Savings" body={refactoring.savings} />
+        <CatalogSection label="Note" body={refactoring.risk} />
       </Stack>
     </Container>
   );
