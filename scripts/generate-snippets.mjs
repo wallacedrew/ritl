@@ -12,7 +12,6 @@
 // The bulk file inlines the per-entity sections verbatim so its content
 // is the centralized view of the same material.
 
-import { execSync } from "node:child_process";
 import { existsSync, mkdirSync, readFileSync, readdirSync, rmSync, writeFileSync } from "node:fs";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -319,7 +318,7 @@ for (const dest of ["docs/snippets", "public/snippets"]) {
 //     skills/<slug>/SKILL.md
 // Plus a one-plugin marketplace manifest at:
 //   .claude-plugin/marketplace.json
-// Plus a .zip download served from public/.
+// Marketplace install is the only distribution path; no zip is produced.
 
 const PLUGIN_NAME = "refactor";
 const MARKETPLACE_NAME = "ritl";
@@ -394,10 +393,6 @@ smells.forEach((s, i) => {
   writeFileSync(resolve(dir, "SKILL.md"), formatSmellSkill(s, i));
 });
 
-const zipPath = resolve(root, `public/${PLUGIN_NAME}.zip`);
-if (existsSync(zipPath)) rmSync(zipPath);
-execSync(`zip -rq "${zipPath}" "plugin/${PLUGIN_NAME}"`, { cwd: root });
-
 console.log("Generated skill-shaped snippets in docs/snippets/ and public/snippets/");
 console.log(`  ${refactorings.length} refactoring SKILL.md files`);
 console.log(`  ${smells.length} smell SKILL.md files`);
@@ -405,4 +400,3 @@ console.log("  1 consolidated refactoring-catalog.md");
 console.log(`Generated plugin '${PLUGIN_NAME}' at plugin/${PLUGIN_NAME}/`);
 console.log(`  marketplace.json at .claude-plugin/marketplace.json`);
 console.log(`  ${refactorings.length + smells.length} skill folders under skills/`);
-console.log(`  bundle at public/${PLUGIN_NAME}.zip`);

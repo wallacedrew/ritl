@@ -27,12 +27,8 @@ describe("user reads the reference view at the home page", () => {
     expect(extractFunctionLinks[0]).toHaveAttribute("href", "/refactorings/extract-function");
   });
 
-  it("offers the plugin .zip download alongside the catalog snippet and the CLI install command", () => {
+  it("offers the catalog snippet preview alongside the marketplace CLI install command", () => {
     renderWithTheme(<HomePage />);
-
-    const pluginDownload = screen.getByRole("link", { name: /refactor\.zip/i });
-    expect(pluginDownload).toHaveAttribute("href", "/refactor.zip");
-    expect(pluginDownload).toHaveAttribute("download");
 
     const catalogButton = screen.getByRole("button", { name: /refactoring-catalog\.md/i });
     expect(catalogButton).toBeInTheDocument();

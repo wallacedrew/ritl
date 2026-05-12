@@ -1,9 +1,7 @@
 "use client";
 
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
-import FileDownloadIcon from "@mui/icons-material/FileDownload";
 import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
 import IconButton from "@mui/material/IconButton";
 import Stack from "@mui/material/Stack";
 import Tooltip from "@mui/material/Tooltip";
@@ -30,20 +28,6 @@ export default function AgentsDownloads() {
           label="refactoring-catalog.md"
           hint="90 SKILL.md sections in one paste"
         />
-        <Button
-          component="a"
-          href="/refactor.zip"
-          download
-          startIcon={<FileDownloadIcon />}
-          variant="outlined"
-          size="small"
-          sx={{ alignSelf: "flex-start", textTransform: "none" }}
-        >
-          refactor.zip
-          <Typography component="span" variant="caption" color="text.secondary" sx={{ ml: 1 }}>
-            · 90-skill plugin
-          </Typography>
-        </Button>
       </Stack>
 
       <Box>
