@@ -3,6 +3,7 @@ import Divider from "@mui/material/Divider";
 import Stack from "@mui/material/Stack";
 
 import BeforeAfterCodeBlocks from "@/shared/components/BeforeAfterCodeBlocks";
+import CatalogBackLink from "@/shared/components/CatalogBackLink";
 import CatalogEntryHeader from "@/shared/components/CatalogEntryHeader";
 import CatalogSection from "@/shared/components/CatalogSection";
 
@@ -17,6 +18,7 @@ export default function RefactoringDetail({ refactoring, number }: RefactoringDe
   return (
     <Container maxWidth="md" sx={{ py: 4 }}>
       <Stack spacing={3}>
+        <CatalogBackLink href="/" label="Refactorings" />
         <CatalogEntryHeader
           name={refactoring.name}
           number={number}
