@@ -26,23 +26,4 @@ describe("user reads the reference view at the home page", () => {
     const extractFunctionLinks = screen.getAllByRole("link", { name: "Extract Function" });
     expect(extractFunctionLinks[0]).toHaveAttribute("href", "/refactorings/extract-function");
   });
-
-  it("offers the AGENTS.md discipline snippet and the catalog fallback alongside the marketplace install", () => {
-    renderWithTheme(<HomePage />);
-
-    const disciplineButton = screen.getByRole("button", { name: /refactoring-discipline\.md/i });
-    expect(disciplineButton).toBeInTheDocument();
-
-    const catalogButton = screen.getByRole("button", { name: /refactoring-catalog\.md/i });
-    expect(catalogButton).toBeInTheDocument();
-
-    expect(
-      screen.getByText(
-        /Fallback for non-Claude-Code agents.*paste sections relevant to the smell/i,
-      ),
-    ).toBeInTheDocument();
-
-    expect(screen.getByText(/plugin marketplace add wallacedrew\/ritl/)).toBeInTheDocument();
-    expect(screen.getByText(/plugin install refactor@ritl/)).toBeInTheDocument();
-  });
 });

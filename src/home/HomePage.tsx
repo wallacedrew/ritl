@@ -8,7 +8,6 @@ import { getRefactoringsByCategory } from "@/refactorings/lib/getRefactoringsByC
 import ReferenceView from "@/refactorings/components/ReferenceView";
 import { loadSmells } from "@/smells/lib/loadSmells";
 
-import AgentsDownloads from "./components/AgentsDownloads";
 import CatalogStats from "./components/CatalogStats";
 
 export default function HomePage() {
@@ -27,7 +26,6 @@ export default function HomePage() {
           <Typography variant="body1" color="text.secondary">
             Fowler refactorings organized by chapter.
           </Typography>
-          <AgentsDownloads />
         </Stack>
         <CatalogStats
           smellCount={smellCount}
