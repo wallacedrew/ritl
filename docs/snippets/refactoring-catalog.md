@@ -6,9 +6,6 @@ content is identical at the section level. Use this single paste when
 you want the whole vocabulary loaded; use the per-entity downloads
 when you want auto-invocable skills under `~/.claude/skills/<slug>/SKILL.md`.
 
-Source: https://refactoring.com/catalog/ (Fowler 2e). Regenerate with
-`npm run snippets`.
-
 
 ---
 
