@@ -1,7 +1,23 @@
 /* Global resets and palette come from MUI's <CssBaseline /> via ThemeRegistry. */
-/* This file exists for app-wide CSS overrides outside of MUI's reach. */
+/* This file exists for app-wide CSS overrides outside of MUI's reach.        */
 
 html,
 body {
   height: 100%;
+}
+
+/* Pre-paint theme: the inline script in app/layout.tsx writes
+   data-color-mode onto <html> before React hydrates. These rules paint
+   the body in the user's persisted theme BEFORE MUI's emotion stylesheet
+   takes over, eliminating the flash of wrong theme on initial load.
+   Values must mirror src/shared/theme/theme.ts palette.background.default
+   for each mode. */
+html[data-color-mode="dark"] body {
+  background-color: #09090b;
+  color: #f4f4f5;
+}
+
+html[data-color-mode="light"] body {
+  background-color: #fafafa;
+  color: #18181b;
 }
