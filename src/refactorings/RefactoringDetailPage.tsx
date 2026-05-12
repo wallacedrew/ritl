@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 
-import { slugify } from "@/shared/lib/slugify";
+import { Slug } from "@/shared/lib/Slug";
 
 import RefactoringDetail from "./components/RefactoringDetail";
 import { loadRefactorings } from "./lib/loadRefactorings";
@@ -10,9 +10,10 @@ interface RefactoringDetailPageProps {
 }
 
 export default async function RefactoringDetailPage({ params }: RefactoringDetailPageProps) {
-  const { slug } = await params;
+  const { slug: rawSlug } = await params;
+  const requested = Slug.fromUrlPart(rawSlug);
   const refactorings = loadRefactorings();
-  const index = refactorings.findIndex((candidate) => slugify(candidate.name) === slug);
+  const index = refactorings.findIndex((candidate) => Slug.from(candidate.name).equals(requested));
   const refactoring = refactorings[index];
 
   if (!refactoring) {
@@ -23,5 +24,7 @@ export default async function RefactoringDetailPage({ params }: RefactoringDetai
 }
 
 export function generateStaticParams() {
-  return loadRefactorings().map((refactoring) => ({ slug: slugify(refactoring.name) }));
+  return loadRefactorings().map((refactoring) => ({
+    slug: Slug.from(refactoring.name).toString(),
+  }));
 }

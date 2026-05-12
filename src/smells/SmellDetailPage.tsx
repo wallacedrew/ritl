@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 
-import { slugify } from "@/shared/lib/slugify";
+import { Slug } from "@/shared/lib/Slug";
 
 import SmellDetail from "./components/SmellDetail";
 import { loadSmells } from "./lib/loadSmells";
@@ -10,9 +10,10 @@ interface SmellDetailPageProps {
 }
 
 export default async function SmellDetailPage({ params }: SmellDetailPageProps) {
-  const { slug } = await params;
+  const { slug: rawSlug } = await params;
+  const requested = Slug.fromUrlPart(rawSlug);
   const smells = loadSmells();
-  const index = smells.findIndex((candidate) => slugify(candidate.name) === slug);
+  const index = smells.findIndex((candidate) => Slug.from(candidate.name).equals(requested));
   const smell = smells[index];
 
   if (!smell) {
@@ -23,5 +24,5 @@ export default async function SmellDetailPage({ params }: SmellDetailPageProps) 
 }
 
 export function generateStaticParams() {
-  return loadSmells().map((smell) => ({ slug: slugify(smell.name) }));
+  return loadSmells().map((smell) => ({ slug: Slug.from(smell.name).toString() }));
 }

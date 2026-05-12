@@ -7,7 +7,7 @@ import CatalogNumber from "@/shared/components/CatalogNumber";
 import CodeBlock from "@/shared/components/CodeBlock";
 import LinkedChip from "@/shared/components/LinkedChip";
 import SnippetPreviewButton from "@/shared/components/SnippetPreviewButton";
-import { slugify } from "@/shared/lib/slugify";
+import { Slug } from "@/shared/lib/Slug";
 
 import type { Refactoring } from "../lib/Refactoring";
 import RefactoringSection from "./RefactoringSection";
@@ -33,12 +33,12 @@ export default function RefactoringDetail({ refactoring, number }: RefactoringDe
               <LinkedChip
                 key={smellName}
                 label={smellName}
-                href={`/smells/${slugify(smellName)}`}
+                href={Slug.from(smellName).toCatalogHref("smells")}
               />
             ))}
           </Stack>
           <SnippetPreviewButton
-            href={`/snippets/refactorings/${slugify(refactoring.name)}.md`}
+            href={Slug.from(refactoring.name).toSnippetHref("refactorings")}
             label="Preview SKILL.md"
           />
         </Stack>

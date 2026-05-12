@@ -1,4 +1,4 @@
-import { slugify } from "@/shared/lib/slugify";
+import { Slug } from "@/shared/lib/Slug";
 
 import type { Refactoring } from "./Refactoring";
 import type { RefactoringListItem } from "./RefactoringListItem";
@@ -9,7 +9,7 @@ export function toRefactoringListItem(
 ): RefactoringListItem {
   return {
     number,
-    href: `/refactorings/${slugify(refactoring.name)}`,
+    href: Slug.from(refactoring.name).toCatalogHref("refactorings"),
     name: refactoring.name,
     solves: refactoring.solves,
     goal: refactoring.goal,

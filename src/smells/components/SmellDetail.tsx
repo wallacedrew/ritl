@@ -7,7 +7,7 @@ import CatalogNumber from "@/shared/components/CatalogNumber";
 import CodeBlock from "@/shared/components/CodeBlock";
 import LinkedChip from "@/shared/components/LinkedChip";
 import SnippetPreviewButton from "@/shared/components/SnippetPreviewButton";
-import { slugify } from "@/shared/lib/slugify";
+import { Slug } from "@/shared/lib/Slug";
 
 import type { Smell } from "../lib/Smell";
 import SmellSection from "./SmellSection";
@@ -33,12 +33,12 @@ export default function SmellDetail({ smell, number }: SmellDetailProps) {
               <LinkedChip
                 key={refactoringName}
                 label={refactoringName}
-                href={`/refactorings/${slugify(refactoringName)}`}
+                href={Slug.from(refactoringName).toCatalogHref("refactorings")}
               />
             ))}
           </Stack>
           <SnippetPreviewButton
-            href={`/snippets/smells/${slugify(smell.name)}.md`}
+            href={Slug.from(smell.name).toSnippetHref("smells")}
             label="Preview SKILL.md"
           />
         </Stack>
