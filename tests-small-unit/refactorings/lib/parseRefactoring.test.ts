@@ -13,11 +13,16 @@ const validRaw = {
 };
 
 describe("parseRefactoring", () => {
-  it("returns a Refactoring when every required field is the right shape", () => {
+  it("returns a Refactoring with name and solves wrapped as CatalogEntryName instances", () => {
     const refactoring = parseRefactoring(validRaw);
 
-    expect(refactoring.name).toBe("Extract Function");
-    expect(refactoring.solves).toEqual(["Long Function", "Duplicated Code"]);
+    expect(refactoring.name.toString()).toBe("Extract Function");
+    expect(refactoring.name.toCatalogHref()).toBe("/refactorings/extract-function");
+    expect(refactoring.solves.map((s) => s.toString())).toEqual([
+      "Long Function",
+      "Duplicated Code",
+    ]);
+    expect(refactoring.solves[0]?.toCatalogHref()).toBe("/smells/long-function");
     expect(refactoring.goal).toContain("single named");
   });
 

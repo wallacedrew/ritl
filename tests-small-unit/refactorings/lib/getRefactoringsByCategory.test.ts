@@ -39,7 +39,7 @@ describe("getRefactoringsByCategory", () => {
   });
 
   it("categorizes every refactoring in the catalog (no orphans)", () => {
-    const allNames = loadRefactorings().map((r) => r.name);
+    const allNames = loadRefactorings().map((r) => r.name.toString());
     const categorizedNames = getRefactoringsByCategory().flatMap((g) => g.items.map((i) => i.name));
 
     for (const name of allNames) {

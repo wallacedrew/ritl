@@ -21,8 +21,6 @@ export default function RefactoringDetail({ refactoring, number }: RefactoringDe
           name={refactoring.name}
           number={number}
           relatedNames={refactoring.solves}
-          relatedKind="smells"
-          snippetKind="refactorings"
         />
         <Divider />
         <CatalogSection label="Goal" body={refactoring.goal} />

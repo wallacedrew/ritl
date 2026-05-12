@@ -1,13 +1,14 @@
 import { describe, expect, it } from "vitest";
 
-import { toSmellListItem } from "@/smells/lib/toSmellListItem";
+import { CatalogEntryName } from "@/shared/lib/CatalogEntryName";
 import type { Smell } from "@/smells/lib/Smell";
+import { toSmellListItem } from "@/smells/lib/toSmellListItem";
 
 const baseSmell: Smell = {
-  name: "Mysterious Name",
+  name: CatalogEntryName.smell("Mysterious Name"),
   symptom: "Names that don't reveal intent.",
   risk: "Re-comprehension cost.",
-  refactorings: ["Rename Variable"],
+  refactorings: [CatalogEntryName.refactoring("Rename Variable")],
   goal: "Names read as the domain.",
   savings: "Faster reading.",
   before: "x",

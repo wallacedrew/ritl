@@ -14,11 +14,13 @@ const validRaw = {
 };
 
 describe("parseSmell", () => {
-  it("returns a Smell when every required field is the right shape", () => {
+  it("returns a Smell with name and refactorings wrapped as CatalogEntryName instances", () => {
     const smell = parseSmell(validRaw);
 
-    expect(smell.name).toBe("Mysterious Name");
-    expect(smell.refactorings).toEqual(["Rename Variable"]);
+    expect(smell.name.toString()).toBe("Mysterious Name");
+    expect(smell.name.toCatalogHref()).toBe("/smells/mysterious-name");
+    expect(smell.refactorings.map((r) => r.toString())).toEqual(["Rename Variable"]);
+    expect(smell.refactorings[0]?.toCatalogHref()).toBe("/refactorings/rename-variable");
     expect(smell.symptom).toContain("don't reveal intent");
   });
 

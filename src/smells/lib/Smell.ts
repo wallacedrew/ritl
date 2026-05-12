@@ -1,8 +1,10 @@
+import type { CatalogEntryName } from "@/shared/lib/CatalogEntryName";
+
 export type Smell = {
-  name: string;
+  name: CatalogEntryName;
   symptom: string;
   risk: string;
-  refactorings: string[];
+  refactorings: CatalogEntryName[];
   goal: string;
   savings: string;
   before: string;

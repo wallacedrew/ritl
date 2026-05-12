@@ -2,10 +2,11 @@ import { describe, expect, it } from "vitest";
 
 import type { Refactoring } from "@/refactorings/lib/Refactoring";
 import { toRefactoringListItem } from "@/refactorings/lib/toRefactoringListItem";
+import { CatalogEntryName } from "@/shared/lib/CatalogEntryName";
 
 const baseRefactoring: Refactoring = {
-  name: "Extract Function",
-  solves: ["Long Function", "Duplicated Code"],
+  name: CatalogEntryName.refactoring("Extract Function"),
+  solves: [CatalogEntryName.smell("Long Function"), CatalogEntryName.smell("Duplicated Code")],
   risk: "Maze of one-line functions if over-eager.",
   goal: "Each function reads as a single named domain step.",
   savings: "Bugs concentrate inside named subroutines.",

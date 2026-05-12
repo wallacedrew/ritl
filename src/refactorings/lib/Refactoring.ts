@@ -1,6 +1,8 @@
+import type { CatalogEntryName } from "@/shared/lib/CatalogEntryName";
+
 export type Refactoring = {
-  name: string;
-  solves: string[];
+  name: CatalogEntryName;
+  solves: CatalogEntryName[];
   risk: string;
   goal: string;
   savings: string;

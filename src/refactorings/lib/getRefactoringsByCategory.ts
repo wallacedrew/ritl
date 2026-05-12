@@ -13,7 +13,7 @@ export function getRefactoringsByCategory(): RefactoringCategoryGroup[] {
   const allRefactorings = loadRefactorings();
   const byName = new Map(
     allRefactorings.map((refactoring, index) => [
-      refactoring.name,
+      refactoring.name.toString(),
       { refactoring, number: index + 1 },
     ]),
   );

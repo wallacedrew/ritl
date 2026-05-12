@@ -17,13 +17,7 @@ export default function SmellDetail({ smell, number }: SmellDetailProps) {
   return (
     <Container maxWidth="md" sx={{ py: 4 }}>
       <Stack spacing={3}>
-        <CatalogEntryHeader
-          name={smell.name}
-          number={number}
-          relatedNames={smell.refactorings}
-          relatedKind="refactorings"
-          snippetKind="smells"
-        />
+        <CatalogEntryHeader name={smell.name} number={number} relatedNames={smell.refactorings} />
         <Divider />
         <CatalogSection label="Symptom" body={smell.symptom} />
         <CatalogSection label="Goal" body={smell.goal} />
