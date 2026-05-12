@@ -3,11 +3,11 @@ import Typography from "@mui/material/Typography";
 
 import LinkedChip from "@/shared/components/LinkedChip";
 
-import type { RefactoringListItem } from "../lib/RefactoringListItem";
+import type { CatalogListItem } from "@/shared/lib/CatalogListItem";
 
 interface CategoryGroupProps {
   category: string;
-  items: RefactoringListItem[];
+  items: CatalogListItem[];
 }
 
 export default function CategoryGroup({ category, items }: CategoryGroupProps) {

@@ -1,10 +1,10 @@
 import Box from "@mui/material/Box";
 
-import type { SmellListItem } from "../lib/SmellListItem";
-import SmellCard from "./SmellCard";
+import CatalogCard from "@/shared/components/CatalogCard";
+import type { CatalogListItem } from "@/shared/lib/CatalogListItem";
 
 interface SmellListProps {
-  items: SmellListItem[];
+  items: CatalogListItem[];
 }
 
 export default function SmellList({ items }: SmellListProps) {
@@ -17,7 +17,7 @@ export default function SmellList({ items }: SmellListProps) {
       }}
     >
       {items.map((item) => (
-        <SmellCard key={item.name} item={item} />
+        <CatalogCard key={item.name} item={item} />
       ))}
     </Box>
   );

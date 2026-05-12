@@ -9,14 +9,13 @@ import Typography from "@mui/material/Typography";
 import NextLink from "next/link";
 
 import CatalogNumber from "@/shared/components/CatalogNumber";
+import type { CatalogListItem } from "@/shared/lib/CatalogListItem";
 
-import type { SmellListItem } from "../lib/SmellListItem";
-
-interface SmellCardProps {
-  item: SmellListItem;
+interface CatalogCardProps {
+  item: CatalogListItem;
 }
 
-export default function SmellCard({ item }: SmellCardProps) {
+export default function CatalogCard({ item }: CatalogCardProps) {
   return (
     <Card variant="outlined" sx={{ height: "100%" }}>
       <CardActionArea component={NextLink} href={item.href} sx={{ height: "100%" }}>
@@ -29,17 +28,12 @@ export default function SmellCard({ item }: SmellCardProps) {
               </Typography>
             </Stack>
             <Stack direction="row" sx={{ flexWrap: "wrap", gap: 1 }}>
-              {item.refactorings.map((refactoringName) => (
-                <Chip
-                  key={refactoringName}
-                  label={refactoringName}
-                  size="small"
-                  variant="outlined"
-                />
+              {item.chips.map((chip) => (
+                <Chip key={chip} label={chip} size="small" variant="outlined" />
               ))}
             </Stack>
             <Typography variant="body2" color="text.secondary">
-              {item.symptom}
+              {item.caption}
             </Typography>
           </Stack>
         </CardContent>

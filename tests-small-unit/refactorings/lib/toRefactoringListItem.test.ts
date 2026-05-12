@@ -26,12 +26,12 @@ describe("toRefactoringListItem", () => {
     expect(item.href).toBe("/refactorings/extract-function");
   });
 
-  it("preserves name, solves, and goal for the list view", () => {
+  it("projects name + solves and goal into the generic chips + caption shape", () => {
     const item = toRefactoringListItem(baseRefactoring, 1);
 
     expect(item.name).toBe("Extract Function");
-    expect(item.solves).toEqual(["Long Function", "Duplicated Code"]);
-    expect(item.goal).toContain("single named");
+    expect(item.chips).toEqual(["Long Function", "Duplicated Code"]);
+    expect(item.caption).toContain("single named");
   });
 
   it("does not leak detail-only fields onto the list item", () => {

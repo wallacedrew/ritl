@@ -1,10 +1,10 @@
 import Box from "@mui/material/Box";
 
-import type { RefactoringListItem } from "../lib/RefactoringListItem";
-import RefactoringCard from "./RefactoringCard";
+import CatalogCard from "@/shared/components/CatalogCard";
+import type { CatalogListItem } from "@/shared/lib/CatalogListItem";
 
 interface RefactoringListProps {
-  items: RefactoringListItem[];
+  items: CatalogListItem[];
 }
 
 export default function RefactoringList({ items }: RefactoringListProps) {
@@ -17,7 +17,7 @@ export default function RefactoringList({ items }: RefactoringListProps) {
       }}
     >
       {items.map((item) => (
-        <RefactoringCard key={item.name} item={item} />
+        <CatalogCard key={item.name} item={item} />
       ))}
     </Box>
   );

@@ -27,12 +27,12 @@ describe("toSmellListItem", () => {
     expect(item.href).toBe("/smells/mysterious-name");
   });
 
-  it("preserves name, refactorings, and symptom for the list view", () => {
+  it("projects name + refactorings and symptom into the generic chips + caption shape", () => {
     const item = toSmellListItem(baseSmell, 1);
 
     expect(item.name).toBe("Mysterious Name");
-    expect(item.refactorings).toEqual(["Rename Variable"]);
-    expect(item.symptom).toContain("don't reveal intent");
+    expect(item.chips).toEqual(["Rename Variable"]);
+    expect(item.caption).toContain("don't reveal intent");
   });
 
   it("does not leak detail-only fields onto the list item", () => {

@@ -1,11 +1,12 @@
+import type { CatalogListItem } from "@/shared/lib/CatalogListItem";
+
 import { REFACTORING_CATEGORIES } from "./categories";
 import { loadRefactorings } from "./loadRefactorings";
-import type { RefactoringListItem } from "./RefactoringListItem";
 import { toRefactoringListItem } from "./toRefactoringListItem";
 
 export interface RefactoringCategoryGroup {
   category: string;
-  items: RefactoringListItem[];
+  items: CatalogListItem[];
 }
 
 export function getRefactoringsByCategory(): RefactoringCategoryGroup[] {
