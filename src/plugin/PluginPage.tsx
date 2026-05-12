@@ -6,13 +6,14 @@ import Typography from "@mui/material/Typography";
 import AgentsMdSnippetSection from "./components/AgentsMdSnippetSection";
 import CatalogPasteSection from "./components/CatalogPasteSection";
 import PluginInstallSection from "./components/PluginInstallSection";
+import { visuallyHidden } from "@mui/utils";
 
 export default function PluginPage() {
   return (
     <Container maxWidth="lg" sx={{ py: 4 }}>
       <Stack spacing={4}>
         <Stack spacing={1}>
-          <Typography component="h1" variant="h4" sx={{ fontWeight: 600 }}>
+          <Typography component="h1" variant="h4" sx={visuallyHidden}>
             Plugin
           </Typography>
           <Typography variant="body1" color="text.secondary">
