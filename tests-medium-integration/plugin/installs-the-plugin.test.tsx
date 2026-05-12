@@ -1,8 +1,10 @@
 import { describe, expect, it } from "vitest";
 import { screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 
 import { renderWithTheme } from "../../tests-small-unit/_helpers/renderWithTheme";
 import PluginPage from "@/plugin/PluginPage";
+import { RecordingAnalyticsTracker } from "@/shared/lib/RecordingAnalyticsTracker";
 
 describe("user installs the plugin from /plugin", () => {
   it("leads with the Claude Code marketplace install marked Recommended", () => {
@@ -40,5 +42,17 @@ describe("user installs the plugin from /plugin", () => {
         /last-resort fallback for non-Claude-Code agents.*Paste sections relevant to the smell/i,
       ),
     ).toBeInTheDocument();
+  });
+
+  it("fires plugin_install_copied when the user clicks the install-command copy button", async () => {
+    const analytics = new RecordingAnalyticsTracker();
+    const user = userEvent.setup();
+
+    renderWithTheme(<PluginPage />, { analytics });
+
+    const copyButton = screen.getByRole("button", { name: /copy install command/i });
+    await user.click(copyButton);
+
+    expect(analytics.calls).toEqual([{ event: "plugin_install_copied" }]);
   });
 });

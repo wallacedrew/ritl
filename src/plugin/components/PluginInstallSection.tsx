@@ -8,6 +8,7 @@ import Stack from "@mui/material/Stack";
 import Tooltip from "@mui/material/Tooltip";
 import Typography from "@mui/material/Typography";
 
+import { useAnalytics } from "@/shared/hooks/useAnalytics";
 import { useClipboardCopy } from "@/shared/hooks/useClipboardCopy";
 import { MONOSPACE_FONT } from "@/shared/theme/monospace";
 
@@ -16,8 +17,10 @@ const CLI_INSTALL_COMMAND = `/plugin marketplace add wallacedrew/ritl
 
 export default function PluginInstallSection() {
   const { copied, copy } = useClipboardCopy();
+  const analytics = useAnalytics();
 
   async function handleCopyCommand() {
+    analytics.track({ event: "plugin_install_copied" });
     await copy(CLI_INSTALL_COMMAND);
   }
 
