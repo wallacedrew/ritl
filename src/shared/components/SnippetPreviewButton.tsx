@@ -60,7 +60,11 @@ export default function SnippetPreviewButton({ href, label, hint }: SnippetPrevi
         startIcon={<FileDownloadIcon />}
         variant="outlined"
         size="small"
-        sx={{ alignSelf: "flex-start", textTransform: "none" }}
+        sx={{
+          alignSelf: "flex-start",
+          textTransform: "none",
+          display: { xs: "none", md: "inline-flex" },
+        }}
       >
         {label}
         {hint && (

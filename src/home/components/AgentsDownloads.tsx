@@ -23,7 +23,7 @@ export default function AgentsDownloads() {
   }
 
   return (
-    <Stack spacing={2}>
+    <Stack spacing={2} sx={{ display: { xs: "none", md: "flex" } }}>
       <Stack direction="row" sx={{ flexWrap: "wrap", gap: 1 }}>
         <SnippetPreviewButton
           href="/snippets/refactoring-catalog.md"
