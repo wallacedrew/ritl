@@ -1,5 +1,4 @@
-import { notFound } from "next/navigation";
-
+import { findCatalogEntryBySlug } from "@/shared/lib/findCatalogEntryBySlug";
 import { Slug } from "@/shared/lib/Slug";
 
 import SmellDetail from "./components/SmellDetail";
@@ -11,16 +10,8 @@ interface SmellDetailPageProps {
 
 export default async function SmellDetailPage({ params }: SmellDetailPageProps) {
   const { slug: rawSlug } = await params;
-  const requested = Slug.fromUrlPart(rawSlug);
-  const smells = loadSmells();
-  const index = smells.findIndex((candidate) => Slug.from(candidate.name).equals(requested));
-  const smell = smells[index];
-
-  if (!smell) {
-    notFound();
-  }
-
-  return <SmellDetail smell={smell} number={index + 1} />;
+  const { entry: smell, number } = findCatalogEntryBySlug(rawSlug, loadSmells());
+  return <SmellDetail smell={smell} number={number} />;
 }
 
 export function generateStaticParams() {

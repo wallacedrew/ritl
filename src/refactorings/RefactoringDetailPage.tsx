@@ -1,5 +1,4 @@
-import { notFound } from "next/navigation";
-
+import { findCatalogEntryBySlug } from "@/shared/lib/findCatalogEntryBySlug";
 import { Slug } from "@/shared/lib/Slug";
 
 import RefactoringDetail from "./components/RefactoringDetail";
@@ -11,16 +10,8 @@ interface RefactoringDetailPageProps {
 
 export default async function RefactoringDetailPage({ params }: RefactoringDetailPageProps) {
   const { slug: rawSlug } = await params;
-  const requested = Slug.fromUrlPart(rawSlug);
-  const refactorings = loadRefactorings();
-  const index = refactorings.findIndex((candidate) => Slug.from(candidate.name).equals(requested));
-  const refactoring = refactorings[index];
-
-  if (!refactoring) {
-    notFound();
-  }
-
-  return <RefactoringDetail refactoring={refactoring} number={index + 1} />;
+  const { entry: refactoring, number } = findCatalogEntryBySlug(rawSlug, loadRefactorings());
+  return <RefactoringDetail refactoring={refactoring} number={number} />;
 }
 
 export function generateStaticParams() {
