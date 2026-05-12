@@ -4,6 +4,7 @@ import "./globals.css";
 import Box from "@mui/material/Box";
 import SiteFooter from "@/shared/components/SiteFooter";
 import SiteHeader from "@/shared/components/SiteHeader";
+import { AnalyticsProvider } from "@/shared/theme/AnalyticsProvider";
 import ThemeRegistry from "@/shared/theme/ThemeRegistry";
 
 export const metadata: Metadata = {
@@ -15,15 +16,17 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   return (
     <html lang="en">
       <body>
-        <ThemeRegistry>
-          <Box sx={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
-            <SiteHeader />
-            <Box component="main" sx={{ flexGrow: 1 }}>
-              {children}
+        <AnalyticsProvider>
+          <ThemeRegistry>
+            <Box sx={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
+              <SiteHeader />
+              <Box component="main" sx={{ flexGrow: 1 }}>
+                {children}
+              </Box>
+              <SiteFooter />
             </Box>
-            <SiteFooter />
-          </Box>
-        </ThemeRegistry>
+          </ThemeRegistry>
+        </AnalyticsProvider>
       </body>
     </html>
   );
