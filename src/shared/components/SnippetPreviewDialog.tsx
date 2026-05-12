@@ -13,6 +13,7 @@ import SnippetDialogActions from "@/shared/components/SnippetDialogActions";
 import SnippetEditor from "@/shared/components/SnippetEditor";
 import SnippetHintCaption from "@/shared/components/SnippetHintCaption";
 import SnippetInstallBanner from "@/shared/components/SnippetInstallBanner";
+import { useAnalytics } from "@/shared/hooks/useAnalytics";
 import { useClipboardCopy } from "@/shared/hooks/useClipboardCopy";
 import { useSnippetFetch } from "@/shared/hooks/useSnippetFetch";
 import { downloadMarkdown } from "@/shared/lib/downloadMarkdown";
@@ -38,13 +39,18 @@ export default function SnippetPreviewDialog({
 }: SnippetPreviewDialogProps) {
   const { content, error, isEdited, setContent, resetContent } = useSnippetFetch(href, open);
   const { copied, copy } = useClipboardCopy();
+  const analytics = useAnalytics();
 
   async function handleCopy() {
-    if (content !== null) await copy(content);
+    if (content === null) return;
+    analytics.track({ event: "snippet_copied", properties: { snippet: filename } });
+    await copy(content);
   }
 
   function handleDownload() {
-    if (content !== null) downloadMarkdown(content, filename);
+    if (content === null) return;
+    analytics.track({ event: "snippet_downloaded", properties: { snippet: filename } });
+    downloadMarkdown(content, filename);
   }
 
   return (

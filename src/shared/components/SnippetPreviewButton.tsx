@@ -6,6 +6,7 @@ import { useState } from "react";
 
 import SnippetHintCaption from "@/shared/components/SnippetHintCaption";
 import SnippetPreviewDialog from "@/shared/components/SnippetPreviewDialog";
+import { useAnalytics } from "@/shared/hooks/useAnalytics";
 
 interface SnippetPreviewButtonProps {
   href: string;
@@ -29,11 +30,17 @@ export default function SnippetPreviewButton({ href, label, hint }: SnippetPrevi
   const [open, setOpen] = useState(false);
   const filename = filenameFromHref(href);
   const skillSlug = skillSlugFromHref(href);
+  const analytics = useAnalytics();
+
+  function handleOpen() {
+    analytics.track({ event: "snippet_preview_opened", properties: { snippet: filename } });
+    setOpen(true);
+  }
 
   return (
     <>
       <Button
-        onClick={() => setOpen(true)}
+        onClick={handleOpen}
         startIcon={<FileDownloadIcon />}
         variant="outlined"
         size="small"
