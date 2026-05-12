@@ -5,7 +5,6 @@ import type { ReactElement, ReactNode } from "react";
 
 import type { AnalyticsTracker } from "@/shared/lib/AnalyticsTracker";
 import { AnalyticsProvider } from "@/shared/theme/AnalyticsProvider";
-import { ColorModeProvider } from "@/shared/theme/ColorModeContext";
 import { theme } from "@/shared/theme/theme";
 
 interface RenderWithThemeOptions extends Omit<RenderOptions, "wrapper"> {
@@ -17,14 +16,12 @@ export function renderWithTheme(ui: ReactElement, options?: RenderWithThemeOptio
 
   function ThemeWrapper({ children }: { children: ReactNode }) {
     return (
-      <ColorModeProvider>
-        <AnalyticsProvider tracker={analytics}>
-          <ThemeProvider theme={theme}>
-            <CssBaseline />
-            {children}
-          </ThemeProvider>
-        </AnalyticsProvider>
-      </ColorModeProvider>
+      <AnalyticsProvider tracker={analytics}>
+        <ThemeProvider theme={theme}>
+          <CssBaseline />
+          {children}
+        </ThemeProvider>
+      </AnalyticsProvider>
     );
   }
 

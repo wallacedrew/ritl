@@ -18,9 +18,9 @@ export default function SnippetEditor({ value, onChange }: SnippetEditorProps) {
       onChange={(event) => onChange(event.target.value)}
       variant="outlined"
       aria-label="Snippet content (editable)"
-      sx={(theme) => ({
+      sx={{
         "& .MuiInputBase-root": {
-          bgcolor: theme.palette.mode === "dark" ? "#0a0a0a" : "#f4f4f5",
+          bgcolor: "#f4f4f5",
           alignItems: "flex-start",
         },
         "& .MuiInputBase-input": {
@@ -28,7 +28,7 @@ export default function SnippetEditor({ value, onChange }: SnippetEditorProps) {
           fontSize: "0.8rem",
           lineHeight: 1.5,
         },
-      })}
+      }}
     />
   );
 }

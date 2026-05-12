@@ -38,15 +38,15 @@ export default function PluginInstallSection() {
         pays attention to the smell or refactoring that&apos;s actually in play.
       </Typography>
       <Box
-        sx={(theme) => ({
+        sx={{
           position: "relative",
-          bgcolor: theme.palette.mode === "dark" ? "#0a0a0a" : "#f4f4f5",
+          bgcolor: "#f4f4f5",
           border: 1,
           borderColor: "divider",
           borderRadius: 1,
           p: 1.5,
           pr: 5,
-        })}
+        }}
       >
         <Typography
           component="pre"
