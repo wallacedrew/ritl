@@ -1,0 +1,24 @@
+# Cloudflare Pages project configuration for ritl.
+#
+# This declares the RUNTIME bindings that Pages Functions (under functions/)
+# need at request time. Bindings here are applied to the production
+# environment on every `wrangler pages deploy` (see .github/workflows/deploy.yml).
+#
+# What lives here:
+#   - kv_namespaces: Pages Function KV access.
+#
+# What does NOT live here:
+#   - Encrypted secrets (STATS_PASSWORD): set with `wrangler pages secret put`.
+#   - NEXT_PUBLIC_* env vars: build-time, exposed via the deploy workflow's
+#     env block on the Build step (NEXT_PUBLIC_* are public values, fine
+#     in plaintext in CI config).
+
+name = "ritl"
+pages_build_output_dir = "out"
+compatibility_date = "2024-09-23"
+
+# Bound as env.ANALYTICS_KV inside functions/api/track.ts and functions/api/stats.ts.
+# Namespace ID returned by `wrangler kv namespace create RITL_ANALYTICS`.
+[[kv_namespaces]]
+binding = "ANALYTICS_KV"
+id = "93f2ec6ff4e9451d94d8bbdfe3053531"
