@@ -1,5 +1,7 @@
 import Typography from "@mui/material/Typography";
 
+import { MONOSPACE_FONT } from "@/shared/theme/monospace";
+
 interface CatalogNumberProps {
   value: number;
   size?: "small" | "large";
@@ -14,8 +16,7 @@ export default function CatalogNumber({ value, size = "small" }: CatalogNumberPr
       variant={size === "large" ? "h6" : "overline"}
       color="text.secondary"
       sx={{
-        fontFamily:
-          'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace',
+        fontFamily: MONOSPACE_FONT,
         fontVariantNumeric: "tabular-nums",
         flexShrink: 0,
         lineHeight: 1,

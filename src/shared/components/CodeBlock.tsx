@@ -2,6 +2,8 @@
 
 import Box from "@mui/material/Box";
 
+import { MONOSPACE_FONT } from "@/shared/theme/monospace";
+
 interface CodeBlockProps {
   code: string;
 }
@@ -18,8 +20,7 @@ export default function CodeBlock({ code }: CodeBlockProps) {
         color: "text.primary",
         border: 1,
         borderColor: "divider",
-        fontFamily:
-          'ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace',
+        fontFamily: MONOSPACE_FONT,
         fontSize: "0.875rem",
         lineHeight: 1.5,
         overflowX: "auto",
