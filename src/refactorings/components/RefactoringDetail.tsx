@@ -5,8 +5,10 @@ import Stack from "@mui/material/Stack";
 import BeforeAfterCodeBlocks from "@/shared/components/BeforeAfterCodeBlocks";
 import CatalogBackLink from "@/shared/components/CatalogBackLink";
 import CatalogEntryHeader from "@/shared/components/CatalogEntryHeader";
+import CatalogPrevNext from "@/shared/components/CatalogPrevNext";
 import CatalogSection from "@/shared/components/CatalogSection";
 
+import { getRefactoringNeighbors } from "../lib/getRefactoringNeighbors";
 import type { Refactoring } from "../lib/Refactoring";
 
 interface RefactoringDetailProps {
@@ -15,6 +17,8 @@ interface RefactoringDetailProps {
 }
 
 export default function RefactoringDetail({ refactoring, number }: RefactoringDetailProps) {
+  const neighbors = getRefactoringNeighbors(number);
+
   return (
     <Container maxWidth="md" sx={{ py: 4 }}>
       <Stack spacing={3}>
@@ -34,6 +38,8 @@ export default function RefactoringDetail({ refactoring, number }: RefactoringDe
         />
         <CatalogSection label="Savings" body={refactoring.savings} />
         <CatalogSection label="Note" body={refactoring.risk} />
+        <Divider />
+        <CatalogPrevNext prev={neighbors.prev} next={neighbors.next} />
       </Stack>
     </Container>
   );
