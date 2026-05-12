@@ -24,15 +24,25 @@ export default function AgentsDownloads() {
     <Stack spacing={2} sx={{ display: { xs: "none", md: "flex" } }}>
       <Stack direction="row" sx={{ flexWrap: "wrap", gap: 1 }}>
         <SnippetPreviewButton
+          href="/snippets/refactoring-discipline.md"
+          label="refactoring-discipline.md"
+          hint="Refactoring discipline for AGENTS.md"
+        />
+        <SnippetPreviewButton
           href="/snippets/refactoring-catalog.md"
           label="refactoring-catalog.md"
-          hint="90 SKILL.md sections in one paste"
+          hint="90 SKILL.md sections"
         />
       </Stack>
 
+      <Typography variant="caption" color="text.secondary" sx={{ display: "block" }}>
+        Fallback for non-Claude-Code agents — paste sections relevant to the smell you&apos;re
+        working on, not the whole file.
+      </Typography>
+
       <Box>
         <Typography variant="caption" color="text.secondary" sx={{ display: "block", mb: 0.5 }}>
-          Or install via Claude Code CLI:
+          Claude Code users — install the auto-invoking plugin instead:
         </Typography>
         <Box
           sx={(theme) => ({
