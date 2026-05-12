@@ -5,6 +5,7 @@ import userEvent from "@testing-library/user-event";
 import { renderWithTheme } from "../../tests-small-unit/_helpers/renderWithTheme";
 import CatalogSearch from "@/shared/components/CatalogSearch";
 import type { CatalogItem } from "@/shared/lib/CatalogItem";
+import { RecordingAnalyticsTracker } from "@/shared/lib/RecordingAnalyticsTracker";
 
 const pushMock = vi.fn();
 const pathnameMock = vi.fn<() => string>(() => "/");
@@ -66,5 +67,24 @@ describe("user searches the catalog", () => {
     await user.click(screen.getByRole("option", { name: /Extract Function/ }));
 
     expect(pushMock).toHaveBeenCalledWith("/refactorings/extract-function");
+  });
+
+  it("fires search_selected with the picked entry's kind and slug", async () => {
+    pathnameMock.mockReturnValue("/");
+    pushMock.mockClear();
+    const analytics = new RecordingAnalyticsTracker();
+    const user = userEvent.setup();
+
+    renderWithTheme(<CatalogSearch items={items} />, { analytics });
+
+    const combobox = screen.getByRole("combobox");
+    await user.click(combobox);
+    await user.type(combobox, "long");
+    await user.click(screen.getByRole("option", { name: /Long Function/ }));
+
+    expect(analytics.calls).toContainEqual({
+      event: "search_selected",
+      properties: { kind: "smell", slug: "long-function" },
+    });
   });
 });

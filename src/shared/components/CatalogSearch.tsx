@@ -7,8 +7,15 @@ import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import { usePathname, useRouter } from "next/navigation";
 
+import { useAnalytics } from "@/shared/hooks/useAnalytics";
+
 import type { CatalogItem } from "../lib/CatalogItem";
 import CatalogNumber from "./CatalogNumber";
+
+function slugFromHref(href: string): string {
+  const last = href.split("/").pop();
+  return last && last.length > 0 ? last : "";
+}
 
 interface CatalogSearchProps {
   items: CatalogItem[];
@@ -17,6 +24,7 @@ interface CatalogSearchProps {
 export default function CatalogSearch({ items }: CatalogSearchProps) {
   const router = useRouter();
   const pathname = usePathname();
+  const analytics = useAnalytics();
   const selected = items.find((item) => item.href === pathname) ?? null;
 
   return (
@@ -31,6 +39,10 @@ export default function CatalogSearch({ items }: CatalogSearchProps) {
       isOptionEqualToValue={(option, value) => option.href === value.href}
       onChange={(_, option) => {
         if (option) {
+          analytics.track({
+            event: "search_selected",
+            properties: { kind: option.kind, slug: slugFromHref(option.href) },
+          });
           router.push(option.href);
         }
       }}

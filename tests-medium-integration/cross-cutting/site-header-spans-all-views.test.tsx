@@ -1,8 +1,10 @@
 import { describe, expect, it, vi } from "vitest";
 import { screen } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 
 import { renderWithTheme } from "../../tests-small-unit/_helpers/renderWithTheme";
 import SiteHeader from "@/shared/components/SiteHeader";
+import { RecordingAnalyticsTracker } from "@/shared/lib/RecordingAnalyticsTracker";
 
 vi.mock("next/navigation", () => ({
   usePathname: () => "/",
@@ -28,5 +30,19 @@ describe("site header spans every catalog view", () => {
 
     const referenceTab = screen.getByRole("tab", { name: /Reference/ });
     expect(referenceTab).toHaveAttribute("href", "/reference");
+  });
+
+  it("fires nav_clicked with the tab name when the user clicks a navigation tab", async () => {
+    const analytics = new RecordingAnalyticsTracker();
+    const user = userEvent.setup();
+
+    renderWithTheme(<SiteHeader />, { analytics });
+
+    await user.click(screen.getByRole("tab", { name: /Smells/ }));
+
+    expect(analytics.calls).toContainEqual({
+      event: "nav_clicked",
+      properties: { tab: "smells" },
+    });
   });
 });
