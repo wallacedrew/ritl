@@ -34,7 +34,7 @@ export default function CatalogEntryHeader({
           />
         ))}
       </Stack>
-      <SnippetPreviewButton href={name.toSnippetHref()} label="Copy as Markdown" />
+      <SnippetPreviewButton href={name.toSnippetHref()} label="Preview Markdown" />
     </Stack>
   );
 }
