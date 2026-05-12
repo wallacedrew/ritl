@@ -26,6 +26,6 @@ describe("user reads a refactoring detail with smell cross-links", () => {
     expect(screen.getByText(/missing id/)).toBeInTheDocument();
     expect(screen.getByText(/withTax/)).toBeInTheDocument();
 
-    expect(screen.getByRole("button", { name: /preview SKILL\.md/i })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /copy as Markdown/i })).toBeInTheDocument();
   });
 });

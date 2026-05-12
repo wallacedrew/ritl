@@ -2,6 +2,7 @@
 
 import FileDownloadIcon from "@mui/icons-material/FileDownload";
 import Button from "@mui/material/Button";
+import Tooltip from "@mui/material/Tooltip";
 import { useState } from "react";
 
 import SnippetHintCaption from "@/shared/components/SnippetHintCaption";
@@ -13,6 +14,9 @@ interface SnippetPreviewButtonProps {
   label: string;
   hint?: string;
 }
+
+const AGENT_TOOLTIP_TITLE =
+  "Compact Markdown for coding agents (Claude Code, Codex, Aider). Same content as this page.";
 
 const PER_ENTITY_SNIPPET_HREF = /^\/snippets\/(refactorings|smells)\//;
 
@@ -39,20 +43,21 @@ export default function SnippetPreviewButton({ href, label, hint }: SnippetPrevi
 
   return (
     <>
-      <Button
-        onClick={handleOpen}
-        startIcon={<FileDownloadIcon />}
-        variant="outlined"
-        size="small"
-        sx={{
-          alignSelf: "flex-start",
-          textTransform: "none",
-          display: { xs: "none", md: "inline-flex" },
-        }}
-      >
-        {label}
-        {hint && <SnippetHintCaption text={hint} />}
-      </Button>
+      <Tooltip title={AGENT_TOOLTIP_TITLE} describeChild enterDelay={300} placement="bottom-start">
+        <Button
+          onClick={handleOpen}
+          startIcon={<FileDownloadIcon />}
+          variant="outlined"
+          size="small"
+          sx={{
+            alignSelf: "flex-start",
+            textTransform: "none",
+          }}
+        >
+          {label}
+          {hint && <SnippetHintCaption text={hint} />}
+        </Button>
+      </Tooltip>
 
       <SnippetPreviewDialog
         open={open}

@@ -20,6 +20,6 @@ describe("user reads a smell detail", () => {
     expect(screen.getByText(/function calc/)).toBeInTheDocument();
     expect(screen.getByText(/function distance/)).toBeInTheDocument();
 
-    expect(screen.getByRole("button", { name: /preview SKILL\.md/i })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /copy as Markdown/i })).toBeInTheDocument();
   });
 });
