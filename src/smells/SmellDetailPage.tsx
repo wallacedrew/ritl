@@ -1,5 +1,5 @@
 import { findCatalogEntryBySlug } from "@/shared/lib/findCatalogEntryBySlug";
-import { Slug } from "@/shared/lib/Slug";
+import { generateCatalogStaticParams } from "@/shared/lib/generateCatalogStaticParams";
 
 import SmellDetail from "./components/SmellDetail";
 import { loadSmells } from "./lib/loadSmells";
@@ -15,5 +15,5 @@ export default async function SmellDetailPage({ params }: SmellDetailPageProps) 
 }
 
 export function generateStaticParams() {
-  return loadSmells().map((smell) => ({ slug: Slug.from(smell.name).toString() }));
+  return generateCatalogStaticParams(loadSmells());
 }

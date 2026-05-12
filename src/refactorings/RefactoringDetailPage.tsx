@@ -1,5 +1,5 @@
 import { findCatalogEntryBySlug } from "@/shared/lib/findCatalogEntryBySlug";
-import { Slug } from "@/shared/lib/Slug";
+import { generateCatalogStaticParams } from "@/shared/lib/generateCatalogStaticParams";
 
 import RefactoringDetail from "./components/RefactoringDetail";
 import { loadRefactorings } from "./lib/loadRefactorings";
@@ -15,7 +15,5 @@ export default async function RefactoringDetailPage({ params }: RefactoringDetai
 }
 
 export function generateStaticParams() {
-  return loadRefactorings().map((refactoring) => ({
-    slug: Slug.from(refactoring.name).toString(),
-  }));
+  return generateCatalogStaticParams(loadRefactorings());
 }
