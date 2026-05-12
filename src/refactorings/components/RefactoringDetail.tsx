@@ -3,8 +3,8 @@ import Divider from "@mui/material/Divider";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 
+import BeforeAfterCodeBlocks from "@/shared/components/BeforeAfterCodeBlocks";
 import CatalogNumber from "@/shared/components/CatalogNumber";
-import CodeBlock from "@/shared/components/CodeBlock";
 import LinkedChip from "@/shared/components/LinkedChip";
 import SnippetPreviewButton from "@/shared/components/SnippetPreviewButton";
 import { Slug } from "@/shared/lib/Slug";
@@ -44,16 +44,12 @@ export default function RefactoringDetail({ refactoring, number }: RefactoringDe
         </Stack>
         <Divider />
         <RefactoringSection label="Goal" body={refactoring.goal} />
-        <Stack spacing={2}>
-          <Typography variant="overline" color="text.secondary">
-            Before the refactoring
-          </Typography>
-          <CodeBlock code={refactoring.before} />
-          <Typography variant="overline" color="text.secondary">
-            After the refactoring
-          </Typography>
-          <CodeBlock code={refactoring.after} />
-        </Stack>
+        <BeforeAfterCodeBlocks
+          beforeLabel="Before the refactoring"
+          afterLabel="After the refactoring"
+          beforeCode={refactoring.before}
+          afterCode={refactoring.after}
+        />
         <RefactoringSection label="Savings" body={refactoring.savings} />
         <RefactoringSection label="Note" body={refactoring.risk} />
       </Stack>

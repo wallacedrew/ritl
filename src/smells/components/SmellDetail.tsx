@@ -3,8 +3,8 @@ import Divider from "@mui/material/Divider";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 
+import BeforeAfterCodeBlocks from "@/shared/components/BeforeAfterCodeBlocks";
 import CatalogNumber from "@/shared/components/CatalogNumber";
-import CodeBlock from "@/shared/components/CodeBlock";
 import LinkedChip from "@/shared/components/LinkedChip";
 import SnippetPreviewButton from "@/shared/components/SnippetPreviewButton";
 import { Slug } from "@/shared/lib/Slug";
@@ -45,16 +45,12 @@ export default function SmellDetail({ smell, number }: SmellDetailProps) {
         <Divider />
         <SmellSection label="Symptom" body={smell.symptom} />
         <SmellSection label="Goal" body={smell.goal} />
-        <Stack spacing={2}>
-          <Typography variant="overline" color="text.secondary">
-            Smellier version
-          </Typography>
-          <CodeBlock code={smell.before} />
-          <Typography variant="overline" color="text.secondary">
-            Fresher version
-          </Typography>
-          <CodeBlock code={smell.after} />
-        </Stack>
+        <BeforeAfterCodeBlocks
+          beforeLabel="Smellier version"
+          afterLabel="Fresher version"
+          beforeCode={smell.before}
+          afterCode={smell.after}
+        />
         <SmellSection label="Savings" body={smell.savings} />
         <SmellSection label="Note" body={smell.risk} />
       </Stack>
