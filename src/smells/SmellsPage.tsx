@@ -3,8 +3,6 @@ import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import { visuallyHidden } from "@mui/utils";
 
-import SnippetPreviewButton from "@/shared/components/SnippetPreviewButton";
-
 import SmellList from "./components/SmellList";
 import { loadSmells } from "./lib/loadSmells";
 import { toSmellListItem } from "./lib/toSmellListItem";
@@ -22,11 +20,6 @@ export default function SmellsPage() {
           <Typography variant="body1" color="text.secondary">
             Canonical Fowler smells and the refactorings that address them.
           </Typography>
-          <SnippetPreviewButton
-            href="/snippets/refactoring-catalog.md"
-            label="refactoring-catalog.md"
-            hint="90 SKILL.md sections in one paste"
-          />
         </Stack>
         <SmellList items={items} />
       </Stack>

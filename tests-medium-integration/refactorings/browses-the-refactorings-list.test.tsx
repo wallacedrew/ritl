@@ -10,7 +10,5 @@ describe("user browses the refactorings list", () => {
 
     expect(screen.getByRole("heading", { name: "Extract Function" })).toBeInTheDocument();
     expect(screen.getAllByText("Long Function").length).toBeGreaterThanOrEqual(1);
-
-    expect(screen.getByRole("button", { name: /refactoring-catalog\.md/i })).toBeInTheDocument();
   });
 });

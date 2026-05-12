@@ -3,8 +3,6 @@ import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import { visuallyHidden } from "@mui/utils";
 
-import SnippetPreviewButton from "@/shared/components/SnippetPreviewButton";
-
 import RefactoringList from "./components/RefactoringList";
 import { loadRefactorings } from "./lib/loadRefactorings";
 import { toRefactoringListItem } from "./lib/toRefactoringListItem";
@@ -24,11 +22,6 @@ export default function RefactoringsPage() {
           <Typography variant="body1" color="text.secondary">
             Canonical Fowler refactorings and the smells they address.
           </Typography>
-          <SnippetPreviewButton
-            href="/snippets/refactoring-catalog.md"
-            label="refactoring-catalog.md"
-            hint="90 SKILL.md sections in one paste"
-          />
         </Stack>
         <RefactoringList items={items} />
       </Stack>

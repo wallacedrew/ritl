@@ -10,7 +10,5 @@ describe("user browses the smells list", () => {
 
     expect(screen.getByRole("heading", { name: "Mysterious Name" })).toBeInTheDocument();
     expect(screen.getByText(/identifiers that don.{0,3}t reveal intent/i)).toBeInTheDocument();
-
-    expect(screen.getByRole("button", { name: /refactoring-catalog\.md/i })).toBeInTheDocument();
   });
 });
