@@ -27,19 +27,35 @@ export default function SiteFooter() {
           <Typography variant="caption" color="text.secondary">
             Refactoring in the Loop — a catalog explorer
           </Typography>
-          <Typography variant="caption" color="text.secondary">
-            Built on{" "}
-            <Link
-              href="https://refactoring.com/catalog/"
-              target="_blank"
-              rel="noopener noreferrer"
-              color="inherit"
-              underline="hover"
-              sx={{ textDecorationStyle: "dotted", fontWeight: 600 }}
-            >
-              Martin Fowler&apos;s refactoring catalog
-            </Link>
-          </Typography>
+          <Stack
+            direction={{ xs: "column", sm: "row" }}
+            spacing={{ xs: 0.5, sm: 2 }}
+            sx={{ alignItems: { xs: "flex-start", sm: "center" } }}
+          >
+            <Typography variant="caption" color="text.secondary">
+              <Link
+                href="mailto:feedback@refactoringintheloop.com"
+                color="inherit"
+                underline="hover"
+                sx={{ textDecorationStyle: "dotted", fontWeight: 600 }}
+              >
+                Feedback
+              </Link>
+            </Typography>
+            <Typography variant="caption" color="text.secondary">
+              Built on{" "}
+              <Link
+                href="https://refactoring.com/catalog/"
+                target="_blank"
+                rel="noopener noreferrer"
+                color="inherit"
+                underline="hover"
+                sx={{ textDecorationStyle: "dotted", fontWeight: 600 }}
+              >
+                Martin Fowler&apos;s refactoring catalog
+              </Link>
+            </Typography>
+          </Stack>
         </Stack>
       </Container>
     </Box>
