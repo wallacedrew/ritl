@@ -16,13 +16,14 @@ describe("user learns which safety net protects a refactoring", () => {
     expect(screen.getByText("types/compiler")).toBeInTheDocument();
   });
 
-  it("does not show the safety net line on a refactoring without one classified yet", async () => {
+  it("sees the 'unit test' safety net on /refactorings/extract-function", async () => {
     const ui = await RefactoringDetailPage({
       params: Promise.resolve({ slug: "extract-function" }),
     });
 
     renderWithTheme(ui);
 
-    expect(screen.queryByText(/safety net/i)).not.toBeInTheDocument();
+    expect(screen.getByText(/safety net/i)).toBeInTheDocument();
+    expect(screen.getByText("unit test")).toBeInTheDocument();
   });
 });

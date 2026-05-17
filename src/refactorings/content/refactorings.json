@@ -1,6 +1,7 @@
 [
   {
     "name": "Extract Function",
+    "safetyNet": "unit test",
     "solves": ["Long Function", "Duplicated Code", "Comments"],
     "risk": "Over-eager extraction can produce a maze of one-line functions; aim for extractions that earn their name with at least one decision or one transformation.",
     "goal": "Each function reads as a single named domain step — what it does, not how.",
@@ -10,6 +11,7 @@
   },
   {
     "name": "Inline Function",
+    "safetyNet": "unit test",
     "solves": ["Lazy Element", "Speculative Generality"],
     "risk": "If the function had a meaningful name covering several call sites, inlining can scatter the intent — only inline when the body is as clear as the wrapper.",
     "goal": "Trivial wrappers vanish; the call site reads as exactly what's happening.",
@@ -53,6 +55,7 @@
   },
   {
     "name": "Encapsulate Variable",
+    "safetyNet": "unit test",
     "solves": ["Global Data", "Mutable Data"],
     "risk": "Adds a layer of indirection that pays off only when every access goes through the wrapper — leakage of direct access undoes the benefit.",
     "goal": "All reads and writes pass through a small named function that owns validation, logging, and invariants.",
@@ -82,6 +85,7 @@
   },
   {
     "name": "Combine Functions into Class",
+    "safetyNet": "unit test",
     "solves": ["Data Clumps", "Primitive Obsession"],
     "risk": "Wrapping passive data in a class that nobody else uses adds ceremony — only combine when 2+ functions take the same data and would benefit from co-located behavior.",
     "goal": "Functions that all act on the same data live alongside it as methods; calls become method calls on a domain object.",
@@ -91,6 +95,7 @@
   },
   {
     "name": "Combine Functions into Transform",
+    "safetyNet": "unit test",
     "solves": ["Data Clumps", "Mutable Data"],
     "risk": "Building a transform up-front when only one derivation exists is BDUF — wait for the second derivation before introducing the transform.",
     "goal": "Multiple derived values from the same source come from one transform that produces an enriched record.",
@@ -100,6 +105,7 @@
   },
   {
     "name": "Split Phase",
+    "safetyNet": "unit test",
     "solves": ["Divergent Change", "Long Function"],
     "risk": "An intermediate data structure between the phases is overhead — earn it by separating two clearly different concerns.",
     "goal": "Each phase reads and writes its own well-defined inputs and outputs; the seam between them is data, not control flow.",
@@ -129,6 +135,7 @@
   },
   {
     "name": "Slide Statements",
+    "safetyNet": "unit test",
     "solves": ["Long Function", "Comments"],
     "risk": "Reordering can change behavior if statements aren't actually independent — verify side effects and dependencies before sliding.",
     "goal": "Related statements sit next to each other; the function reads as a sequence of cohesive sub-steps that are easy to extract.",
@@ -138,6 +145,7 @@
   },
   {
     "name": "Split Loop",
+    "safetyNet": "unit test",
     "solves": ["Long Function", "Loops"],
     "risk": "Two loops over the same collection are slower than one — only split when the doubled cost is dwarfed by the readability gain (which it usually is).",
     "goal": "Each loop does one thing; mixed-purpose loops separate into named single-purpose passes.",
@@ -147,6 +155,7 @@
   },
   {
     "name": "Replace Loop with Pipeline",
+    "safetyNet": "unit test",
     "solves": ["Loops"],
     "risk": "Pipelines add a tiny per-element function-call overhead — usually negligible, but profile if you're in a hot path.",
     "goal": "Filter / map / reduce expresses the transformation as a sequence of named operations; intent jumps off the page.",
@@ -186,6 +195,7 @@
   },
   {
     "name": "Replace Derived Variable with Query",
+    "safetyNet": "unit test",
     "solves": ["Mutable Data"],
     "risk": "If the derivation is expensive and the source rarely changes, recomputing on every read may be wasteful — measure before deciding.",
     "goal": "Values computed from other state are computed on demand; no separate field needs to be kept in sync.",
@@ -195,6 +205,7 @@
   },
   {
     "name": "Decompose Conditional",
+    "safetyNet": "unit test",
     "solves": ["Long Function", "Comments"],
     "risk": "Names that aren't crisper than the underlying condition add ceremony — only extract when the named function/variable says something the condition can't.",
     "goal": "Conditions and their consequents read as named domain decisions: isInSummer(), discountFor(date), etc.",
@@ -204,6 +215,7 @@
   },
   {
     "name": "Consolidate Conditional Expression",
+    "safetyNet": "unit test",
     "solves": ["Duplicated Code"],
     "risk": "Combining conditions can hide their independent reasons — only consolidate when they truly express the same business rule.",
     "goal": "Multiple conditions leading to the same action collapse into one named predicate.",
@@ -213,6 +225,7 @@
   },
   {
     "name": "Replace Nested Conditional with Guard Clauses",
+    "safetyNet": "unit test",
     "solves": ["Long Function", "Comments"],
     "risk": "If multiple paths share work, premature returns can duplicate that work — extract first, then guard.",
     "goal": "Edge cases bail out early at the top of the function; the main flow is unindented and tells the happy path linearly.",
@@ -240,6 +253,7 @@
   },
   {
     "name": "Introduce Assertion",
+    "safetyNet": "unit test",
     "solves": ["Comments", "Mutable Data"],
     "risk": "Assertions used as control flow couple production behavior to debug-mode invariants — keep them as runtime contracts that should never fire.",
     "goal": "Invariants the code assumes are stated explicitly; readers don't need to deduce them.",
@@ -289,6 +303,7 @@
   },
   {
     "name": "Replace Parameter with Query",
+    "safetyNet": "unit test",
     "solves": ["Long Parameter List"],
     "risk": "If the query has side effects or is expensive, passing the value is genuinely better — only replace when the query is pure and cheap.",
     "goal": "When a function can compute its own answer from already-available state, callers don't have to pre-compute it.",
@@ -337,6 +352,7 @@
   },
   {
     "name": "Extract Superclass",
+    "safetyNet": "unit test",
     "solves": ["Duplicated Code", "Alternative Classes with Different Interfaces"],
     "risk": "Inheritance is inflexible — if the duplication is shallow, prefer Extract Class (composition) over Extract Superclass.",
     "goal": "Two classes with substantial shared structure get a common parent that owns the shared bits.",
@@ -365,6 +381,7 @@
   },
   {
     "name": "Extract Class",
+    "safetyNet": "unit test",
     "solves": ["Data Clumps", "Temporary Field", "Large Class", "Primitive Obsession"],
     "risk": "Premature class extraction adds ceremony — extract when 3+ fields and at least one operation cluster around a single concept that the parent class doesn't own.",
     "goal": "A cohesive sub-concept inside a class becomes its own class with its own name, fields, and methods.",
@@ -414,6 +431,7 @@
   },
   {
     "name": "Move Statements into Function",
+    "safetyNet": "unit test",
     "solves": ["Duplicated Code"],
     "risk": "If the moved statements aren't always wanted, the function grows a flag argument — verify every caller really needs the moved behavior.",
     "goal": "Setup or follow-up that happens around every call to a function moves inside the function, so the caller's contract shrinks.",
@@ -423,6 +441,7 @@
   },
   {
     "name": "Move Statements to Callers",
+    "safetyNet": "unit test",
     "solves": ["Divergent Change"],
     "risk": "If most callers want the moved statements, you've created duplication — the inverse of Move Statements into Function is only an improvement when callers genuinely differ.",
     "goal": "Statements that vary by caller move out of the function so each caller chooses its own setup or follow-up.",
@@ -442,6 +461,7 @@
   },
   {
     "name": "Replace Temp with Query",
+    "safetyNet": "unit test",
     "solves": ["Long Function", "Mutable Data"],
     "risk": "If the temp wraps an expensive calculation called many times, naive replacement may multiply cost — measure or cache before deciding.",
     "goal": "A local variable assigned once from a computation becomes a function that returns that computation on demand.",
@@ -497,6 +517,7 @@
   },
   {
     "name": "Encapsulate Record",
+    "safetyNet": "unit test",
     "solves": ["Data Class", "Primitive Obsession"],
     "risk": "Wrapping every record adds ceremony — only worth it when behavior or validation will accrete around the data.",
     "goal": "A bare record (plain object with public fields) becomes a class whose properties are accessed through methods that can validate, log, or derive.",
@@ -544,6 +565,7 @@
   },
   {
     "name": "Replace Control Flag with Break",
+    "safetyNet": "unit test",
     "solves": ["Loops", "Long Function"],
     "risk": "If the loop body is large, the break can hide the early-exit semantics — extract a function around the loop's body to keep the exit obvious.",
     "goal": "Loops that maintain a boolean to decide when to stop replace it with a direct `break`, `return`, or `continue`.",
