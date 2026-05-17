@@ -11,4 +11,5 @@ export type Refactoring = {
   before: string;
   after: string;
   safetyNet?: SafetyNet;
+  tradeoff?: string;
 };

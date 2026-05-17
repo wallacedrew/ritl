@@ -95,4 +95,23 @@ describe("parseRefactoring", () => {
   it("rejects a non-string safetyNet value", () => {
     expect(() => parseRefactoring({ ...validRaw, safetyNet: 99 })).toThrow(/safetyNet.*string/i);
   });
+
+  it("returns no tradeoff when the field is absent", () => {
+    const refactoring = parseRefactoring(validRaw);
+
+    expect(refactoring.tradeoff).toBeUndefined();
+  });
+
+  it("returns the tradeoff string when the field is present", () => {
+    const refactoring = parseRefactoring({
+      ...validRaw,
+      tradeoff: "Extra indirection at every call site.",
+    });
+
+    expect(refactoring.tradeoff).toBe("Extra indirection at every call site.");
+  });
+
+  it("rejects a non-string tradeoff value", () => {
+    expect(() => parseRefactoring({ ...validRaw, tradeoff: 42 })).toThrow(/tradeoff.*string/i);
+  });
 });

@@ -40,6 +40,7 @@ export default function RefactoringDetail({ refactoring, number }: RefactoringDe
           afterCode={refactoring.after}
         />
         <CatalogSection label="Savings" body={refactoring.savings} />
+        {refactoring.tradeoff && <CatalogSection label="Tradeoff" body={refactoring.tradeoff} />}
         <CatalogSection label="Note" body={refactoring.risk} />
         <Divider />
         <CatalogPrevNext prev={neighbors.prev} next={neighbors.next} />

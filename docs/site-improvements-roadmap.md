@@ -39,6 +39,8 @@ Before anything else. This is the wedge.
 
 5. **Rename Savings → Trade where the move carries a real cost.** Audit all 66. Pure-win moves (Remove Dead Code, Replace Magic Literal) keep `Savings`. Real-cost moves get `Trade` with both sides written honestly.
 
+   _Reframed (2026-05-16): keep Savings, add Tradeoff._ The original framing forced an either/or between "win" and "cost"; the reality is most refactorings have both. Keep `savings` as-is for every entry, add an optional `tradeoff?: string` field surfaced as its own "Tradeoff" section right after Savings (the symmetric counterpart). `risk` stays as the operational "Note" — different axis (mechanical caveat when doing the move) vs Tradeoff (honest cost even when the move succeeds). Pure-win moves leave Tradeoff blank; the section conditionally renders. Same Tidy First sequence as item 4: structural commit (optional field + parser + render-when-present) then content commits in batches.
+
 ---
 
 **Phase 2 — Calibration & Audience Decision (this week → next)**
