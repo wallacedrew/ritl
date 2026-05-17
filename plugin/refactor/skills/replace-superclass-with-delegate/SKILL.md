@@ -9,7 +9,7 @@ description: Apply Replace Superclass with Delegate when you see Refused Bequest
 
 **Why apply it:** The misleading is-a relationship disappears; the former subclass can change its delegate's class without affecting its callers.
 
-**Pitfall:** Adds a forwarding method on the former subclass for every method the old superclass exposed — only worth it when the superclass relationship is misleading.
+**Tradeoff:** Adds a forwarding method on the former subclass for every method the old superclass exposed — only worth it when the superclass relationship is misleading.
 
 ```js
 // Avoid:

@@ -9,7 +9,7 @@ description: Apply Push Down Method when you see Refused Bequest, Large Class. M
 
 **Why apply it:** The superclass surface shrinks; subclasses that don't need the method aren't burdened by it.
 
-**Pitfall:** If the method is occasionally needed in the parent, pushing it down forces awkward type checks back at consumers — verify usage first.
+**Tradeoff:** If the method is occasionally needed in the parent, pushing it down forces awkward type checks back at consumers — verify usage first.
 
 ```js
 // Avoid:

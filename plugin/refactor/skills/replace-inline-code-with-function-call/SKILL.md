@@ -9,7 +9,7 @@ description: Apply Replace Inline Code with Function Call when you see Duplicate
 
 **Why apply it:** One canonical implementation; the name labels the intent; future improvements to the function reach every site that used to inline.
 
-**Pitfall:** If the existing function's name doesn't quite match the local intent, the call site reads as a near-miss; consider Change Function Declaration first.
+**Tradeoff:** If the existing function's name doesn't quite match the local intent, the call site reads as a near-miss; consider Change Function Declaration first.
 
 ```js
 // Avoid:

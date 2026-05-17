@@ -9,7 +9,7 @@ description: Apply Change Reference to Value when you see Mutable Data. An objec
 
 **Why apply it:** Concurrency hazards disappear; the type system can mark fields readonly; the object can travel safely across boundaries.
 
-**Pitfall:** Comparison semantics shift from identity to equality — every call site that depended on `===` or identity caches needs review.
+**Tradeoff:** Comparison semantics shift from identity to equality — every call site that depended on `===` or identity caches needs review.
 
 ```js
 // Avoid:

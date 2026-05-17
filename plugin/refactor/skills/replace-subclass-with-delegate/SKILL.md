@@ -9,7 +9,7 @@ description: Apply Replace Subclass with Delegate when you see Refused Bequest, 
 
 **Why apply it:** Variants can be combined or swapped at runtime; Liskov violations vanish; the hierarchy tree flattens.
 
-**Pitfall:** Composition is more verbose at construction sites — accept the verbosity in exchange for the flexibility.
+**Tradeoff:** Composition is more verbose at construction sites — accept the verbosity in exchange for the flexibility.
 
 ```js
 // Avoid:

@@ -9,7 +9,7 @@ description: Apply Pull Up Field when you see Duplicated Code. A field declared 
 
 **Why apply it:** One source of truth for the field's type and default; subclasses focus on what they actually specialize.
 
-**Pitfall:** Pulling up a field that subclasses use differently (different default, different visibility) creates surprise — verify the field semantics are identical.
+**Tradeoff:** Pulling up a field that subclasses use differently (different default, different visibility) creates surprise — verify the field semantics are identical.
 
 ```js
 // Avoid:

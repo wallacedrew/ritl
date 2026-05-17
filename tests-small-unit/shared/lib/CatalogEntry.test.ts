@@ -61,6 +61,22 @@ describe("CatalogEntry", () => {
     expect(entry.forcesFor("agent").symptom).toBe("agent symptom");
   });
 
+  it("forcesFor falls back to human when agent is absent", () => {
+    const human = Forces.from({ ...validForcesRecord, symptom: "human symptom" });
+    const entry = makeEntry({ forces: { human } });
+
+    expect(entry.forcesFor("agent").symptom).toBe("human symptom");
+    expect(entry.hasAgentLens()).toBe(false);
+  });
+
+  it("hasAgentLens is true when agent forces are provided", () => {
+    const entry = makeEntry({
+      forces: { human: Forces.from(validForcesRecord), agent: Forces.from(validForcesRecord) },
+    });
+
+    expect(entry.hasAgentLens()).toBe(true);
+  });
+
   it("href derives from the catalog entry name", () => {
     expect(makeEntry().href()).toBe("/smells/long-function");
   });

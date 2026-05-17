@@ -9,7 +9,7 @@ description: Apply Replace Control Flag with Break when you see Loops, Long Func
 
 **Why apply it:** The exit condition appears at the moment it's decided, not as a delayed effect of a flag check; the loop's intent becomes literal.
 
-**Pitfall:** If the loop body is large, the break can hide the early-exit semantics — extract a function around the loop's body to keep the exit obvious.
+**Tradeoff:** If the loop body is large, the break can hide the early-exit semantics — extract a function around the loop's body to keep the exit obvious.
 
 ```js
 // Avoid:

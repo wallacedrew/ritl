@@ -9,7 +9,7 @@ description: Apply Separate Query from Modifier when you see Mutable Data. Funct
 
 **Why apply it:** Reasoning about side effects is local; tests target each shape independently.
 
-**Pitfall:** If the modification and the query truly cannot be separated (e.g. find-and-remove on a queue), the constraint is fundamental — leave the combined operation but document it.
+**Tradeoff:** If the modification and the query truly cannot be separated (e.g. find-and-remove on a queue), the constraint is fundamental — leave the combined operation but document it.
 
 ```js
 // Avoid:

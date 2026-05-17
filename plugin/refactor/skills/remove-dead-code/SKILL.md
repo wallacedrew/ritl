@@ -9,7 +9,7 @@ description: Apply Remove Dead Code when you see Speculative Generality, Comment
 
 **Why apply it:** Smaller surface, faster reading, fewer false leads when debugging.
 
-**Pitfall:** Code that looks dead may be reachable via reflection, dynamic dispatch, or external callers — delete in version control where it can be recovered.
+**Tradeoff:** You give up the option to revive without a git dive — and 'dead' under static analysis can still be reachable via reflection, dynamic dispatch, or external callers.
 
 ```js
 // Avoid:

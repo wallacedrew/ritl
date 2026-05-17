@@ -9,7 +9,7 @@ description: Apply Introduce Assertion when you see Comments, Mutable Data. Inva
 
 **Why apply it:** Bugs that violate the invariant fail loudly at the source instead of bubbling out as mysterious downstream errors.
 
-**Pitfall:** Assertions used as control flow couple production behavior to debug-mode invariants — keep them as runtime contracts that should never fire.
+**Tradeoff:** Assertions used as control flow couple production behavior to debug-mode invariants — keep them as runtime contracts that should never fire.
 
 ```js
 // Avoid:

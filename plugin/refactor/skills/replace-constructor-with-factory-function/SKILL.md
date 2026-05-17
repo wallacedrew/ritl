@@ -9,7 +9,7 @@ description: Apply Replace Constructor with Factory Function when you see Primit
 
 **Why apply it:** Construction can vary per case; consumers don't depend on which concrete class they're getting.
 
-**Pitfall:** Hides the actual class from callers — make sure your factory's name still expresses the produced shape clearly.
+**Tradeoff:** Hides the actual class from callers — make sure your factory's name still expresses the produced shape clearly.
 
 ```js
 // Avoid:

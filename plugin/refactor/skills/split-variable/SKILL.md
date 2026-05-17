@@ -9,7 +9,7 @@ description: Apply Split Variable when you see Mysterious Name, Mutable Data. Ea
 
 **Why apply it:** Names match purpose; the type system can narrow each role; refactoring each use becomes local.
 
-**Pitfall:** Two distinct uses of one variable share a single update pattern that may have hidden coupling — verify each use is genuinely independent.
+**Tradeoff:** If the two uses were actually coupled — shared init or synchronized update — splitting them invites drift the single mutation kept in sync.
 
 ```js
 // Avoid:

@@ -1,13 +1,12 @@
+import type { CatalogEntry } from "@/shared/lib/CatalogEntry";
 import type { CatalogListItem } from "@/shared/lib/CatalogListItem";
 
-import type { Smell } from "./Smell";
-
-export function toSmellListItem(smell: Smell, number: number): CatalogListItem {
+export function toSmellListItem(smell: CatalogEntry, number: number): CatalogListItem {
   return {
     number,
     href: smell.name.toCatalogHref(),
     name: smell.name.toString(),
-    chips: smell.refactorings.map((refactoringName) => refactoringName.toString()),
-    caption: smell.symptom,
+    chips: smell.nemeses.map((nemesis) => nemesis.toString()),
+    caption: smell.forcesFor("human").symptom,
   };
 }

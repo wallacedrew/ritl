@@ -9,7 +9,7 @@ description: Apply Substitute Algorithm when you see Long Function, Loops. An op
 
 **Why apply it:** Future maintainers read the well-known pattern instead of decoding the bespoke implementation; performance and correctness usually improve.
 
-**Pitfall:** Swapping algorithms wholesale forfeits behavioral safety — characterize the function with tests at every input boundary you care about before substituting.
+**Tradeoff:** Swapping algorithms wholesale forfeits behavioral safety — characterize the function with tests at every input boundary you care about before substituting.
 
 ```js
 // Avoid:

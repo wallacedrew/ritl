@@ -9,7 +9,7 @@ description: Apply Remove Subclass when you see Lazy Element, Speculative Genera
 
 **Why apply it:** Smaller hierarchy; new variants are field values instead of new files; the parent regains its variability point as data.
 
-**Pitfall:** Removing a subclass referenced by name elsewhere (factories, registries) breaks those references — confirm no consumer is type-testing the subclass.
+**Tradeoff:** Removing a subclass referenced by name elsewhere (factories, registries) breaks those references — confirm no consumer is type-testing the subclass.
 
 ```js
 // Avoid:

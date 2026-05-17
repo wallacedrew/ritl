@@ -9,7 +9,7 @@ description: Apply Consolidate Conditional Expression when you see Duplicated Co
 
 **Why apply it:** The shared rationale becomes visible and namable; new conditions extend one place instead of N.
 
-**Pitfall:** Combining conditions can hide their independent reasons — only consolidate when they truly express the same business rule.
+**Tradeoff:** Combining conditions can hide their independent reasons — only consolidate when they truly express the same business rule.
 
 ```js
 // Avoid:

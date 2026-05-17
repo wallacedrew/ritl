@@ -9,15 +9,24 @@ description: Apply Move Function when you see Feature Envy, Shotgun Surgery, Ins
 
 **Why apply it:** Modules become more cohesive; tests stay focused; feature-envy patterns disappear.
 
-**Pitfall:** Moving a function across modules can pull dependencies with it — confirm the new home actually has access to everything the function needs.
+**Tradeoff:** Dependencies don't always travel cleanly — circular imports surface at the destination, and readers' 'where does this live' map briefly breaks.
 
 ```js
 // Avoid:
-class Order { totalPriority() { return this.account.priority(); } }
+class Order {
+  account;
+  isVip() {
+    return this.account.tier === 'gold' && this.account.yearsActive >= 3;
+  }
+}
 
 // Prefer:
-class Account { priority() { /* ... */ } }
-class Order   { /* asks account directly when needed */ }
+class Account {
+  tier; yearsActive;
+  isVip() { return this.tier === 'gold' && this.yearsActive >= 3; }
+}
+class Order { account; }
+order.account.isVip();
 ```
 
 **Removes smells:** Feature Envy, Shotgun Surgery, Insider Trading, Divergent Change

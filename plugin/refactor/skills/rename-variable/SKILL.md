@@ -9,7 +9,7 @@ description: Apply Rename Variable when you see Mysterious Name. Variable names 
 
 **Why apply it:** Reading the variable's name tells you everything you need without checking its definition.
 
-**Pitfall:** A rename is small but cross-file; ensure your tooling catches every reference (including string templates and comments).
+**Tradeoff:** The IDE renames code, not the world around it — cross-repo greps, commit history, comments, and string-literal references silently drift stale.
 
 ```js
 // Avoid:

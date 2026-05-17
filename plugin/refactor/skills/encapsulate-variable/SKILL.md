@@ -9,7 +9,7 @@ description: Apply Encapsulate Variable when you see Global Data, Mutable Data. 
 
 **Why apply it:** A bug fix or audit becomes a one-line addition inside the wrapper; consumers never need to change.
 
-**Pitfall:** Adds a layer of indirection that pays off only when every access goes through the wrapper — leakage of direct access undoes the benefit.
+**Tradeoff:** Adds a layer of indirection that pays off only when every access goes through the wrapper — leakage of direct access undoes the benefit.
 
 ```js
 // Avoid:

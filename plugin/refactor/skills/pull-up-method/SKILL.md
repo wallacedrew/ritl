@@ -9,7 +9,7 @@ description: Apply Pull Up Method when you see Duplicated Code, Alternative Clas
 
 **Why apply it:** One implementation, one place to fix; subclasses focus on what's actually different.
 
-**Pitfall:** If the methods only superficially resemble each other, pulling up creates a fake-shared abstraction — unify only when behavior is actually identical.
+**Tradeoff:** If the methods only superficially resemble each other, pulling up creates a fake-shared abstraction — unify only when behavior is actually identical.
 
 ```js
 // Avoid:

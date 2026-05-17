@@ -9,7 +9,7 @@ description: Apply Introduce Special Case when you see Repeated Switches, Commen
 
 **Why apply it:** Callers stop branching on identity; the special behavior lives in one place.
 
-**Pitfall:** Adds a tiny class for one case; only worthwhile when the special case appears in 2+ consumers.
+**Tradeoff:** Adds a tiny class for one case; only worthwhile when the special case appears in 2+ consumers.
 
 ```js
 // Avoid:

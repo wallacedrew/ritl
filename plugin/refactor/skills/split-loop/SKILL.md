@@ -9,7 +9,7 @@ description: Apply Split Loop when you see Long Function, Loops. Each loop does 
 
 **Why apply it:** Each loop can then be replaced by a pipeline or extracted by name; bugs concentrate in one purpose at a time.
 
-**Pitfall:** Two loops over the same collection are slower than one — only split when the doubled cost is dwarfed by the readability gain (which it usually is).
+**Tradeoff:** Two loops over the same collection are slower than one — only split when the doubled cost is dwarfed by the readability gain (which it usually is).
 
 ```js
 // Avoid:

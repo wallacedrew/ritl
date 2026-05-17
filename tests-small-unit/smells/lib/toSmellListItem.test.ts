@@ -1,19 +1,27 @@
 import { describe, expect, it } from "vitest";
 
+import { CatalogEntry } from "@/shared/lib/CatalogEntry";
 import { CatalogEntryName } from "@/shared/lib/CatalogEntryName";
-import type { Smell } from "@/smells/lib/Smell";
+import { Forces } from "@/shared/lib/Forces";
 import { toSmellListItem } from "@/smells/lib/toSmellListItem";
 
-const baseSmell: Smell = {
-  name: CatalogEntryName.smell("Mysterious Name"),
+const baseForcesRecord = {
   symptom: "Names that don't reveal intent.",
-  risk: "Re-comprehension cost.",
-  refactorings: [CatalogEntryName.refactoring("Rename Variable")],
   goal: "Names read as the domain.",
-  savings: "Faster reading.",
+  pressure: "Re-comprehension cost.",
+  tradeoff: "Cost of the rename ripples cross-file.",
+  relief: "Faster reading.",
+  trap: "Obsessive renaming churn.",
+};
+
+const baseSmell = CatalogEntry.from({
+  catalog: "smells",
+  name: CatalogEntryName.smell("Mysterious Name"),
+  nemeses: [CatalogEntryName.refactoring("Rename Variable")],
   before: "x",
   after: "y",
-};
+  forces: { human: Forces.from(baseForcesRecord) },
+});
 
 describe("toSmellListItem", () => {
   it("attaches the catalog number passed in", () => {
@@ -28,7 +36,7 @@ describe("toSmellListItem", () => {
     expect(item.href).toBe("/smells/mysterious-name");
   });
 
-  it("projects name + refactorings and symptom into the generic chips + caption shape", () => {
+  it("projects name + nemeses and human-lens symptom into the generic chips + caption shape", () => {
     const item = toSmellListItem(baseSmell, 1);
 
     expect(item.name).toBe("Mysterious Name");
@@ -39,9 +47,7 @@ describe("toSmellListItem", () => {
   it("does not leak detail-only fields onto the list item", () => {
     const item = toSmellListItem(baseSmell, 1);
 
-    expect(item).not.toHaveProperty("risk");
-    expect(item).not.toHaveProperty("goal");
-    expect(item).not.toHaveProperty("savings");
+    expect(item).not.toHaveProperty("forces");
     expect(item).not.toHaveProperty("before");
     expect(item).not.toHaveProperty("after");
   });

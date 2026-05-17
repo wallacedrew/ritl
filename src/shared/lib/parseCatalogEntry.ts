@@ -71,16 +71,18 @@ function readForcesField(
   return value;
 }
 
-function readForces(record: Record<string, unknown>): { human: Forces; agent: Forces } {
+function readForces(record: Record<string, unknown>): { human: Forces; agent?: Forces } {
   const raw = record.forces;
   if (raw === null || typeof raw !== "object" || Array.isArray(raw)) {
     throw new Error('parseCatalogEntry: field "forces" must be an object');
   }
   const forcesRecord = raw as Record<string, unknown>;
-  return {
-    human: Forces.from(readForcesRecord(forcesRecord, "human")),
-    agent: Forces.from(readForcesRecord(forcesRecord, "agent")),
-  };
+  const human = Forces.from(readForcesRecord(forcesRecord, "human"));
+  const agent =
+    forcesRecord.agent === undefined
+      ? undefined
+      : Forces.from(readForcesRecord(forcesRecord, "agent"));
+  return agent === undefined ? { human } : { human, agent };
 }
 
 function readOptionalSafetyNet(record: Record<string, unknown>): SafetyNet | undefined {

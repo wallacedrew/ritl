@@ -178,10 +178,15 @@ function routingDescriptionForRefactoring(r) {
   return `Apply ${r.name} when you see ${triggers}. ${goal}`;
 }
 
+function agentLensForces(entry) {
+  return entry.forces.agent ?? entry.forces.human;
+}
+
 function routingDescriptionForSmell(s) {
-  const symptomLead = neutralizeColonSpace(firstSentence(s.symptom));
+  const forces = agentLensForces(s);
+  const symptomLead = neutralizeColonSpace(firstSentence(forces.symptom));
   const symptomClause = symptomLead.replace(/^[A-Z]/, (c) => c.toLowerCase());
-  const apply = s.refactorings.slice(0, 2).join(", ");
+  const apply = s.nemeses.slice(0, 2).join(", ");
   return `Refuse ${s.name} when ${symptomClause} Apply ${apply}.`;
 }
 
@@ -211,14 +216,15 @@ function formatRefactoringBody(r) {
 
 function formatSmellBody(s, index) {
   const num = String(index + 1).padStart(2, "0");
+  const forces = agentLensForces(s);
   return [
     `# Refuse: ${num} — ${s.name}`,
     "",
-    `**Trigger (refuse when you see):** ${s.symptom}`,
+    `**Trigger (refuse when you see):** ${forces.symptom}`,
     "",
-    `**Cost of leaving it in:** ${s.risk}`,
+    `**Cost of leaving it in:** ${forces.pressure}`,
     "",
-    `**Target shape after refactoring:** ${s.goal}`,
+    `**Target shape after refactoring:** ${forces.goal}`,
     "",
     "```js",
     "// Smellier:",
@@ -228,7 +234,7 @@ function formatSmellBody(s, index) {
     s.after,
     "```",
     "",
-    `**Apply refactorings:** ${s.refactorings.join(", ")}`,
+    `**Apply refactorings:** ${s.nemeses.join(", ")}`,
     "",
   ].join("\n");
 }

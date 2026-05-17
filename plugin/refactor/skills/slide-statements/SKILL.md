@@ -9,7 +9,7 @@ description: Apply Slide Statements when you see Long Function, Comments. Relate
 
 **Why apply it:** Setup for Extract Function becomes trivial; the implicit grouping inside the function becomes explicit.
 
-**Pitfall:** Reordering can change behavior if statements aren't actually independent — verify side effects and dependencies before sliding.
+**Tradeoff:** Reordering can change behavior if statements aren't actually independent — verify side effects and dependencies before sliding.
 
 ```js
 // Avoid:

@@ -9,7 +9,7 @@ description: Apply Decompose Conditional when you see Long Function, Comments. C
 
 **Why apply it:** The branching logic reads top-to-bottom as a story; bugs concentrate in the named pieces.
 
-**Pitfall:** Names that aren't crisper than the underlying condition add ceremony — only extract when the named function/variable says something the condition can't.
+**Tradeoff:** Names that aren't crisper than the underlying condition add ceremony — only extract when the named function/variable says something the condition can't.
 
 ```js
 // Avoid:

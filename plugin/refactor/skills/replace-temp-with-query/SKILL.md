@@ -9,7 +9,7 @@ description: Apply Replace Temp with Query when you see Long Function, Mutable D
 
 **Why apply it:** Extract Function becomes easier (the query has a name and stable scope); the temp's lifetime no longer constrains how the surrounding function is split.
 
-**Pitfall:** If the temp wraps an expensive calculation called many times, naive replacement may multiply cost — measure or cache before deciding.
+**Tradeoff:** If the temp wraps an expensive calculation called many times, naive replacement may multiply cost — measure or cache before deciding.
 
 ```js
 // Avoid:

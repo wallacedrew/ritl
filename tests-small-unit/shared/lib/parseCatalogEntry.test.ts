@@ -47,7 +47,7 @@ describe("parseCatalogEntry", () => {
       "/refactorings/replace-temp-with-query",
     ]);
     expect(entry.forces.human.symptom).toBe("S");
-    expect(entry.forces.agent.trap).toBe("X");
+    expect(entry.forces.agent?.trap).toBe("X");
     expect(entry.safetyNet).toBeUndefined();
   });
 
@@ -86,14 +86,20 @@ describe("parseCatalogEntry", () => {
     );
   });
 
-  it("rejects when forces or one of its lens halves is missing", () => {
+  it("rejects when the forces container is missing", () => {
     const withoutForces = { ...validSmell } as Record<string, unknown>;
     delete withoutForces.forces;
     expect(() => parseCatalogEntry(withoutForces)).toThrow(/forces.*object/i);
+  });
 
-    expect(() =>
-      parseCatalogEntry({ ...validSmell, forces: { human: validForcesRecord } }),
-    ).toThrow(/forces\.agent.*object/i);
+  it("allows forces.agent to be absent (lens falls back to human)", () => {
+    const entry = parseCatalogEntry({
+      ...validSmell,
+      forces: { human: validForcesRecord },
+    });
+
+    expect(entry.hasAgentLens()).toBe(false);
+    expect(entry.forcesFor("agent").symptom).toBe(entry.forcesFor("human").symptom);
   });
 
   it("rejects when a forces sub-field is the wrong type", () => {
