@@ -19,6 +19,7 @@
   },
   {
     "name": "Extract Variable",
+    "safetyNet": "types/compiler",
     "solves": ["Mysterious Name", "Comments"],
     "risk": "Over-extracting tiny expressions clutters scope with one-shot names; extract when the expression carries domain meaning the surrounding code can't speak.",
     "goal": "A complex expression earns a name that says what it represents in the domain.",
@@ -28,6 +29,7 @@
   },
   {
     "name": "Inline Variable",
+    "safetyNet": "types/compiler",
     "solves": ["Lazy Element"],
     "risk": "Inlining a name that did carry domain meaning costs readability — only inline when the expression is already self-explanatory.",
     "goal": "Single-use variables that just rename their right-hand side disappear; the expression speaks for itself.",
@@ -37,6 +39,7 @@
   },
   {
     "name": "Change Function Declaration",
+    "safetyNet": "types/compiler",
     "solves": [
       "Mysterious Name",
       "Long Parameter List",
@@ -69,6 +72,7 @@
   },
   {
     "name": "Introduce Parameter Object",
+    "safetyNet": "types/compiler",
     "solves": ["Long Parameter List", "Data Clumps"],
     "risk": "Premature parameter objects hide which fields are actually needed by which method — wait until the clump appears in 3+ places before extracting.",
     "goal": "Related arguments travel together as one well-named value object that the function (and callers) refer to by name.",
@@ -105,6 +109,7 @@
   },
   {
     "name": "Move Function",
+    "safetyNet": "types/compiler",
     "solves": ["Feature Envy", "Shotgun Surgery", "Insider Trading", "Divergent Change"],
     "risk": "Moving a function across modules can pull dependencies with it — confirm the new home actually has access to everything the function needs.",
     "goal": "Each function lives where its data lives; coupling between modules drops.",
@@ -114,6 +119,7 @@
   },
   {
     "name": "Move Field",
+    "safetyNet": "types/compiler",
     "solves": ["Shotgun Surgery", "Insider Trading"],
     "risk": "Moving a field disturbs every reader — refactor in tooling-supported steps and add a temporary accessor on the original class while migrating.",
     "goal": "Each field belongs to the class that owns its lifecycle; cross-class reaching disappears.",
@@ -150,6 +156,7 @@
   },
   {
     "name": "Remove Dead Code",
+    "safetyNet": "types/compiler",
     "solves": ["Speculative Generality", "Comments"],
     "risk": "Code that looks dead may be reachable via reflection, dynamic dispatch, or external callers — delete in version control where it can be recovered.",
     "goal": "Every line in the codebase is reachable and used; readers don't waste cycles on phantom branches.",
@@ -159,6 +166,7 @@
   },
   {
     "name": "Split Variable",
+    "safetyNet": "types/compiler",
     "solves": ["Mysterious Name", "Mutable Data"],
     "risk": "Two distinct uses of one variable share a single update pattern that may have hidden coupling — verify each use is genuinely independent.",
     "goal": "Each variable has one role; reassignment patterns reflect distinct purposes rather than reused storage.",
@@ -168,6 +176,7 @@
   },
   {
     "name": "Rename Field",
+    "safetyNet": "types/compiler",
     "solves": ["Mysterious Name"],
     "risk": "Field renames cross every reader/writer of the class — refactor in tooling-supported steps and update tests with each batch.",
     "goal": "Field names match the domain role they play; readers don't need to inspect usage to know what a field means.",
@@ -240,6 +249,7 @@
   },
   {
     "name": "Separate Query from Modifier",
+    "safetyNet": "types/compiler",
     "solves": ["Mutable Data"],
     "risk": "If the modification and the query truly cannot be separated (e.g. find-and-remove on a queue), the constraint is fundamental — leave the combined operation but document it.",
     "goal": "Functions either return a value or mutate state, never both — callers can compose them without surprise.",
@@ -249,6 +259,7 @@
   },
   {
     "name": "Parameterize Function",
+    "safetyNet": "types/compiler",
     "solves": ["Duplicated Code"],
     "risk": "If the variations are conceptually different operations, one parameterized function will accumulate flags and special cases — keep them separate then.",
     "goal": "Two near-identical functions that differ only in literal values combine into one with a parameter.",
@@ -258,6 +269,7 @@
   },
   {
     "name": "Remove Flag Argument",
+    "safetyNet": "types/compiler",
     "solves": ["Long Parameter List"],
     "risk": "Two replacement functions with similar bodies introduce duplication — pair this with Extract Function for shared internals.",
     "goal": "Each flag value becomes its own well-named function; callers say what they mean rather than passing booleans.",
@@ -267,6 +279,7 @@
   },
   {
     "name": "Preserve Whole Object",
+    "safetyNet": "types/compiler",
     "solves": ["Long Parameter List", "Data Clumps"],
     "risk": "Passing the whole object adds coupling to its full surface — only do this when the called function might reasonably need other parts of the object.",
     "goal": "Instead of pulling several values out of an object to pass them in, pass the object itself.",
@@ -285,6 +298,7 @@
   },
   {
     "name": "Replace Constructor with Factory Function",
+    "safetyNet": "types/compiler",
     "solves": ["Primitive Obsession", "Speculative Generality"],
     "risk": "Hides the actual class from callers — make sure your factory's name still expresses the produced shape clearly.",
     "goal": "Object creation goes through a named function that can validate, choose subclasses, or return cached instances.",
@@ -294,6 +308,7 @@
   },
   {
     "name": "Pull Up Method",
+    "safetyNet": "types/compiler",
     "solves": ["Duplicated Code", "Alternative Classes with Different Interfaces"],
     "risk": "If the methods only superficially resemble each other, pulling up creates a fake-shared abstraction — unify only when behavior is actually identical.",
     "goal": "Methods that subclasses implement identically move to the shared superclass.",
@@ -303,6 +318,7 @@
   },
   {
     "name": "Push Down Method",
+    "safetyNet": "types/compiler",
     "solves": ["Refused Bequest", "Large Class"],
     "risk": "If the method is occasionally needed in the parent, pushing it down forces awkward type checks back at consumers — verify usage first.",
     "goal": "Methods used by only one subclass live with that subclass, not on the shared superclass.",
@@ -330,6 +346,7 @@
   },
   {
     "name": "Collapse Hierarchy",
+    "safetyNet": "types/compiler",
     "solves": ["Lazy Element", "Speculative Generality"],
     "risk": "Collapsing too eagerly destroys an extension point you'll later want — only collapse when the variant has been zero-sum for a sustained period.",
     "goal": "A subclass that no longer differs meaningfully from its parent merges back in.",
@@ -357,6 +374,7 @@
   },
   {
     "name": "Replace Primitive with Object",
+    "safetyNet": "types/compiler",
     "solves": ["Primitive Obsession"],
     "risk": "Wrapping every primitive is overkill — wrap when the concept needs validation, formatting, or domain-specific behavior beyond what the primitive offers.",
     "goal": "Each domain concept has a small typed home — Money, PhoneNumber, OrderId — that knows its rules.",
@@ -366,6 +384,7 @@
   },
   {
     "name": "Hide Delegate",
+    "safetyNet": "types/compiler",
     "solves": ["Message Chains"],
     "risk": "Adds a passthrough method on the parent for every delegated operation — only worth it for operations that are repeated across consumers.",
     "goal": "Callers ask the closest object for what they want; the object delegates internally without exposing its collaborators.",
@@ -375,6 +394,7 @@
   },
   {
     "name": "Remove Middle Man",
+    "safetyNet": "types/compiler",
     "solves": ["Middle Man"],
     "risk": "Direct access to the delegate exposes its surface to every consumer — only remove the middle man when most of its methods are passthroughs.",
     "goal": "Callers talk directly to the real object; trivial passthroughs are deleted.",
@@ -384,6 +404,7 @@
   },
   {
     "name": "Replace Magic Literal",
+    "safetyNet": "types/compiler",
     "solves": ["Mysterious Name", "Comments"],
     "risk": "Naming every literal can drown the file in trivia — only name literals that carry domain meaning the surrounding code can't speak.",
     "goal": "Bare numbers and strings that encode domain concepts become named constants whose name says what the value represents.",
@@ -411,6 +432,7 @@
   },
   {
     "name": "Replace Inline Code with Function Call",
+    "safetyNet": "types/compiler",
     "solves": ["Duplicated Code"],
     "risk": "If the existing function's name doesn't quite match the local intent, the call site reads as a near-miss; consider Change Function Declaration first.",
     "goal": "When inline code reproduces what a named function already does, the inline copy is replaced by a call.",
@@ -447,6 +469,7 @@
   },
   {
     "name": "Return Modified Value",
+    "safetyNet": "types/compiler",
     "solves": ["Mutable Data"],
     "risk": "Callers must remember to capture the returned value; if any forget, they keep the unmodified original. Mark the parameter readonly so the type system helps.",
     "goal": "Instead of mutating a parameter in place, the function returns the modified value so the caller reassigns.",
@@ -483,6 +506,7 @@
   },
   {
     "name": "Remove Setting Method",
+    "safetyNet": "types/compiler",
     "solves": ["Mutable Data", "Data Class"],
     "risk": "Removing a setter forces every legitimate update through a more meaningful method — verify there's a domain action behind every setter call before deleting it.",
     "goal": "Fields whose values should only be set at construction lose their setters; callers either construct a new object or call a domain method that changes the field as a side effect of doing real work.",
@@ -492,6 +516,7 @@
   },
   {
     "name": "Inline Class",
+    "safetyNet": "types/compiler",
     "solves": ["Lazy Element", "Speculative Generality"],
     "risk": "If the absorbing class was already large, inlining piles more onto it — fold in only when the absorber stays under its complexity budget afterward.",
     "goal": "A class with too few responsibilities to deserve its own file folds into a class it collaborates with most.",
@@ -528,6 +553,7 @@
   },
   {
     "name": "Replace Query with Parameter",
+    "safetyNet": "types/compiler",
     "solves": ["Mutable Data", "Insider Trading"],
     "risk": "Passing the value pushes the responsibility onto callers; for many call sites, signatures grow noisily — prefer this when the query touches global or volatile state.",
     "goal": "A function that reads from a query (global, singleton, instance state) instead accepts the value as a parameter and becomes referentially transparent.",
@@ -555,6 +581,7 @@
   },
   {
     "name": "Pull Up Constructor Body",
+    "safetyNet": "types/compiler",
     "solves": ["Duplicated Code"],
     "risk": "If only some subclasses share the init logic, pulling it up forces the others to opt out — verify the body is genuinely common.",
     "goal": "Initialization code repeated across subclass constructors moves into the parent class's constructor and is called via super.",
@@ -564,6 +591,7 @@
   },
   {
     "name": "Pull Up Field",
+    "safetyNet": "types/compiler",
     "solves": ["Duplicated Code"],
     "risk": "Pulling up a field that subclasses use differently (different default, different visibility) creates surprise — verify the field semantics are identical.",
     "goal": "A field declared identically in two or more subclasses moves to the shared superclass.",
@@ -573,6 +601,7 @@
   },
   {
     "name": "Push Down Field",
+    "safetyNet": "types/compiler",
     "solves": ["Refused Bequest", "Large Class"],
     "risk": "If the field is occasionally consulted in the parent for type checks, pushing it down forces awkward downcasts — verify usage first.",
     "goal": "A field used by only one subclass moves out of the parent and into that subclass.",
@@ -582,6 +611,7 @@
   },
   {
     "name": "Remove Subclass",
+    "safetyNet": "types/compiler",
     "solves": ["Lazy Element", "Speculative Generality"],
     "risk": "Removing a subclass referenced by name elsewhere (factories, registries) breaks those references — confirm no consumer is type-testing the subclass.",
     "goal": "A subclass whose only purpose was to encode a type code or add nothing collapses back into a field on the parent.",
