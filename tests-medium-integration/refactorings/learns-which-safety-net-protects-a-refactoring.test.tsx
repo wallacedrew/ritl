@@ -26,4 +26,15 @@ describe("user learns which safety net protects a refactoring", () => {
     expect(screen.getByText(/safety net/i)).toBeInTheDocument();
     expect(screen.getByText("unit test")).toBeInTheDocument();
   });
+
+  it("sees the 'characterization test' safety net on /refactorings/replace-conditional-with-polymorphism", async () => {
+    const ui = await RefactoringDetailPage({
+      params: Promise.resolve({ slug: "replace-conditional-with-polymorphism" }),
+    });
+
+    renderWithTheme(ui);
+
+    expect(screen.getByText(/safety net/i)).toBeInTheDocument();
+    expect(screen.getByText("characterization test")).toBeInTheDocument();
+  });
 });

@@ -235,6 +235,7 @@
   },
   {
     "name": "Replace Conditional with Polymorphism",
+    "safetyNet": "characterization test",
     "solves": ["Repeated Switches", "Primitive Obsession"],
     "risk": "If only one switch on the type code exists, polymorphism is overkill — wait for the second or third repeat before extracting subclasses.",
     "goal": "Each case becomes a class implementing a shared interface; dispatch happens once via virtual call.",
@@ -244,6 +245,7 @@
   },
   {
     "name": "Introduce Special Case",
+    "safetyNet": "characterization test",
     "solves": ["Repeated Switches", "Comments"],
     "risk": "Adds a tiny class for one case; only worthwhile when the special case appears in 2+ consumers.",
     "goal": "A repeating null-or-special check becomes a Null Object (or Special Case) that responds sensibly to the same interface.",
@@ -343,6 +345,7 @@
   },
   {
     "name": "Replace Type Code with Subclasses",
+    "safetyNet": "characterization test",
     "solves": ["Repeated Switches", "Primitive Obsession"],
     "risk": "If only one or two switches exist on the type code, subclassing is over-design; combine with Replace Conditional with Polymorphism only when dispatch repeats.",
     "goal": "A 'kind' string field becomes a real subclass type; the type system enforces the legal set.",
@@ -372,6 +375,7 @@
   },
   {
     "name": "Replace Subclass with Delegate",
+    "safetyNet": "characterization test",
     "solves": ["Refused Bequest", "Insider Trading"],
     "risk": "Composition is more verbose at construction sites — accept the verbosity in exchange for the flexibility.",
     "goal": "Behavior that varied via inheritance now varies via a delegate object that implements the variant interface.",
@@ -471,6 +475,7 @@
   },
   {
     "name": "Replace Function with Command",
+    "safetyNet": "characterization test",
     "solves": ["Long Function"],
     "risk": "Promoting a function to a command adds ceremony (constructor, method calls). Only worth it when the function genuinely needs its own intermediate state or multiple entry points.",
     "goal": "A function with rich internal state becomes an object whose methods can share that state — easier to extract, name, and test in pieces.",
@@ -480,6 +485,7 @@
   },
   {
     "name": "Replace Command with Function",
+    "safetyNet": "characterization test",
     "solves": ["Speculative Generality", "Lazy Element"],
     "risk": "If the command holds genuinely useful intermediate state, flattening to a function regrows the temps it eliminated — confirm there's no real reuse first.",
     "goal": "A command object whose execute() does everything in one shot collapses back to a plain function.",
@@ -499,6 +505,7 @@
   },
   {
     "name": "Substitute Algorithm",
+    "safetyNet": "characterization test",
     "solves": ["Long Function", "Loops"],
     "risk": "Swapping algorithms wholesale forfeits behavioral safety — characterize the function with tests at every input boundary you care about before substituting.",
     "goal": "An opaque or convoluted algorithm gets replaced by a clearer one (often from a library or well-known pattern) that produces the same outputs.",
@@ -508,6 +515,7 @@
   },
   {
     "name": "Encapsulate Collection",
+    "safetyNet": "characterization test",
     "solves": ["Mutable Data", "Insider Trading"],
     "risk": "Returning a shallow copy on every read can hide bugs where callers expected mutation to be reflected — be explicit about the contract.",
     "goal": "A class's internal collection is never returned directly; callers add or remove via methods on the class, and reads return a snapshot or iterator.",
@@ -547,6 +555,7 @@
   },
   {
     "name": "Change Reference to Value",
+    "safetyNet": "characterization test",
     "solves": ["Mutable Data"],
     "risk": "Comparison semantics shift from identity to equality — every call site that depended on `===` or identity caches needs review.",
     "goal": "An object treated as a sharable record (with setters) becomes a value object — immutable, equal by content, replaced rather than mutated.",
@@ -556,6 +565,7 @@
   },
   {
     "name": "Change Value to Reference",
+    "safetyNet": "characterization test",
     "solves": ["Duplicated Code"],
     "risk": "Sharing introduces the question 'who owns this?' — make sure the lifetime and visibility of the shared reference are well-defined.",
     "goal": "Duplicate copies of a logically-single entity collapse into one shared object that everyone references.",
@@ -585,6 +595,7 @@
   },
   {
     "name": "Replace Error Code with Exception",
+    "safetyNet": "characterization test",
     "solves": ["Comments"],
     "risk": "Exceptions for predictable conditions misuse the mechanism — only convert codes that represent genuine, exceptional, unrecoverable failures.",
     "goal": "Numeric or string error codes that callers must remember to check are replaced with exceptions that propagate by default.",
@@ -594,6 +605,7 @@
   },
   {
     "name": "Replace Exception with Precheck",
+    "safetyNet": "characterization test",
     "solves": ["Comments"],
     "risk": "Race conditions: the precheck may pass and the operation still fail (TOCTOU). Use prechecks only for conditions the caller can verify without a race.",
     "goal": "Exceptions used for predictable, checkable conditions become an explicit precheck the caller can perform, leaving exceptions for truly exceptional cases.",
@@ -643,6 +655,7 @@
   },
   {
     "name": "Replace Superclass with Delegate",
+    "safetyNet": "characterization test",
     "solves": ["Refused Bequest", "Insider Trading"],
     "risk": "Adds a forwarding method on the former subclass for every method the old superclass exposed — only worth it when the superclass relationship is misleading.",
     "goal": "Inheritance from a superclass that doesn't really fit (Liskov violations, awkward methods) becomes composition: the former subclass holds an instance and delegates explicitly.",
