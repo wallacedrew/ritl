@@ -1,6 +1,7 @@
 import { CatalogEntryName } from "@/shared/lib/CatalogEntryName";
 
 import type { Refactoring } from "./Refactoring";
+import { SafetyNet } from "./SafetyNet";
 
 function readStringField(record: Record<string, unknown>, field: string): string {
   const value = record[field];
@@ -8,6 +9,17 @@ function readStringField(record: Record<string, unknown>, field: string): string
     throw new Error(`parseRefactoring: field "${field}" must be a string`);
   }
   return value;
+}
+
+function readOptionalSafetyNet(record: Record<string, unknown>): SafetyNet | undefined {
+  const raw = record.safetyNet;
+  if (raw === undefined) {
+    return undefined;
+  }
+  if (typeof raw !== "string") {
+    throw new Error('parseRefactoring: field "safetyNet" must be a string when present');
+  }
+  return SafetyNet.from(raw);
 }
 
 export function parseRefactoring(raw: unknown): Refactoring {
@@ -36,5 +48,6 @@ export function parseRefactoring(raw: unknown): Refactoring {
     savings: readStringField(record, "savings"),
     before: readStringField(record, "before"),
     after: readStringField(record, "after"),
+    safetyNet: readOptionalSafetyNet(record),
   };
 }

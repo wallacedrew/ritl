@@ -1,5 +1,7 @@
 import type { CatalogEntryName } from "@/shared/lib/CatalogEntryName";
 
+import type { SafetyNet } from "./SafetyNet";
+
 export type Refactoring = {
   name: CatalogEntryName;
   solves: CatalogEntryName[];
@@ -8,4 +10,5 @@ export type Refactoring = {
   savings: string;
   before: string;
   after: string;
+  safetyNet?: SafetyNet;
 };

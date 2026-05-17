@@ -29,6 +29,9 @@ export default function RefactoringDetail({ refactoring, number }: RefactoringDe
           relatedNames={refactoring.solves}
         />
         <Divider />
+        {refactoring.safetyNet && (
+          <CatalogSection label="Safety net" body={refactoring.safetyNet.toString()} />
+        )}
         <CatalogSection label="Goal" body={refactoring.goal} />
         <BeforeAfterCodeBlocks
           beforeLabel="Before the refactoring"

@@ -73,4 +73,26 @@ describe("parseRefactoring", () => {
 
     expect(() => parseRefactoring(withBadSolves)).toThrow(/solves.*string/i);
   });
+
+  it("returns no safetyNet when the field is absent", () => {
+    const refactoring = parseRefactoring(validRaw);
+
+    expect(refactoring.safetyNet).toBeUndefined();
+  });
+
+  it("wraps a legal safetyNet value as a SafetyNet value object", () => {
+    const refactoring = parseRefactoring({ ...validRaw, safetyNet: "types/compiler" });
+
+    expect(refactoring.safetyNet?.toString()).toBe("types/compiler");
+  });
+
+  it("rejects an unknown safetyNet value", () => {
+    expect(() => parseRefactoring({ ...validRaw, safetyNet: "integration test" })).toThrow(
+      /unknown safety net/i,
+    );
+  });
+
+  it("rejects a non-string safetyNet value", () => {
+    expect(() => parseRefactoring({ ...validRaw, safetyNet: 99 })).toThrow(/safetyNet.*string/i);
+  });
 });
