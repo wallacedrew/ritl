@@ -49,6 +49,8 @@ Before anything else. This is the wedge.
 
 7. **Pick a language per card, not multiple.** Choose the language that makes each refactoring's _shape_ clearest. Java for inheritance moves, TS for pipeline moves, Python where duck typing illuminates. Don't quadruple every card.
 
+   _Deferred (2026-05-17)._ Comes back after Phase 3 plugin-page work. Current examples are all JS-flavored; a per-card language tag implies (a) annotating each entry's language in JSON, (b) rendering a small language chip on the detail page, and (c) potentially rewriting examples whose shape lands better in another language. Substantial cross-cutting work; not the next-best move while higher-leverage Phase 3 items (AGENTS.md inline, plugin-tier reorder) are still untouched.
+
 8. **Audience decision gate.** Before Phase 5: is the public site (a) storefront for the plugin, or (b) canonical reference? Decision shapes everything downstream — home page lead, plugin page positioning, how aggressive pair consolidation can be. Don't try to be both.
 
    _Resolved (2026-05-16): canonical reference._ Home leads with the catalog; `/plugin` is the thesis + install + proof page. Phase 5 pair consolidation runs cautiously — preserve URLs, set up redirects, expect inbound links and citations to outlive any restructure. Re-read item 25 under this framing (see flag below).
