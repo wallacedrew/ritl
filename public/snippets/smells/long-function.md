@@ -1,15 +1,15 @@
 ---
 name: long-function
-description: Refuse Long Function when functions whose body has dozens of lines and a mix of concerns — fetching, calculating, formatting, and logging all interwoven. Apply Extract Function, Replace Temp with Query.
+description: Refuse Long Function when a function whose token count exceeds the agent's reliable chunk-reasoning budget; verifying behavior preservation requires re-reading the entire span on every edit. Apply Extract Function, Replace Temp with Query.
 ---
 
 # Refuse: 03 — Long Function
 
-**Trigger (refuse when you see):** Functions whose body has dozens of lines and a mix of concerns — fetching, calculating, formatting, and logging all interwoven.
+**Trigger (refuse when you see):** A function whose token count exceeds the agent's reliable chunk-reasoning budget; verifying behavior preservation requires re-reading the entire span on every edit.
 
-**Cost of leaving it in:** Each line is an opportunity for the reader to lose context; understanding requires holding the whole function in working memory.
+**Cost of leaving it in:** Every edit pays full re-read cost; chained changes compound context usage and increase the chance of missing a cross-statement invariant.
 
-**Target shape after refactoring:** Each function reads as a sequence of named single-responsibility steps; nothing does more than its name advertises.
+**Target shape after refactoring:** Each function is a verifiable unit small enough that the agent can reason about its full behavior in a single reasoning step.
 
 ```js
 // Smellier:

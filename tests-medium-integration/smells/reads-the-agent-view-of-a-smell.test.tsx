@@ -5,7 +5,7 @@ import { renderWithTheme } from "../../tests-small-unit/_helpers/renderWithTheme
 import SmellAgentPage from "@/smells/SmellAgentPage";
 
 describe("user reads the agent view of a smell", () => {
-  it("falls back to human-lens content at /smells/mysterious-name/agent when agent forces are not yet authored", async () => {
+  it("renders authored agent-lens content at /smells/mysterious-name/agent", async () => {
     const ui = await SmellAgentPage({
       params: Promise.resolve({ slug: "mysterious-name" }),
     });
@@ -13,10 +13,26 @@ describe("user reads the agent view of a smell", () => {
     renderWithTheme(ui);
 
     expect(screen.getByRole("heading", { name: "Mysterious Name", level: 1 })).toBeInTheDocument();
-    expect(screen.getByText(/identifiers that don.{0,3}t reveal intent/i)).toBeInTheDocument();
-    expect(screen.getByText(/re-comprehension cost/i)).toBeInTheDocument();
+    expect(screen.getByText(/token-level identifiers/i)).toBeInTheDocument();
+    expect(screen.getByText(/fewer context-lookup hops/i)).toBeInTheDocument();
 
     const backToHuman = screen.getByRole("link", { name: /View as human/ });
     expect(backToHuman).toHaveAttribute("href", "/smells/mysterious-name");
+  });
+
+  it("falls back to human-lens content at /smells/duplicated-code/agent when agent forces are not yet authored", async () => {
+    const ui = await SmellAgentPage({
+      params: Promise.resolve({ slug: "duplicated-code" }),
+    });
+
+    renderWithTheme(ui);
+
+    expect(screen.getByRole("heading", { name: "Duplicated Code", level: 1 })).toBeInTheDocument();
+    expect(
+      screen.getByText(/same code structure appears in two or more places/i),
+    ).toBeInTheDocument();
+
+    const backToHuman = screen.getByRole("link", { name: /View as human/ });
+    expect(backToHuman).toHaveAttribute("href", "/smells/duplicated-code");
   });
 });

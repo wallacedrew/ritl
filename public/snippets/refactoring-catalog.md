@@ -1914,16 +1914,16 @@ class CategoryItem {
 
 ---
 name: mysterious-name
-description: Refuse Mysterious Name when identifiers that don't reveal intent — names like aFunc(), x, theData, temp, or one-letter loop variables that force every reader to reverse-engineer the code's purpose. Apply Change Function Declaration, Rename Variable.
+description: Refuse Mysterious Name when token-level identifiers don't disambiguate scope or domain — the agent must load surrounding context to answer 'what does this variable hold?' before any reasoning step succeeds. Apply Change Function Declaration, Rename Variable.
 ---
 
 # Refuse: 01 — Mysterious Name
 
-**Trigger (refuse when you see):** Identifiers that don't reveal intent — names like aFunc(), x, theData, temp, or one-letter loop variables that force every reader to reverse-engineer the code's purpose.
+**Trigger (refuse when you see):** Token-level identifiers don't disambiguate scope or domain — the agent must load surrounding context to answer 'what does this variable hold?' before any reasoning step succeeds.
 
-**Cost of leaving it in:** Every reading is a re-comprehension cost; bugs sneak in because what code does diverges from what its name suggests. Compounds in proportion to how many readers (humans + LLMs) touch the file.
+**Cost of leaving it in:** Every reasoning pass re-derives meaning from surrounding context; chained edits compound the cost and increase the chance of hallucinating a misread.
 
-**Target shape after refactoring:** Names read as the domain — a function's purpose, a variable's role, a class's responsibility — visible in one glance.
+**Target shape after refactoring:** Identifiers carry enough disambiguating information that the agent can reason about each symbol without a lookup hop.
 
 ```js
 // Smellier:
@@ -1971,16 +1971,16 @@ function lineTotal(items) {
 
 ---
 name: long-function
-description: Refuse Long Function when functions whose body has dozens of lines and a mix of concerns — fetching, calculating, formatting, and logging all interwoven. Apply Extract Function, Replace Temp with Query.
+description: Refuse Long Function when a function whose token count exceeds the agent's reliable chunk-reasoning budget; verifying behavior preservation requires re-reading the entire span on every edit. Apply Extract Function, Replace Temp with Query.
 ---
 
 # Refuse: 03 — Long Function
 
-**Trigger (refuse when you see):** Functions whose body has dozens of lines and a mix of concerns — fetching, calculating, formatting, and logging all interwoven.
+**Trigger (refuse when you see):** A function whose token count exceeds the agent's reliable chunk-reasoning budget; verifying behavior preservation requires re-reading the entire span on every edit.
 
-**Cost of leaving it in:** Each line is an opportunity for the reader to lose context; understanding requires holding the whole function in working memory.
+**Cost of leaving it in:** Every edit pays full re-read cost; chained changes compound context usage and increase the chance of missing a cross-statement invariant.
 
-**Target shape after refactoring:** Each function reads as a sequence of named single-responsibility steps; nothing does more than its name advertises.
+**Target shape after refactoring:** Each function is a verifiable unit small enough that the agent can reason about its full behavior in a single reasoning step.
 
 ```js
 // Smellier:
@@ -2143,16 +2143,16 @@ function logEvent({ event, user }) {
 
 ---
 name: feature-envy
-description: Refuse Feature Envy when a method on class A reaches deeply into class B's data via getters, then computes something B should compute. Apply Move Function, Extract Function.
+description: Refuse Feature Envy when a method's body references foreign-class data more than its own; the agent loading this method must also load the foreign class to verify any change. Apply Move Function, Extract Function.
 ---
 
 # Refuse: 09 — Feature Envy
 
-**Trigger (refuse when you see):** A method on class A reaches deeply into class B's data via getters, then computes something B should compute.
+**Trigger (refuse when you see):** A method's body references foreign-class data more than its own; the agent loading this method must also load the foreign class to verify any change.
 
-**Cost of leaving it in:** Domain logic lives where it's least expected; B's internals leak through public surfaces just to support A's method.
+**Cost of leaving it in:** Each call to the envious method pulls a second class into the agent's working context; chained reasoning across the boundary compounds the load.
 
-**Target shape after refactoring:** Methods live with the data they care about — B owns the logic over B's fields.
+**Target shape after refactoring:** Method bodies stay close to the data they read — the agent loads one class to reason about one behavior.
 
 ```js
 // Smellier:

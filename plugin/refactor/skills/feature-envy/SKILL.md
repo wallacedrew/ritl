@@ -1,15 +1,15 @@
 ---
 name: feature-envy
-description: Refuse Feature Envy when a method on class A reaches deeply into class B's data via getters, then computes something B should compute. Apply Move Function, Extract Function.
+description: Refuse Feature Envy when a method's body references foreign-class data more than its own; the agent loading this method must also load the foreign class to verify any change. Apply Move Function, Extract Function.
 ---
 
 # Refuse: 09 — Feature Envy
 
-**Trigger (refuse when you see):** A method on class A reaches deeply into class B's data via getters, then computes something B should compute.
+**Trigger (refuse when you see):** A method's body references foreign-class data more than its own; the agent loading this method must also load the foreign class to verify any change.
 
-**Cost of leaving it in:** Domain logic lives where it's least expected; B's internals leak through public surfaces just to support A's method.
+**Cost of leaving it in:** Each call to the envious method pulls a second class into the agent's working context; chained reasoning across the boundary compounds the load.
 
-**Target shape after refactoring:** Methods live with the data they care about — B owns the logic over B's fields.
+**Target shape after refactoring:** Method bodies stay close to the data they read — the agent loads one class to reason about one behavior.
 
 ```js
 // Smellier:
