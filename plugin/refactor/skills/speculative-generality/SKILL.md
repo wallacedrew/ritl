@@ -1,15 +1,15 @@
 ---
 name: speculative-generality
-description: Refuse Speculative Generality when hooks, abstract base classes, configuration knobs, and parameters added 'in case we need them' — but no real call site uses them. Apply Collapse Hierarchy, Inline Function.
+description: Refuse Speculative Generality when abstract base classes, hooks, configuration knobs, or parameters with no real call site exercising them — the agent must learn vocabulary it never gets to use. Apply Collapse Hierarchy, Inline Function.
 ---
 
 # Refuse: 15 — Speculative Generality
 
-**Trigger (refuse when you see):** Hooks, abstract base classes, configuration knobs, and parameters added 'in case we need them' — but no real call site uses them.
+**Trigger (refuse when you see):** Abstract base classes, hooks, configuration knobs, or parameters with no real call site exercising them — the agent must learn vocabulary it never gets to use.
 
-**Cost of leaving it in:** Tests are forced to cover branches no one exercises; readers learn a vocabulary they don't need; YAGNI debt compounds.
+**Cost of leaving it in:** Tests cover branches no one exercises; readers (human and agent) learn dead vocabulary; refactoring proposals must consider phantom users that aren't real.
 
-**Target shape after refactoring:** The code expresses exactly what it does today — abstraction earns its keep when a real second user shows up.
+**Target shape after refactoring:** The code expresses exactly what it does today; the agent's mental model has no concepts that don't correspond to active behavior.
 
 ```js
 // Smellier:

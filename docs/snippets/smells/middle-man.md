@@ -1,15 +1,15 @@
 ---
 name: middle-man
-description: Refuse Middle Man when a class whose methods all delegate straight through to another object — no decisions, no transformations. Apply Remove Middle Man, Inline Function.
+description: Refuse Middle Man when a class whose methods all delegate straight through to another object — the agent traces every call to the real implementation, paying a hop for no decision. Apply Remove Middle Man, Inline Function.
 ---
 
 # Refuse: 18 — Middle Man
 
-**Trigger (refuse when you see):** A class whose methods all delegate straight through to another object — no decisions, no transformations.
+**Trigger (refuse when you see):** A class whose methods all delegate straight through to another object — the agent traces every call to the real implementation, paying a hop for no decision.
 
-**Cost of leaving it in:** An entire layer of indirection that adds no value; readers must follow every call to the real implementation.
+**Cost of leaving it in:** An entire indirection layer the agent must navigate per method; the agent reading code through the middle man re-traces the delegation on every reasoning step.
 
-**Target shape after refactoring:** Callers talk directly to the real object; trivial passthroughs are deleted.
+**Target shape after refactoring:** Callers talk to the real object directly; the agent's call traces are shorter and the real implementation's location is obvious.
 
 ```js
 // Smellier:

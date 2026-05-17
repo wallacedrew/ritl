@@ -376,9 +376,17 @@
         "symptom": "A class, function, or namespace that exists but does nothing meaningful — a one-line wrapper, an empty subclass, a passthrough method.",
         "goal": "Trivial wrappers disappear; the call site says exactly what's happening.",
         "pressure": "Reader pays a navigation cost to discover the wrapper adds nothing; future changes are tempted to add real work to it.",
-        "tradeoff": "[human tradeoff not yet authored]",
+        "tradeoff": "Inlining the wrapper at every call site can leak its body across files; if the wrapper later genuinely needs work, you'll have to re-extract it after the fact.",
         "relief": "Shorter call chains, less indirection to unwrap when reading; one fewer file to maintain.",
-        "trap": "[human trap not yet authored]"
+        "trap": "Aggressive inlining of trivial-looking wrappers that actually mark a real seam — the wrapper's emptiness was the point (extension point, mocking boundary), and removing it forecloses options."
+      },
+      "agent": {
+        "symptom": "A class, function, or namespace whose body the agent traces through only to find no decisions or transformations — every hop is pure overhead in reasoning context.",
+        "goal": "Trivial wrappers disappear; the call site reads exactly as what's happening and the agent skips the indirection.",
+        "pressure": "The agent navigates through layers that add nothing; future maintainers (human or agent) face a choice between leaving dead weight or extracting a real reason for it.",
+        "tradeoff": "Inlining scatters the wrapper's body across call sites; if the wrapper was a seam (mocking boundary, extension point), removing it forecloses options the agent might need later.",
+        "relief": "Shorter call chains; the agent loads one fewer definition per reasoning step; the call site reads as exactly what's happening.",
+        "trap": "Mechanically inlining everything that looks trivial — including wrappers that mark a real seam — collapses extension points the agent will need to re-introduce later at higher cost."
       }
     }
   },
@@ -399,9 +407,17 @@
         "symptom": "Hooks, abstract base classes, configuration knobs, and parameters added 'in case we need them' — but no real call site uses them.",
         "goal": "The code expresses exactly what it does today — abstraction earns its keep when a real second user shows up.",
         "pressure": "Tests are forced to cover branches no one exercises; readers learn a vocabulary they don't need; YAGNI debt compounds.",
-        "tradeoff": "[human tradeoff not yet authored]",
+        "tradeoff": "Removing the unused abstraction can break a real (if rare) future need; YAGNI is a useful default, but historical context sometimes justifies the option-value.",
         "relief": "Smaller surface, fewer concepts, fewer test branches.",
-        "trap": "[human trap not yet authored]"
+        "trap": "Aggressive removal of every unused hook on principle — including ones that document a known coming feature or a stable boundary the team agreed to preserve."
+      },
+      "agent": {
+        "symptom": "Abstract base classes, hooks, configuration knobs, or parameters with no real call site exercising them — the agent must learn vocabulary it never gets to use.",
+        "goal": "The code expresses exactly what it does today; the agent's mental model has no concepts that don't correspond to active behavior.",
+        "pressure": "Tests cover branches no one exercises; readers (human and agent) learn dead vocabulary; refactoring proposals must consider phantom users that aren't real.",
+        "tradeoff": "Removing speculative scaffolding is sometimes a real loss — the abstraction may document a coming feature or a deliberately-preserved seam; the agent collapsing it must verify no current or imminent caller relies on the option.",
+        "relief": "Smaller surface; fewer concepts the agent must hold in its reasoning context; tests align with actual behavior so green tests mean live coverage.",
+        "trap": "Collapsing every unused hook on sight removes options the team had reason to hold; the agent must judge intent before deleting, or risk shipping cleanups the maintainers reject."
       }
     }
   },
@@ -416,9 +432,17 @@
         "symptom": "A class field used by only one method, set to null or default the rest of the time.",
         "goal": "The temporary state moves to a dedicated class that exists only when it's relevant.",
         "pressure": "Reader must trace the conditions under which the field is meaningful; null-checks scatter; the field's role is unclear.",
-        "tradeoff": "[human tradeoff not yet authored]",
+        "tradeoff": "Extracting the temporary state to a dedicated class adds a new type the team must learn; for one-shot uses the class can feel like more ceremony than the original field.",
         "relief": "Null-checks vanish; class invariants tighten; the new class has a clear purpose.",
-        "trap": "[human trap not yet authored]"
+        "trap": "Extracting a class for every short-lived field — including ones whose 'temporary' use is genuinely local and well-encapsulated by the host class."
+      },
+      "agent": {
+        "symptom": "A class field the agent finds set to null or default for most of the object's lifetime, populated only inside one method's flow — the agent must verify which methods care.",
+        "goal": "Temporary state lives in a dedicated class that exists only when relevant; the agent loads the temporary type only when reasoning about that flow.",
+        "pressure": "The agent must trace the conditions under which the field is meaningful; null-checks scatter across consumers; class invariants weaken because the field has no defined lifecycle.",
+        "tradeoff": "Extracting a new class adds a type the agent must load to reason about the flow; for genuinely one-shot uses the class is more code than the original field warranted.",
+        "relief": "Null-checks vanish; the agent reasons about a class with a clear lifecycle; class invariants tighten so reasoning about the host class doesn't have to consider the unused state.",
+        "trap": "Extracting a class for every short-lived field — including ones with truly local use — creates new types the agent must load with no comprehension gain over the original encapsulated field."
       }
     }
   },
@@ -433,9 +457,17 @@
         "symptom": "Long dotted access paths: a.b.c.d.e — every callsite walks the entire object graph.",
         "goal": "Callers ask the closest object for what they want; the object delegates internally.",
         "pressure": "Every link in the chain is a coupling point; renaming any intermediate field breaks every consumer.",
-        "tradeoff": "[human tradeoff not yet authored]",
+        "tradeoff": "Hiding the delegate adds a passthrough method on the host class for every chained operation; if the chain is used in only one place, the passthrough is pure ceremony.",
         "relief": "Encapsulation tightens; intermediate objects can change shape without breaking callers.",
-        "trap": "[human trap not yet authored]"
+        "trap": "Wrapping every dotted chain in passthrough methods — the chains migrate from call sites into the host class's surface, which then balloons with delegations that add no real value."
+      },
+      "agent": {
+        "symptom": "Long dotted access paths the agent must trace through several object hops to understand any single read; renaming any intermediate field breaks every caller silently.",
+        "goal": "Callers ask the closest object for what they want; the agent reasons about one boundary instead of traversing N.",
+        "pressure": "Every link in the chain is a coupling point the agent must hold in working memory; refactoring any intermediate shape requires the agent to find and update every chained access.",
+        "tradeoff": "Adding passthrough methods on the host class grows its surface; for chains used in one place the passthrough is overhead the agent now maintains in two places.",
+        "relief": "Encapsulation tightens; intermediate objects can change shape without breaking callers; the agent reasoning about a caller doesn't load every link in the chain.",
+        "trap": "Wrapping every dotted chain in passthroughs migrates the smell from call sites into the host class's surface — the agent now reads a wall of delegation methods to find any real behavior."
       }
     }
   },
@@ -455,9 +487,17 @@
         "symptom": "A class whose methods all delegate straight through to another object — no decisions, no transformations.",
         "goal": "Callers talk directly to the real object; trivial passthroughs are deleted.",
         "pressure": "An entire layer of indirection that adds no value; readers must follow every call to the real implementation.",
-        "tradeoff": "[human tradeoff not yet authored]",
+        "tradeoff": "Removing the middle man exposes the underlying object's full surface to every consumer; consumers that only needed a few methods now have access to all of them.",
         "relief": "Fewer files, shorter call stacks, the implementation's location is obvious.",
-        "trap": "[human trap not yet authored]"
+        "trap": "Deleting any class whose methods mostly delegate, even ones that add legitimate authorization, validation, or auditing on top — the trivial-looking layer was load-bearing."
+      },
+      "agent": {
+        "symptom": "A class whose methods all delegate straight through to another object — the agent traces every call to the real implementation, paying a hop for no decision.",
+        "goal": "Callers talk to the real object directly; the agent's call traces are shorter and the real implementation's location is obvious.",
+        "pressure": "An entire indirection layer the agent must navigate per method; the agent reading code through the middle man re-traces the delegation on every reasoning step.",
+        "tradeoff": "Direct access exposes the underlying object's full surface to every consumer; the agent loses any encapsulation the middle man was providing (even if mostly cosmetic).",
+        "relief": "Fewer files; shorter call stacks; the agent's plan-and-execute loop touches the real implementation directly without the passthrough hop.",
+        "trap": "Deleting a passthrough that was actually doing real work — authorization, validation, auditing — removes a load-bearing layer the agent didn't recognize because the trivial-looking delegation masked it."
       }
     }
   },

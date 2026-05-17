@@ -2282,16 +2282,16 @@ const seniors = users
 
 ---
 name: lazy-element
-description: Refuse Lazy Element when a class, function, or namespace that exists but does nothing meaningful — a one-line wrapper, an empty subclass, a passthrough method. Apply Inline Function, Inline Class.
+description: Refuse Lazy Element when a class, function, or namespace whose body the agent traces through only to find no decisions or transformations — every hop is pure overhead in reasoning context. Apply Inline Function, Inline Class.
 ---
 
 # Refuse: 14 — Lazy Element
 
-**Trigger (refuse when you see):** A class, function, or namespace that exists but does nothing meaningful — a one-line wrapper, an empty subclass, a passthrough method.
+**Trigger (refuse when you see):** A class, function, or namespace whose body the agent traces through only to find no decisions or transformations — every hop is pure overhead in reasoning context.
 
-**Cost of leaving it in:** Reader pays a navigation cost to discover the wrapper adds nothing; future changes are tempted to add real work to it.
+**Cost of leaving it in:** The agent navigates through layers that add nothing; future maintainers (human or agent) face a choice between leaving dead weight or extracting a real reason for it.
 
-**Target shape after refactoring:** Trivial wrappers disappear; the call site says exactly what's happening.
+**Target shape after refactoring:** Trivial wrappers disappear; the call site reads exactly as what's happening and the agent skips the indirection.
 
 ```js
 // Smellier:
@@ -2308,16 +2308,16 @@ const n = user.name;
 
 ---
 name: speculative-generality
-description: Refuse Speculative Generality when hooks, abstract base classes, configuration knobs, and parameters added 'in case we need them' — but no real call site uses them. Apply Collapse Hierarchy, Inline Function.
+description: Refuse Speculative Generality when abstract base classes, hooks, configuration knobs, or parameters with no real call site exercising them — the agent must learn vocabulary it never gets to use. Apply Collapse Hierarchy, Inline Function.
 ---
 
 # Refuse: 15 — Speculative Generality
 
-**Trigger (refuse when you see):** Hooks, abstract base classes, configuration knobs, and parameters added 'in case we need them' — but no real call site uses them.
+**Trigger (refuse when you see):** Abstract base classes, hooks, configuration knobs, or parameters with no real call site exercising them — the agent must learn vocabulary it never gets to use.
 
-**Cost of leaving it in:** Tests are forced to cover branches no one exercises; readers learn a vocabulary they don't need; YAGNI debt compounds.
+**Cost of leaving it in:** Tests cover branches no one exercises; readers (human and agent) learn dead vocabulary; refactoring proposals must consider phantom users that aren't real.
 
-**Target shape after refactoring:** The code expresses exactly what it does today — abstraction earns its keep when a real second user shows up.
+**Target shape after refactoring:** The code expresses exactly what it does today; the agent's mental model has no concepts that don't correspond to active behavior.
 
 ```js
 // Smellier:
@@ -2336,16 +2336,16 @@ execute();
 
 ---
 name: temporary-field
-description: Refuse Temporary Field when a class field used by only one method, set to null or default the rest of the time. Apply Extract Class, Move Function.
+description: Refuse Temporary Field when a class field the agent finds set to null or default for most of the object's lifetime, populated only inside one method's flow — the agent must verify which methods care. Apply Extract Class, Move Function.
 ---
 
 # Refuse: 16 — Temporary Field
 
-**Trigger (refuse when you see):** A class field used by only one method, set to null or default the rest of the time.
+**Trigger (refuse when you see):** A class field the agent finds set to null or default for most of the object's lifetime, populated only inside one method's flow — the agent must verify which methods care.
 
-**Cost of leaving it in:** Reader must trace the conditions under which the field is meaningful; null-checks scatter; the field's role is unclear.
+**Cost of leaving it in:** The agent must trace the conditions under which the field is meaningful; null-checks scatter across consumers; class invariants weaken because the field has no defined lifecycle.
 
-**Target shape after refactoring:** The temporary state moves to a dedicated class that exists only when it's relevant.
+**Target shape after refactoring:** Temporary state lives in a dedicated class that exists only when relevant; the agent loads the temporary type only when reasoning about that flow.
 
 ```js
 // Smellier:
@@ -2365,16 +2365,16 @@ class Shipment { /* owns the track */ }
 
 ---
 name: message-chains
-description: Refuse Message Chains when long dotted access paths; a.b.c.d.e — every callsite walks the entire object graph. Apply Hide Delegate, Extract Function.
+description: Refuse Message Chains when long dotted access paths the agent must trace through several object hops to understand any single read; renaming any intermediate field breaks every caller silently. Apply Hide Delegate, Extract Function.
 ---
 
 # Refuse: 17 — Message Chains
 
-**Trigger (refuse when you see):** Long dotted access paths: a.b.c.d.e — every callsite walks the entire object graph.
+**Trigger (refuse when you see):** Long dotted access paths the agent must trace through several object hops to understand any single read; renaming any intermediate field breaks every caller silently.
 
-**Cost of leaving it in:** Every link in the chain is a coupling point; renaming any intermediate field breaks every consumer.
+**Cost of leaving it in:** Every link in the chain is a coupling point the agent must hold in working memory; refactoring any intermediate shape requires the agent to find and update every chained access.
 
-**Target shape after refactoring:** Callers ask the closest object for what they want; the object delegates internally.
+**Target shape after refactoring:** Callers ask the closest object for what they want; the agent reasons about one boundary instead of traversing N.
 
 ```js
 // Smellier:
@@ -2388,16 +2388,16 @@ const street = order.customerStreet();
 
 ---
 name: middle-man
-description: Refuse Middle Man when a class whose methods all delegate straight through to another object — no decisions, no transformations. Apply Remove Middle Man, Inline Function.
+description: Refuse Middle Man when a class whose methods all delegate straight through to another object — the agent traces every call to the real implementation, paying a hop for no decision. Apply Remove Middle Man, Inline Function.
 ---
 
 # Refuse: 18 — Middle Man
 
-**Trigger (refuse when you see):** A class whose methods all delegate straight through to another object — no decisions, no transformations.
+**Trigger (refuse when you see):** A class whose methods all delegate straight through to another object — the agent traces every call to the real implementation, paying a hop for no decision.
 
-**Cost of leaving it in:** An entire layer of indirection that adds no value; readers must follow every call to the real implementation.
+**Cost of leaving it in:** An entire indirection layer the agent must navigate per method; the agent reading code through the middle man re-traces the delegation on every reasoning step.
 
-**Target shape after refactoring:** Callers talk directly to the real object; trivial passthroughs are deleted.
+**Target shape after refactoring:** Callers talk to the real object directly; the agent's call traces are shorter and the real implementation's location is obvious.
 
 ```js
 // Smellier:
