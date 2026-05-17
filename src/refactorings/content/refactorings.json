@@ -59,6 +59,7 @@
   },
   {
     "name": "Rename Variable",
+    "safetyNet": "types/compiler",
     "solves": ["Mysterious Name"],
     "risk": "A rename is small but cross-file; ensure your tooling catches every reference (including string templates and comments).",
     "goal": "Variable names match the domain role they play, not their implementation type or scratch nature.",
