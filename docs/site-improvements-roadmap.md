@@ -85,6 +85,8 @@ Before anything else. This is the wedge.
 
 19. **Add Failure Mode per card.** One line — what this refactoring becomes when over-applied. Prevents pattern worship.
 
+    _In progress (2026-05-17): agent-effect framing._ Failure Mode names the effect on the **coding agent** working with the resulting code (context cost, navigation cost, lost invariants, broken reasoning) — not generic human-reader experience or "pattern worship." Matches the site's thesis (catalog the agent reads from). Refactorings only (not smells). Tidy First sequence: structural commit (optional `failureMode?: string` field + parser + render-when-present), then content commits in batches of ~13–17 cards. Side-effect to budget for: ~10–15 current Tradeoffs are actually Failure Modes in disguise; audit + migration deferred as a follow-up slice.
+
 20. **Add Verify per card.** One or two pointed questions to ask _after_ the move. _"Did coupling actually decrease? Would the next change here be cheaper now?"_ Sanity check, not checklist.
 
 21. **Add Codebase Signals to smell cards (not refactoring cards).** Change frequency, defect rate, coupling, cognitive load. Tells the reader which smell to chase first. Lives on smells because that's where prioritization happens.

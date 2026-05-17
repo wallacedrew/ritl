@@ -41,6 +41,9 @@ export default function RefactoringDetail({ refactoring, number }: RefactoringDe
         />
         <CatalogSection label="Savings" body={refactoring.savings} />
         <CatalogSection label="Tradeoff" body={refactoring.tradeoff} />
+        {refactoring.failureMode && (
+          <CatalogSection label="Failure mode" body={refactoring.failureMode} />
+        )}
         <Divider />
         <CatalogPrevNext prev={neighbors.prev} next={neighbors.next} />
       </Stack>

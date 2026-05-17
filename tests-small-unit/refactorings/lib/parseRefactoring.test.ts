@@ -108,4 +108,27 @@ describe("parseRefactoring", () => {
 
     expect(() => parseRefactoring(withBadTradeoff)).toThrow(/tradeoff.*string/i);
   });
+
+  it("returns no failureMode when the field is absent", () => {
+    const refactoring = parseRefactoring(validRaw);
+
+    expect(refactoring.failureMode).toBeUndefined();
+  });
+
+  it("returns the failureMode string when the field is present", () => {
+    const refactoring = parseRefactoring({
+      ...validRaw,
+      failureMode: "Agent loses cross-function invariants when chasing extracted helpers.",
+    });
+
+    expect(refactoring.failureMode).toBe(
+      "Agent loses cross-function invariants when chasing extracted helpers.",
+    );
+  });
+
+  it("rejects a non-string failureMode value", () => {
+    expect(() => parseRefactoring({ ...validRaw, failureMode: 42 })).toThrow(
+      /failureMode.*string/i,
+    );
+  });
 });
