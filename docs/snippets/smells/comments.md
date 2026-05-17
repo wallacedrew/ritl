@@ -1,15 +1,15 @@
 ---
 name: comments
-description: Refuse Comments when comments explaining what the next block of code does, what a function returns, or how a parameter is meant to be used. Apply Extract Function, Change Function Declaration.
+description: Refuse Comments when comments explaining what the next block does or what a function returns; the agent loading the comment plus the code carries two sources of truth that may have drifted apart. Apply Extract Function, Change Function Declaration.
 ---
 
 # Refuse: 24 — Comments
 
-**Trigger (refuse when you see):** Comments explaining what the next block of code does, what a function returns, or how a parameter is meant to be used.
+**Trigger (refuse when you see):** Comments explaining what the next block does or what a function returns; the agent loading the comment plus the code carries two sources of truth that may have drifted apart.
 
-**Cost of leaving it in:** The code didn't reveal its intent — the comment is patching an unnamed function or unclear variable; comment and code drift over time.
+**Cost of leaving it in:** The code didn't reveal its intent so the comment is patching an unnamed function or unclear variable; the agent must reconcile both sources and risk acting on the stale one.
 
-**Target shape after refactoring:** Names of functions, variables, and types tell the reader what the comment was trying to say. Comments survive only when WHY is non-obvious.
+**Target shape after refactoring:** Names tell the agent what the comment was trying to say; comments survive only when they document a non-obvious WHY (hidden constraint, invariant, workaround).
 
 ```js
 // Smellier:

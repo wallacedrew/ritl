@@ -1,15 +1,15 @@
 ---
 name: refused-bequest
-description: Refuse Refused Bequest when a subclass inherits methods or fields it doesn't actually use — overriding to no-ops, throwing 'unsupported', or just ignoring the inheritance. Apply Push Down Method, Push Down Field.
+description: Refuse Refused Bequest when a subclass overriding parent methods to no-ops, throwing 'unsupported', or quietly ignoring inherited behavior — the agent cannot trust polymorphic calls on parent-typed references. Apply Push Down Method, Push Down Field.
 ---
 
 # Refuse: 23 — Refused Bequest
 
-**Trigger (refuse when you see):** A subclass inherits methods or fields it doesn't actually use — overriding to no-ops, throwing 'unsupported', or just ignoring the inheritance.
+**Trigger (refuse when you see):** A subclass overriding parent methods to no-ops, throwing 'unsupported', or quietly ignoring inherited behavior — the agent cannot trust polymorphic calls on parent-typed references.
 
-**Cost of leaving it in:** Liskov violations: callers can't trust subclass instances to honor the parent contract; polymorphism becomes a trap.
+**Cost of leaving it in:** Liskov violations: the agent cannot trust subclass instances to honor the parent contract, so polymorphism becomes a trap that the agent must defensively check at every call site.
 
-**Target shape after refactoring:** Sharing happens through composition (a delegate object) rather than forced inheritance.
+**Target shape after refactoring:** Sharing happens via composition (a held delegate) instead of forced inheritance; every reference type honors its contract.
 
 ```js
 // Smellier:

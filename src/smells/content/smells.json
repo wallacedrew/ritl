@@ -518,9 +518,17 @@
         "symptom": "Modules reach into each other's internals to coordinate behavior, bypassing public interfaces.",
         "goal": "Cooperation happens through narrow, explicit interfaces; secrets stay secret.",
         "pressure": "Coupling at the implementation level — refactoring one breaks the other in non-obvious ways.",
-        "tradeoff": "[human tradeoff not yet authored]",
+        "tradeoff": "Establishing a real public interface between modules forces both sides to commit to a contract; until the interface stabilizes, the boundary is more painful than the original direct access.",
         "relief": "Module boundaries become real; tests exercise the public surface; refactoring is local.",
-        "trap": "[human trap not yet authored]"
+        "trap": "Building elaborate public APIs between modules that genuinely belong together — the encapsulation overhead exceeds the coupling cost the boundary was meant to fix."
+      },
+      "agent": {
+        "symptom": "Module A reaches into module B's private fields or undocumented behavior; the agent reasoning about A must also load B's internals to make any change.",
+        "goal": "Cooperation flows through a narrow named interface the agent can read once; A's reasoning context excludes B's implementation details.",
+        "pressure": "Refactoring one module silently breaks the other in ways the type system doesn't catch; the agent must trace cross-module assumptions on every edit.",
+        "tradeoff": "Defining a real public interface adds a contract the agent must respect at both ends; until the interface stabilizes, every change forces synchronized edits across both modules.",
+        "relief": "Module boundaries become real seams the agent can reason about independently; tests exercise the public surface and refactoring stays local.",
+        "trap": "Erecting elaborate public APIs between modules that genuinely belong together creates a fake boundary the agent must navigate at every interaction with no isolation gain."
       }
     }
   },
@@ -535,9 +543,17 @@
         "symptom": "A class with too many fields and methods — multiple unrelated responsibilities under one type.",
         "goal": "Each class has one cohesive purpose; methods cluster around fields they actually use.",
         "pressure": "Cognitive load: every reader pays for fields they don't care about; merge conflicts spike; testing is unfocused.",
-        "tradeoff": "[human tradeoff not yet authored]",
+        "tradeoff": "Splitting a large class creates collaborator relationships that the team must learn; some classes are large because they encode a genuinely large domain concept that resists decomposition.",
         "relief": "Smaller, more testable units; clearer ownership; faster reading.",
-        "trap": "[human trap not yet authored]"
+        "trap": "Splitting every large class on superficial groupings (methods that happen to share a prefix, fields that happen to be related) without honoring real cohesion boundaries — produces fragments that don't make sense apart."
+      },
+      "agent": {
+        "symptom": "A class file with so many fields and methods that the agent cannot load it as a coherent unit; multiple unrelated responsibilities sit under one name.",
+        "goal": "Each class has one cohesive purpose; the agent loads a small focused file to reason about any single behavior.",
+        "pressure": "Cognitive context inflates with every irrelevant member; the agent reading any single method must skim past unrelated fields and helpers to find what it needs.",
+        "tradeoff": "Splitting creates new collaborator relationships the agent must trace across files; what was one load now becomes N loads and the agent must understand how the pieces interact.",
+        "relief": "Smaller, focused units; the agent's reasoning context per method is tight; tests target one concern at a time.",
+        "trap": "Splitting on superficial groupings produces fragments that don't cohere on their own — the agent now navigates several files to understand what was previously one coherent (if large) concept."
       }
     }
   },
@@ -552,9 +568,17 @@
         "symptom": "Two classes do similar things but with mismatched method names and signatures — sortBy() vs orderUsing(), valueOf() vs evaluate().",
         "goal": "Equivalent operations have equivalent signatures; a shared superclass or interface emerges naturally.",
         "pressure": "Substitution becomes copy-paste; consumers can't treat the two interchangeably; abstraction over them is impossible.",
-        "tradeoff": "[human tradeoff not yet authored]",
+        "tradeoff": "Aligning the interfaces may force renames across both classes and every consumer; for classes that have stable independent APIs and only superficial similarity, the alignment is invented coherence.",
         "relief": "Polymorphic use becomes possible; new alternatives plug in without bespoke adapters.",
-        "trap": "[human trap not yet authored]"
+        "trap": "Forcing two classes into a shared interface because they look similar — even when their underlying contracts genuinely differ — creates an abstraction that hides important distinctions."
+      },
+      "agent": {
+        "symptom": "Two classes the agent recognizes as doing similar things but with mismatched method names and signatures; the agent must learn both vocabularies and translate between them.",
+        "goal": "Equivalent operations have equivalent signatures; the agent uses one mental model and the type system enforces substitutability.",
+        "pressure": "Substitution becomes copy-paste; abstraction over the two is impossible; the agent must hold both interfaces in working memory to use either.",
+        "tradeoff": "Aligning the interfaces forces renames across both classes and every consumer; the agent verifying the alignment must update every call site and confirm the new common contract holds for both.",
+        "relief": "Polymorphic use becomes possible; new alternatives plug in without bespoke adapters; the agent reasons about the operation once.",
+        "trap": "Forcing two classes into a shared interface despite genuinely different contracts produces an abstraction the agent must constantly special-case — important distinctions hide behind a fake polymorphism."
       }
     }
   },
@@ -575,9 +599,17 @@
         "symptom": "A class that holds fields with getters and setters but no behavior — and consumers do all the operations on it externally.",
         "goal": "Behavior that belongs with the data lives on the class; the class becomes a real domain object.",
         "pressure": "Domain logic gets scattered to consumers; the class's data invariants aren't enforced; encapsulation is theater.",
-        "tradeoff": "[human tradeoff not yet authored]",
+        "tradeoff": "Pulling behavior onto the data class can create circular dependencies (the class now needs collaborators the original consumers had); the migration touches every consumer that did the work externally.",
         "relief": "Invariants are enforceable; consumers write less domain plumbing; tests target the class itself.",
-        "trap": "[human trap not yet authored]"
+        "trap": "Attaching every operation that touches the class onto the class — including operations that genuinely belong to a use case, a service, or a different domain — turns the data class into a god object."
+      },
+      "agent": {
+        "symptom": "A class whose surface is only getters and setters; all real behavior lives in consumers, scattered across files the agent must locate to reason about anything domain-meaningful.",
+        "goal": "Behavior that belongs with the data lives on the class; the agent loading the class finds the operations and invariants it expects, in one place.",
+        "pressure": "Domain logic scatters across consumers; the agent must search the codebase to find any operation; class invariants aren't enforced so the agent must defensively check them at every consumer.",
+        "tradeoff": "Migrating behavior onto the class can pull new collaborators into its definition; consumers shrink but the class's surface grows and its dependencies multiply.",
+        "relief": "Invariants are enforceable in one place; the agent reasons about the class as a real domain object instead of chasing operations across consumers.",
+        "trap": "Attaching every operation that touches the data — including ones that belong to use cases or services — turns the data class into a god object the agent must load to reason about anything in the surrounding domain."
       }
     }
   },
@@ -597,9 +629,17 @@
         "symptom": "A subclass inherits methods or fields it doesn't actually use — overriding to no-ops, throwing 'unsupported', or just ignoring the inheritance.",
         "goal": "Sharing happens through composition (a delegate object) rather than forced inheritance.",
         "pressure": "Liskov violations: callers can't trust subclass instances to honor the parent contract; polymorphism becomes a trap.",
-        "tradeoff": "[human tradeoff not yet authored]",
+        "tradeoff": "Replacing inheritance with composition is more verbose at construction sites and removes the syntactic polymorphism inheritance provided; consumers that rely on `instanceof` checks or shared base methods need explicit migration.",
         "relief": "Each class has only what it needs; surprises in polymorphic use disappear.",
-        "trap": "[human trap not yet authored]"
+        "trap": "Replacing every inheritance relationship with composition, including ones where the Liskov contract genuinely holds — pays construction-site verbosity for no real fit improvement."
+      },
+      "agent": {
+        "symptom": "A subclass overriding parent methods to no-ops, throwing 'unsupported', or quietly ignoring inherited behavior — the agent cannot trust polymorphic calls on parent-typed references.",
+        "goal": "Sharing happens via composition (a held delegate) instead of forced inheritance; every reference type honors its contract.",
+        "pressure": "Liskov violations: the agent cannot trust subclass instances to honor the parent contract, so polymorphism becomes a trap that the agent must defensively check at every call site.",
+        "tradeoff": "Composition is more verbose at construction; the agent loses syntactic polymorphism and must verify behavior through explicit delegation calls instead of relying on inheritance dispatch.",
+        "relief": "Each class has only what it needs; the agent's polymorphic reasoning becomes trustworthy because every reference type honors its declared contract.",
+        "trap": "Replacing every inheritance relationship with composition, including ones where Liskov genuinely holds, pays construction verbosity at every site without buying any safety the original inheritance didn't provide."
       }
     }
   },
@@ -614,9 +654,17 @@
         "symptom": "Comments explaining what the next block of code does, what a function returns, or how a parameter is meant to be used.",
         "goal": "Names of functions, variables, and types tell the reader what the comment was trying to say. Comments survive only when WHY is non-obvious.",
         "pressure": "The code didn't reveal its intent — the comment is patching an unnamed function or unclear variable; comment and code drift over time.",
-        "tradeoff": "[human tradeoff not yet authored]",
+        "tradeoff": "Renaming to express what a comment said increases churn across consumers and history; some legitimate comments (non-obvious WHY, hidden invariants, workaround references) are harder to convey through names alone.",
         "relief": "No more stale comments; readers trust names; the code is the documentation.",
-        "trap": "[human trap not yet authored]"
+        "trap": "Deleting every comment as part of a cleanup pass — including ones that document hidden constraints, historical context, or invariants that names genuinely can't express."
+      },
+      "agent": {
+        "symptom": "Comments explaining what the next block does or what a function returns; the agent loading the comment plus the code carries two sources of truth that may have drifted apart.",
+        "goal": "Names tell the agent what the comment was trying to say; comments survive only when they document a non-obvious WHY (hidden constraint, invariant, workaround).",
+        "pressure": "The code didn't reveal its intent so the comment is patching an unnamed function or unclear variable; the agent must reconcile both sources and risk acting on the stale one.",
+        "tradeoff": "Renaming to express the comment's content ripples across consumers (cross-repo greps, embedding indexes, prior conversation context) the agent must accept will drift stale for a window.",
+        "relief": "The agent trusts names as the source of truth; reasoning steps don't need to cross-reference comments that might be wrong; the code is the documentation.",
+        "trap": "Deleting every comment in a cleanup pass — including ones documenting hidden constraints, historical context, or invariants names can't express — strips load-bearing context the agent will need later."
       }
     }
   }

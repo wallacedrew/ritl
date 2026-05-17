@@ -2416,16 +2416,16 @@ manager.team.members();
 
 ---
 name: insider-trading
-description: Refuse Insider Trading when modules reach into each other's internals to coordinate behavior, bypassing public interfaces. Apply Move Function, Move Field.
+description: Refuse Insider Trading when module A reaches into module B's private fields or undocumented behavior; the agent reasoning about A must also load B's internals to make any change. Apply Move Function, Move Field.
 ---
 
 # Refuse: 19 — Insider Trading
 
-**Trigger (refuse when you see):** Modules reach into each other's internals to coordinate behavior, bypassing public interfaces.
+**Trigger (refuse when you see):** Module A reaches into module B's private fields or undocumented behavior; the agent reasoning about A must also load B's internals to make any change.
 
-**Cost of leaving it in:** Coupling at the implementation level — refactoring one breaks the other in non-obvious ways.
+**Cost of leaving it in:** Refactoring one module silently breaks the other in ways the type system doesn't catch; the agent must trace cross-module assumptions on every edit.
 
-**Target shape after refactoring:** Cooperation happens through narrow, explicit interfaces; secrets stay secret.
+**Target shape after refactoring:** Cooperation flows through a narrow named interface the agent can read once; A's reasoning context excludes B's implementation details.
 
 ```js
 // Smellier:
@@ -2445,16 +2445,16 @@ class B { read(a) { return a.value(); } }
 
 ---
 name: large-class
-description: Refuse Large Class when a class with too many fields and methods — multiple unrelated responsibilities under one type. Apply Extract Class, Extract Superclass.
+description: Refuse Large Class when a class file with so many fields and methods that the agent cannot load it as a coherent unit; multiple unrelated responsibilities sit under one name. Apply Extract Class, Extract Superclass.
 ---
 
 # Refuse: 20 — Large Class
 
-**Trigger (refuse when you see):** A class with too many fields and methods — multiple unrelated responsibilities under one type.
+**Trigger (refuse when you see):** A class file with so many fields and methods that the agent cannot load it as a coherent unit; multiple unrelated responsibilities sit under one name.
 
-**Cost of leaving it in:** Cognitive load: every reader pays for fields they don't care about; merge conflicts spike; testing is unfocused.
+**Cost of leaving it in:** Cognitive context inflates with every irrelevant member; the agent reading any single method must skim past unrelated fields and helpers to find what it needs.
 
-**Target shape after refactoring:** Each class has one cohesive purpose; methods cluster around fields they actually use.
+**Target shape after refactoring:** Each class has one cohesive purpose; the agent loads a small focused file to reason about any single behavior.
 
 ```js
 // Smellier:
@@ -2472,16 +2472,16 @@ class Shipping { /* address, track */ }
 
 ---
 name: alternative-classes-with-different-interfaces
-description: Refuse Alternative Classes with Different Interfaces when two classes do similar things but with mismatched method names and signatures — sortBy() vs orderUsing(), valueOf() vs evaluate(). Apply Change Function Declaration, Move Function.
+description: Refuse Alternative Classes with Different Interfaces when two classes the agent recognizes as doing similar things but with mismatched method names and signatures; the agent must learn both vocabularies and translate between them. Apply Change Function Declaration, Move Function.
 ---
 
 # Refuse: 21 — Alternative Classes with Different Interfaces
 
-**Trigger (refuse when you see):** Two classes do similar things but with mismatched method names and signatures — sortBy() vs orderUsing(), valueOf() vs evaluate().
+**Trigger (refuse when you see):** Two classes the agent recognizes as doing similar things but with mismatched method names and signatures; the agent must learn both vocabularies and translate between them.
 
-**Cost of leaving it in:** Substitution becomes copy-paste; consumers can't treat the two interchangeably; abstraction over them is impossible.
+**Cost of leaving it in:** Substitution becomes copy-paste; abstraction over the two is impossible; the agent must hold both interfaces in working memory to use either.
 
-**Target shape after refactoring:** Equivalent operations have equivalent signatures; a shared superclass or interface emerges naturally.
+**Target shape after refactoring:** Equivalent operations have equivalent signatures; the agent uses one mental model and the type system enforces substitutability.
 
 ```js
 // Smellier:
@@ -2497,16 +2497,16 @@ class JSONExporter implements Exporter { write(rows) {} }
 
 ---
 name: data-class
-description: Refuse Data Class when a class that holds fields with getters and setters but no behavior — and consumers do all the operations on it externally. Apply Encapsulate Record, Remove Setting Method.
+description: Refuse Data Class when a class whose surface is only getters and setters; all real behavior lives in consumers, scattered across files the agent must locate to reason about anything domain-meaningful. Apply Encapsulate Record, Remove Setting Method.
 ---
 
 # Refuse: 22 — Data Class
 
-**Trigger (refuse when you see):** A class that holds fields with getters and setters but no behavior — and consumers do all the operations on it externally.
+**Trigger (refuse when you see):** A class whose surface is only getters and setters; all real behavior lives in consumers, scattered across files the agent must locate to reason about anything domain-meaningful.
 
-**Cost of leaving it in:** Domain logic gets scattered to consumers; the class's data invariants aren't enforced; encapsulation is theater.
+**Cost of leaving it in:** Domain logic scatters across consumers; the agent must search the codebase to find any operation; class invariants aren't enforced so the agent must defensively check them at every consumer.
 
-**Target shape after refactoring:** Behavior that belongs with the data lives on the class; the class becomes a real domain object.
+**Target shape after refactoring:** Behavior that belongs with the data lives on the class; the agent loading the class finds the operations and invariants it expects, in one place.
 
 ```js
 // Smellier:
@@ -2527,16 +2527,16 @@ class Address {
 
 ---
 name: refused-bequest
-description: Refuse Refused Bequest when a subclass inherits methods or fields it doesn't actually use — overriding to no-ops, throwing 'unsupported', or just ignoring the inheritance. Apply Push Down Method, Push Down Field.
+description: Refuse Refused Bequest when a subclass overriding parent methods to no-ops, throwing 'unsupported', or quietly ignoring inherited behavior — the agent cannot trust polymorphic calls on parent-typed references. Apply Push Down Method, Push Down Field.
 ---
 
 # Refuse: 23 — Refused Bequest
 
-**Trigger (refuse when you see):** A subclass inherits methods or fields it doesn't actually use — overriding to no-ops, throwing 'unsupported', or just ignoring the inheritance.
+**Trigger (refuse when you see):** A subclass overriding parent methods to no-ops, throwing 'unsupported', or quietly ignoring inherited behavior — the agent cannot trust polymorphic calls on parent-typed references.
 
-**Cost of leaving it in:** Liskov violations: callers can't trust subclass instances to honor the parent contract; polymorphism becomes a trap.
+**Cost of leaving it in:** Liskov violations: the agent cannot trust subclass instances to honor the parent contract, so polymorphism becomes a trap that the agent must defensively check at every call site.
 
-**Target shape after refactoring:** Sharing happens through composition (a delegate object) rather than forced inheritance.
+**Target shape after refactoring:** Sharing happens via composition (a held delegate) instead of forced inheritance; every reference type honors its contract.
 
 ```js
 // Smellier:
@@ -2555,16 +2555,16 @@ class Dog {
 
 ---
 name: comments
-description: Refuse Comments when comments explaining what the next block of code does, what a function returns, or how a parameter is meant to be used. Apply Extract Function, Change Function Declaration.
+description: Refuse Comments when comments explaining what the next block does or what a function returns; the agent loading the comment plus the code carries two sources of truth that may have drifted apart. Apply Extract Function, Change Function Declaration.
 ---
 
 # Refuse: 24 — Comments
 
-**Trigger (refuse when you see):** Comments explaining what the next block of code does, what a function returns, or how a parameter is meant to be used.
+**Trigger (refuse when you see):** Comments explaining what the next block does or what a function returns; the agent loading the comment plus the code carries two sources of truth that may have drifted apart.
 
-**Cost of leaving it in:** The code didn't reveal its intent — the comment is patching an unnamed function or unclear variable; comment and code drift over time.
+**Cost of leaving it in:** The code didn't reveal its intent so the comment is patching an unnamed function or unclear variable; the agent must reconcile both sources and risk acting on the stale one.
 
-**Target shape after refactoring:** Names of functions, variables, and types tell the reader what the comment was trying to say. Comments survive only when WHY is non-obvious.
+**Target shape after refactoring:** Names tell the agent what the comment was trying to say; comments survive only when they document a non-obvious WHY (hidden constraint, invariant, workaround).
 
 ```js
 // Smellier:

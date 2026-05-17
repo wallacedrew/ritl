@@ -1,15 +1,15 @@
 ---
 name: insider-trading
-description: Refuse Insider Trading when modules reach into each other's internals to coordinate behavior, bypassing public interfaces. Apply Move Function, Move Field.
+description: Refuse Insider Trading when module A reaches into module B's private fields or undocumented behavior; the agent reasoning about A must also load B's internals to make any change. Apply Move Function, Move Field.
 ---
 
 # Refuse: 19 — Insider Trading
 
-**Trigger (refuse when you see):** Modules reach into each other's internals to coordinate behavior, bypassing public interfaces.
+**Trigger (refuse when you see):** Module A reaches into module B's private fields or undocumented behavior; the agent reasoning about A must also load B's internals to make any change.
 
-**Cost of leaving it in:** Coupling at the implementation level — refactoring one breaks the other in non-obvious ways.
+**Cost of leaving it in:** Refactoring one module silently breaks the other in ways the type system doesn't catch; the agent must trace cross-module assumptions on every edit.
 
-**Target shape after refactoring:** Cooperation happens through narrow, explicit interfaces; secrets stay secret.
+**Target shape after refactoring:** Cooperation flows through a narrow named interface the agent can read once; A's reasoning context excludes B's implementation details.
 
 ```js
 // Smellier:

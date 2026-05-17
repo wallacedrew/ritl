@@ -1,15 +1,15 @@
 ---
 name: large-class
-description: Refuse Large Class when a class with too many fields and methods — multiple unrelated responsibilities under one type. Apply Extract Class, Extract Superclass.
+description: Refuse Large Class when a class file with so many fields and methods that the agent cannot load it as a coherent unit; multiple unrelated responsibilities sit under one name. Apply Extract Class, Extract Superclass.
 ---
 
 # Refuse: 20 — Large Class
 
-**Trigger (refuse when you see):** A class with too many fields and methods — multiple unrelated responsibilities under one type.
+**Trigger (refuse when you see):** A class file with so many fields and methods that the agent cannot load it as a coherent unit; multiple unrelated responsibilities sit under one name.
 
-**Cost of leaving it in:** Cognitive load: every reader pays for fields they don't care about; merge conflicts spike; testing is unfocused.
+**Cost of leaving it in:** Cognitive context inflates with every irrelevant member; the agent reading any single method must skim past unrelated fields and helpers to find what it needs.
 
-**Target shape after refactoring:** Each class has one cohesive purpose; methods cluster around fields they actually use.
+**Target shape after refactoring:** Each class has one cohesive purpose; the agent loads a small focused file to reason about any single behavior.
 
 ```js
 // Smellier:
