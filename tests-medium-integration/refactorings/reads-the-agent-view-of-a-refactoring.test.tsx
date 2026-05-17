@@ -5,27 +5,23 @@ import { renderWithTheme } from "../../tests-small-unit/_helpers/renderWithTheme
 import RefactoringAgentPage from "@/refactorings/RefactoringAgentPage";
 
 describe("user reads the agent view of a refactoring", () => {
-  it("sees Extract Function rendered with agent-lens labels at /refactorings/extract-function/agent", async () => {
+  it("renders Extract Function at /refactorings/extract-function/agent with the same L&F as the human view + cross-lens link back", async () => {
     const ui = await RefactoringAgentPage({
       params: Promise.resolve({ slug: "extract-function" }),
     });
 
     renderWithTheme(ui);
 
-    expect(
-      screen.getByRole("heading", { name: /Apply: 01 — Extract Function/, level: 1 }),
-    ).toBeInTheDocument();
+    expect(screen.getByRole("heading", { name: "Extract Function", level: 1 })).toBeInTheDocument();
 
-    expect(screen.getByText(/Apply Extract Function when you see/)).toBeInTheDocument();
-    expect(screen.getByText(/Target state/)).toBeInTheDocument();
-    expect(screen.getByText(/Why apply it/)).toBeInTheDocument();
-    expect(screen.getByText(/Pitfall/)).toBeInTheDocument();
-    expect(screen.getByText(/Removes smells/)).toBeInTheDocument();
+    // Same labels as human view (per the locked decision: same L&F + same labels in both views)
+    expect(screen.getByText(/^Goal$/)).toBeInTheDocument();
+    expect(screen.getByText(/^Pressure$/)).toBeInTheDocument();
+    expect(screen.getByText(/^Tradeoff$/)).toBeInTheDocument();
+    expect(screen.getByText(/^Relief$/)).toBeInTheDocument();
+    expect(screen.getByText(/^Trap$/)).toBeInTheDocument();
 
-    expect(screen.queryByText(/^Goal$/)).not.toBeInTheDocument();
-    expect(screen.queryByText(/^Savings$/)).not.toBeInTheDocument();
-    expect(screen.queryByText(/^Tradeoff$/)).not.toBeInTheDocument();
-
+    // Cross-lens back-link points to the human view
     const backToHuman = screen.getByRole("link", { name: /View as human/ });
     expect(backToHuman).toHaveAttribute("href", "/refactorings/extract-function");
   });

@@ -1,7 +1,7 @@
 import { findCatalogEntryBySlug } from "@/shared/lib/findCatalogEntryBySlug";
 import { generateCatalogStaticParams } from "@/shared/lib/generateCatalogStaticParams";
 
-import RefactoringAgentDetail from "./components/RefactoringAgentDetail";
+import RefactoringDetail from "./components/RefactoringDetail";
 import { loadRefactorings } from "./lib/loadRefactorings";
 
 interface RefactoringAgentPageProps {
@@ -11,7 +11,7 @@ interface RefactoringAgentPageProps {
 export default async function RefactoringAgentPage({ params }: RefactoringAgentPageProps) {
   const { slug: rawSlug } = await params;
   const { entry: refactoring, number } = findCatalogEntryBySlug(rawSlug, loadRefactorings());
-  return <RefactoringAgentDetail refactoring={refactoring} number={number} />;
+  return <RefactoringDetail refactoring={refactoring} number={number} lens="agent" />;
 }
 
 export function generateStaticParams() {

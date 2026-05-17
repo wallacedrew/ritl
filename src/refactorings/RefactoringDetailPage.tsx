@@ -11,7 +11,7 @@ interface RefactoringDetailPageProps {
 export default async function RefactoringDetailPage({ params }: RefactoringDetailPageProps) {
   const { slug: rawSlug } = await params;
   const { entry: refactoring, number } = findCatalogEntryBySlug(rawSlug, loadRefactorings());
-  return <RefactoringDetail refactoring={refactoring} number={number} />;
+  return <RefactoringDetail refactoring={refactoring} number={number} lens="human" />;
 }
 
 export function generateStaticParams() {

@@ -1,18 +1,30 @@
 import { describe, expect, it } from "vitest";
 
-import type { Refactoring } from "@/refactorings/lib/Refactoring";
-import { toRefactoringListItem } from "@/refactorings/lib/toRefactoringListItem";
+import { CatalogEntry } from "@/shared/lib/CatalogEntry";
 import { CatalogEntryName } from "@/shared/lib/CatalogEntryName";
+import { Forces } from "@/shared/lib/Forces";
+import { toRefactoringListItem } from "@/refactorings/lib/toRefactoringListItem";
 
-const baseRefactoring: Refactoring = {
-  name: CatalogEntryName.refactoring("Extract Function"),
-  solves: [CatalogEntryName.smell("Long Function"), CatalogEntryName.smell("Duplicated Code")],
-  tradeoff: "Maze of one-line functions if over-eager.",
+const baseForcesRecord = {
+  symptom: "Long function with mixed concerns.",
   goal: "Each function reads as a single named domain step.",
-  savings: "Bugs concentrate inside named subroutines.",
+  pressure: "Reading speed drops with every additional line.",
+  tradeoff: "Maze of one-line functions if over-eager.",
+  relief: "Bugs concentrate inside named subroutines.",
+  trap: "Workflow becomes harder to skim.",
+};
+
+const baseRefactoring = CatalogEntry.from({
+  catalog: "refactorings",
+  name: CatalogEntryName.refactoring("Extract Function"),
+  nemeses: [CatalogEntryName.smell("Long Function"), CatalogEntryName.smell("Duplicated Code")],
   before: "function ship(o) { /* big body */ }",
   after: "function ship(o) { validate(o); notify(o); }",
-};
+  forces: {
+    human: Forces.from(baseForcesRecord),
+    agent: Forces.from(baseForcesRecord),
+  },
+});
 
 describe("toRefactoringListItem", () => {
   it("attaches the catalog number passed in", () => {
@@ -27,7 +39,7 @@ describe("toRefactoringListItem", () => {
     expect(item.href).toBe("/refactorings/extract-function");
   });
 
-  it("projects name + solves and goal into the generic chips + caption shape", () => {
+  it("projects name + nemeses and human-lens goal into the generic chips + caption shape", () => {
     const item = toRefactoringListItem(baseRefactoring, 1);
 
     expect(item.name).toBe("Extract Function");
@@ -38,8 +50,7 @@ describe("toRefactoringListItem", () => {
   it("does not leak detail-only fields onto the list item", () => {
     const item = toRefactoringListItem(baseRefactoring, 1);
 
-    expect(item).not.toHaveProperty("tradeoff");
-    expect(item).not.toHaveProperty("savings");
+    expect(item).not.toHaveProperty("forces");
     expect(item).not.toHaveProperty("before");
     expect(item).not.toHaveProperty("after");
   });

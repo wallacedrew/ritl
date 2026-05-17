@@ -1,13 +1,12 @@
+import type { CatalogEntry } from "@/shared/lib/CatalogEntry";
 import type { CatalogListItem } from "@/shared/lib/CatalogListItem";
 
-import type { Refactoring } from "./Refactoring";
-
-export function toRefactoringListItem(refactoring: Refactoring, number: number): CatalogListItem {
+export function toRefactoringListItem(refactoring: CatalogEntry, number: number): CatalogListItem {
   return {
     number,
     href: refactoring.name.toCatalogHref(),
     name: refactoring.name.toString(),
-    chips: refactoring.solves.map((smellName) => smellName.toString()),
-    caption: refactoring.goal,
+    chips: refactoring.nemeses.map((smellName) => smellName.toString()),
+    caption: refactoring.forcesFor("human").goal,
   };
 }

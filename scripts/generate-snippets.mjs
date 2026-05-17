@@ -173,13 +173,19 @@ function neutralizeColonSpace(text) {
 }
 
 function routingDescriptionForRefactoring(r) {
-  const triggers = r.solves.join(", ");
-  const goal = neutralizeColonSpace(firstSentence(r.goal));
+  const forces = agentLensForces(r);
+  const triggers = r.nemeses.join(", ");
+  const goal = neutralizeColonSpace(firstSentence(forces.goal));
   return `Apply ${r.name} when you see ${triggers}. ${goal}`;
 }
 
 function agentLensForces(entry) {
-  return entry.forces.agent ?? entry.forces.human;
+  // Prefer the agent lens when it has real content; fall back to human
+  // when agent content is still a `[... not yet authored]` placeholder
+  // (transitional state during a content sprint).
+  const agent = entry.forces.agent;
+  const looksAuthored = typeof agent?.symptom === "string" && !agent.symptom.startsWith("[");
+  return looksAuthored ? agent : entry.forces.human;
 }
 
 function routingDescriptionForSmell(s) {
@@ -192,14 +198,15 @@ function routingDescriptionForSmell(s) {
 
 function formatRefactoringBody(r) {
   const num = String(refactoringNumberByName.get(r.name)).padStart(2, "0");
+  const forces = agentLensForces(r);
   return [
     `# Apply: ${num} — ${r.name}`,
     "",
-    `**Target state:** ${r.goal}`,
+    `**Target state:** ${forces.goal}`,
     "",
-    `**Why apply it:** ${r.savings}`,
+    `**Why apply it:** ${forces.relief}`,
     "",
-    `**Tradeoff:** ${r.tradeoff}`,
+    `**Tradeoff:** ${forces.tradeoff}`,
     "",
     "```js",
     "// Avoid:",
@@ -209,7 +216,7 @@ function formatRefactoringBody(r) {
     r.after,
     "```",
     "",
-    `**Removes smells:** ${r.solves.join(", ")}`,
+    `**Removes smells:** ${r.nemeses.join(", ")}`,
     "",
   ].join("\n");
 }

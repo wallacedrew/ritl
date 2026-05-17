@@ -9,17 +9,21 @@ import CatalogBackLink from "@/shared/components/CatalogBackLink";
 import CatalogEntryHeader from "@/shared/components/CatalogEntryHeader";
 import CatalogPrevNext from "@/shared/components/CatalogPrevNext";
 import CatalogSection from "@/shared/components/CatalogSection";
+import type { CatalogEntry, Lens } from "@/shared/lib/CatalogEntry";
 
 import { getRefactoringNeighbors } from "../lib/getRefactoringNeighbors";
-import type { Refactoring } from "../lib/Refactoring";
 
 interface RefactoringDetailProps {
-  refactoring: Refactoring;
+  refactoring: CatalogEntry;
   number: number;
+  lens: Lens;
 }
 
-export default function RefactoringDetail({ refactoring, number }: RefactoringDetailProps) {
+export default function RefactoringDetail({ refactoring, number, lens }: RefactoringDetailProps) {
   const neighbors = getRefactoringNeighbors(number);
+  const forces = refactoring.forcesFor(lens);
+  const crossLensHref = lens === "human" ? refactoring.agentHref() : refactoring.href();
+  const crossLensLabel = lens === "human" ? "View as agent →" : "← View as human";
 
   return (
     <Container maxWidth="md" sx={{ py: 4 }}>
@@ -28,27 +32,27 @@ export default function RefactoringDetail({ refactoring, number }: RefactoringDe
         <CatalogEntryHeader
           name={refactoring.name}
           number={number}
-          relatedNames={refactoring.solves}
+          relatedNames={refactoring.nemeses}
         />
         <Typography variant="body2">
-          <NextLink href={`${refactoring.name.toCatalogHref()}/agent`}>View as agent →</NextLink>
+          <NextLink href={crossLensHref}>{crossLensLabel}</NextLink>
         </Typography>
         <Divider />
         {refactoring.safetyNet && (
           <CatalogSection label="Safety net" body={refactoring.safetyNet.toString()} />
         )}
-        <CatalogSection label="Goal" body={refactoring.goal} />
+        <CatalogSection label="Symptom" body={forces.symptom} />
+        <CatalogSection label="Goal" body={forces.goal} />
         <BeforeAfterCodeBlocks
           beforeLabel="Before the refactoring"
           afterLabel="After the refactoring"
           beforeCode={refactoring.before}
           afterCode={refactoring.after}
         />
-        <CatalogSection label="Savings" body={refactoring.savings} />
-        <CatalogSection label="Tradeoff" body={refactoring.tradeoff} />
-        {refactoring.failureMode && (
-          <CatalogSection label="Failure mode" body={refactoring.failureMode} />
-        )}
+        <CatalogSection label="Pressure" body={forces.pressure} />
+        <CatalogSection label="Tradeoff" body={forces.tradeoff} />
+        <CatalogSection label="Relief" body={forces.relief} />
+        <CatalogSection label="Trap" body={forces.trap} />
         <Divider />
         <CatalogPrevNext prev={neighbors.prev} next={neighbors.next} />
       </Stack>
