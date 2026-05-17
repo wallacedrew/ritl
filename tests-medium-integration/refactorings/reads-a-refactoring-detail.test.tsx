@@ -27,5 +27,8 @@ describe("user reads a refactoring detail with smell cross-links", () => {
     expect(screen.getByText(/subtotalAfterBulkDiscount/)).toBeInTheDocument();
 
     expect(screen.getByRole("button", { name: /preview Markdown/i })).toBeInTheDocument();
+
+    const viewAsAgentLink = screen.getByRole("link", { name: /View as agent/ });
+    expect(viewAsAgentLink).toHaveAttribute("href", "/refactorings/extract-function/agent");
   });
 });

@@ -1,6 +1,8 @@
 import Container from "@mui/material/Container";
 import Divider from "@mui/material/Divider";
 import Stack from "@mui/material/Stack";
+import Typography from "@mui/material/Typography";
+import NextLink from "next/link";
 
 import BeforeAfterCodeBlocks from "@/shared/components/BeforeAfterCodeBlocks";
 import CatalogBackLink from "@/shared/components/CatalogBackLink";
@@ -28,6 +30,9 @@ export default function RefactoringDetail({ refactoring, number }: RefactoringDe
           number={number}
           relatedNames={refactoring.solves}
         />
+        <Typography variant="body2">
+          <NextLink href={`${refactoring.name.toCatalogHref()}/agent`}>View as agent →</NextLink>
+        </Typography>
         <Divider />
         {refactoring.safetyNet && (
           <CatalogSection label="Safety net" body={refactoring.safetyNet.toString()} />
