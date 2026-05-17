@@ -7,7 +7,7 @@ import { CatalogEntryName } from "@/shared/lib/CatalogEntryName";
 const baseRefactoring: Refactoring = {
   name: CatalogEntryName.refactoring("Extract Function"),
   solves: [CatalogEntryName.smell("Long Function"), CatalogEntryName.smell("Duplicated Code")],
-  risk: "Maze of one-line functions if over-eager.",
+  tradeoff: "Maze of one-line functions if over-eager.",
   goal: "Each function reads as a single named domain step.",
   savings: "Bugs concentrate inside named subroutines.",
   before: "function ship(o) { /* big body */ }",
@@ -38,7 +38,7 @@ describe("toRefactoringListItem", () => {
   it("does not leak detail-only fields onto the list item", () => {
     const item = toRefactoringListItem(baseRefactoring, 1);
 
-    expect(item).not.toHaveProperty("risk");
+    expect(item).not.toHaveProperty("tradeoff");
     expect(item).not.toHaveProperty("savings");
     expect(item).not.toHaveProperty("before");
     expect(item).not.toHaveProperty("after");

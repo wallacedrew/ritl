@@ -22,17 +22,6 @@ function readOptionalSafetyNet(record: Record<string, unknown>): SafetyNet | und
   return SafetyNet.from(raw);
 }
 
-function readOptionalString(record: Record<string, unknown>, field: string): string | undefined {
-  const raw = record[field];
-  if (raw === undefined) {
-    return undefined;
-  }
-  if (typeof raw !== "string") {
-    throw new Error(`parseRefactoring: field "${field}" must be a string when present`);
-  }
-  return raw;
-}
-
 export function parseRefactoring(raw: unknown): Refactoring {
   if (raw === null || typeof raw !== "object" || Array.isArray(raw)) {
     throw new Error("parseRefactoring: expected an object");
@@ -54,12 +43,11 @@ export function parseRefactoring(raw: unknown): Refactoring {
   return {
     name: CatalogEntryName.refactoring(readStringField(record, "name")),
     solves: wrappedSolves,
-    risk: readStringField(record, "risk"),
+    tradeoff: readStringField(record, "tradeoff"),
     goal: readStringField(record, "goal"),
     savings: readStringField(record, "savings"),
     before: readStringField(record, "before"),
     after: readStringField(record, "after"),
     safetyNet: readOptionalSafetyNet(record),
-    tradeoff: readOptionalString(record, "tradeoff"),
   };
 }

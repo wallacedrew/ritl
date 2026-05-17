@@ -194,7 +194,7 @@ function formatRefactoringBody(r) {
     "",
     `**Why apply it:** ${r.savings}`,
     "",
-    `**Pitfall:** ${r.risk}`,
+    `**Tradeoff:** ${r.tradeoff}`,
     "",
     "```js",
     "// Avoid:",

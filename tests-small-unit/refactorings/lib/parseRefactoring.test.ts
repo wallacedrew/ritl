@@ -5,7 +5,7 @@ import { parseRefactoring } from "@/refactorings/lib/parseRefactoring";
 const validRaw = {
   name: "Extract Function",
   solves: ["Long Function", "Duplicated Code"],
-  risk: "Maze of one-line functions if over-eager.",
+  tradeoff: "Maze of one-line functions if over-eager.",
   goal: "Each function reads as a single named domain step.",
   savings: "Bugs concentrate inside named subroutines.",
   before: "function ship(o) { /* big body */ }",
@@ -96,22 +96,16 @@ describe("parseRefactoring", () => {
     expect(() => parseRefactoring({ ...validRaw, safetyNet: 99 })).toThrow(/safetyNet.*string/i);
   });
 
-  it("returns no tradeoff when the field is absent", () => {
-    const refactoring = parseRefactoring(validRaw);
+  it("rejects when tradeoff is missing", () => {
+    const incomplete = { ...validRaw } as Record<string, unknown>;
+    delete incomplete.tradeoff;
 
-    expect(refactoring.tradeoff).toBeUndefined();
+    expect(() => parseRefactoring(incomplete)).toThrow(/tradeoff.*string/i);
   });
 
-  it("returns the tradeoff string when the field is present", () => {
-    const refactoring = parseRefactoring({
-      ...validRaw,
-      tradeoff: "Extra indirection at every call site.",
-    });
+  it("rejects when tradeoff is the wrong type", () => {
+    const withBadTradeoff = { ...validRaw, tradeoff: 42 };
 
-    expect(refactoring.tradeoff).toBe("Extra indirection at every call site.");
-  });
-
-  it("rejects a non-string tradeoff value", () => {
-    expect(() => parseRefactoring({ ...validRaw, tradeoff: 42 })).toThrow(/tradeoff.*string/i);
+    expect(() => parseRefactoring(withBadTradeoff)).toThrow(/tradeoff.*string/i);
   });
 });

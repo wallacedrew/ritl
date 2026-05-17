@@ -39,7 +39,7 @@ Before anything else. This is the wedge.
 
 5. **Rename Savings → Trade where the move carries a real cost.** Audit all 66. Pure-win moves (Remove Dead Code, Replace Magic Literal) keep `Savings`. Real-cost moves get `Trade` with both sides written honestly.
 
-   _Reframed (2026-05-16): keep Savings, add Tradeoff._ The original framing forced an either/or between "win" and "cost"; the reality is most refactorings have both. Keep `savings` as-is for every entry, add an optional `tradeoff?: string` field surfaced as its own "Tradeoff" section right after Savings (the symmetric counterpart). `risk` stays as the operational "Note" — different axis (mechanical caveat when doing the move) vs Tradeoff (honest cost even when the move succeeds). Pure-win moves leave Tradeoff blank; the section conditionally renders. Same Tidy First sequence as item 4: structural commit (optional field + parser + render-when-present) then content commits in batches.
+   _Reframed (2026-05-16): rename `risk` → `tradeoff`._ First-pass reframe added an optional `tradeoff?: string` alongside `risk` (rendered as "Note"). Audit showed the existing 66 `risk` strings were already mostly tradeoff-flavored, so the second field would have duplicated ~80% of the content with only label-renaming value. Final shape: rename the data field `risk` → `tradeoff` (still required), rename the rendered label "Note" → "Tradeoff", drop the just-scaffolded optional field. Content audit then rewrites any `tradeoff` value that's still mechanical-only (e.g. Rename Variable's "ensure your tooling catches every reference") to lead with honest cost. Snippet generator's `**Pitfall:**` label moves to `**Tradeoff:**` to stay consistent with the site.
 
 ---
 

@@ -5,11 +5,10 @@ import type { SafetyNet } from "./SafetyNet";
 export type Refactoring = {
   name: CatalogEntryName;
   solves: CatalogEntryName[];
-  risk: string;
+  tradeoff: string;
   goal: string;
   savings: string;
   before: string;
   after: string;
   safetyNet?: SafetyNet;
-  tradeoff?: string;
 };
