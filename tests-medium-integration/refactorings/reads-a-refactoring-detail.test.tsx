@@ -23,8 +23,8 @@ describe("user reads a refactoring detail with smell cross-links", () => {
     expect(screen.getByText(/maze of one-line functions/i)).toBeInTheDocument();
     expect(screen.getByText(/single named domain step/i)).toBeInTheDocument();
     expect(screen.getByText(/named subroutines/i)).toBeInTheDocument();
-    expect(screen.getByText(/missing id/)).toBeInTheDocument();
-    expect(screen.getByText(/withTax/)).toBeInTheDocument();
+    expect(screen.getByText(/let total = 0/)).toBeInTheDocument();
+    expect(screen.getByText(/subtotalAfterBulkDiscount/)).toBeInTheDocument();
 
     expect(screen.getByRole("button", { name: /preview Markdown/i })).toBeInTheDocument();
   });

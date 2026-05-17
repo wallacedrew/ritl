@@ -6,8 +6,8 @@
     "tradeoff": "Over-eager extraction can produce a maze of one-line functions; aim for extractions that earn their name with at least one decision or one transformation.",
     "goal": "Each function reads as a single named domain step — what it does, not how.",
     "savings": "Calling code becomes a sequence of named intentions; bugs concentrate inside the now-named subroutines.",
-    "before": "function ship(order) {\n  if (!order.id) throw new Error('missing id');\n  const grand = order.total * 1.1;\n  email(order.user, `Total ${grand}`);\n}",
-    "after": "function ship(order) {\n  validate(order);\n  const grand = withTax(order);\n  notify(order, grand);\n}"
+    "before": "function invoiceTotal(invoice) {\n  let total = 0;\n  for (const line of invoice.lines) {\n    total += line.qty * line.unitPrice;\n    if (line.qty >= 100) total -= line.qty * line.unitPrice * 0.05;\n  }\n  total += total * invoice.taxRate;\n  return Math.round(total * 100) / 100;\n}",
+    "after": "function invoiceTotal(invoice) {\n  const subtotal = subtotalAfterBulkDiscount(invoice);\n  const withTax  = subtotal * (1 + invoice.taxRate);\n  return roundToCents(withTax);\n}"
   },
   {
     "name": "Inline Function",
@@ -16,8 +16,8 @@
     "tradeoff": "If the function had a meaningful name covering several call sites, inlining can scatter the intent — only inline when the body is as clear as the wrapper.",
     "goal": "Trivial wrappers vanish; the call site reads as exactly what's happening.",
     "savings": "One fewer indirection to follow when reading; smaller surface to maintain.",
-    "before": "function getRating(driver) {\n  return moreThanFiveLateDeliveries(driver) ? 2 : 1;\n}\nfunction moreThanFiveLateDeliveries(driver) {\n  return driver.numberOfLateDeliveries > 5;\n}",
-    "after": "function getRating(driver) {\n  return driver.numberOfLateDeliveries > 5 ? 2 : 1;\n}"
+    "before": "function moreThanFive(n) {\n  return n > 5;\n}\nfunction rating(driver) {\n  return moreThanFive(driver.numberOfLateDeliveries) ? 2 : 1;\n}",
+    "after": "function rating(driver) {\n  return driver.numberOfLateDeliveries > 5 ? 2 : 1;\n}"
   },
   {
     "name": "Extract Variable",
@@ -27,7 +27,7 @@
     "goal": "A complex expression earns a name that says what it represents in the domain.",
     "savings": "Reusable in nearby code; debugging shows the intermediate value; comments explaining the expression become unnecessary.",
     "before": "if (order.qty * order.price - Math.max(0, order.qty - 500) * order.price * 0.05 > 1000) { /* ... */ }",
-    "after": "const basePrice = order.qty * order.price;\nconst discount  = Math.max(0, order.qty - 500) * order.price * 0.05;\nif (basePrice - discount > 1000) { /* ... */ }"
+    "after": "const basePrice    = order.qty * order.price;\nconst bulkDiscount = Math.max(0, order.qty - 500) * order.price * 0.05;\nif (basePrice - bulkDiscount > 1000) { /* ... */ }"
   },
   {
     "name": "Inline Variable",
