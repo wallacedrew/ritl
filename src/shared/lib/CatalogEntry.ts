@@ -13,7 +13,7 @@ export type CatalogEntryProps = {
   nemeses: readonly CatalogEntryName[];
   before: string;
   after: string;
-  forces: { human: Forces; agent?: Forces };
+  forces: { human: Forces; agent: Forces };
   safetyNet?: SafetyNet;
 };
 
@@ -24,7 +24,7 @@ export class CatalogEntry {
     readonly nemeses: readonly CatalogEntryName[],
     readonly before: string,
     readonly after: string,
-    readonly forces: { human: Forces; agent?: Forces },
+    readonly forces: { human: Forces; agent: Forces },
     readonly safetyNet?: SafetyNet,
   ) {
     if (!LEGAL_CATALOGS.includes(catalog)) {
@@ -51,11 +51,7 @@ export class CatalogEntry {
   }
 
   forcesFor(lens: Lens): Forces {
-    return this.forces[lens] ?? this.forces.human;
-  }
-
-  hasAgentLens(): boolean {
-    return this.forces.agent !== undefined;
+    return this.forces[lens];
   }
 
   href(): string {

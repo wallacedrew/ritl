@@ -20,7 +20,7 @@ const baseSmell = CatalogEntry.from({
   nemeses: [CatalogEntryName.refactoring("Rename Variable")],
   before: "x",
   after: "y",
-  forces: { human: Forces.from(baseForcesRecord) },
+  forces: { human: Forces.from(baseForcesRecord), agent: Forces.from(baseForcesRecord) },
 });
 
 describe("toSmellListItem", () => {
