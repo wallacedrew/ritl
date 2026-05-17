@@ -1,15 +1,15 @@
 ---
 name: long-parameter-list
-description: Refuse Long Parameter List when functions taking five, six, or more parameters — especially when several travel together as a logical group. Apply Replace Parameter with Query, Preserve Whole Object.
+description: Refuse Long Parameter List when a signature with so many positional parameters that the agent must look up the function definition (or call-site documentation) before any invocation succeeds. Apply Replace Parameter with Query, Preserve Whole Object.
 ---
 
 # Refuse: 04 — Long Parameter List
 
-**Trigger (refuse when you see):** Functions taking five, six, or more parameters — especially when several travel together as a logical group.
+**Trigger (refuse when you see):** A signature with so many positional parameters that the agent must look up the function definition (or call-site documentation) before any invocation succeeds.
 
-**Cost of leaving it in:** Callers must remember argument order and meaning; refactoring becomes a coordination exercise across every call site.
+**Cost of leaving it in:** Every call site is a chance to misorder arguments or miss one entirely; even with a type checker the agent pays a lookup cost on every invocation.
 
-**Target shape after refactoring:** Related parameters travel together as one well-named value object that the function (and its callers) refer to by domain meaning.
+**Target shape after refactoring:** Each parameter is either a domain concept the agent recognizes, or it's bundled into a named object the agent can pass through without unpacking.
 
 ```js
 // Smellier:

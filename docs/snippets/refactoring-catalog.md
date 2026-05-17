@@ -1941,16 +1941,16 @@ function distance(speed, time) {
 
 ---
 name: duplicated-code
-description: Refuse Duplicated Code when the same code structure appears in two or more places — same shape with cosmetic variations, or copy-paste-modify patterns that drift over time. Apply Extract Function, Slide Statements.
+description: Refuse Duplicated Code when near-identical code appears in multiple files; every reasoning step about one copy must either deliberately ignore the others or repeat itself across them. Apply Extract Function, Slide Statements.
 ---
 
 # Refuse: 02 — Duplicated Code
 
-**Trigger (refuse when you see):** The same code structure appears in two or more places — same shape with cosmetic variations, or copy-paste-modify patterns that drift over time.
+**Trigger (refuse when you see):** Near-identical code appears in multiple files; every reasoning step about one copy must either deliberately ignore the others or repeat itself across them.
 
-**Cost of leaving it in:** Bugs need to be fixed in every copy; behavior diverges as copies age, multiplying maintenance cost.
+**Cost of leaving it in:** Edits propagate by hand across copies; the agent must remember to find every clone or ship inconsistent behavior that silently passes unit tests targeting only one copy.
 
-**Target shape after refactoring:** One canonical home per behavior, with parameters for the variations.
+**Target shape after refactoring:** One canonical implementation the agent loads once and reasons about once, with variation parameterized at the call site.
 
 ```js
 // Smellier:
@@ -2004,16 +2004,16 @@ function ship(order) {
 
 ---
 name: long-parameter-list
-description: Refuse Long Parameter List when functions taking five, six, or more parameters — especially when several travel together as a logical group. Apply Replace Parameter with Query, Preserve Whole Object.
+description: Refuse Long Parameter List when a signature with so many positional parameters that the agent must look up the function definition (or call-site documentation) before any invocation succeeds. Apply Replace Parameter with Query, Preserve Whole Object.
 ---
 
 # Refuse: 04 — Long Parameter List
 
-**Trigger (refuse when you see):** Functions taking five, six, or more parameters — especially when several travel together as a logical group.
+**Trigger (refuse when you see):** A signature with so many positional parameters that the agent must look up the function definition (or call-site documentation) before any invocation succeeds.
 
-**Cost of leaving it in:** Callers must remember argument order and meaning; refactoring becomes a coordination exercise across every call site.
+**Cost of leaving it in:** Every call site is a chance to misorder arguments or miss one entirely; even with a type checker the agent pays a lookup cost on every invocation.
 
-**Target shape after refactoring:** Related parameters travel together as one well-named value object that the function (and its callers) refer to by domain meaning.
+**Target shape after refactoring:** Each parameter is either a domain concept the agent recognizes, or it's bundled into a named object the agent can pass through without unpacking.
 
 ```js
 // Smellier:
@@ -2031,16 +2031,16 @@ function book(traveler, address, trip) {
 
 ---
 name: global-data
-description: Refuse Global Data when module-level variables, singletons, or shared mutable state that any code can read or mutate from anywhere. Apply Encapsulate Variable.
+description: Refuse Global Data when a module-level variable mutated from anywhere — the agent reading any single call site cannot bound its impact without scanning every consumer. Apply Encapsulate Variable.
 ---
 
 # Refuse: 05 — Global Data
 
-**Trigger (refuse when you see):** Module-level variables, singletons, or shared mutable state that any code can read or mutate from anywhere.
+**Trigger (refuse when you see):** A module-level variable mutated from anywhere — the agent reading any single call site cannot bound its impact without scanning every consumer.
 
-**Cost of leaving it in:** The blast radius of any change is the whole codebase; behavior depends on hidden write order between unrelated callers.
+**Cost of leaving it in:** Behavior depends on hidden write-order between callers the agent must discover one at a time; tracing any bug requires reconstructing a global mutation timeline.
 
-**Target shape after refactoring:** Access goes through a small named function that owns the read/write contract — and ideally narrows it (read-only, validated).
+**Target shape after refactoring:** All reads and writes go through a named function the agent can grep for, find every consumer of, and reason about as a closed surface.
 
 ```js
 // Smellier:
@@ -2061,16 +2061,16 @@ function getCurrentUser() {
 
 ---
 name: mutable-data
-description: Refuse Mutable Data when data structures whose fields are reassigned across the codebase, with no clear owner of the mutation. Apply Encapsulate Variable, Split Variable.
+description: Refuse Mutable Data when fields the agent finds reassigned across multiple files with no obvious owner; reasoning about state at any moment requires tracing every writer. Apply Encapsulate Variable, Split Variable.
 ---
 
 # Refuse: 06 — Mutable Data
 
-**Trigger (refuse when you see):** Data structures whose fields are reassigned across the codebase, with no clear owner of the mutation.
+**Trigger (refuse when you see):** Fields the agent finds reassigned across multiple files with no obvious owner; reasoning about state at any moment requires tracing every writer.
 
-**Cost of leaving it in:** Reasoning about state at any moment requires tracing every writer; concurrent code becomes a hazard area.
+**Cost of leaving it in:** The agent cannot answer 'what is this value here?' without modeling the full timeline of writes; concurrent reasoning becomes practically impossible.
 
-**Target shape after refactoring:** Mutation happens in one place behind a named function (or returns a new value), so the moment of change is clear.
+**Target shape after refactoring:** Mutation happens behind a named function with a clear contract, or the data is replaced rather than modified — the agent can locate every change in one place.
 
 ```js
 // Smellier:
@@ -2087,16 +2087,16 @@ const final = addTax(applyDiscount(order));
 
 ---
 name: divergent-change
-description: Refuse Divergent Change when one module changes for many unrelated reasons — one part for tax law updates, another for UI changes, another for API shape drift. Apply Split Phase, Move Function.
+description: Refuse Divergent Change when reading the module, the agent constantly switches between conceptually unrelated regions (tax logic, UI logic, API logic); every cross-axis edit requires loading and reasoning about all of them. Apply Split Phase, Move Function.
 ---
 
 # Refuse: 07 — Divergent Change
 
-**Trigger (refuse when you see):** One module changes for many unrelated reasons — one part for tax law updates, another for UI changes, another for API shape drift.
+**Trigger (refuse when you see):** Reading the module, the agent constantly switches between conceptually unrelated regions (tax logic, UI logic, API logic); every cross-axis edit requires loading and reasoning about all of them.
 
-**Cost of leaving it in:** Every team's churn lands in the same file; merges become contentious; testing one concern requires understanding all of them.
+**Cost of leaving it in:** Any single conceptual change touches code that also implements unrelated concerns; the agent must verify it didn't break the other axes on every edit.
 
-**Target shape after refactoring:** Each module changes for one reason — the kinds of changes that touch it cluster around a single axis of variation.
+**Target shape after refactoring:** Each module varies along one axis; the agent loading it can predict what kinds of changes will touch it and bring only the relevant context.
 
 ```js
 // Smellier:

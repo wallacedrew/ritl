@@ -35,9 +35,17 @@
         "symptom": "The same code structure appears in two or more places — same shape with cosmetic variations, or copy-paste-modify patterns that drift over time.",
         "goal": "One canonical home per behavior, with parameters for the variations.",
         "pressure": "Bugs need to be fixed in every copy; behavior diverges as copies age, multiplying maintenance cost.",
-        "tradeoff": "[human tradeoff not yet authored]",
+        "tradeoff": "Extracting the shared form introduces a parameter list or hierarchy that all callers must learn; the abstraction has to earn its keep against the cost of indirection.",
         "relief": "A bug fix or enhancement lands once, not in every clone — and the unifying name reveals shared intent.",
-        "trap": "[human trap not yet authored]"
+        "trap": "Premature deduplication on superficial similarity — code that looks the same but means different things gets merged behind a single abstraction, and any future divergence forces awkward branches."
+      },
+      "agent": {
+        "symptom": "Near-identical code appears in multiple files; every reasoning step about one copy must either deliberately ignore the others or repeat itself across them.",
+        "goal": "One canonical implementation the agent loads once and reasons about once, with variation parameterized at the call site.",
+        "pressure": "Edits propagate by hand across copies; the agent must remember to find every clone or ship inconsistent behavior that silently passes unit tests targeting only one copy.",
+        "tradeoff": "The shared form introduces an indirection the agent must trace through; if the abstraction is wrong, every divergence becomes an exception that complicates reasoning at every call site.",
+        "relief": "Bug fixes and feature additions land in one place; the agent's plan-and-execute loop touches one definition instead of N.",
+        "trap": "Over-eager merging of superficially-similar code creates a leaky abstraction the agent must constantly special-case — reasoning becomes harder than reasoning about the original copies."
       }
     }
   },
@@ -93,9 +101,17 @@
         "symptom": "Functions taking five, six, or more parameters — especially when several travel together as a logical group.",
         "goal": "Related parameters travel together as one well-named value object that the function (and its callers) refer to by domain meaning.",
         "pressure": "Callers must remember argument order and meaning; refactoring becomes a coordination exercise across every call site.",
-        "tradeoff": "[human tradeoff not yet authored]",
+        "tradeoff": "Introducing a parameter object adds a class the team must learn; if the bundle isn't meaningful as a concept, the type becomes ceremony around what was already clear.",
         "relief": "Adding a related field is one type change instead of touching every signature; intent is named at the call site.",
-        "trap": "[human trap not yet authored]"
+        "trap": "Bundling parameters that don't actually travel together — synthetic value objects that exist only to shorten signatures, with no domain coherence behind them."
+      },
+      "agent": {
+        "symptom": "A signature with so many positional parameters that the agent must look up the function definition (or call-site documentation) before any invocation succeeds.",
+        "goal": "Each parameter is either a domain concept the agent recognizes, or it's bundled into a named object the agent can pass through without unpacking.",
+        "pressure": "Every call site is a chance to misorder arguments or miss one entirely; even with a type checker the agent pays a lookup cost on every invocation.",
+        "tradeoff": "A new parameter object adds a class the agent must load to construct values; if used in only one place the cost is pure overhead.",
+        "relief": "Call sites become readable as named intent; the agent constructs and passes domain objects instead of remembering positional contracts.",
+        "trap": "Synthesizing parameter objects that don't represent real domain concepts forces the agent through extra wrapping and unwrapping with no comprehension payoff — pure ceremony."
       }
     }
   },
@@ -110,9 +126,17 @@
         "symptom": "Module-level variables, singletons, or shared mutable state that any code can read or mutate from anywhere.",
         "goal": "Access goes through a small named function that owns the read/write contract — and ideally narrows it (read-only, validated).",
         "pressure": "The blast radius of any change is the whole codebase; behavior depends on hidden write order between unrelated callers.",
-        "tradeoff": "[human tradeoff not yet authored]",
+        "tradeoff": "Encapsulating access through a small wrapper adds indirection at every call site; if any code leaks past the wrapper, the safety promise breaks silently.",
         "relief": "All access sites become trivially findable; you can add logging, validation, or a cache without touching consumers.",
-        "trap": "[human trap not yet authored]"
+        "trap": "Wrapping global access without removing the global — adds a layer of ceremony while the underlying coupling stays in place."
+      },
+      "agent": {
+        "symptom": "A module-level variable mutated from anywhere — the agent reading any single call site cannot bound its impact without scanning every consumer.",
+        "goal": "All reads and writes go through a named function the agent can grep for, find every consumer of, and reason about as a closed surface.",
+        "pressure": "Behavior depends on hidden write-order between callers the agent must discover one at a time; tracing any bug requires reconstructing a global mutation timeline.",
+        "tradeoff": "Wrapping the global doesn't eliminate the coupling — every reader still depends on the same shared state, and the agent still has to model the timeline to reason about reads.",
+        "relief": "A single named function becomes the audit point; the agent can attach logging, validation, or cache logic in one place instead of chasing every consumer.",
+        "trap": "Wrapping globals without narrowing access creates a false safety signal — the agent assumes the wrapper guarantees something it doesn't, and silent leaks become harder to diagnose."
       }
     }
   },
@@ -138,9 +162,17 @@
         "symptom": "Data structures whose fields are reassigned across the codebase, with no clear owner of the mutation.",
         "goal": "Mutation happens in one place behind a named function (or returns a new value), so the moment of change is clear.",
         "pressure": "Reasoning about state at any moment requires tracing every writer; concurrent code becomes a hazard area.",
-        "tradeoff": "[human tradeoff not yet authored]",
+        "tradeoff": "Encapsulating mutation can force the team to learn a less ergonomic API for what was previously a direct write; immutability has migration cost in performance-sensitive code.",
         "relief": "Bugs stop being 'who set this field?' and become local to the encapsulating method.",
-        "trap": "[human trap not yet authored]"
+        "trap": "Wrapping mutable fields with passthrough setters that change nothing — the encapsulation looks safe but the mutation is still everywhere, hidden behind syntactic sugar."
+      },
+      "agent": {
+        "symptom": "Fields the agent finds reassigned across multiple files with no obvious owner; reasoning about state at any moment requires tracing every writer.",
+        "goal": "Mutation happens behind a named function with a clear contract, or the data is replaced rather than modified — the agent can locate every change in one place.",
+        "pressure": "The agent cannot answer 'what is this value here?' without modeling the full timeline of writes; concurrent reasoning becomes practically impossible.",
+        "tradeoff": "Switching to immutable or encapsulated mutation can force the agent to construct new objects on every change; for hot-path mutation this trades reasoning clarity for runtime overhead.",
+        "relief": "State changes become locatable and bisectable; the agent reasoning about behavior traces one entry point instead of N writers.",
+        "trap": "Wrapping writes in setters that don't enforce anything (no validation, no event, no copy-on-write) keeps the mutation everywhere while pretending it's encapsulated — the agent is now misled by the API."
       }
     }
   },
@@ -155,9 +187,17 @@
         "symptom": "One module changes for many unrelated reasons — one part for tax law updates, another for UI changes, another for API shape drift.",
         "goal": "Each module changes for one reason — the kinds of changes that touch it cluster around a single axis of variation.",
         "pressure": "Every team's churn lands in the same file; merges become contentious; testing one concern requires understanding all of them.",
-        "tradeoff": "[human tradeoff not yet authored]",
+        "tradeoff": "Splitting the module forces a coordination surface — two files where there used to be one, plus a shared seam that any cross-cutting change must touch in both.",
         "relief": "Owners and reviewers are obvious; tests are focused; teams can move in parallel without colliding.",
-        "trap": "[human trap not yet authored]"
+        "trap": "Aggressive splitting on every change axis fragments cohesion — a class that genuinely belongs together gets shredded into pieces too small to express the original concept."
+      },
+      "agent": {
+        "symptom": "Reading the module, the agent constantly switches between conceptually unrelated regions (tax logic, UI logic, API logic); every cross-axis edit requires loading and reasoning about all of them.",
+        "goal": "Each module varies along one axis; the agent loading it can predict what kinds of changes will touch it and bring only the relevant context.",
+        "pressure": "Any single conceptual change touches code that also implements unrelated concerns; the agent must verify it didn't break the other axes on every edit.",
+        "tradeoff": "Splitting introduces a seam between modules; cross-cutting changes now require the agent to load and synchronize edits across both, raising context cost for those specific cases.",
+        "relief": "One axis of change per module means the agent loads exactly the context relevant to the request, and concurrent edits along different axes don't interfere.",
+        "trap": "Splitting on every minor distinction creates a fan-out of tiny modules the agent must navigate to reason about any meaningful behavior — abstraction overhead exceeds comprehension gain."
       }
     }
   },

@@ -1,15 +1,15 @@
 ---
 name: duplicated-code
-description: Refuse Duplicated Code when the same code structure appears in two or more places — same shape with cosmetic variations, or copy-paste-modify patterns that drift over time. Apply Extract Function, Slide Statements.
+description: Refuse Duplicated Code when near-identical code appears in multiple files; every reasoning step about one copy must either deliberately ignore the others or repeat itself across them. Apply Extract Function, Slide Statements.
 ---
 
 # Refuse: 02 — Duplicated Code
 
-**Trigger (refuse when you see):** The same code structure appears in two or more places — same shape with cosmetic variations, or copy-paste-modify patterns that drift over time.
+**Trigger (refuse when you see):** Near-identical code appears in multiple files; every reasoning step about one copy must either deliberately ignore the others or repeat itself across them.
 
-**Cost of leaving it in:** Bugs need to be fixed in every copy; behavior diverges as copies age, multiplying maintenance cost.
+**Cost of leaving it in:** Edits propagate by hand across copies; the agent must remember to find every clone or ship inconsistent behavior that silently passes unit tests targeting only one copy.
 
-**Target shape after refactoring:** One canonical home per behavior, with parameters for the variations.
+**Target shape after refactoring:** One canonical implementation the agent loads once and reasons about once, with variation parameterized at the call site.
 
 ```js
 // Smellier:

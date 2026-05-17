@@ -1,15 +1,15 @@
 ---
 name: global-data
-description: Refuse Global Data when module-level variables, singletons, or shared mutable state that any code can read or mutate from anywhere. Apply Encapsulate Variable.
+description: Refuse Global Data when a module-level variable mutated from anywhere — the agent reading any single call site cannot bound its impact without scanning every consumer. Apply Encapsulate Variable.
 ---
 
 # Refuse: 05 — Global Data
 
-**Trigger (refuse when you see):** Module-level variables, singletons, or shared mutable state that any code can read or mutate from anywhere.
+**Trigger (refuse when you see):** A module-level variable mutated from anywhere — the agent reading any single call site cannot bound its impact without scanning every consumer.
 
-**Cost of leaving it in:** The blast radius of any change is the whole codebase; behavior depends on hidden write order between unrelated callers.
+**Cost of leaving it in:** Behavior depends on hidden write-order between callers the agent must discover one at a time; tracing any bug requires reconstructing a global mutation timeline.
 
-**Target shape after refactoring:** Access goes through a small named function that owns the read/write contract — and ideally narrows it (read-only, validated).
+**Target shape after refactoring:** All reads and writes go through a named function the agent can grep for, find every consumer of, and reason about as a closed surface.
 
 ```js
 // Smellier:

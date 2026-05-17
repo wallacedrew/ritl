@@ -19,20 +19,4 @@ describe("user reads the agent view of a smell", () => {
     const backToHuman = screen.getByRole("link", { name: /View as human/ });
     expect(backToHuman).toHaveAttribute("href", "/smells/mysterious-name");
   });
-
-  it("falls back to human-lens content at /smells/duplicated-code/agent when agent forces are not yet authored", async () => {
-    const ui = await SmellAgentPage({
-      params: Promise.resolve({ slug: "duplicated-code" }),
-    });
-
-    renderWithTheme(ui);
-
-    expect(screen.getByRole("heading", { name: "Duplicated Code", level: 1 })).toBeInTheDocument();
-    expect(
-      screen.getByText(/same code structure appears in two or more places/i),
-    ).toBeInTheDocument();
-
-    const backToHuman = screen.getByRole("link", { name: /View as human/ });
-    expect(backToHuman).toHaveAttribute("href", "/smells/duplicated-code");
-  });
 });
