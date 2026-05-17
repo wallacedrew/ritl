@@ -9,7 +9,7 @@ description: Apply Move Statements into Function when you see Duplicated Code. S
 
 **Why apply it:** One fewer thing to remember at the call site; consistency is enforced by the function's definition, not by convention.
 
-**Pitfall:** If the moved statements aren't always wanted, the function grows a flag argument — verify every caller really needs the moved behavior.
+**Tradeoff:** If the moved statements aren't always wanted, the function grows a flag argument — verify every caller really needs the moved behavior.
 
 ```js
 // Avoid:

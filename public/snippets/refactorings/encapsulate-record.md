@@ -9,7 +9,7 @@ description: Apply Encapsulate Record when you see Data Class, Primitive Obsessi
 
 **Why apply it:** Field renames stay internal; invariants can be enforced on every read or write; the record becomes a real domain object.
 
-**Pitfall:** Wrapping every record adds ceremony — only worth it when behavior or validation will accrete around the data.
+**Tradeoff:** Wrapping every record adds ceremony — only worth it when behavior or validation will accrete around the data.
 
 ```js
 // Avoid:

@@ -9,7 +9,7 @@ description: Apply Replace Command with Function when you see Speculative Genera
 
 **Why apply it:** Fewer files, fewer constructors, less indirection — the caller sees one function instead of build-then-execute.
 
-**Pitfall:** If the command holds genuinely useful intermediate state, flattening to a function regrows the temps it eliminated — confirm there's no real reuse first.
+**Tradeoff:** If the command holds genuinely useful intermediate state, flattening to a function regrows the temps it eliminated — confirm there's no real reuse first.
 
 ```js
 // Avoid:

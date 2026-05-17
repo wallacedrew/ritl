@@ -9,7 +9,7 @@ description: Apply Return Modified Value when you see Mutable Data. Instead of m
 
 **Why apply it:** Side effects on inputs disappear; the function reads as a transformation; equality and snapshotting become possible.
 
-**Pitfall:** Callers must remember to capture the returned value; if any forget, they keep the unmodified original. Mark the parameter readonly so the type system helps.
+**Tradeoff:** Callers must remember to capture the returned value; if any forget, they keep the unmodified original. Mark the parameter readonly so the type system helps.
 
 ```js
 // Avoid:

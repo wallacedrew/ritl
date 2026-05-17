@@ -9,7 +9,7 @@ description: Apply Collapse Hierarchy when you see Lazy Element, Speculative Gen
 
 **Why apply it:** Smaller hierarchy, less ceremony, fewer files to navigate.
 
-**Pitfall:** Collapsing too eagerly destroys an extension point you'll later want — only collapse when the variant has been zero-sum for a sustained period.
+**Tradeoff:** Collapsing too eagerly destroys an extension point you'll later want — only collapse when the variant has been zero-sum for a sustained period.
 
 ```js
 // Avoid:

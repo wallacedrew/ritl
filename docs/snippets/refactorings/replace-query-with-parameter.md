@@ -9,7 +9,7 @@ description: Apply Replace Query with Parameter when you see Mutable Data, Insid
 
 **Why apply it:** The function becomes testable in isolation; its dependencies are visible in its signature; pure-function reasoning becomes possible.
 
-**Pitfall:** Passing the value pushes the responsibility onto callers; for many call sites, signatures grow noisily — prefer this when the query touches global or volatile state.
+**Tradeoff:** Passing the value pushes the responsibility onto callers; for many call sites, signatures grow noisily — prefer this when the query touches global or volatile state.
 
 ```js
 // Avoid:

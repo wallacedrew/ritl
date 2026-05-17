@@ -9,16 +9,16 @@ description: Apply Extract Variable when you see Mysterious Name, Comments. A co
 
 **Why apply it:** Reusable in nearby code; debugging shows the intermediate value; comments explaining the expression become unnecessary.
 
-**Pitfall:** Over-extracting tiny expressions clutters scope with one-shot names; extract when the expression carries domain meaning the surrounding code can't speak.
+**Tradeoff:** Over-extracting tiny expressions clutters scope with one-shot names; extract when the expression carries domain meaning the surrounding code can't speak.
 
 ```js
 // Avoid:
 if (order.qty * order.price - Math.max(0, order.qty - 500) * order.price * 0.05 > 1000) { /* ... */ }
 
 // Prefer:
-const basePrice = order.qty * order.price;
-const discount  = Math.max(0, order.qty - 500) * order.price * 0.05;
-if (basePrice - discount > 1000) { /* ... */ }
+const basePrice    = order.qty * order.price;
+const bulkDiscount = Math.max(0, order.qty - 500) * order.price * 0.05;
+if (basePrice - bulkDiscount > 1000) { /* ... */ }
 ```
 
 **Removes smells:** Mysterious Name, Comments

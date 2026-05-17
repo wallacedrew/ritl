@@ -9,7 +9,7 @@ description: Apply Change Function Declaration when you see Mysterious Name, Lon
 
 **Why apply it:** Call sites read fluently; mismatches between expectation and behavior surface immediately at the boundary.
 
-**Pitfall:** Mass renames or signature shifts ripple to every caller; refactor in tooling-supported steps and update tests with each batch.
+**Tradeoff:** Every caller pays for the signature change at once, even those whose call sites were already fine; other-team callers get forced coordination.
 
 ```js
 // Avoid:

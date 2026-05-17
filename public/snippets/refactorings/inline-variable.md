@@ -9,7 +9,7 @@ description: Apply Inline Variable when you see Lazy Element. Single-use variabl
 
 **Why apply it:** Less local clutter, fewer redundant names, smaller scopes to track.
 
-**Pitfall:** Inlining a name that did carry domain meaning costs readability — only inline when the expression is already self-explanatory.
+**Tradeoff:** Inlining a name that did carry domain meaning costs readability — only inline when the expression is already self-explanatory.
 
 ```js
 // Avoid:

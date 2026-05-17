@@ -9,7 +9,7 @@ description: Apply Replace Nested Conditional with Guard Clauses when you see Lo
 
 **Why apply it:** Indentation drops; the dominant case is obvious; new edge cases land at the top without disturbing the rest.
 
-**Pitfall:** If multiple paths share work, premature returns can duplicate that work — extract first, then guard.
+**Tradeoff:** If multiple paths share work, premature returns can duplicate that work — extract first, then guard.
 
 ```js
 // Avoid:

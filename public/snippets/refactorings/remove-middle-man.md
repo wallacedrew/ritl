@@ -9,7 +9,7 @@ description: Apply Remove Middle Man when you see Middle Man. Callers talk direc
 
 **Why apply it:** Fewer files, shorter call stacks, the implementation's location is obvious.
 
-**Pitfall:** Direct access to the delegate exposes its surface to every consumer — only remove the middle man when most of its methods are passthroughs.
+**Tradeoff:** Direct access to the delegate exposes its surface to every consumer — only remove the middle man when most of its methods are passthroughs.
 
 ```js
 // Avoid:

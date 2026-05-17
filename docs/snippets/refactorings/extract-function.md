@@ -9,21 +9,25 @@ description: Apply Extract Function when you see Long Function, Duplicated Code,
 
 **Why apply it:** Calling code becomes a sequence of named intentions; bugs concentrate inside the now-named subroutines.
 
-**Pitfall:** Over-eager extraction can produce a maze of one-line functions; aim for extractions that earn their name with at least one decision or one transformation.
+**Tradeoff:** Over-eager extraction can produce a maze of one-line functions; aim for extractions that earn their name with at least one decision or one transformation.
 
 ```js
 // Avoid:
-function ship(order) {
-  if (!order.id) throw new Error('missing id');
-  const grand = order.total * 1.1;
-  email(order.user, `Total ${grand}`);
+function invoiceTotal(invoice) {
+  let total = 0;
+  for (const line of invoice.lines) {
+    total += line.qty * line.unitPrice;
+    if (line.qty >= 100) total -= line.qty * line.unitPrice * 0.05;
+  }
+  total += total * invoice.taxRate;
+  return Math.round(total * 100) / 100;
 }
 
 // Prefer:
-function ship(order) {
-  validate(order);
-  const grand = withTax(order);
-  notify(order, grand);
+function invoiceTotal(invoice) {
+  const subtotal = subtotalAfterBulkDiscount(invoice);
+  const withTax  = subtotal * (1 + invoice.taxRate);
+  return roundToCents(withTax);
 }
 ```
 

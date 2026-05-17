@@ -9,15 +9,24 @@ description: Apply Move Field when you see Shotgun Surgery, Insider Trading. Eac
 
 **Why apply it:** Class boundaries align with data ownership; mutations are local; refactoring becomes safer.
 
-**Pitfall:** Moving a field disturbs every reader — refactor in tooling-supported steps and add a temporary accessor on the original class while migrating.
+**Tradeoff:** Every reader of the original class now reaches across the new class boundary — coupling drops at the field's new home but reappears at each consumer.
 
 ```js
 // Avoid:
-class Customer { plan; discountRate; }
+class Customer {
+  plan;
+  discountRate;
+}
+// every customer in a given plan gets the same rate:
+customers.forEach(c => c.discountRate = c.plan.kind === 'gold' ? 0.15 : 0.05);
 
 // Prefer:
-class Plan     { discountRate; }
-class Customer { plan; /* discountRate accessed via plan */ }
+class Plan {
+  kind;
+  discountRate;
+}
+class Customer { plan; }
+customer.plan.discountRate;
 ```
 
 **Removes smells:** Shotgun Surgery, Insider Trading

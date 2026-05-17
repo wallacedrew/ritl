@@ -9,7 +9,7 @@ description: Apply Replace Parameter with Query when you see Long Parameter List
 
 **Why apply it:** Signatures shrink; consumers stop doing the function's homework.
 
-**Pitfall:** If the query has side effects or is expensive, passing the value is genuinely better — only replace when the query is pure and cheap.
+**Tradeoff:** If the query has side effects or is expensive, passing the value is genuinely better — only replace when the query is pure and cheap.
 
 ```js
 // Avoid:

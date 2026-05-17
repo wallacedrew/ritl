@@ -9,7 +9,7 @@ description: Apply Push Down Field when you see Refused Bequest, Large Class. A 
 
 **Why apply it:** Other subclasses no longer carry storage they ignore; the parent's surface shrinks; the field's meaning becomes local.
 
-**Pitfall:** If the field is occasionally consulted in the parent for type checks, pushing it down forces awkward downcasts — verify usage first.
+**Tradeoff:** If the field is occasionally consulted in the parent for type checks, pushing it down forces awkward downcasts — verify usage first.
 
 ```js
 // Avoid:

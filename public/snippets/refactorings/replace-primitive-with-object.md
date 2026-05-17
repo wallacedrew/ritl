@@ -9,7 +9,7 @@ description: Apply Replace Primitive with Object when you see Primitive Obsessio
 
 **Why apply it:** Misuse becomes a type error; behavior accretes around the concept; refactoring is local to the wrapper.
 
-**Pitfall:** Wrapping every primitive is overkill — wrap when the concept needs validation, formatting, or domain-specific behavior beyond what the primitive offers.
+**Tradeoff:** Wrapping every primitive is overkill — wrap when the concept needs validation, formatting, or domain-specific behavior beyond what the primitive offers.
 
 ```js
 // Avoid:

@@ -9,7 +9,7 @@ description: Apply Replace Loop with Pipeline when you see Loops. Filter / map /
 
 **Why apply it:** Off-by-one and accumulator bugs vanish; each step is independently testable.
 
-**Pitfall:** Pipelines add a tiny per-element function-call overhead — usually negligible, but profile if you're in a hot path.
+**Tradeoff:** Pipelines add a tiny per-element function-call overhead — usually negligible, but profile if you're in a hot path.
 
 ```js
 // Avoid:

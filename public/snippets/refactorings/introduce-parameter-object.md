@@ -9,19 +9,19 @@ description: Apply Introduce Parameter Object when you see Long Parameter List, 
 
 **Why apply it:** Adding a related field is one type change instead of touching every call site; intent is named.
 
-**Pitfall:** Premature parameter objects hide which fields are actually needed by which method — wait until the clump appears in 3+ places before extracting.
+**Tradeoff:** Premature parameter objects hide which fields are actually needed by which method — wait until the clump appears in 3+ places before extracting.
 
 ```js
 // Avoid:
-function record(low, high, value) {
-  // ...
-}
+function recordTemperature(low, high, value) { /* ... */ }
+function alertIfOutOfRange(low, high, reading) { /* ... */ }
 
 // Prefer:
-class NumberRange { /* low, high */ }
-function record(range, value) {
-  // ...
+class NumberRange {
+  constructor(low, high) { this.low = low; this.high = high; }
 }
+function recordTemperature(range, value)   { /* ... */ }
+function alertIfOutOfRange(range, reading) { /* ... */ }
 ```
 
 **Removes smells:** Long Parameter List, Data Clumps

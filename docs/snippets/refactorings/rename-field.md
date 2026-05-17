@@ -9,14 +9,22 @@ description: Apply Rename Field when you see Mysterious Name. Field names match 
 
 **Why apply it:** Stronger encapsulation; future-you reads the class definition and immediately understands its shape.
 
-**Pitfall:** Field renames cross every reader/writer of the class — refactor in tooling-supported steps and update tests with each batch.
+**Tradeoff:** Same drift as Rename Variable, amplified across the field's read/write surface and any persistence shadows (DB columns, JSON schemas, APIs).
 
 ```js
 // Avoid:
-class Org { name; }
+class Position {
+  name;          // role name? or person's name?
+  hiringManager;
+}
+console.log(position.name);  // ambiguous
 
 // Prefer:
-class Org { title; }
+class Position {
+  title;
+  hiringManager;
+}
+console.log(position.title);  // clearly the role
 ```
 
 **Removes smells:** Mysterious Name

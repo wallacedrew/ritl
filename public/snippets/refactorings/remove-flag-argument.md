@@ -9,7 +9,7 @@ description: Apply Remove Flag Argument when you see Long Parameter List. Each f
 
 **Why apply it:** Call sites read fluently; new variations land as new functions instead of new switch cases.
 
-**Pitfall:** Two replacement functions with similar bodies introduce duplication — pair this with Extract Function for shared internals.
+**Tradeoff:** Two replacement functions with similar bodies introduce duplication — pair this with Extract Function for shared internals.
 
 ```js
 // Avoid:

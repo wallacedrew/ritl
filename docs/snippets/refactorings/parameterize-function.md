@@ -9,7 +9,7 @@ description: Apply Parameterize Function when you see Duplicated Code. Two near-
 
 **Why apply it:** One canonical implementation; new variations are new parameter values, not new functions.
 
-**Pitfall:** If the variations are conceptually different operations, one parameterized function will accumulate flags and special cases — keep them separate then.
+**Tradeoff:** If the variations are conceptually different operations, one parameterized function will accumulate flags and special cases — keep them separate then.
 
 ```js
 // Avoid:

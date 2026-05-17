@@ -9,20 +9,29 @@ description: Apply Replace Function with Command when you see Long Function. A f
 
 **Why apply it:** Long sequences become labeled steps; tests target each step on the command; subclasses or strategies can vary parts of the algorithm.
 
-**Pitfall:** Promoting a function to a command adds ceremony (constructor, method calls). Only worth it when the function genuinely needs its own intermediate state or multiple entry points.
+**Tradeoff:** Promoting a function to a command adds ceremony (constructor, method calls). Only worth it when the function genuinely needs its own intermediate state or multiple entry points.
 
 ```js
 // Avoid:
-function score(c) {
-  // fifty lines using ten locals
+function score(candidate) {
+  let total = candidate.experience * 10;
+  if (candidate.hasCertifications) total += 25;
+  total -= candidate.gaps * 5;
+  total += candidate.referrals * 8;
+  return total;
 }
 
 // Prefer:
 class Scorer {
-  constructor(c) { /* fields */ }
-  execute()      { return this.compose(); }
-  // named private steps
+  constructor(candidate) { this.candidate = candidate; }
+  execute() {
+    return this.base() + this.bonus() - this.penalty();
+  }
+  base()    { return this.candidate.experience * 10 + (this.candidate.hasCertifications ? 25 : 0); }
+  bonus()   { return this.candidate.referrals * 8; }
+  penalty() { return this.candidate.gaps * 5; }
 }
+new Scorer(candidate).execute();
 ```
 
 **Removes smells:** Long Function

@@ -9,18 +9,27 @@ description: Apply Split Phase when you see Divergent Change, Long Function. Eac
 
 **Why apply it:** Phases evolve independently; tests target each phase in isolation; the intermediate shape becomes a documented contract.
 
-**Pitfall:** An intermediate data structure between the phases is overhead — earn it by separating two clearly different concerns.
+**Tradeoff:** An intermediate data structure between the phases is overhead — earn it by separating two clearly different concerns.
 
 ```js
 // Avoid:
 function priceAndRender(input) {
-  const price = computePrice(input);
-  return renderHTML(input, price);
+  let total = 0;
+  for (const item of input.items) total += item.qty * item.price;
+  if (input.member) total *= 0.95;
+  return `<p>Total: ${(total / 100).toFixed(2)} for ${input.items.length} items</p>`;
 }
 
 // Prefer:
-function pricing(input) { return { ...input, price: computePrice(input) }; }
-function render(priced)  { return renderHTML(priced); }
+function pricing(input) {
+  let total = 0;
+  for (const item of input.items) total += item.qty * item.price;
+  if (input.member) total *= 0.95;
+  return { items: input.items, totalCents: total };
+}
+function render({ items, totalCents }) {
+  return `<p>Total: ${(totalCents / 100).toFixed(2)} for ${items.length} items</p>`;
+}
 ```
 
 **Removes smells:** Divergent Change, Long Function

@@ -9,7 +9,7 @@ description: Apply Change Value to Reference when you see Duplicated Code. Dupli
 
 **Why apply it:** Updates to the entity are visible everywhere; storage shrinks; identity becomes meaningful again.
 
-**Pitfall:** Sharing introduces the question 'who owns this?' — make sure the lifetime and visibility of the shared reference are well-defined.
+**Tradeoff:** Sharing introduces the question 'who owns this?' — make sure the lifetime and visibility of the shared reference are well-defined.
 
 ```js
 // Avoid:

@@ -9,7 +9,7 @@ description: Apply Remove Setting Method when you see Mutable Data, Data Class. 
 
 **Why apply it:** Immutable-by-default classes; bugs from late mutation vanish; the API expresses what users can actually do.
 
-**Pitfall:** Removing a setter forces every legitimate update through a more meaningful method — verify there's a domain action behind every setter call before deleting it.
+**Tradeoff:** Removing a setter forces every legitimate update through a more meaningful method — verify there's a domain action behind every setter call before deleting it.
 
 ```js
 // Avoid:

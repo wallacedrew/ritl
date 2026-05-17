@@ -24,7 +24,7 @@ description: Apply Rename Variable when you see Mysterious Name. Variable names 
 
 **Why apply it:** Reading the variable's name tells you everything you need without checking its definition.
 
-**Pitfall:** A rename is small but cross-file; ensure your tooling catches every reference (including string templates and comments).
+**Tradeoff:** The IDE renames code, not the world around it — cross-repo greps, commit history, comments, and string-literal references silently drift stale.
 
 ```js
 // Avoid:
@@ -47,14 +47,22 @@ description: Apply Rename Field when you see Mysterious Name. Field names match 
 
 **Why apply it:** Stronger encapsulation; future-you reads the class definition and immediately understands its shape.
 
-**Pitfall:** Field renames cross every reader/writer of the class — refactor in tooling-supported steps and update tests with each batch.
+**Tradeoff:** Same drift as Rename Variable, amplified across the field's read/write surface and any persistence shadows (DB columns, JSON schemas, APIs).
 
 ```js
 // Avoid:
-class Org { name; }
+class Position {
+  name;          // role name? or person's name?
+  hiringManager;
+}
+console.log(position.name);  // ambiguous
 
 // Prefer:
-class Org { title; }
+class Position {
+  title;
+  hiringManager;
+}
+console.log(position.title);  // clearly the role
 ```
 
 **Removes smells:** Mysterious Name
@@ -70,7 +78,7 @@ description: Apply Remove Dead Code when you see Speculative Generality, Comment
 
 **Why apply it:** Smaller surface, faster reading, fewer false leads when debugging.
 
-**Pitfall:** Code that looks dead may be reachable via reflection, dynamic dispatch, or external callers — delete in version control where it can be recovered.
+**Tradeoff:** You give up the option to revive without a git dive — and 'dead' under static analysis can still be reachable via reflection, dynamic dispatch, or external callers.
 
 ```js
 // Avoid:
@@ -94,7 +102,7 @@ description: Apply Replace Magic Literal when you see Mysterious Name, Comments.
 
 **Why apply it:** Searches by domain term find every callsite; changing the value is one edit; the constant invites code-side documentation when it's truly load-bearing.
 
-**Pitfall:** Naming every literal can drown the file in trivia — only name literals that carry domain meaning the surrounding code can't speak.
+**Tradeoff:** Naming every literal can drown the file in trivia — only name literals that carry domain meaning the surrounding code can't speak.
 
 ```js
 // Avoid:
@@ -124,21 +132,25 @@ description: Apply Extract Function when you see Long Function, Duplicated Code,
 
 **Why apply it:** Calling code becomes a sequence of named intentions; bugs concentrate inside the now-named subroutines.
 
-**Pitfall:** Over-eager extraction can produce a maze of one-line functions; aim for extractions that earn their name with at least one decision or one transformation.
+**Tradeoff:** Over-eager extraction can produce a maze of one-line functions; aim for extractions that earn their name with at least one decision or one transformation.
 
 ```js
 // Avoid:
-function ship(order) {
-  if (!order.id) throw new Error('missing id');
-  const grand = order.total * 1.1;
-  email(order.user, `Total ${grand}`);
+function invoiceTotal(invoice) {
+  let total = 0;
+  for (const line of invoice.lines) {
+    total += line.qty * line.unitPrice;
+    if (line.qty >= 100) total -= line.qty * line.unitPrice * 0.05;
+  }
+  total += total * invoice.taxRate;
+  return Math.round(total * 100) / 100;
 }
 
 // Prefer:
-function ship(order) {
-  validate(order);
-  const grand = withTax(order);
-  notify(order, grand);
+function invoiceTotal(invoice) {
+  const subtotal = subtotalAfterBulkDiscount(invoice);
+  const withTax  = subtotal * (1 + invoice.taxRate);
+  return roundToCents(withTax);
 }
 ```
 
@@ -155,19 +167,19 @@ description: Apply Inline Function when you see Lazy Element, Speculative Genera
 
 **Why apply it:** One fewer indirection to follow when reading; smaller surface to maintain.
 
-**Pitfall:** If the function had a meaningful name covering several call sites, inlining can scatter the intent — only inline when the body is as clear as the wrapper.
+**Tradeoff:** If the function had a meaningful name covering several call sites, inlining can scatter the intent — only inline when the body is as clear as the wrapper.
 
 ```js
 // Avoid:
-function getRating(driver) {
-  return moreThanFiveLateDeliveries(driver) ? 2 : 1;
+function moreThanFive(n) {
+  return n > 5;
 }
-function moreThanFiveLateDeliveries(driver) {
-  return driver.numberOfLateDeliveries > 5;
+function rating(driver) {
+  return moreThanFive(driver.numberOfLateDeliveries) ? 2 : 1;
 }
 
 // Prefer:
-function getRating(driver) {
+function rating(driver) {
   return driver.numberOfLateDeliveries > 5 ? 2 : 1;
 }
 ```
@@ -185,16 +197,16 @@ description: Apply Extract Variable when you see Mysterious Name, Comments. A co
 
 **Why apply it:** Reusable in nearby code; debugging shows the intermediate value; comments explaining the expression become unnecessary.
 
-**Pitfall:** Over-extracting tiny expressions clutters scope with one-shot names; extract when the expression carries domain meaning the surrounding code can't speak.
+**Tradeoff:** Over-extracting tiny expressions clutters scope with one-shot names; extract when the expression carries domain meaning the surrounding code can't speak.
 
 ```js
 // Avoid:
 if (order.qty * order.price - Math.max(0, order.qty - 500) * order.price * 0.05 > 1000) { /* ... */ }
 
 // Prefer:
-const basePrice = order.qty * order.price;
-const discount  = Math.max(0, order.qty - 500) * order.price * 0.05;
-if (basePrice - discount > 1000) { /* ... */ }
+const basePrice    = order.qty * order.price;
+const bulkDiscount = Math.max(0, order.qty - 500) * order.price * 0.05;
+if (basePrice - bulkDiscount > 1000) { /* ... */ }
 ```
 
 **Removes smells:** Mysterious Name, Comments
@@ -210,7 +222,7 @@ description: Apply Inline Variable when you see Lazy Element. Single-use variabl
 
 **Why apply it:** Less local clutter, fewer redundant names, smaller scopes to track.
 
-**Pitfall:** Inlining a name that did carry domain meaning costs readability — only inline when the expression is already self-explanatory.
+**Tradeoff:** Inlining a name that did carry domain meaning costs readability — only inline when the expression is already self-explanatory.
 
 ```js
 // Avoid:
@@ -234,17 +246,22 @@ description: Apply Combine Functions into Class when you see Data Clumps, Primit
 
 **Why apply it:** Encapsulation tightens; tests target the class; new operations land in one obvious place.
 
-**Pitfall:** Wrapping passive data in a class that nobody else uses adds ceremony — only combine when 2+ functions take the same data and would benefit from co-located behavior.
+**Tradeoff:** Wrapping passive data in a class that nobody else uses adds ceremony — only combine when 2+ functions take the same data and would benefit from co-located behavior.
 
 ```js
 // Avoid:
-function baseCharge(reading)    { /* uses reading */ }
-function taxableCharge(reading) { /* uses reading */ }
+function baseCharge(reading) {
+  return reading.kwh * reading.tariff.baseRate;
+}
+function taxableCharge(reading) {
+  return baseCharge(reading) + reading.kwh * reading.tariff.taxRate;
+}
 
 // Prefer:
 class Reading {
-  baseCharge()    { /* ... */ }
-  taxableCharge() { /* ... */ }
+  constructor({ kwh, tariff }) { this.kwh = kwh; this.tariff = tariff; }
+  baseCharge()    { return this.kwh * this.tariff.baseRate; }
+  taxableCharge() { return this.baseCharge() + this.kwh * this.tariff.taxRate; }
 }
 ```
 
@@ -261,17 +278,27 @@ description: Apply Combine Functions into Transform when you see Data Clumps, Mu
 
 **Why apply it:** Derivations stay consistent (no two callers compute slightly different versions); cache invalidation becomes obvious.
 
-**Pitfall:** Building a transform up-front when only one derivation exists is BDUF — wait for the second derivation before introducing the transform.
+**Tradeoff:** Building a transform up-front when only one derivation exists is BDUF — wait for the second derivation before introducing the transform.
 
 ```js
 // Avoid:
-function base(reading)    { /* ... */ }
-function taxable(reading) { /* ... */ }
+function baseCharge(reading)    { return reading.kwh * reading.tariff.baseRate; }
+function taxableCharge(reading) { return reading.kwh * reading.tariff.taxRate; }
+// every consumer recomputes:
+const monthly  = baseCharge(reading) + taxableCharge(reading);
+const discount = baseCharge(reading) * 0.95;
 
 // Prefer:
 function enrich(reading) {
-  return { ...reading, base: base(reading), taxable: taxable(reading) };
+  return {
+    ...reading,
+    baseCharge:    reading.kwh * reading.tariff.baseRate,
+    taxableCharge: reading.kwh * reading.tariff.taxRate,
+  };
 }
+const r = enrich(reading);
+const monthly  = r.baseCharge + r.taxableCharge;
+const discount = r.baseCharge * 0.95;
 ```
 
 **Removes smells:** Data Clumps, Mutable Data
@@ -287,18 +314,27 @@ description: Apply Split Phase when you see Divergent Change, Long Function. Eac
 
 **Why apply it:** Phases evolve independently; tests target each phase in isolation; the intermediate shape becomes a documented contract.
 
-**Pitfall:** An intermediate data structure between the phases is overhead — earn it by separating two clearly different concerns.
+**Tradeoff:** An intermediate data structure between the phases is overhead — earn it by separating two clearly different concerns.
 
 ```js
 // Avoid:
 function priceAndRender(input) {
-  const price = computePrice(input);
-  return renderHTML(input, price);
+  let total = 0;
+  for (const item of input.items) total += item.qty * item.price;
+  if (input.member) total *= 0.95;
+  return `<p>Total: ${(total / 100).toFixed(2)} for ${input.items.length} items</p>`;
 }
 
 // Prefer:
-function pricing(input) { return { ...input, price: computePrice(input) }; }
-function render(priced)  { return renderHTML(priced); }
+function pricing(input) {
+  let total = 0;
+  for (const item of input.items) total += item.qty * item.price;
+  if (input.member) total *= 0.95;
+  return { items: input.items, totalCents: total };
+}
+function render({ items, totalCents }) {
+  return `<p>Total: ${(totalCents / 100).toFixed(2)} for ${items.length} items</p>`;
+}
 ```
 
 **Removes smells:** Divergent Change, Long Function
@@ -314,7 +350,7 @@ description: Apply Slide Statements when you see Long Function, Comments. Relate
 
 **Why apply it:** Setup for Extract Function becomes trivial; the implicit grouping inside the function becomes explicit.
 
-**Pitfall:** Reordering can change behavior if statements aren't actually independent — verify side effects and dependencies before sliding.
+**Tradeoff:** Reordering can change behavior if statements aren't actually independent — verify side effects and dependencies before sliding.
 
 ```js
 // Avoid:
@@ -343,7 +379,7 @@ description: Apply Split Loop when you see Long Function, Loops. Each loop does 
 
 **Why apply it:** Each loop can then be replaced by a pipeline or extracted by name; bugs concentrate in one purpose at a time.
 
-**Pitfall:** Two loops over the same collection are slower than one — only split when the doubled cost is dwarfed by the readability gain (which it usually is).
+**Tradeoff:** Two loops over the same collection are slower than one — only split when the doubled cost is dwarfed by the readability gain (which it usually is).
 
 ```js
 // Avoid:
@@ -372,7 +408,7 @@ description: Apply Replace Loop with Pipeline when you see Loops. Filter / map /
 
 **Why apply it:** Off-by-one and accumulator bugs vanish; each step is independently testable.
 
-**Pitfall:** Pipelines add a tiny per-element function-call overhead — usually negligible, but profile if you're in a hot path.
+**Tradeoff:** Pipelines add a tiny per-element function-call overhead — usually negligible, but profile if you're in a hot path.
 
 ```js
 // Avoid:
@@ -400,7 +436,7 @@ description: Apply Replace Derived Variable with Query when you see Mutable Data
 
 **Why apply it:** Mutation scope shrinks; reasoning about state is simpler; no chance of the derived field drifting from its source.
 
-**Pitfall:** If the derivation is expensive and the source rarely changes, recomputing on every read may be wasteful — measure before deciding.
+**Tradeoff:** If the derivation is expensive and the source rarely changes, recomputing on every read may be wasteful — measure before deciding.
 
 ```js
 // Avoid:
@@ -431,7 +467,7 @@ description: Apply Split Variable when you see Mysterious Name, Mutable Data. Ea
 
 **Why apply it:** Names match purpose; the type system can narrow each role; refactoring each use becomes local.
 
-**Pitfall:** Two distinct uses of one variable share a single update pattern that may have hidden coupling — verify each use is genuinely independent.
+**Tradeoff:** If the two uses were actually coupled — shared init or synchronized update — splitting them invites drift the single mutation kept in sync.
 
 ```js
 // Avoid:
@@ -460,7 +496,7 @@ description: Apply Move Statements into Function when you see Duplicated Code. S
 
 **Why apply it:** One fewer thing to remember at the call site; consistency is enforced by the function's definition, not by convention.
 
-**Pitfall:** If the moved statements aren't always wanted, the function grows a flag argument — verify every caller really needs the moved behavior.
+**Tradeoff:** If the moved statements aren't always wanted, the function grows a flag argument — verify every caller really needs the moved behavior.
 
 ```js
 // Avoid:
@@ -489,7 +525,7 @@ description: Apply Move Statements to Callers when you see Divergent Change. Sta
 
 **Why apply it:** The function's body becomes about its single responsibility; callers express their differences directly.
 
-**Pitfall:** If most callers want the moved statements, you've created duplication — the inverse of Move Statements into Function is only an improvement when callers genuinely differ.
+**Tradeoff:** If most callers want the moved statements, you've created duplication — the inverse of Move Statements into Function is only an improvement when callers genuinely differ.
 
 ```js
 // Avoid:
@@ -517,7 +553,7 @@ description: Apply Replace Inline Code with Function Call when you see Duplicate
 
 **Why apply it:** One canonical implementation; the name labels the intent; future improvements to the function reach every site that used to inline.
 
-**Pitfall:** If the existing function's name doesn't quite match the local intent, the call site reads as a near-miss; consider Change Function Declaration first.
+**Tradeoff:** If the existing function's name doesn't quite match the local intent, the call site reads as a near-miss; consider Change Function Declaration first.
 
 ```js
 // Avoid:
@@ -540,7 +576,7 @@ description: Apply Replace Temp with Query when you see Long Function, Mutable D
 
 **Why apply it:** Extract Function becomes easier (the query has a name and stable scope); the temp's lifetime no longer constrains how the surrounding function is split.
 
-**Pitfall:** If the temp wraps an expensive calculation called many times, naive replacement may multiply cost — measure or cache before deciding.
+**Tradeoff:** If the temp wraps an expensive calculation called many times, naive replacement may multiply cost — measure or cache before deciding.
 
 ```js
 // Avoid:
@@ -571,20 +607,29 @@ description: Apply Replace Function with Command when you see Long Function. A f
 
 **Why apply it:** Long sequences become labeled steps; tests target each step on the command; subclasses or strategies can vary parts of the algorithm.
 
-**Pitfall:** Promoting a function to a command adds ceremony (constructor, method calls). Only worth it when the function genuinely needs its own intermediate state or multiple entry points.
+**Tradeoff:** Promoting a function to a command adds ceremony (constructor, method calls). Only worth it when the function genuinely needs its own intermediate state or multiple entry points.
 
 ```js
 // Avoid:
-function score(c) {
-  // fifty lines using ten locals
+function score(candidate) {
+  let total = candidate.experience * 10;
+  if (candidate.hasCertifications) total += 25;
+  total -= candidate.gaps * 5;
+  total += candidate.referrals * 8;
+  return total;
 }
 
 // Prefer:
 class Scorer {
-  constructor(c) { /* fields */ }
-  execute()      { return this.compose(); }
-  // named private steps
+  constructor(candidate) { this.candidate = candidate; }
+  execute() {
+    return this.base() + this.bonus() - this.penalty();
+  }
+  base()    { return this.candidate.experience * 10 + (this.candidate.hasCertifications ? 25 : 0); }
+  bonus()   { return this.candidate.referrals * 8; }
+  penalty() { return this.candidate.gaps * 5; }
 }
+new Scorer(candidate).execute();
 ```
 
 **Removes smells:** Long Function
@@ -600,7 +645,7 @@ description: Apply Replace Command with Function when you see Speculative Genera
 
 **Why apply it:** Fewer files, fewer constructors, less indirection — the caller sees one function instead of build-then-execute.
 
-**Pitfall:** If the command holds genuinely useful intermediate state, flattening to a function regrows the temps it eliminated — confirm there's no real reuse first.
+**Tradeoff:** If the command holds genuinely useful intermediate state, flattening to a function regrows the temps it eliminated — confirm there's no real reuse first.
 
 ```js
 // Avoid:
@@ -628,7 +673,7 @@ description: Apply Return Modified Value when you see Mutable Data. Instead of m
 
 **Why apply it:** Side effects on inputs disappear; the function reads as a transformation; equality and snapshotting become possible.
 
-**Pitfall:** Callers must remember to capture the returned value; if any forget, they keep the unmodified original. Mark the parameter readonly so the type system helps.
+**Tradeoff:** Callers must remember to capture the returned value; if any forget, they keep the unmodified original. Mark the parameter readonly so the type system helps.
 
 ```js
 // Avoid:
@@ -657,7 +702,7 @@ description: Apply Substitute Algorithm when you see Long Function, Loops. An op
 
 **Why apply it:** Future maintainers read the well-known pattern instead of decoding the bespoke implementation; performance and correctness usually improve.
 
-**Pitfall:** Swapping algorithms wholesale forfeits behavioral safety — characterize the function with tests at every input boundary you care about before substituting.
+**Tradeoff:** Swapping algorithms wholesale forfeits behavioral safety — characterize the function with tests at every input boundary you care about before substituting.
 
 ```js
 // Avoid:
@@ -687,7 +732,7 @@ description: Apply Encapsulate Variable when you see Global Data, Mutable Data. 
 
 **Why apply it:** A bug fix or audit becomes a one-line addition inside the wrapper; consumers never need to change.
 
-**Pitfall:** Adds a layer of indirection that pays off only when every access goes through the wrapper — leakage of direct access undoes the benefit.
+**Tradeoff:** Adds a layer of indirection that pays off only when every access goes through the wrapper — leakage of direct access undoes the benefit.
 
 ```js
 // Avoid:
@@ -712,7 +757,7 @@ description: Apply Hide Delegate when you see Message Chains. Callers ask the cl
 
 **Why apply it:** Encapsulation tightens; intermediate objects can change shape without breaking callers.
 
-**Pitfall:** Adds a passthrough method on the parent for every delegated operation — only worth it for operations that are repeated across consumers.
+**Tradeoff:** Adds a passthrough method on the parent for every delegated operation — only worth it for operations that are repeated across consumers.
 
 ```js
 // Avoid:
@@ -736,7 +781,7 @@ description: Apply Remove Middle Man when you see Middle Man. Callers talk direc
 
 **Why apply it:** Fewer files, shorter call stacks, the implementation's location is obvious.
 
-**Pitfall:** Direct access to the delegate exposes its surface to every consumer — only remove the middle man when most of its methods are passthroughs.
+**Tradeoff:** Direct access to the delegate exposes its surface to every consumer — only remove the middle man when most of its methods are passthroughs.
 
 ```js
 // Avoid:
@@ -762,7 +807,7 @@ description: Apply Encapsulate Collection when you see Mutable Data, Insider Tra
 
 **Why apply it:** The owner can enforce invariants (uniqueness, ordering, max size); refactoring the collection's internal shape is local.
 
-**Pitfall:** Returning a shallow copy on every read can hide bugs where callers expected mutation to be reflected — be explicit about the contract.
+**Tradeoff:** Returning a shallow copy on every read can hide bugs where callers expected mutation to be reflected — be explicit about the contract.
 
 ```js
 // Avoid:
@@ -793,7 +838,7 @@ description: Apply Encapsulate Record when you see Data Class, Primitive Obsessi
 
 **Why apply it:** Field renames stay internal; invariants can be enforced on every read or write; the record becomes a real domain object.
 
-**Pitfall:** Wrapping every record adds ceremony — only worth it when behavior or validation will accrete around the data.
+**Tradeoff:** Wrapping every record adds ceremony — only worth it when behavior or validation will accrete around the data.
 
 ```js
 // Avoid:
@@ -822,7 +867,7 @@ description: Apply Remove Setting Method when you see Mutable Data, Data Class. 
 
 **Why apply it:** Immutable-by-default classes; bugs from late mutation vanish; the API expresses what users can actually do.
 
-**Pitfall:** Removing a setter forces every legitimate update through a more meaningful method — verify there's a domain action behind every setter call before deleting it.
+**Tradeoff:** Removing a setter forces every legitimate update through a more meaningful method — verify there's a domain action behind every setter call before deleting it.
 
 ```js
 // Avoid:
@@ -852,15 +897,24 @@ description: Apply Move Function when you see Feature Envy, Shotgun Surgery, Ins
 
 **Why apply it:** Modules become more cohesive; tests stay focused; feature-envy patterns disappear.
 
-**Pitfall:** Moving a function across modules can pull dependencies with it — confirm the new home actually has access to everything the function needs.
+**Tradeoff:** Dependencies don't always travel cleanly — circular imports surface at the destination, and readers' 'where does this live' map briefly breaks.
 
 ```js
 // Avoid:
-class Order { totalPriority() { return this.account.priority(); } }
+class Order {
+  account;
+  isVip() {
+    return this.account.tier === 'gold' && this.account.yearsActive >= 3;
+  }
+}
 
 // Prefer:
-class Account { priority() { /* ... */ } }
-class Order   { /* asks account directly when needed */ }
+class Account {
+  tier; yearsActive;
+  isVip() { return this.tier === 'gold' && this.yearsActive >= 3; }
+}
+class Order { account; }
+order.account.isVip();
 ```
 
 **Removes smells:** Feature Envy, Shotgun Surgery, Insider Trading, Divergent Change
@@ -876,15 +930,24 @@ description: Apply Move Field when you see Shotgun Surgery, Insider Trading. Eac
 
 **Why apply it:** Class boundaries align with data ownership; mutations are local; refactoring becomes safer.
 
-**Pitfall:** Moving a field disturbs every reader — refactor in tooling-supported steps and add a temporary accessor on the original class while migrating.
+**Tradeoff:** Every reader of the original class now reaches across the new class boundary — coupling drops at the field's new home but reappears at each consumer.
 
 ```js
 // Avoid:
-class Customer { plan; discountRate; }
+class Customer {
+  plan;
+  discountRate;
+}
+// every customer in a given plan gets the same rate:
+customers.forEach(c => c.discountRate = c.plan.kind === 'gold' ? 0.15 : 0.05);
 
 // Prefer:
-class Plan     { discountRate; }
-class Customer { plan; /* discountRate accessed via plan */ }
+class Plan {
+  kind;
+  discountRate;
+}
+class Customer { plan; }
+customer.plan.discountRate;
 ```
 
 **Removes smells:** Shotgun Surgery, Insider Trading
@@ -900,7 +963,7 @@ description: Apply Extract Class when you see Data Clumps, Temporary Field, Larg
 
 **Why apply it:** Each class has one purpose; tests target the small unit; the parent class shrinks.
 
-**Pitfall:** Premature class extraction adds ceremony — extract when 3+ fields and at least one operation cluster around a single concept that the parent class doesn't own.
+**Tradeoff:** Premature class extraction adds ceremony — extract when 3+ fields and at least one operation cluster around a single concept that the parent class doesn't own.
 
 ```js
 // Avoid:
@@ -933,7 +996,7 @@ description: Apply Inline Class when you see Lazy Element, Speculative Generalit
 
 **Why apply it:** Fewer files, fewer constructors, shorter call paths; the absorbing class's coherence improves when it gains the methods it was already orchestrating.
 
-**Pitfall:** If the absorbing class was already large, inlining piles more onto it — fold in only when the absorber stays under its complexity budget afterward.
+**Tradeoff:** If the absorbing class was already large, inlining piles more onto it — fold in only when the absorber stays under its complexity budget afterward.
 
 ```js
 // Avoid:
@@ -967,7 +1030,7 @@ description: Apply Replace Primitive with Object when you see Primitive Obsessio
 
 **Why apply it:** Misuse becomes a type error; behavior accretes around the concept; refactoring is local to the wrapper.
 
-**Pitfall:** Wrapping every primitive is overkill — wrap when the concept needs validation, formatting, or domain-specific behavior beyond what the primitive offers.
+**Tradeoff:** Wrapping every primitive is overkill — wrap when the concept needs validation, formatting, or domain-specific behavior beyond what the primitive offers.
 
 ```js
 // Avoid:
@@ -995,7 +1058,7 @@ description: Apply Change Reference to Value when you see Mutable Data. An objec
 
 **Why apply it:** Concurrency hazards disappear; the type system can mark fields readonly; the object can travel safely across boundaries.
 
-**Pitfall:** Comparison semantics shift from identity to equality — every call site that depended on `===` or identity caches needs review.
+**Tradeoff:** Comparison semantics shift from identity to equality — every call site that depended on `===` or identity caches needs review.
 
 ```js
 // Avoid:
@@ -1026,7 +1089,7 @@ description: Apply Change Value to Reference when you see Duplicated Code. Dupli
 
 **Why apply it:** Updates to the entity are visible everywhere; storage shrinks; identity becomes meaningful again.
 
-**Pitfall:** Sharing introduces the question 'who owns this?' — make sure the lifetime and visibility of the shared reference are well-defined.
+**Tradeoff:** Sharing introduces the question 'who owns this?' — make sure the lifetime and visibility of the shared reference are well-defined.
 
 ```js
 // Avoid:
@@ -1053,7 +1116,7 @@ description: Apply Decompose Conditional when you see Long Function, Comments. C
 
 **Why apply it:** The branching logic reads top-to-bottom as a story; bugs concentrate in the named pieces.
 
-**Pitfall:** Names that aren't crisper than the underlying condition add ceremony — only extract when the named function/variable says something the condition can't.
+**Tradeoff:** Names that aren't crisper than the underlying condition add ceremony — only extract when the named function/variable says something the condition can't.
 
 ```js
 // Avoid:
@@ -1082,7 +1145,7 @@ description: Apply Consolidate Conditional Expression when you see Duplicated Co
 
 **Why apply it:** The shared rationale becomes visible and namable; new conditions extend one place instead of N.
 
-**Pitfall:** Combining conditions can hide their independent reasons — only consolidate when they truly express the same business rule.
+**Tradeoff:** Combining conditions can hide their independent reasons — only consolidate when they truly express the same business rule.
 
 ```js
 // Avoid:
@@ -1107,7 +1170,7 @@ description: Apply Replace Nested Conditional with Guard Clauses when you see Lo
 
 **Why apply it:** Indentation drops; the dominant case is obvious; new edge cases land at the top without disturbing the rest.
 
-**Pitfall:** If multiple paths share work, premature returns can duplicate that work — extract first, then guard.
+**Tradeoff:** If multiple paths share work, premature returns can duplicate that work — extract first, then guard.
 
 ```js
 // Avoid:
@@ -1144,7 +1207,7 @@ description: Apply Replace Conditional with Polymorphism when you see Repeated S
 
 **Why apply it:** Adding a new case is one new class; the type system tells you what's missing.
 
-**Pitfall:** If only one switch on the type code exists, polymorphism is overkill — wait for the second or third repeat before extracting subclasses.
+**Tradeoff:** If only one switch on the type code exists, polymorphism is overkill — wait for the second or third repeat before extracting subclasses.
 
 ```js
 // Avoid:
@@ -1170,7 +1233,7 @@ description: Apply Introduce Special Case when you see Repeated Switches, Commen
 
 **Why apply it:** Callers stop branching on identity; the special behavior lives in one place.
 
-**Pitfall:** Adds a tiny class for one case; only worthwhile when the special case appears in 2+ consumers.
+**Tradeoff:** Adds a tiny class for one case; only worthwhile when the special case appears in 2+ consumers.
 
 ```js
 // Avoid:
@@ -1193,7 +1256,7 @@ description: Apply Replace Control Flag with Break when you see Loops, Long Func
 
 **Why apply it:** The exit condition appears at the moment it's decided, not as a delayed effect of a flag check; the loop's intent becomes literal.
 
-**Pitfall:** If the loop body is large, the break can hide the early-exit semantics — extract a function around the loop's body to keep the exit obvious.
+**Tradeoff:** If the loop body is large, the break can hide the early-exit semantics — extract a function around the loop's body to keep the exit obvious.
 
 ```js
 // Avoid:
@@ -1229,7 +1292,7 @@ description: Apply Change Function Declaration when you see Mysterious Name, Lon
 
 **Why apply it:** Call sites read fluently; mismatches between expectation and behavior surface immediately at the boundary.
 
-**Pitfall:** Mass renames or signature shifts ripple to every caller; refactor in tooling-supported steps and update tests with each batch.
+**Tradeoff:** Every caller pays for the signature change at once, even those whose call sites were already fine; other-team callers get forced coordination.
 
 ```js
 // Avoid:
@@ -1256,19 +1319,19 @@ description: Apply Introduce Parameter Object when you see Long Parameter List, 
 
 **Why apply it:** Adding a related field is one type change instead of touching every call site; intent is named.
 
-**Pitfall:** Premature parameter objects hide which fields are actually needed by which method — wait until the clump appears in 3+ places before extracting.
+**Tradeoff:** Premature parameter objects hide which fields are actually needed by which method — wait until the clump appears in 3+ places before extracting.
 
 ```js
 // Avoid:
-function record(low, high, value) {
-  // ...
-}
+function recordTemperature(low, high, value) { /* ... */ }
+function alertIfOutOfRange(low, high, reading) { /* ... */ }
 
 // Prefer:
-class NumberRange { /* low, high */ }
-function record(range, value) {
-  // ...
+class NumberRange {
+  constructor(low, high) { this.low = low; this.high = high; }
 }
+function recordTemperature(range, value)   { /* ... */ }
+function alertIfOutOfRange(range, reading) { /* ... */ }
 ```
 
 **Removes smells:** Long Parameter List, Data Clumps
@@ -1284,7 +1347,7 @@ description: Apply Introduce Assertion when you see Comments, Mutable Data. Inva
 
 **Why apply it:** Bugs that violate the invariant fail loudly at the source instead of bubbling out as mysterious downstream errors.
 
-**Pitfall:** Assertions used as control flow couple production behavior to debug-mode invariants — keep them as runtime contracts that should never fire.
+**Tradeoff:** Assertions used as control flow couple production behavior to debug-mode invariants — keep them as runtime contracts that should never fire.
 
 ```js
 // Avoid:
@@ -1309,7 +1372,7 @@ description: Apply Separate Query from Modifier when you see Mutable Data. Funct
 
 **Why apply it:** Reasoning about side effects is local; tests target each shape independently.
 
-**Pitfall:** If the modification and the query truly cannot be separated (e.g. find-and-remove on a queue), the constraint is fundamental — leave the combined operation but document it.
+**Tradeoff:** If the modification and the query truly cannot be separated (e.g. find-and-remove on a queue), the constraint is fundamental — leave the combined operation but document it.
 
 ```js
 // Avoid:
@@ -1340,7 +1403,7 @@ description: Apply Parameterize Function when you see Duplicated Code. Two near-
 
 **Why apply it:** One canonical implementation; new variations are new parameter values, not new functions.
 
-**Pitfall:** If the variations are conceptually different operations, one parameterized function will accumulate flags and special cases — keep them separate then.
+**Tradeoff:** If the variations are conceptually different operations, one parameterized function will accumulate flags and special cases — keep them separate then.
 
 ```js
 // Avoid:
@@ -1364,7 +1427,7 @@ description: Apply Remove Flag Argument when you see Long Parameter List. Each f
 
 **Why apply it:** Call sites read fluently; new variations land as new functions instead of new switch cases.
 
-**Pitfall:** Two replacement functions with similar bodies introduce duplication — pair this with Extract Function for shared internals.
+**Tradeoff:** Two replacement functions with similar bodies introduce duplication — pair this with Extract Function for shared internals.
 
 ```js
 // Avoid:
@@ -1391,7 +1454,7 @@ description: Apply Preserve Whole Object when you see Long Parameter List, Data 
 
 **Why apply it:** Signatures shrink; adding a needed field is internal; consumers don't have to plumb new arguments through.
 
-**Pitfall:** Passing the whole object adds coupling to its full surface — only do this when the called function might reasonably need other parts of the object.
+**Tradeoff:** Passing the whole object adds coupling to its full surface — only do this when the called function might reasonably need other parts of the object.
 
 ```js
 // Avoid:
@@ -1414,7 +1477,7 @@ description: Apply Replace Parameter with Query when you see Long Parameter List
 
 **Why apply it:** Signatures shrink; consumers stop doing the function's homework.
 
-**Pitfall:** If the query has side effects or is expensive, passing the value is genuinely better — only replace when the query is pure and cheap.
+**Tradeoff:** If the query has side effects or is expensive, passing the value is genuinely better — only replace when the query is pure and cheap.
 
 ```js
 // Avoid:
@@ -1439,7 +1502,7 @@ description: Apply Replace Query with Parameter when you see Mutable Data, Insid
 
 **Why apply it:** The function becomes testable in isolation; its dependencies are visible in its signature; pure-function reasoning becomes possible.
 
-**Pitfall:** Passing the value pushes the responsibility onto callers; for many call sites, signatures grow noisily — prefer this when the query touches global or volatile state.
+**Tradeoff:** Passing the value pushes the responsibility onto callers; for many call sites, signatures grow noisily — prefer this when the query touches global or volatile state.
 
 ```js
 // Avoid:
@@ -1466,7 +1529,7 @@ description: Apply Replace Constructor with Factory Function when you see Primit
 
 **Why apply it:** Construction can vary per case; consumers don't depend on which concrete class they're getting.
 
-**Pitfall:** Hides the actual class from callers — make sure your factory's name still expresses the produced shape clearly.
+**Tradeoff:** Hides the actual class from callers — make sure your factory's name still expresses the produced shape clearly.
 
 ```js
 // Avoid:
@@ -1492,7 +1555,7 @@ description: Apply Replace Error Code with Exception when you see Comments. Nume
 
 **Why apply it:** Forgetting to check no longer silently swallows the error; the type system marks the failure path; cleanup happens via finally / try-with.
 
-**Pitfall:** Exceptions for predictable conditions misuse the mechanism — only convert codes that represent genuine, exceptional, unrecoverable failures.
+**Tradeoff:** Exceptions for predictable conditions misuse the mechanism — only convert codes that represent genuine, exceptional, unrecoverable failures.
 
 ```js
 // Avoid:
@@ -1522,7 +1585,7 @@ description: Apply Replace Exception with Precheck when you see Comments. Except
 
 **Why apply it:** The error path is local and visible; reading code top-to-bottom describes the rules rather than the failure response; debuggers stop catching benign throws.
 
-**Pitfall:** Race conditions: the precheck may pass and the operation still fail (TOCTOU). Use prechecks only for conditions the caller can verify without a race.
+**Tradeoff:** Race conditions: the precheck may pass and the operation still fail (TOCTOU). Use prechecks only for conditions the caller can verify without a race.
 
 ```js
 // Avoid:
@@ -1552,7 +1615,7 @@ description: Apply Pull Up Method when you see Duplicated Code, Alternative Clas
 
 **Why apply it:** One implementation, one place to fix; subclasses focus on what's actually different.
 
-**Pitfall:** If the methods only superficially resemble each other, pulling up creates a fake-shared abstraction — unify only when behavior is actually identical.
+**Tradeoff:** If the methods only superficially resemble each other, pulling up creates a fake-shared abstraction — unify only when behavior is actually identical.
 
 ```js
 // Avoid:
@@ -1578,7 +1641,7 @@ description: Apply Push Down Method when you see Refused Bequest, Large Class. M
 
 **Why apply it:** The superclass surface shrinks; subclasses that don't need the method aren't burdened by it.
 
-**Pitfall:** If the method is occasionally needed in the parent, pushing it down forces awkward type checks back at consumers — verify usage first.
+**Tradeoff:** If the method is occasionally needed in the parent, pushing it down forces awkward type checks back at consumers — verify usage first.
 
 ```js
 // Avoid:
@@ -1605,18 +1668,28 @@ description: Apply Replace Type Code with Subclasses when you see Repeated Switc
 
 **Why apply it:** Compile-time checks that no kind is missed; per-kind behavior lives where it belongs.
 
-**Pitfall:** If only one or two switches exist on the type code, subclassing is over-design; combine with Replace Conditional with Polymorphism only when dispatch repeats.
+**Tradeoff:** If only one or two switches exist on the type code, subclassing is over-design; combine with Replace Conditional with Polymorphism only when dispatch repeats.
 
 ```js
 // Avoid:
 class Employee {
   type; // 'engineer' | 'manager'
+  bonus() {
+    switch (this.type) {
+      case 'engineer': return this.salary * 0.10;
+      case 'manager':  return this.salary * 0.15 + this.reports.length * 100;
+    }
+  }
 }
 
 // Prefer:
 class Employee {}
-class Engineer extends Employee {}
-class Manager  extends Employee {}
+class Engineer extends Employee {
+  bonus() { return this.salary * 0.10; }
+}
+class Manager extends Employee {
+  bonus() { return this.salary * 0.15 + this.reports.length * 100; }
+}
 ```
 
 **Removes smells:** Repeated Switches, Primitive Obsession
@@ -1632,7 +1705,7 @@ description: Apply Extract Superclass when you see Duplicated Code, Alternative 
 
 **Why apply it:** Bug fixes and new shared behavior land in one place; the relationship between the classes is documented in code.
 
-**Pitfall:** Inheritance is inflexible — if the duplication is shallow, prefer Extract Class (composition) over Extract Superclass.
+**Tradeoff:** Inheritance is inflexible — if the duplication is shallow, prefer Extract Class (composition) over Extract Superclass.
 
 ```js
 // Avoid:
@@ -1658,7 +1731,7 @@ description: Apply Collapse Hierarchy when you see Lazy Element, Speculative Gen
 
 **Why apply it:** Smaller hierarchy, less ceremony, fewer files to navigate.
 
-**Pitfall:** Collapsing too eagerly destroys an extension point you'll later want — only collapse when the variant has been zero-sum for a sustained period.
+**Tradeoff:** Collapsing too eagerly destroys an extension point you'll later want — only collapse when the variant has been zero-sum for a sustained period.
 
 ```js
 // Avoid:
@@ -1682,7 +1755,7 @@ description: Apply Replace Subclass with Delegate when you see Refused Bequest, 
 
 **Why apply it:** Variants can be combined or swapped at runtime; Liskov violations vanish; the hierarchy tree flattens.
 
-**Pitfall:** Composition is more verbose at construction sites — accept the verbosity in exchange for the flexibility.
+**Tradeoff:** Composition is more verbose at construction sites — accept the verbosity in exchange for the flexibility.
 
 ```js
 // Avoid:
@@ -1711,7 +1784,7 @@ description: Apply Pull Up Constructor Body when you see Duplicated Code. Initia
 
 **Why apply it:** One canonical home for parent-state init; new subclasses inherit the setup for free; bug fixes apply uniformly.
 
-**Pitfall:** If only some subclasses share the init logic, pulling it up forces the others to opt out — verify the body is genuinely common.
+**Tradeoff:** If only some subclasses share the init logic, pulling it up forces the others to opt out — verify the body is genuinely common.
 
 ```js
 // Avoid:
@@ -1739,7 +1812,7 @@ description: Apply Pull Up Field when you see Duplicated Code. A field declared 
 
 **Why apply it:** One source of truth for the field's type and default; subclasses focus on what they actually specialize.
 
-**Pitfall:** Pulling up a field that subclasses use differently (different default, different visibility) creates surprise — verify the field semantics are identical.
+**Tradeoff:** Pulling up a field that subclasses use differently (different default, different visibility) creates surprise — verify the field semantics are identical.
 
 ```js
 // Avoid:
@@ -1765,7 +1838,7 @@ description: Apply Push Down Field when you see Refused Bequest, Large Class. A 
 
 **Why apply it:** Other subclasses no longer carry storage they ignore; the parent's surface shrinks; the field's meaning becomes local.
 
-**Pitfall:** If the field is occasionally consulted in the parent for type checks, pushing it down forces awkward downcasts — verify usage first.
+**Tradeoff:** If the field is occasionally consulted in the parent for type checks, pushing it down forces awkward downcasts — verify usage first.
 
 ```js
 // Avoid:
@@ -1791,7 +1864,7 @@ description: Apply Remove Subclass when you see Lazy Element, Speculative Genera
 
 **Why apply it:** Smaller hierarchy; new variants are field values instead of new files; the parent regains its variability point as data.
 
-**Pitfall:** Removing a subclass referenced by name elsewhere (factories, registries) breaks those references — confirm no consumer is type-testing the subclass.
+**Tradeoff:** Removing a subclass referenced by name elsewhere (factories, registries) breaks those references — confirm no consumer is type-testing the subclass.
 
 ```js
 // Avoid:
@@ -1818,7 +1891,7 @@ description: Apply Replace Superclass with Delegate when you see Refused Bequest
 
 **Why apply it:** The misleading is-a relationship disappears; the former subclass can change its delegate's class without affecting its callers.
 
-**Pitfall:** Adds a forwarding method on the former subclass for every method the old superclass exposed — only worth it when the superclass relationship is misleading.
+**Tradeoff:** Adds a forwarding method on the former subclass for every method the old superclass exposed — only worth it when the superclass relationship is misleading.
 
 ```js
 // Avoid:

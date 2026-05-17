@@ -9,7 +9,7 @@ description: Apply Replace Magic Literal when you see Mysterious Name, Comments.
 
 **Why apply it:** Searches by domain term find every callsite; changing the value is one edit; the constant invites code-side documentation when it's truly load-bearing.
 
-**Pitfall:** Naming every literal can drown the file in trivia — only name literals that carry domain meaning the surrounding code can't speak.
+**Tradeoff:** Naming every literal can drown the file in trivia — only name literals that carry domain meaning the surrounding code can't speak.
 
 ```js
 // Avoid:

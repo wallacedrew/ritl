@@ -9,7 +9,7 @@ description: Apply Encapsulate Collection when you see Mutable Data, Insider Tra
 
 **Why apply it:** The owner can enforce invariants (uniqueness, ordering, max size); refactoring the collection's internal shape is local.
 
-**Pitfall:** Returning a shallow copy on every read can hide bugs where callers expected mutation to be reflected — be explicit about the contract.
+**Tradeoff:** Returning a shallow copy on every read can hide bugs where callers expected mutation to be reflected — be explicit about the contract.
 
 ```js
 // Avoid:

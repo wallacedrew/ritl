@@ -9,7 +9,7 @@ description: Apply Inline Class when you see Lazy Element, Speculative Generalit
 
 **Why apply it:** Fewer files, fewer constructors, shorter call paths; the absorbing class's coherence improves when it gains the methods it was already orchestrating.
 
-**Pitfall:** If the absorbing class was already large, inlining piles more onto it — fold in only when the absorber stays under its complexity budget afterward.
+**Tradeoff:** If the absorbing class was already large, inlining piles more onto it — fold in only when the absorber stays under its complexity budget afterward.
 
 ```js
 // Avoid:

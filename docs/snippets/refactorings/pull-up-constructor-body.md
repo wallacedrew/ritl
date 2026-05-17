@@ -9,7 +9,7 @@ description: Apply Pull Up Constructor Body when you see Duplicated Code. Initia
 
 **Why apply it:** One canonical home for parent-state init; new subclasses inherit the setup for free; bug fixes apply uniformly.
 
-**Pitfall:** If only some subclasses share the init logic, pulling it up forces the others to opt out — verify the body is genuinely common.
+**Tradeoff:** If only some subclasses share the init logic, pulling it up forces the others to opt out — verify the body is genuinely common.
 
 ```js
 // Avoid:

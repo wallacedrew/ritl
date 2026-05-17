@@ -9,7 +9,7 @@ description: Apply Replace Error Code with Exception when you see Comments. Nume
 
 **Why apply it:** Forgetting to check no longer silently swallows the error; the type system marks the failure path; cleanup happens via finally / try-with.
 
-**Pitfall:** Exceptions for predictable conditions misuse the mechanism — only convert codes that represent genuine, exceptional, unrecoverable failures.
+**Tradeoff:** Exceptions for predictable conditions misuse the mechanism — only convert codes that represent genuine, exceptional, unrecoverable failures.
 
 ```js
 // Avoid:

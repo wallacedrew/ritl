@@ -9,7 +9,7 @@ description: Apply Extract Class when you see Data Clumps, Temporary Field, Larg
 
 **Why apply it:** Each class has one purpose; tests target the small unit; the parent class shrinks.
 
-**Pitfall:** Premature class extraction adds ceremony — extract when 3+ fields and at least one operation cluster around a single concept that the parent class doesn't own.
+**Tradeoff:** Premature class extraction adds ceremony — extract when 3+ fields and at least one operation cluster around a single concept that the parent class doesn't own.
 
 ```js
 // Avoid:

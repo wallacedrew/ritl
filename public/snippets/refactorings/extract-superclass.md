@@ -9,7 +9,7 @@ description: Apply Extract Superclass when you see Duplicated Code, Alternative 
 
 **Why apply it:** Bug fixes and new shared behavior land in one place; the relationship between the classes is documented in code.
 
-**Pitfall:** Inheritance is inflexible — if the duplication is shallow, prefer Extract Class (composition) over Extract Superclass.
+**Tradeoff:** Inheritance is inflexible — if the duplication is shallow, prefer Extract Class (composition) over Extract Superclass.
 
 ```js
 // Avoid:

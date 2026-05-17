@@ -9,7 +9,7 @@ description: Apply Replace Conditional with Polymorphism when you see Repeated S
 
 **Why apply it:** Adding a new case is one new class; the type system tells you what's missing.
 
-**Pitfall:** If only one switch on the type code exists, polymorphism is overkill — wait for the second or third repeat before extracting subclasses.
+**Tradeoff:** If only one switch on the type code exists, polymorphism is overkill — wait for the second or third repeat before extracting subclasses.
 
 ```js
 // Avoid:
