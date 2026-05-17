@@ -80,8 +80,8 @@
     "tradeoff": "Premature parameter objects hide which fields are actually needed by which method — wait until the clump appears in 3+ places before extracting.",
     "goal": "Related arguments travel together as one well-named value object that the function (and callers) refer to by name.",
     "savings": "Adding a related field is one type change instead of touching every call site; intent is named.",
-    "before": "function record(low, high, value) {\n  // ...\n}",
-    "after": "class NumberRange { /* low, high */ }\nfunction record(range, value) {\n  // ...\n}"
+    "before": "function recordTemperature(low, high, value) { /* ... */ }\nfunction alertIfOutOfRange(low, high, reading) { /* ... */ }",
+    "after": "class NumberRange {\n  constructor(low, high) { this.low = low; this.high = high; }\n}\nfunction recordTemperature(range, value)   { /* ... */ }\nfunction alertIfOutOfRange(range, reading) { /* ... */ }"
   },
   {
     "name": "Combine Functions into Class",
@@ -90,8 +90,8 @@
     "tradeoff": "Wrapping passive data in a class that nobody else uses adds ceremony — only combine when 2+ functions take the same data and would benefit from co-located behavior.",
     "goal": "Functions that all act on the same data live alongside it as methods; calls become method calls on a domain object.",
     "savings": "Encapsulation tightens; tests target the class; new operations land in one obvious place.",
-    "before": "function baseCharge(reading)    { /* uses reading */ }\nfunction taxableCharge(reading) { /* uses reading */ }",
-    "after": "class Reading {\n  baseCharge()    { /* ... */ }\n  taxableCharge() { /* ... */ }\n}"
+    "before": "function baseCharge(reading) {\n  return reading.kwh * reading.tariff.baseRate;\n}\nfunction taxableCharge(reading) {\n  return baseCharge(reading) + reading.kwh * reading.tariff.taxRate;\n}",
+    "after": "class Reading {\n  constructor({ kwh, tariff }) { this.kwh = kwh; this.tariff = tariff; }\n  baseCharge()    { return this.kwh * this.tariff.baseRate; }\n  taxableCharge() { return this.baseCharge() + this.kwh * this.tariff.taxRate; }\n}"
   },
   {
     "name": "Combine Functions into Transform",
@@ -100,8 +100,8 @@
     "tradeoff": "Building a transform up-front when only one derivation exists is BDUF — wait for the second derivation before introducing the transform.",
     "goal": "Multiple derived values from the same source come from one transform that produces an enriched record.",
     "savings": "Derivations stay consistent (no two callers compute slightly different versions); cache invalidation becomes obvious.",
-    "before": "function base(reading)    { /* ... */ }\nfunction taxable(reading) { /* ... */ }",
-    "after": "function enrich(reading) {\n  return { ...reading, base: base(reading), taxable: taxable(reading) };\n}"
+    "before": "function baseCharge(reading)    { return reading.kwh * reading.tariff.baseRate; }\nfunction taxableCharge(reading) { return reading.kwh * reading.tariff.taxRate; }\n// every consumer recomputes:\nconst monthly  = baseCharge(reading) + taxableCharge(reading);\nconst discount = baseCharge(reading) * 0.95;",
+    "after": "function enrich(reading) {\n  return {\n    ...reading,\n    baseCharge:    reading.kwh * reading.tariff.baseRate,\n    taxableCharge: reading.kwh * reading.tariff.taxRate,\n  };\n}\nconst r = enrich(reading);\nconst monthly  = r.baseCharge + r.taxableCharge;\nconst discount = r.baseCharge * 0.95;"
   },
   {
     "name": "Split Phase",
@@ -110,8 +110,8 @@
     "tradeoff": "An intermediate data structure between the phases is overhead — earn it by separating two clearly different concerns.",
     "goal": "Each phase reads and writes its own well-defined inputs and outputs; the seam between them is data, not control flow.",
     "savings": "Phases evolve independently; tests target each phase in isolation; the intermediate shape becomes a documented contract.",
-    "before": "function priceAndRender(input) {\n  const price = computePrice(input);\n  return renderHTML(input, price);\n}",
-    "after": "function pricing(input) { return { ...input, price: computePrice(input) }; }\nfunction render(priced)  { return renderHTML(priced); }"
+    "before": "function priceAndRender(input) {\n  let total = 0;\n  for (const item of input.items) total += item.qty * item.price;\n  if (input.member) total *= 0.95;\n  return `<p>Total: ${(total / 100).toFixed(2)} for ${input.items.length} items</p>`;\n}",
+    "after": "function pricing(input) {\n  let total = 0;\n  for (const item of input.items) total += item.qty * item.price;\n  if (input.member) total *= 0.95;\n  return { items: input.items, totalCents: total };\n}\nfunction render({ items, totalCents }) {\n  return `<p>Total: ${(totalCents / 100).toFixed(2)} for ${items.length} items</p>`;\n}"
   },
   {
     "name": "Move Function",
@@ -120,8 +120,8 @@
     "tradeoff": "Dependencies don't always travel cleanly — circular imports surface at the destination, and readers' 'where does this live' map briefly breaks.",
     "goal": "Each function lives where its data lives; coupling between modules drops.",
     "savings": "Modules become more cohesive; tests stay focused; feature-envy patterns disappear.",
-    "before": "class Order { totalPriority() { return this.account.priority(); } }",
-    "after": "class Account { priority() { /* ... */ } }\nclass Order   { /* asks account directly when needed */ }"
+    "before": "class Order {\n  account;\n  isVip() {\n    return this.account.tier === 'gold' && this.account.yearsActive >= 3;\n  }\n}",
+    "after": "class Account {\n  tier; yearsActive;\n  isVip() { return this.tier === 'gold' && this.yearsActive >= 3; }\n}\nclass Order { account; }\norder.account.isVip();"
   },
   {
     "name": "Move Field",
@@ -130,8 +130,8 @@
     "tradeoff": "Every reader of the original class now reaches across the new class boundary — coupling drops at the field's new home but reappears at each consumer.",
     "goal": "Each field belongs to the class that owns its lifecycle; cross-class reaching disappears.",
     "savings": "Class boundaries align with data ownership; mutations are local; refactoring becomes safer.",
-    "before": "class Customer { plan; discountRate; }",
-    "after": "class Plan     { discountRate; }\nclass Customer { plan; /* discountRate accessed via plan */ }"
+    "before": "class Customer {\n  plan;\n  discountRate;\n}\n// every customer in a given plan gets the same rate:\ncustomers.forEach(c => c.discountRate = c.plan.kind === 'gold' ? 0.15 : 0.05);",
+    "after": "class Plan {\n  kind;\n  discountRate;\n}\nclass Customer { plan; }\ncustomer.plan.discountRate;"
   },
   {
     "name": "Slide Statements",
@@ -190,8 +190,8 @@
     "tradeoff": "Same drift as Rename Variable, amplified across the field's read/write surface and any persistence shadows (DB columns, JSON schemas, APIs).",
     "goal": "Field names match the domain role they play; readers don't need to inspect usage to know what a field means.",
     "savings": "Stronger encapsulation; future-you reads the class definition and immediately understands its shape.",
-    "before": "class Org { name; }",
-    "after": "class Org { title; }"
+    "before": "class Position {\n  name;          // role name? or person's name?\n  hiringManager;\n}\nconsole.log(position.name);  // ambiguous",
+    "after": "class Position {\n  title;\n  hiringManager;\n}\nconsole.log(position.title);  // clearly the role"
   },
   {
     "name": "Replace Derived Variable with Query",
@@ -350,8 +350,8 @@
     "tradeoff": "If only one or two switches exist on the type code, subclassing is over-design; combine with Replace Conditional with Polymorphism only when dispatch repeats.",
     "goal": "A 'kind' string field becomes a real subclass type; the type system enforces the legal set.",
     "savings": "Compile-time checks that no kind is missed; per-kind behavior lives where it belongs.",
-    "before": "class Employee {\n  type; // 'engineer' | 'manager'\n}",
-    "after": "class Employee {}\nclass Engineer extends Employee {}\nclass Manager  extends Employee {}"
+    "before": "class Employee {\n  type; // 'engineer' | 'manager'\n  bonus() {\n    switch (this.type) {\n      case 'engineer': return this.salary * 0.10;\n      case 'manager':  return this.salary * 0.15 + this.reports.length * 100;\n    }\n  }\n}",
+    "after": "class Employee {}\nclass Engineer extends Employee {\n  bonus() { return this.salary * 0.10; }\n}\nclass Manager extends Employee {\n  bonus() { return this.salary * 0.15 + this.reports.length * 100; }\n}"
   },
   {
     "name": "Extract Superclass",
@@ -480,8 +480,8 @@
     "tradeoff": "Promoting a function to a command adds ceremony (constructor, method calls). Only worth it when the function genuinely needs its own intermediate state or multiple entry points.",
     "goal": "A function with rich internal state becomes an object whose methods can share that state — easier to extract, name, and test in pieces.",
     "savings": "Long sequences become labeled steps; tests target each step on the command; subclasses or strategies can vary parts of the algorithm.",
-    "before": "function score(c) {\n  // fifty lines using ten locals\n}",
-    "after": "class Scorer {\n  constructor(c) { /* fields */ }\n  execute()      { return this.compose(); }\n  // named private steps\n}"
+    "before": "function score(candidate) {\n  let total = candidate.experience * 10;\n  if (candidate.hasCertifications) total += 25;\n  total -= candidate.gaps * 5;\n  total += candidate.referrals * 8;\n  return total;\n}",
+    "after": "class Scorer {\n  constructor(candidate) { this.candidate = candidate; }\n  execute() {\n    return this.base() + this.bonus() - this.penalty();\n  }\n  base()    { return this.candidate.experience * 10 + (this.candidate.hasCertifications ? 25 : 0); }\n  bonus()   { return this.candidate.referrals * 8; }\n  penalty() { return this.candidate.gaps * 5; }\n}\nnew Scorer(candidate).execute();"
   },
   {
     "name": "Replace Command with Function",
