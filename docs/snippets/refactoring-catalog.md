@@ -2116,16 +2116,16 @@ function sent(html)    { return postToGateway(html); }
 
 ---
 name: shotgun-surgery
-description: Refuse Shotgun Surgery when a single conceptual change forces edits in many small places — adding a logging field means touching 17 files. Apply Move Function, Move Field.
+description: Refuse Shotgun Surgery when a single conceptual edit forces the agent to identify, load, and modify many small sites — each one cheap individually but the search and completeness check is expensive. Apply Move Function, Move Field.
 ---
 
 # Refuse: 08 — Shotgun Surgery
 
-**Trigger (refuse when you see):** A single conceptual change forces edits in many small places — adding a logging field means touching 17 files.
+**Trigger (refuse when you see):** A single conceptual edit forces the agent to identify, load, and modify many small sites — each one cheap individually but the search and completeness check is expensive.
 
-**Cost of leaving it in:** Easy to miss a site; reviewers can't easily verify completeness; small changes feel disproportionately risky.
+**Cost of leaving it in:** Every change carries a risk of missing a site the agent didn't grep for; reviewers (human or agent) can't easily verify completeness without re-running the same search.
 
-**Target shape after refactoring:** All code that varies together lives together. Adding a new field is one change in one module.
+**Target shape after refactoring:** All code that varies together sits in one place; the agent loads one module to make any change along this axis and verifies completeness in one read.
 
 ```js
 // Smellier:
@@ -2171,16 +2171,16 @@ class Order { totalWeight() { return this.items.reduce((s, i) => s + i.weight(),
 
 ---
 name: data-clumps
-description: Refuse Data Clumps when the same group of fields travels together everywhere — (street, city, zip), (start, end), (firstName, lastName) — appearing as parameters, fields, or method args. Apply Extract Class, Introduce Parameter Object.
+description: Refuse Data Clumps when the agent sees the same field group appearing across multiple signatures (parameters, fields, args) — every site re-parses the same shape and verifies the same ordering. Apply Extract Class, Introduce Parameter Object.
 ---
 
 # Refuse: 10 — Data Clumps
 
-**Trigger (refuse when you see):** The same group of fields travels together everywhere — (street, city, zip), (start, end), (firstName, lastName) — appearing as parameters, fields, or method args.
+**Trigger (refuse when you see):** The agent sees the same field group appearing across multiple signatures (parameters, fields, args) — every site re-parses the same shape and verifies the same ordering.
 
-**Cost of leaving it in:** Adding or removing a field of the clump means touching every site; the clump's identity is invisible.
+**Cost of leaving it in:** Adding or removing a field of the clump means touching every site; the agent must find them all and update each consistently or risk silent shape drift.
 
-**Target shape after refactoring:** The clump becomes a value object with its own name and its own behavior.
+**Target shape after refactoring:** The clump becomes a named value object the agent passes through as a single token; structure validation happens once at construction.
 
 ```js
 // Smellier:
@@ -2199,16 +2199,16 @@ function send(name, email, address) {
 
 ---
 name: primitive-obsession
-description: Refuse Primitive Obsession when domain concepts represented as raw strings, numbers, or booleans — phone number is a string, money is a number, status is a code. Apply Replace Primitive with Object, Replace Type Code with Subclasses.
+description: Refuse Primitive Obsession when function signatures use raw strings and numbers where domain concepts hide; the agent cannot tell from the type whether an argument is the right kind of thing. Apply Replace Primitive with Object, Replace Type Code with Subclasses.
 ---
 
 # Refuse: 11 — Primitive Obsession
 
-**Trigger (refuse when you see):** Domain concepts represented as raw strings, numbers, or booleans — phone number is a string, money is a number, status is a code.
+**Trigger (refuse when you see):** Function signatures use raw strings and numbers where domain concepts hide; the agent cannot tell from the type whether an argument is the right kind of thing.
 
-**Cost of leaving it in:** Validation and formatting scatter across every consumer; the type system can't catch wrong primitives in the wrong slot.
+**Cost of leaving it in:** The agent must inspect call-site context (variable names, surrounding code) to verify a primitive is the right kind; validation and formatting logic scatters across consumers.
 
-**Target shape after refactoring:** Each domain concept has a small typed home — Money, PhoneNumber, OrderId, Status — that knows its rules.
+**Target shape after refactoring:** Each domain concept has its own typed wrapper; the agent's type checker catches wrong-primitive-in-wrong-slot mistakes before runtime.
 
 ```js
 // Smellier:
@@ -2227,16 +2227,16 @@ function priceFor(money) {
 
 ---
 name: repeated-switches
-description: Refuse Repeated Switches when the same switch (or if/else chain) over a type code appears in multiple places — adding a new case means hunting them all down. Apply Replace Conditional with Polymorphism.
+description: Refuse Repeated Switches when the agent finds the same switch (or if/else chain) over a type code in multiple files; adding a new case requires the agent to grep for every site and update each consistently. Apply Replace Conditional with Polymorphism.
 ---
 
 # Refuse: 12 — Repeated Switches
 
-**Trigger (refuse when you see):** The same switch (or if/else chain) over a type code appears in multiple places — adding a new case means hunting them all down.
+**Trigger (refuse when you see):** The agent finds the same switch (or if/else chain) over a type code in multiple files; adding a new case requires the agent to grep for every site and update each consistently.
 
-**Cost of leaving it in:** Dispatch logic is duplicated across the codebase; new cases are easy to miss; the type-code couple amplifies.
+**Cost of leaving it in:** Dispatch logic duplicates across files; new cases are easy to miss; chained edits across all switch sites compound the agent's review burden per change.
 
-**Target shape after refactoring:** Each case is a class implementing a shared interface; dispatch happens once via a virtual call.
+**Target shape after refactoring:** Each case is a class implementing a shared interface; the agent adds a new case by adding one class, and the type checker tells it what's still missing.
 
 ```js
 // Smellier:
@@ -2254,16 +2254,16 @@ event.handle(); // ClickEvent, KeyEvent, DragEvent each implement handle()
 
 ---
 name: loops
-description: Refuse Loops when imperative for/while loops obscuring what the loop is producing — filter, map, reduce mixed together by hand. Apply Replace Loop with Pipeline.
+description: Refuse Loops when imperative for/while loops where filter, map, and reduce concerns are mixed by hand; the agent cannot tell what the loop is producing without mentally executing it. Apply Replace Loop with Pipeline.
 ---
 
 # Refuse: 13 — Loops
 
-**Trigger (refuse when you see):** Imperative for/while loops obscuring what the loop is producing — filter, map, reduce mixed together by hand.
+**Trigger (refuse when you see):** Imperative for/while loops where filter, map, and reduce concerns are mixed by hand; the agent cannot tell what the loop is producing without mentally executing it.
 
-**Cost of leaving it in:** Reader must mentally execute the loop to learn the result; off-by-one errors and accumulator bugs hide in the body.
+**Cost of leaving it in:** The agent must mentally execute the loop to learn its result; off-by-one and accumulator bugs hide in the body and only surface at test time.
 
-**Target shape after refactoring:** The transformation reads as a sequence of named operations: filter, map, reduce.
+**Target shape after refactoring:** The transformation reads as a sequence of named operations; the agent recognizes the shape (filter, map, reduce) without simulating the loop.
 
 ```js
 // Smellier:

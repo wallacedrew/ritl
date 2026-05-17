@@ -1,15 +1,15 @@
 ---
 name: loops
-description: Refuse Loops when imperative for/while loops obscuring what the loop is producing — filter, map, reduce mixed together by hand. Apply Replace Loop with Pipeline.
+description: Refuse Loops when imperative for/while loops where filter, map, and reduce concerns are mixed by hand; the agent cannot tell what the loop is producing without mentally executing it. Apply Replace Loop with Pipeline.
 ---
 
 # Refuse: 13 — Loops
 
-**Trigger (refuse when you see):** Imperative for/while loops obscuring what the loop is producing — filter, map, reduce mixed together by hand.
+**Trigger (refuse when you see):** Imperative for/while loops where filter, map, and reduce concerns are mixed by hand; the agent cannot tell what the loop is producing without mentally executing it.
 
-**Cost of leaving it in:** Reader must mentally execute the loop to learn the result; off-by-one errors and accumulator bugs hide in the body.
+**Cost of leaving it in:** The agent must mentally execute the loop to learn its result; off-by-one and accumulator bugs hide in the body and only surface at test time.
 
-**Target shape after refactoring:** The transformation reads as a sequence of named operations: filter, map, reduce.
+**Target shape after refactoring:** The transformation reads as a sequence of named operations; the agent recognizes the shape (filter, map, reduce) without simulating the loop.
 
 ```js
 // Smellier:

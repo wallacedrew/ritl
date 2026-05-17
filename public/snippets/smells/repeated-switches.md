@@ -1,15 +1,15 @@
 ---
 name: repeated-switches
-description: Refuse Repeated Switches when the same switch (or if/else chain) over a type code appears in multiple places — adding a new case means hunting them all down. Apply Replace Conditional with Polymorphism.
+description: Refuse Repeated Switches when the agent finds the same switch (or if/else chain) over a type code in multiple files; adding a new case requires the agent to grep for every site and update each consistently. Apply Replace Conditional with Polymorphism.
 ---
 
 # Refuse: 12 — Repeated Switches
 
-**Trigger (refuse when you see):** The same switch (or if/else chain) over a type code appears in multiple places — adding a new case means hunting them all down.
+**Trigger (refuse when you see):** The agent finds the same switch (or if/else chain) over a type code in multiple files; adding a new case requires the agent to grep for every site and update each consistently.
 
-**Cost of leaving it in:** Dispatch logic is duplicated across the codebase; new cases are easy to miss; the type-code couple amplifies.
+**Cost of leaving it in:** Dispatch logic duplicates across files; new cases are easy to miss; chained edits across all switch sites compound the agent's review burden per change.
 
-**Target shape after refactoring:** Each case is a class implementing a shared interface; dispatch happens once via a virtual call.
+**Target shape after refactoring:** Each case is a class implementing a shared interface; the agent adds a new case by adding one class, and the type checker tells it what's still missing.
 
 ```js
 // Smellier:

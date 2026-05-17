@@ -1,15 +1,15 @@
 ---
 name: shotgun-surgery
-description: Refuse Shotgun Surgery when a single conceptual change forces edits in many small places — adding a logging field means touching 17 files. Apply Move Function, Move Field.
+description: Refuse Shotgun Surgery when a single conceptual edit forces the agent to identify, load, and modify many small sites — each one cheap individually but the search and completeness check is expensive. Apply Move Function, Move Field.
 ---
 
 # Refuse: 08 — Shotgun Surgery
 
-**Trigger (refuse when you see):** A single conceptual change forces edits in many small places — adding a logging field means touching 17 files.
+**Trigger (refuse when you see):** A single conceptual edit forces the agent to identify, load, and modify many small sites — each one cheap individually but the search and completeness check is expensive.
 
-**Cost of leaving it in:** Easy to miss a site; reviewers can't easily verify completeness; small changes feel disproportionately risky.
+**Cost of leaving it in:** Every change carries a risk of missing a site the agent didn't grep for; reviewers (human or agent) can't easily verify completeness without re-running the same search.
 
-**Target shape after refactoring:** All code that varies together lives together. Adding a new field is one change in one module.
+**Target shape after refactoring:** All code that varies together sits in one place; the agent loads one module to make any change along this axis and verifies completeness in one read.
 
 ```js
 // Smellier:

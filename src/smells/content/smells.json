@@ -220,9 +220,17 @@
         "symptom": "A single conceptual change forces edits in many small places — adding a logging field means touching 17 files.",
         "goal": "All code that varies together lives together. Adding a new field is one change in one module.",
         "pressure": "Easy to miss a site; reviewers can't easily verify completeness; small changes feel disproportionately risky.",
-        "tradeoff": "[human tradeoff not yet authored]",
+        "tradeoff": "Consolidating the scattered code into one module can pull together responsibilities that genuinely belong apart; the cure forces a coordinated migration across every original site.",
         "relief": "Change cost becomes proportional to the conceptual change, not to how widely the concept was scattered.",
-        "trap": "[human trap not yet authored]"
+        "trap": "Pulling every superficially-related edit into one module creates a god-module that becomes the new shotgun target — change cost migrates instead of vanishing."
+      },
+      "agent": {
+        "symptom": "A single conceptual edit forces the agent to identify, load, and modify many small sites — each one cheap individually but the search and completeness check is expensive.",
+        "goal": "All code that varies together sits in one place; the agent loads one module to make any change along this axis and verifies completeness in one read.",
+        "pressure": "Every change carries a risk of missing a site the agent didn't grep for; reviewers (human or agent) can't easily verify completeness without re-running the same search.",
+        "tradeoff": "Consolidation creates a new boundary the agent must respect; previously-independent sites now route through one module that can become a contention point for unrelated edits.",
+        "relief": "Change cost becomes proportional to the conceptual change; the agent reasons about one location instead of N scattered ones.",
+        "trap": "Pulling every superficially-related edit into one module creates a god-module the agent now must reason about as a tangle of unrelated concerns — the smell migrated, not vanished."
       }
     }
   },
@@ -262,9 +270,17 @@
         "symptom": "The same group of fields travels together everywhere — (street, city, zip), (start, end), (firstName, lastName) — appearing as parameters, fields, or method args.",
         "goal": "The clump becomes a value object with its own name and its own behavior.",
         "pressure": "Adding or removing a field of the clump means touching every site; the clump's identity is invisible.",
-        "tradeoff": "[human tradeoff not yet authored]",
+        "tradeoff": "Introducing the value object forces every consumer to construct and destructure it; for short-lived clumps the ceremony can outweigh the gain.",
         "relief": "Operations on the clump (formatting, validation, equality) live with it; method signatures shrink.",
-        "trap": "[human trap not yet authored]"
+        "trap": "Wrapping field groups that don't actually represent a coherent domain concept — the object exists only to shrink signatures and has no real behavior to attract."
+      },
+      "agent": {
+        "symptom": "The agent sees the same field group appearing across multiple signatures (parameters, fields, args) — every site re-parses the same shape and verifies the same ordering.",
+        "goal": "The clump becomes a named value object the agent passes through as a single token; structure validation happens once at construction.",
+        "pressure": "Adding or removing a field of the clump means touching every site; the agent must find them all and update each consistently or risk silent shape drift.",
+        "tradeoff": "Constructing the value object on every call adds an allocation and a name the agent must learn; if the bundle isn't reused it's pure ceremony.",
+        "relief": "Operations on the clump (formatting, validation, equality) live with it; signatures shrink and the agent reasons about one named concept instead of N coupled fields.",
+        "trap": "Wrapping coincidental field groups creates fake value objects the agent must construct and destructure with no comprehension gain — naming what isn't a concept doesn't help reason."
       }
     }
   },
@@ -285,9 +301,17 @@
         "symptom": "Domain concepts represented as raw strings, numbers, or booleans — phone number is a string, money is a number, status is a code.",
         "goal": "Each domain concept has a small typed home — Money, PhoneNumber, OrderId, Status — that knows its rules.",
         "pressure": "Validation and formatting scatter across every consumer; the type system can't catch wrong primitives in the wrong slot.",
-        "tradeoff": "[human tradeoff not yet authored]",
+        "tradeoff": "Each wrapper class adds construction ceremony at every entry point; for one-off primitives that never carry domain rules, the wrapper is overhead with no return.",
         "relief": "Misuse becomes a type error; behavior accretes around the concept; refactoring is local to the wrapper.",
-        "trap": "[human trap not yet authored]"
+        "trap": "Wrapping every primitive on principle — Name, Title, Description as separate classes whose only methods are toString() — adds typing ceremony without enforcing any domain rule."
+      },
+      "agent": {
+        "symptom": "Function signatures use raw strings and numbers where domain concepts hide; the agent cannot tell from the type whether an argument is the right kind of thing.",
+        "goal": "Each domain concept has its own typed wrapper; the agent's type checker catches wrong-primitive-in-wrong-slot mistakes before runtime.",
+        "pressure": "The agent must inspect call-site context (variable names, surrounding code) to verify a primitive is the right kind; validation and formatting logic scatters across consumers.",
+        "tradeoff": "Each wrapper is a class the agent must load and instantiate; for primitives used in only one place, the wrapper is more code than the original concern warranted.",
+        "relief": "Wrong-primitive misuse becomes a type error the agent catches without runtime testing; behavior and rules accrete around the concept where the agent expects to find them.",
+        "trap": "Wrapping every primitive — including ones with no domain rules or behavior — adds boilerplate the agent must navigate at every signature with no reasoning benefit."
       }
     }
   },
@@ -302,9 +326,17 @@
         "symptom": "The same switch (or if/else chain) over a type code appears in multiple places — adding a new case means hunting them all down.",
         "goal": "Each case is a class implementing a shared interface; dispatch happens once via a virtual call.",
         "pressure": "Dispatch logic is duplicated across the codebase; new cases are easy to miss; the type-code couple amplifies.",
-        "tradeoff": "[human tradeoff not yet authored]",
+        "tradeoff": "Replacing the switch with polymorphism scatters dispatch across classes; adding a new case is one new file, but understanding the full dispatch surface now requires reading several.",
         "relief": "Adding a new case is one new class; the compiler and tests tell you what's missing.",
-        "trap": "[human trap not yet authored]"
+        "trap": "Polymorphism worship — a switch with two stable cases becomes a class hierarchy of two trivial subclasses, paying class-hierarchy overhead with no flexibility return."
+      },
+      "agent": {
+        "symptom": "The agent finds the same switch (or if/else chain) over a type code in multiple files; adding a new case requires the agent to grep for every site and update each consistently.",
+        "goal": "Each case is a class implementing a shared interface; the agent adds a new case by adding one class, and the type checker tells it what's still missing.",
+        "pressure": "Dispatch logic duplicates across files; new cases are easy to miss; chained edits across all switch sites compound the agent's review burden per change.",
+        "tradeoff": "Polymorphic dispatch is implicit at call sites — the agent can no longer see the full set of branches in one place and must enumerate subclasses across files to reason about behavior.",
+        "relief": "Adding a new variant is mechanical and the type checker enforces completeness; the agent's plan-and-execute loop for new cases is bounded.",
+        "trap": "Replacing every switch with polymorphism, even ones with two stable cases, creates a class hierarchy the agent must navigate without buying any extension flexibility."
       }
     }
   },
@@ -319,9 +351,17 @@
         "symptom": "Imperative for/while loops obscuring what the loop is producing — filter, map, reduce mixed together by hand.",
         "goal": "The transformation reads as a sequence of named operations: filter, map, reduce.",
         "pressure": "Reader must mentally execute the loop to learn the result; off-by-one errors and accumulator bugs hide in the body.",
-        "tradeoff": "[human tradeoff not yet authored]",
+        "tradeoff": "Pipelines (filter/map/reduce) introduce per-element function-call overhead and force the reader to track intermediate collection shapes; in tight loops the overhead is real.",
         "relief": "Intent jumps off the page; bugs concentrate on individual steps that are independently testable.",
-        "trap": "[human trap not yet authored]"
+        "trap": "Forcing every loop into a pipeline — including loops with early-exit, accumulator-with-side-effects, or genuinely sequential dependencies — produces twisted .reduce() bodies that are harder to read than the original."
+      },
+      "agent": {
+        "symptom": "Imperative for/while loops where filter, map, and reduce concerns are mixed by hand; the agent cannot tell what the loop is producing without mentally executing it.",
+        "goal": "The transformation reads as a sequence of named operations; the agent recognizes the shape (filter, map, reduce) without simulating the loop.",
+        "pressure": "The agent must mentally execute the loop to learn its result; off-by-one and accumulator bugs hide in the body and only surface at test time.",
+        "tradeoff": "Pipeline form adds per-element call overhead and forces the agent to track intermediate collection types through the chain; for hot paths the runtime cost matters.",
+        "relief": "Intent jumps off the page; the agent reasons about each step independently and the type signatures at each pipeline stage document the transformation.",
+        "trap": "Forcing every loop into a pipeline — including ones with early-exit, side-effecting accumulators, or sequential dependencies — produces twisted .reduce() bodies the agent has to untangle to understand."
       }
     }
   },
