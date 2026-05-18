@@ -1,15 +1,15 @@
 ---
 name: extract-function
-description: Apply Extract Function when you see Long Function, Duplicated Code, Comments. Each function reads as a single named domain step — what it does, not how.
+description: Apply Extract Function when you see Long Function, Duplicated Code, Comments. Each function is a verifiable unit small enough that the agent can reason about its full behavior in a single reasoning step.
 ---
 
 # Apply: 01 — Extract Function
 
-**Target state:** Each function reads as a single named domain step — what it does, not how.
+**Target state:** Each function is a verifiable unit small enough that the agent can reason about its full behavior in a single reasoning step.
 
-**Why apply it:** Calling code becomes a sequence of named intentions; bugs concentrate inside the now-named subroutines.
+**Why apply it:** Smaller diff surface per commit; behavior preservation verifiable per refactoring step; chained orchestrations work from named subroutines instead of re-derived semantics.
 
-**Tradeoff:** Over-eager extraction can produce a maze of one-line functions; aim for extractions that earn their name with at least one decision or one transformation.
+**Tradeoff:** Each extracted helper inflates context-window cost by one definition the next reasoning step must load; over-extracting blows effective working memory.
 
 ```js
 // Avoid:

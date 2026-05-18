@@ -1,15 +1,15 @@
 ---
 name: replace-conditional-with-polymorphism
-description: Apply Replace Conditional with Polymorphism when you see Repeated Switches, Primitive Obsession. Each case becomes a class implementing a shared interface; dispatch happens once via virtual call.
+description: Apply Replace Conditional with Polymorphism when you see Repeated Switches, Primitive Obsession. Each case is a class implementing a shared interface; the agent adds a new case by adding one class, and the type system tells it what's still missing.
 ---
 
 # Apply: 24 — Replace Conditional with Polymorphism
 
-**Target state:** Each case becomes a class implementing a shared interface; dispatch happens once via virtual call.
+**Target state:** Each case is a class implementing a shared interface; the agent adds a new case by adding one class, and the type system tells it what's still missing.
 
-**Why apply it:** Adding a new case is one new class; the type system tells you what's missing.
+**Why apply it:** Adding a new variant is mechanical and the type checker enforces completeness; the agent's plan-and-execute loop for new cases is bounded.
 
-**Tradeoff:** If only one switch on the type code exists, polymorphism is overkill — wait for the second or third repeat before extracting subclasses.
+**Tradeoff:** Polymorphic dispatch is implicit at call sites — the agent can no longer see the full set of branches in one place and must enumerate subclasses across files to reason about behavior.
 
 ```js
 // Avoid:

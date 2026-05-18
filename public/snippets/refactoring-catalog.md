@@ -123,16 +123,16 @@ function trip(distance) {
 
 ---
 name: extract-function
-description: Apply Extract Function when you see Long Function, Duplicated Code, Comments. Each function reads as a single named domain step — what it does, not how.
+description: Apply Extract Function when you see Long Function, Duplicated Code, Comments. Each function is a verifiable unit small enough that the agent can reason about its full behavior in a single reasoning step.
 ---
 
 # Apply: 01 — Extract Function
 
-**Target state:** Each function reads as a single named domain step — what it does, not how.
+**Target state:** Each function is a verifiable unit small enough that the agent can reason about its full behavior in a single reasoning step.
 
-**Why apply it:** Calling code becomes a sequence of named intentions; bugs concentrate inside the now-named subroutines.
+**Why apply it:** Smaller diff surface per commit; behavior preservation verifiable per refactoring step; chained orchestrations work from named subroutines instead of re-derived semantics.
 
-**Tradeoff:** Over-eager extraction can produce a maze of one-line functions; aim for extractions that earn their name with at least one decision or one transformation.
+**Tradeoff:** Each extracted helper inflates context-window cost by one definition the next reasoning step must load; over-extracting blows effective working memory.
 
 ```js
 // Avoid:
@@ -888,16 +888,16 @@ class Person {
 
 ---
 name: move-function
-description: Apply Move Function when you see Feature Envy, Shotgun Surgery, Insider Trading, Divergent Change. Each function lives where its data lives; coupling between modules drops.
+description: Apply Move Function when you see Feature Envy, Shotgun Surgery, Insider Trading, Divergent Change. Each function lives where its data lives; the agent loads one class to reason about one behavior.
 ---
 
 # Apply: 12 — Move Function
 
-**Target state:** Each function lives where its data lives; coupling between modules drops.
+**Target state:** Each function lives where its data lives; the agent loads one class to reason about one behavior.
 
-**Why apply it:** Modules become more cohesive; tests stay focused; feature-envy patterns disappear.
+**Why apply it:** The function's data sits inside the agent's current reasoning context; verifying behavior touches one class instead of two.
 
-**Tradeoff:** Dependencies don't always travel cleanly — circular imports surface at the destination, and readers' 'where does this live' map briefly breaks.
+**Tradeoff:** Dependencies don't always travel cleanly — circular imports surface at the destination, and the agent's mental map of 'where does this live' briefly breaks until indices refresh.
 
 ```js
 // Avoid:
@@ -1198,16 +1198,16 @@ function payAmount(employee) {
 
 ---
 name: replace-conditional-with-polymorphism
-description: Apply Replace Conditional with Polymorphism when you see Repeated Switches, Primitive Obsession. Each case becomes a class implementing a shared interface; dispatch happens once via virtual call.
+description: Apply Replace Conditional with Polymorphism when you see Repeated Switches, Primitive Obsession. Each case is a class implementing a shared interface; the agent adds a new case by adding one class, and the type system tells it what's still missing.
 ---
 
 # Apply: 24 — Replace Conditional with Polymorphism
 
-**Target state:** Each case becomes a class implementing a shared interface; dispatch happens once via virtual call.
+**Target state:** Each case is a class implementing a shared interface; the agent adds a new case by adding one class, and the type system tells it what's still missing.
 
-**Why apply it:** Adding a new case is one new class; the type system tells you what's missing.
+**Why apply it:** Adding a new variant is mechanical and the type checker enforces completeness; the agent's plan-and-execute loop for new cases is bounded.
 
-**Tradeoff:** If only one switch on the type code exists, polymorphism is overkill — wait for the second or third repeat before extracting subclasses.
+**Tradeoff:** Polymorphic dispatch is implicit at call sites — the agent can no longer see the full set of branches in one place and must enumerate subclasses across files to reason about behavior.
 
 ```js
 // Avoid:
