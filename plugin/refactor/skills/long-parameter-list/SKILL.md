@@ -5,11 +5,9 @@ description: Refuse Long Parameter List when a signature with so many positional
 
 # Refuse: 04 — Long Parameter List
 
-**Trigger (refuse when you see):** A signature with so many positional parameters that the agent must look up the function definition (or call-site documentation) before any invocation succeeds.
+**Symptom:** A signature with so many positional parameters that the agent must look up the function definition (or call-site documentation) before any invocation succeeds.
 
-**Cost of leaving it in:** Every call site is a chance to misorder arguments or miss one entirely; even with a type checker the agent pays a lookup cost on every invocation.
-
-**Target shape after refactoring:** Each parameter is either a domain concept the agent recognizes, or it's bundled into a named object the agent can pass through without unpacking.
+**Goal:** Each parameter is either a domain concept the agent recognizes, or it's bundled into a named object the agent can pass through without unpacking.
 
 ```js
 // Smellier:
@@ -22,5 +20,13 @@ function book(traveler, address, trip) {
   // ...
 }
 ```
+
+**Pressure:** Every call site is a chance to misorder arguments or miss one entirely; even with a type checker the agent pays a lookup cost on every invocation.
+
+**Tradeoff:** A new parameter object adds a class the agent must load to construct values; if used in only one place the cost is pure overhead.
+
+**Relief:** Call sites become readable as named intent; the agent constructs and passes domain objects instead of remembering positional contracts.
+
+**Trap:** Synthesizing parameter objects that don't represent real domain concepts forces the agent through extra wrapping and unwrapping with no comprehension payoff — pure ceremony.
 
 **Apply refactorings:** Replace Parameter with Query, Preserve Whole Object, Introduce Parameter Object, Remove Flag Argument, Combine Functions into Class

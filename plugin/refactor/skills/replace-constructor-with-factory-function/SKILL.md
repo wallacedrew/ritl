@@ -5,11 +5,9 @@ description: Apply Replace Constructor with Factory Function when you see Primit
 
 # Apply: 32 — Replace Constructor with Factory Function
 
-**Target state:** Construction goes through a named factory the agent can extend with validation, polymorphism, or caching as one location.
+**Symptom:** The agent finds constructors used directly where construction needs validation, subclass selection, or caching — none of which constructors can express.
 
-**Why apply it:** The agent extends construction in one place; consumers don't depend on which concrete class they're getting.
-
-**Tradeoff:** The factory hides the actual class from callers; the agent must ensure the factory's name still expresses the produced shape clearly or call sites become opaque.
+**Goal:** Construction goes through a named factory the agent can extend with validation, polymorphism, or caching as one location.
 
 ```js
 // Avoid:
@@ -21,5 +19,13 @@ function createEngineer(name, salary) {
 }
 const employee = createEngineer(name, salary);
 ```
+
+**Pressure:** The agent's reasoning about construction must consider pre-construction logic scattered at every call site; constructors hide the capability for the patterns the code actually needs.
+
+**Tradeoff:** The factory hides the actual class from callers; the agent must ensure the factory's name still expresses the produced shape clearly or call sites become opaque.
+
+**Relief:** The agent extends construction in one place; consumers don't depend on which concrete class they're getting.
+
+**Trap:** Wrapping every constructor in a factory adds an indirection layer the agent must navigate without buying any new construction capability.
 
 **Removes smells:** Primitive Obsession, Speculative Generality

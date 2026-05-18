@@ -5,11 +5,9 @@ description: Apply Split Loop when you see Long Function, Loops. Each loop does 
 
 # Apply: 15 — Split Loop
 
-**Target state:** Each loop does one thing; the agent reasons about one concern per loop and can replace each loop independently with a pipeline.
+**Symptom:** A single loop body that mixes filter, map, reduce, and side-effect concerns; the agent verifying any change must trace all concerns through the same iteration.
 
-**Why apply it:** Each loop becomes an independently-replaceable unit (pipeline candidate); the agent's edit surface per concern shrinks.
-
-**Tradeoff:** Two loops over the same collection cost more per iteration than one; for hot paths the runtime overhead matters and the agent verifying performance must measure.
+**Goal:** Each loop does one thing; the agent reasons about one concern per loop and can replace each loop independently with a pipeline.
 
 ```js
 // Avoid:
@@ -24,5 +22,13 @@ for (const p of people) {
 const totalSalary = people.reduce((s, p) => s + p.salary, 0);
 const youngest    = Math.min(...people.map(p => p.age));
 ```
+
+**Pressure:** The agent's per-line reasoning must account for every concern the loop body addresses; changing one concern risks silent interaction with the others.
+
+**Tradeoff:** Two loops over the same collection cost more per iteration than one; for hot paths the runtime overhead matters and the agent verifying performance must measure.
+
+**Relief:** Each loop becomes an independently-replaceable unit (pipeline candidate); the agent's edit surface per concern shrinks.
+
+**Trap:** Splitting loops whose concerns share per-iteration state — accumulator-of-running-difference, look-behind logic — fragments coupled state the agent must now re-derive in each split.
 
 **Removes smells:** Long Function, Loops

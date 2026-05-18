@@ -5,11 +5,9 @@ description: Apply Remove Middle Man when you see Middle Man. Callers talk to th
 
 # Apply: 42 — Remove Middle Man
 
-**Target state:** Callers talk to the real object directly; the agent's call traces are shorter and the implementation's location is obvious.
+**Symptom:** A class whose methods all delegate straight through to another object; the agent traces every call to the real implementation through the passthrough hop.
 
-**Why apply it:** Fewer files; shorter call stacks; the agent's plan-and-execute loop touches the real implementation directly.
-
-**Tradeoff:** Direct access exposes the real object's full surface to every consumer; the agent loses any encapsulation the middle man was providing (even if mostly cosmetic).
+**Goal:** Callers talk to the real object directly; the agent's call traces are shorter and the implementation's location is obvious.
 
 ```js
 // Avoid:
@@ -21,5 +19,13 @@ class Manager {
 // Expose team directly when the wrapper adds nothing.
 manager.team.members();
 ```
+
+**Pressure:** The agent navigates the indirection on every reasoning step; refactoring the delegate's API requires the agent to update both classes in sync.
+
+**Tradeoff:** Direct access exposes the real object's full surface to every consumer; the agent loses any encapsulation the middle man was providing (even if mostly cosmetic).
+
+**Relief:** Fewer files; shorter call stacks; the agent's plan-and-execute loop touches the real implementation directly.
+
+**Trap:** Deleting a passthrough that was doing real work — authorization, validation, auditing — removes a load-bearing layer the agent didn't recognize because the trivial-looking delegation masked it.
 
 **Removes smells:** Middle Man

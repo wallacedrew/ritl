@@ -20,11 +20,9 @@ description: Apply Rename Variable when you see Mysterious Name. Variable names 
 
 # Apply: 07 — Rename Variable
 
-**Target state:** Variable names carry enough disambiguating information that the agent can reason about each symbol without a lookup hop.
+**Symptom:** The agent encounters a variable whose identifier doesn't disambiguate scope or domain; reasoning about any expression involving the variable requires loading the surrounding context first.
 
-**Why apply it:** Fewer context-lookup hops per reasoning step; planning loops run cheaper and resist drift.
-
-**Tradeoff:** Renames invalidate cached associations — commit history, RAG snippets, embedding indexes, and prior conversation context all carry the old name until they refresh.
+**Goal:** Variable names carry enough disambiguating information that the agent can reason about each symbol without a lookup hop.
 
 ```js
 // Avoid:
@@ -33,6 +31,14 @@ const a = height * width;
 // Prefer:
 const area = height * width;
 ```
+
+**Pressure:** Every reasoning pass re-derives meaning from surrounding context; chained edits compound the cost.
+
+**Tradeoff:** Renames invalidate cached associations — commit history, RAG snippets, embedding indexes, and prior conversation context all carry the old name until they refresh.
+
+**Relief:** Fewer context-lookup hops per reasoning step; planning loops run cheaper and resist drift.
+
+**Trap:** Compulsive renaming generates spurious diffs that crowd the review surface and burn context the human reviewer has to skim past.
 
 **Removes smells:** Mysterious Name
 
@@ -43,11 +49,9 @@ description: Apply Rename Field when you see Mysterious Name. Field names carry 
 
 # Apply: 19 — Rename Field
 
-**Target state:** Field names carry domain meaning so the agent can interpret reads and writes without examining the class definition.
+**Symptom:** A class field the agent must contextualize against surrounding code to interpret; reasoning about any read/write touches the field plus the class-shape context.
 
-**Why apply it:** The agent reasons about field access with the field's name as ground truth; consumer-side reasoning becomes self-documenting.
-
-**Tradeoff:** Renaming a field invalidates more cached associations than a variable rename — persistence layers (DB columns, JSON schemas, API contracts) carry the old name until they update.
+**Goal:** Field names carry domain meaning so the agent can interpret reads and writes without examining the class definition.
 
 ```js
 // Avoid:
@@ -65,6 +69,14 @@ class Position {
 console.log(position.title);  // clearly the role
 ```
 
+**Pressure:** The agent re-derives field meaning at every access site; ambiguity compounds with the number of consumers.
+
+**Tradeoff:** Renaming a field invalidates more cached associations than a variable rename — persistence layers (DB columns, JSON schemas, API contracts) carry the old name until they update.
+
+**Relief:** The agent reasons about field access with the field's name as ground truth; consumer-side reasoning becomes self-documenting.
+
+**Trap:** Renaming fields purely for cosmetic preference creates churn across persistence + API surfaces the agent must coordinate without comprehension gain.
+
 **Removes smells:** Mysterious Name
 
 ---
@@ -74,11 +86,9 @@ description: Apply Remove Dead Code when you see Speculative Generality, Comment
 
 # Apply: 17 — Remove Dead Code
 
-**Target state:** Every definition the agent encounters is reachable; reasoning about behavior doesn't have to consider phantom paths.
+**Symptom:** The agent finds code (functions, branches, fields) with no inbound references the type system or grep can locate; reasoning about reachability requires assuming static analysis is complete.
 
-**Why apply it:** The agent's reasoning context shrinks; static analysis becomes ground truth; planning loops don't waste cycles on phantom paths.
-
-**Tradeoff:** Deletion is one-way under static analysis but reachability can hide in reflection, dynamic dispatch, external callers, or runtime config — the agent that deletes without checking risks a regression nothing catches.
+**Goal:** Every definition the agent encounters is reachable; reasoning about behavior doesn't have to consider phantom paths.
 
 ```js
 // Avoid:
@@ -89,6 +99,14 @@ function modernDiscount(order) { /* the real one */ }
 function discount(order) { /* the real one */ }
 ```
 
+**Pressure:** The agent's plan-and-execute loop has to consider dead branches as live until proven otherwise; tests pass while code-walking analyses include dead surface area.
+
+**Tradeoff:** Deletion is one-way under static analysis but reachability can hide in reflection, dynamic dispatch, external callers, or runtime config — the agent that deletes without checking risks a regression nothing catches.
+
+**Relief:** The agent's reasoning context shrinks; static analysis becomes ground truth; planning loops don't waste cycles on phantom paths.
+
+**Trap:** Aggressive deletion based purely on grep/static-analysis evidence misses reflection-reachable, plugin-loaded, or externally-referenced code — the cleanup ships a silent regression the agent's tests don't catch.
+
 **Removes smells:** Speculative Generality, Comments
 
 ---
@@ -98,11 +116,9 @@ description: Apply Replace Magic Literal when you see Mysterious Name, Comments.
 
 # Apply: 43 — Replace Magic Literal
 
-**Target state:** Domain-meaningful values have named constants the agent can reference by name; the constant's name documents what the value represents.
+**Symptom:** The agent encounters a bare number or string whose meaning requires loading the surrounding context to interpret; refactoring the value means finding every occurrence by character match.
 
-**Why apply it:** The agent reasons about values by name with the type system enforcing valid uses; changing the value is one edit the type checker confirms.
-
-**Tradeoff:** Each new named constant is an import the agent must locate and resolve; over-naming creates a vocabulary the agent must learn for marginal disambiguation benefit.
+**Goal:** Domain-meaningful values have named constants the agent can reference by name; the constant's name documents what the value represents.
 
 ```js
 // Avoid:
@@ -117,6 +133,14 @@ function trip(distance) {
 }
 ```
 
+**Pressure:** The agent must trace context to interpret bare literals; changing a value requires text-search across the codebase with no semantic guarantee of completeness.
+
+**Tradeoff:** Each new named constant is an import the agent must locate and resolve; over-naming creates a vocabulary the agent must learn for marginal disambiguation benefit.
+
+**Relief:** The agent reasons about values by name with the type system enforcing valid uses; changing the value is one edit the type checker confirms.
+
+**Trap:** Naming every literal — including indices, loop bounds, and obvious status codes — bloats the agent's mental constant table without comprehension gain.
+
 **Removes smells:** Mysterious Name, Comments
 
 ### Composing Methods
@@ -128,11 +152,9 @@ description: Apply Extract Function when you see Long Function, Duplicated Code,
 
 # Apply: 01 — Extract Function
 
-**Target state:** Each function is a verifiable unit small enough that the agent can reason about its full behavior in a single reasoning step.
+**Symptom:** A function whose token count exceeds the agent's reliable chunk-reasoning budget; verifying behavior preservation requires re-reading the entire span on every edit.
 
-**Why apply it:** Smaller diff surface per commit; behavior preservation verifiable per refactoring step; chained orchestrations work from named subroutines instead of re-derived semantics.
-
-**Tradeoff:** Each extracted helper inflates context-window cost by one definition the next reasoning step must load; over-extracting blows effective working memory.
+**Goal:** Each function is a verifiable unit small enough that the agent can reason about its full behavior in a single reasoning step.
 
 ```js
 // Avoid:
@@ -154,6 +176,14 @@ function invoiceTotal(invoice) {
 }
 ```
 
+**Pressure:** Every edit pays full re-read cost; chained changes compound context usage and increase the chance of missing a cross-statement invariant.
+
+**Tradeoff:** Each extracted helper inflates context-window cost by one definition the next reasoning step must load; over-extracting blows effective working memory.
+
+**Relief:** Smaller diff surface per commit; behavior preservation verifiable per refactoring step; chained orchestrations work from named subroutines instead of re-derived semantics.
+
+**Trap:** Forces the agent to chase a dozen function definitions to follow what was once a 20-line procedure — context cost inflates and cross-function invariants disappear.
+
 **Removes smells:** Long Function, Duplicated Code, Comments
 
 ---
@@ -163,11 +193,9 @@ description: Apply Inline Function when you see Lazy Element, Speculative Genera
 
 # Apply: 02 — Inline Function
 
-**Target state:** Trivial wrappers disappear from the agent's working context; call sites read as exactly what's happening.
+**Symptom:** A function whose body the agent must trace through only to find no decisions or transformations — every reference site pays a context-load hop for no reasoning gain.
 
-**Why apply it:** Shorter call chains; the agent loads one fewer definition per reasoning step.
-
-**Tradeoff:** Inlining scatters the wrapper's body across call sites; if the wrapper was a seam (mocking boundary, extension point), removing it forecloses options the agent might need later.
+**Goal:** Trivial wrappers disappear from the agent's working context; call sites read as exactly what's happening.
 
 ```js
 // Avoid:
@@ -184,6 +212,14 @@ function rating(driver) {
 }
 ```
 
+**Pressure:** The agent loads the wrapper definition to verify any change touching it; the indirection is a tax on every reasoning step.
+
+**Tradeoff:** Inlining scatters the wrapper's body across call sites; if the wrapper was a seam (mocking boundary, extension point), removing it forecloses options the agent might need later.
+
+**Relief:** Shorter call chains; the agent loads one fewer definition per reasoning step.
+
+**Trap:** Mechanically inlining every short function — including ones that name a real domain concept — collapses semantic anchors the agent uses to reason about behavior.
+
 **Removes smells:** Lazy Element, Speculative Generality
 
 ---
@@ -193,11 +229,9 @@ description: Apply Extract Variable when you see Mysterious Name, Comments. Inte
 
 # Apply: 03 — Extract Variable
 
-**Target state:** Intermediate values have names the agent can reference directly; reasoning about the expression decomposes into reasoning about named sub-values.
+**Symptom:** An expression complex enough that the agent must parse it sub-step by sub-step to interpret; subsequent reasoning about the value requires re-parsing the full expression.
 
-**Why apply it:** The agent references named intermediate values; expression-level reasoning becomes reference-level reasoning, which is cheaper.
-
-**Tradeoff:** Each extracted variable is a name in the agent's local scope; over-extraction creates scope clutter the agent must navigate to find what's actually relevant.
+**Goal:** Intermediate values have names the agent can reference directly; reasoning about the expression decomposes into reasoning about named sub-values.
 
 ```js
 // Avoid:
@@ -209,6 +243,14 @@ const bulkDiscount = Math.max(0, order.qty - 500) * order.price * 0.05;
 if (basePrice - bulkDiscount > 1000) { /* ... */ }
 ```
 
+**Pressure:** The agent re-parses complex expressions at every reference; debugging requires the agent to mentally evaluate the full subexpression chain.
+
+**Tradeoff:** Each extracted variable is a name in the agent's local scope; over-extraction creates scope clutter the agent must navigate to find what's actually relevant.
+
+**Relief:** The agent references named intermediate values; expression-level reasoning becomes reference-level reasoning, which is cheaper.
+
+**Trap:** Extracting every sub-expression — including ones already obvious — bloats the agent's scope table with names that document nothing the agent didn't already know.
+
 **Removes smells:** Mysterious Name, Comments
 
 ---
@@ -218,11 +260,9 @@ description: Apply Inline Variable when you see Lazy Element. Single-use variabl
 
 # Apply: 04 — Inline Variable
 
-**Target state:** Single-use variables that rename without semantic gain disappear; expressions speak for themselves.
+**Symptom:** A local variable whose value is the same as its right-hand expression and whose name adds no semantic information beyond the expression itself.
 
-**Why apply it:** Less local clutter in the agent's scope table; expressions read as themselves.
-
-**Tradeoff:** Inlining a variable that did carry domain meaning forces the agent to interpret the bare expression every time instead of reading the named concept.
+**Goal:** Single-use variables that rename without semantic gain disappear; expressions speak for themselves.
 
 ```js
 // Avoid:
@@ -233,6 +273,14 @@ return basePrice > 1000;
 return order.basePrice > 1000;
 ```
 
+**Pressure:** The agent tracks an extra name in scope for no reasoning benefit; reference resolution becomes a tiny hop to a definition that adds nothing.
+
+**Tradeoff:** Inlining a variable that did carry domain meaning forces the agent to interpret the bare expression every time instead of reading the named concept.
+
+**Relief:** Less local clutter in the agent's scope table; expressions read as themselves.
+
+**Trap:** Inlining variables that named non-obvious intermediate values forces the agent to repeatedly parse the same expression across every reference site.
+
 **Removes smells:** Lazy Element
 
 ---
@@ -242,11 +290,9 @@ description: Apply Combine Functions into Class when you see Data Clumps, Primit
 
 # Apply: 09 — Combine Functions into Class
 
-**Target state:** Operations live with the data they act on; the agent loads one class to reason about both shape and behavior.
+**Symptom:** The agent finds multiple functions that all take the same data shape; reasoning about the data requires loading every operation that touches it scattered across files.
 
-**Why apply it:** The agent loads the class as a single unit; behavior, fields, and invariants all in one place with one import.
-
-**Tradeoff:** Wrapping the data in a class adds construction ceremony at every entry point; for data only used in one place the class is more code than the original concern warranted.
+**Goal:** Operations live with the data they act on; the agent loads one class to reason about both shape and behavior.
 
 ```js
 // Avoid:
@@ -265,6 +311,14 @@ class Reading {
 }
 ```
 
+**Pressure:** The agent traces operations across modules to understand what the data can do; invariants the agent must respect aren't enforced at construction.
+
+**Tradeoff:** Wrapping the data in a class adds construction ceremony at every entry point; for data only used in one place the class is more code than the original concern warranted.
+
+**Relief:** The agent loads the class as a single unit; behavior, fields, and invariants all in one place with one import.
+
+**Trap:** Wrapping data that nobody else operates on creates a class the agent must instantiate everywhere with no encapsulation gain — pure overhead.
+
 **Removes smells:** Data Clumps, Primitive Obsession
 
 ---
@@ -274,11 +328,9 @@ description: Apply Combine Functions into Transform when you see Data Clumps, Mu
 
 # Apply: 10 — Combine Functions into Transform
 
-**Target state:** One transform produces the enriched record; the agent reasons about derivations in one place and consumers read named fields.
+**Symptom:** The agent encounters consumers each independently computing the same derived values from the same source; reasoning about consistency requires tracing every derivation.
 
-**Why apply it:** Derivations are consistent by construction; the agent reads field accesses on the enriched record instead of computing across the codebase.
-
-**Tradeoff:** Building the transform when only one consumer exists creates an intermediate type the agent must learn before its second use justifies it.
+**Goal:** One transform produces the enriched record; the agent reasons about derivations in one place and consumers read named fields.
 
 ```js
 // Avoid:
@@ -301,6 +353,14 @@ const monthly  = r.baseCharge + r.taxableCharge;
 const discount = r.baseCharge * 0.95;
 ```
 
+**Pressure:** Each consumer re-derives the same values; the agent can't trust them to be consistent and must verify equivalence on every change.
+
+**Tradeoff:** Building the transform when only one consumer exists creates an intermediate type the agent must learn before its second use justifies it.
+
+**Relief:** Derivations are consistent by construction; the agent reads field accesses on the enriched record instead of computing across the codebase.
+
+**Trap:** Pre-building transforms for hypothetical consumers creates intermediate shapes the agent must understand and maintain with no active reuse.
+
 **Removes smells:** Data Clumps, Mutable Data
 
 ---
@@ -310,11 +370,9 @@ description: Apply Split Phase when you see Divergent Change, Long Function. Eac
 
 # Apply: 11 — Split Phase
 
-**Target state:** Each phase reads and writes its own well-defined inputs and outputs; the agent reasons about phases independently with the intermediate shape as the contract.
+**Symptom:** The agent finds a function that conflates two concerns in interleaved code; reasoning about either concern requires tracing through the other.
 
-**Why apply it:** Each phase becomes the agent's unit of reasoning; the intermediate shape documents the contract; testing and modification isolate to one phase at a time.
-
-**Tradeoff:** The intermediate data structure is overhead; for functions where the two phases are tightly coupled (shared mutable locals, observer effects), splitting adds a seam without buying isolation.
+**Goal:** Each phase reads and writes its own well-defined inputs and outputs; the agent reasons about phases independently with the intermediate shape as the contract.
 
 ```js
 // Avoid:
@@ -337,6 +395,14 @@ function render({ items, totalCents }) {
 }
 ```
 
+**Pressure:** The agent must trace interleaved concerns through one function body; testing or modifying either requires reasoning about both.
+
+**Tradeoff:** The intermediate data structure is overhead; for functions where the two phases are tightly coupled (shared mutable locals, observer effects), splitting adds a seam without buying isolation.
+
+**Relief:** Each phase becomes the agent's unit of reasoning; the intermediate shape documents the contract; testing and modification isolate to one phase at a time.
+
+**Trap:** Splitting tightly-coupled phases creates an artificial seam the agent must coordinate across — the intermediate shape leaks one phase's implementation into the next.
+
 **Removes smells:** Divergent Change, Long Function
 
 ---
@@ -346,11 +412,9 @@ description: Apply Slide Statements when you see Long Function, Comments. Relate
 
 # Apply: 14 — Slide Statements
 
-**Target state:** Related statements sit next to each other; the agent reads the function as a sequence of cohesive blocks ready for extraction.
+**Symptom:** A function whose related statements are interleaved with unrelated work; the agent reasoning about any sub-step must track state across non-adjacent lines.
 
-**Why apply it:** The function reads as cohesive blocks the agent can extract or reason about as units; setup for further refactoring becomes mechanical.
-
-**Tradeoff:** Sliding can silently change behavior if statements aren't truly independent (hidden side effects, timing dependencies, observer effects); the agent verifying the slide must confirm independence at every gap.
+**Goal:** Related statements sit next to each other; the agent reads the function as a sequence of cohesive blocks ready for extraction.
 
 ```js
 // Avoid:
@@ -366,6 +430,14 @@ logPriceCalc(basePrice);
 logTaxCalc(tax);
 ```
 
+**Pressure:** The agent holds partial sub-step state across non-adjacent lines; reasoning about any single concern requires tracking the others through the interleave.
+
+**Tradeoff:** Sliding can silently change behavior if statements aren't truly independent (hidden side effects, timing dependencies, observer effects); the agent verifying the slide must confirm independence at every gap.
+
+**Relief:** The function reads as cohesive blocks the agent can extract or reason about as units; setup for further refactoring becomes mechanical.
+
+**Trap:** Aggressive sliding without verifying side-effect ordering — observer logs, time reads, async dispatch — silently changes behavior the agent's local tests may not catch.
+
 **Removes smells:** Long Function, Comments
 
 ---
@@ -375,11 +447,9 @@ description: Apply Split Loop when you see Long Function, Loops. Each loop does 
 
 # Apply: 15 — Split Loop
 
-**Target state:** Each loop does one thing; the agent reasons about one concern per loop and can replace each loop independently with a pipeline.
+**Symptom:** A single loop body that mixes filter, map, reduce, and side-effect concerns; the agent verifying any change must trace all concerns through the same iteration.
 
-**Why apply it:** Each loop becomes an independently-replaceable unit (pipeline candidate); the agent's edit surface per concern shrinks.
-
-**Tradeoff:** Two loops over the same collection cost more per iteration than one; for hot paths the runtime overhead matters and the agent verifying performance must measure.
+**Goal:** Each loop does one thing; the agent reasons about one concern per loop and can replace each loop independently with a pipeline.
 
 ```js
 // Avoid:
@@ -395,6 +465,14 @@ const totalSalary = people.reduce((s, p) => s + p.salary, 0);
 const youngest    = Math.min(...people.map(p => p.age));
 ```
 
+**Pressure:** The agent's per-line reasoning must account for every concern the loop body addresses; changing one concern risks silent interaction with the others.
+
+**Tradeoff:** Two loops over the same collection cost more per iteration than one; for hot paths the runtime overhead matters and the agent verifying performance must measure.
+
+**Relief:** Each loop becomes an independently-replaceable unit (pipeline candidate); the agent's edit surface per concern shrinks.
+
+**Trap:** Splitting loops whose concerns share per-iteration state — accumulator-of-running-difference, look-behind logic — fragments coupled state the agent must now re-derive in each split.
+
 **Removes smells:** Long Function, Loops
 
 ---
@@ -404,11 +482,9 @@ description: Apply Replace Loop with Pipeline when you see Loops. Transformation
 
 # Apply: 16 — Replace Loop with Pipeline
 
-**Target state:** Transformations read as named operation sequences (filter, map, reduce); the agent recognizes the shape without simulating the loop.
+**Symptom:** Imperative for/while loops where the agent must mentally execute the body to learn the result; the loop's purpose isn't readable from its shape.
 
-**Why apply it:** Intent is readable; the agent reasons about each pipeline stage independently with type signatures documenting the transformation.
-
-**Tradeoff:** Pipeline form adds per-element call overhead and forces the agent to track intermediate collection types through the chain; for hot paths the runtime cost matters.
+**Goal:** Transformations read as named operation sequences (filter, map, reduce); the agent recognizes the shape without simulating the loop.
 
 ```js
 // Avoid:
@@ -423,6 +499,14 @@ const seniors = users
   .map(u => u.name);
 ```
 
+**Pressure:** The agent must trace the loop body step by step to verify behavior; off-by-one bugs hide where the agent's mental simulation diverges from runtime.
+
+**Tradeoff:** Pipeline form adds per-element call overhead and forces the agent to track intermediate collection types through the chain; for hot paths the runtime cost matters.
+
+**Relief:** Intent is readable; the agent reasons about each pipeline stage independently with type signatures documenting the transformation.
+
+**Trap:** Forcing every loop into a pipeline — including ones with early-exit, side-effects, or sequential dependencies — produces twisted .reduce() bodies the agent has to untangle to understand.
+
 **Removes smells:** Loops
 
 ---
@@ -432,11 +516,9 @@ description: Apply Replace Derived Variable with Query when you see Mutable Data
 
 # Apply: 20 — Replace Derived Variable with Query
 
-**Target state:** Derived values are computed on demand; the agent reasons about state by reading source fields and trusting derivations.
+**Symptom:** The agent finds a field whose value mirrors a computation on other fields; every writer of the source field must update the derived field consistently or the values drift.
 
-**Why apply it:** Mutation scope shrinks to source fields; the agent reasons about state without modeling derivation update timing; consistency is by construction.
-
-**Tradeoff:** Recomputing on every read can multiply cost if the derivation is expensive and the source rarely changes; the agent verifying performance must measure before deciding.
+**Goal:** Derived values are computed on demand; the agent reasons about state by reading source fields and trusting derivations.
 
 ```js
 // Avoid:
@@ -454,6 +536,14 @@ class Order {
 }
 ```
 
+**Pressure:** The agent must trace every writer of the source field to verify the derived field stays in sync; bugs hide where one writer forgot to update the derivation.
+
+**Tradeoff:** Recomputing on every read can multiply cost if the derivation is expensive and the source rarely changes; the agent verifying performance must measure before deciding.
+
+**Relief:** Mutation scope shrinks to source fields; the agent reasons about state without modeling derivation update timing; consistency is by construction.
+
+**Trap:** Replacing every derived field with a query — including ones wrapping expensive computations called many times — trades runtime cost for correctness without measuring the impact.
+
 **Removes smells:** Mutable Data
 
 ---
@@ -463,11 +553,9 @@ description: Apply Split Variable when you see Mysterious Name, Mutable Data. Ea
 
 # Apply: 18 — Split Variable
 
-**Target state:** Each variable holds one role with a stable name; the agent reasons about names without tracking reassignment timeline.
+**Symptom:** The agent finds a variable reassigned with values of conceptually different types or domains; reasoning about any expression involving it requires knowing which role is currently active.
 
-**Why apply it:** The agent reasons about each variable as a stable name; the type system can narrow each role; each use becomes independently refactorable.
-
-**Tradeoff:** If the two uses were actually coupled (shared init, synchronized update), splitting forces the agent to re-derive the coupling across two variables.
+**Goal:** Each variable holds one role with a stable name; the agent reasons about names without tracking reassignment timeline.
 
 ```js
 // Avoid:
@@ -483,6 +571,14 @@ const area = height * width;
 console.log(area);
 ```
 
+**Pressure:** The agent must trace through reassignments to know what any reference currently means; type-narrowing in unions becomes guesswork at every read site.
+
+**Tradeoff:** If the two uses were actually coupled (shared init, synchronized update), splitting forces the agent to re-derive the coupling across two variables.
+
+**Relief:** The agent reasons about each variable as a stable name; the type system can narrow each role; each use becomes independently refactorable.
+
+**Trap:** Splitting variables whose uses genuinely shared state forces the agent to re-establish the coupling outside the variable, complicating the original logic.
+
 **Removes smells:** Mysterious Name, Mutable Data
 
 ---
@@ -492,11 +588,9 @@ description: Apply Move Statements into Function when you see Duplicated Code. T
 
 # Apply: 44 — Move Statements into Function
 
-**Target state:** The function owns its setup and follow-up; the agent verifies behavior at the function definition instead of auditing every call site.
+**Symptom:** The agent finds the same setup or follow-up code around every call to a function; consistency depends on every caller remembering the pattern.
 
-**Why apply it:** The agent reasons about the function's full contract from its definition; consistency is enforced by the function, not by convention.
-
-**Tradeoff:** If some callers genuinely don't want the moved behavior, the function grows a flag argument and the agent must reason about which mode each caller wants.
+**Goal:** The function owns its setup and follow-up; the agent verifies behavior at the function definition instead of auditing every call site.
 
 ```js
 // Avoid:
@@ -512,6 +606,14 @@ function fetchLogged(url) {
 }
 ```
 
+**Pressure:** Every caller is a chance to miss the boilerplate or misorder it; the agent verifying consistency must check every site individually.
+
+**Tradeoff:** If some callers genuinely don't want the moved behavior, the function grows a flag argument and the agent must reason about which mode each caller wants.
+
+**Relief:** The agent reasons about the function's full contract from its definition; consistency is enforced by the function, not by convention.
+
+**Trap:** Moving statements into a function some callers don't want adds a flag argument the agent must thread through every call site — substitutes one boilerplate for another.
+
 **Removes smells:** Duplicated Code
 
 ---
@@ -521,11 +623,9 @@ description: Apply Move Statements to Callers when you see Divergent Change. The
 
 # Apply: 45 — Move Statements to Callers
 
-**Target state:** The function's body addresses one responsibility; callers express their differences at the call site.
+**Symptom:** The agent finds a function body whose statements vary by caller context — logging contexts, post-processing flags, metric labels baked into one body via branches.
 
-**Why apply it:** The function's contract narrows to its single responsibility; callers express variation explicitly; the agent reasons about one body and one branch per caller.
-
-**Tradeoff:** If most callers want the moved statements, the agent now sees duplicated boilerplate at every call site — the inverse smell.
+**Goal:** The function's body addresses one responsibility; callers express their differences at the call site.
 
 ```js
 // Avoid:
@@ -540,6 +640,14 @@ emit('startup');
 metrics.tick();
 ```
 
+**Pressure:** Adding a new caller forces extending the function's branches; the agent must reason about which branch applies and verify branch coverage at every site.
+
+**Tradeoff:** If most callers want the moved statements, the agent now sees duplicated boilerplate at every call site — the inverse smell.
+
+**Relief:** The function's contract narrows to its single responsibility; callers express variation explicitly; the agent reasons about one body and one branch per caller.
+
+**Trap:** Pushing statements to callers when most callers want them creates duplication the agent must keep in sync across every site — substitutes one smell for another.
+
 **Removes smells:** Divergent Change
 
 ---
@@ -549,11 +657,9 @@ description: Apply Replace Inline Code with Function Call when you see Duplicate
 
 # Apply: 46 — Replace Inline Code with Function Call
 
-**Target state:** One canonical implementation the agent loads once and references everywhere; the name labels the intent at every call site.
+**Symptom:** The agent finds inline code that reproduces the body of a named function elsewhere in the codebase; consistency depends on both implementations staying in sync.
 
-**Why apply it:** The agent reasons about one definition; future improvements reach every site that used to inline; consistency is enforced by reference.
-
-**Tradeoff:** If the existing function's name doesn't quite match the local intent, the agent reads the call site as a near-miss and must verify the semantic match at every replacement.
+**Goal:** One canonical implementation the agent loads once and references everywhere; the name labels the intent at every call site.
 
 ```js
 // Avoid:
@@ -562,6 +668,14 @@ const inRange = candidate >= low && candidate <= high;
 // Prefer:
 const inRange = between(candidate, low, high);
 ```
+
+**Pressure:** Two implementations drift over time; the agent verifying changes must update both or risk inconsistency the type checker doesn't catch.
+
+**Tradeoff:** If the existing function's name doesn't quite match the local intent, the agent reads the call site as a near-miss and must verify the semantic match at every replacement.
+
+**Relief:** The agent reasons about one definition; future improvements reach every site that used to inline; consistency is enforced by reference.
+
+**Trap:** Replacing inline code with a call to a poorly-named function smears semantic mismatch across the codebase — the agent must constantly verify that the function's name still describes the local use.
 
 **Removes smells:** Duplicated Code
 
@@ -572,11 +686,9 @@ description: Apply Replace Temp with Query when you see Long Function, Mutable D
 
 # Apply: 47 — Replace Temp with Query
 
-**Target state:** Computations become named queries the agent can reference by name from anywhere; functions decompose without dragging the temp's lifetime.
+**Symptom:** The agent finds a local variable assigned once from a computation and referenced multiple times; the temp's existence couples the rest of the function to the computation's locality.
 
-**Why apply it:** The agent's plan-and-execute loop for Extract Function becomes mechanical; the named query is reusable anywhere it makes sense.
-
-**Tradeoff:** If the temp wraps an expensive calculation called many times, naive replacement multiplies cost; the agent verifying performance must measure or cache before substituting.
+**Goal:** Computations become named queries the agent can reference by name from anywhere; functions decompose without dragging the temp's lifetime.
 
 ```js
 // Avoid:
@@ -594,6 +706,14 @@ function bill() {
 function basePrice() { return qty * itemPrice; }
 ```
 
+**Pressure:** The agent extracting parts of the function must thread the temp through every extracted helper; the named computation can't be reused outside the function.
+
+**Tradeoff:** If the temp wraps an expensive calculation called many times, naive replacement multiplies cost; the agent verifying performance must measure or cache before substituting.
+
+**Relief:** The agent's plan-and-execute loop for Extract Function becomes mechanical; the named query is reusable anywhere it makes sense.
+
+**Trap:** Replacing temps that wrap expensive computations called many times multiplies runtime cost the agent's local tests may not catch.
+
 **Removes smells:** Long Function, Mutable Data
 
 ---
@@ -603,11 +723,9 @@ description: Apply Replace Function with Command when you see Long Function. Sub
 
 # Apply: 48 — Replace Function with Command
 
-**Target state:** Sub-steps become named methods sharing state via fields; the agent reasons about each step in isolation and extracts/tests them independently.
+**Symptom:** A function whose body holds many shared locals across conceptually distinct sub-steps; the agent extracting any step must thread temps through helper parameters.
 
-**Why apply it:** Each sub-step becomes a named method on the command; the agent extracts and tests them in pieces without rewiring shared state.
-
-**Tradeoff:** Command ceremony (constructor + execute + named private methods) is overhead for functions without genuine multi-step state; the agent now navigates a class where one function used to suffice.
+**Goal:** Sub-steps become named methods sharing state via fields; the agent reasons about each step in isolation and extracts/tests them independently.
 
 ```js
 // Avoid:
@@ -632,6 +750,14 @@ class Scorer {
 new Scorer(candidate).execute();
 ```
 
+**Pressure:** Every step the agent wants to extract drags shared state through parameter lists; the function's algorithm shape resists decomposition.
+
+**Tradeoff:** Command ceremony (constructor + execute + named private methods) is overhead for functions without genuine multi-step state; the agent now navigates a class where one function used to suffice.
+
+**Relief:** Each sub-step becomes a named method on the command; the agent extracts and tests them in pieces without rewiring shared state.
+
+**Trap:** Promoting every long function to a command — including ones with no genuine shared state — adds class ceremony the agent must navigate without gaining any decomposition advantage.
+
 **Removes smells:** Long Function
 
 ---
@@ -641,11 +767,9 @@ description: Apply Replace Command with Function when you see Speculative Genera
 
 # Apply: 49 — Replace Command with Function
 
-**Target state:** The command collapses to a plain function; the agent's call sites become direct invocations.
+**Symptom:** A command class whose execute() does the work in one shot with no sub-step decomposition; callers go through construct-then-call ceremony for what could be one function.
 
-**Why apply it:** Fewer files; shorter call stacks; the agent's plan-and-execute loop touches the function directly without the construct-then-call hop.
-
-**Tradeoff:** If the command held genuinely useful intermediate state, collapsing regrows the temps it eliminated; the agent verifying the collapse must check whether any internal decomposition is load-bearing.
+**Goal:** The command collapses to a plain function; the agent's call sites become direct invocations.
 
 ```js
 // Avoid:
@@ -660,6 +784,14 @@ function charge(c, o) { return c.base + o.tax; }
 charge(c, o);
 ```
 
+**Pressure:** Every caller pays the construct-then-call hop; the agent reasoning about behavior loads a class to find a single function.
+
+**Tradeoff:** If the command held genuinely useful intermediate state, collapsing regrows the temps it eliminated; the agent verifying the collapse must check whether any internal decomposition is load-bearing.
+
+**Relief:** Fewer files; shorter call stacks; the agent's plan-and-execute loop touches the function directly without the construct-then-call hop.
+
+**Trap:** Collapsing commands that genuinely decomposed into named sub-steps regrows the temps they eliminated and the function-with-many-locals smell returns.
+
 **Removes smells:** Speculative Generality, Lazy Element
 
 ---
@@ -669,11 +801,9 @@ description: Apply Return Modified Value when you see Mutable Data. The function
 
 # Apply: 50 — Return Modified Value
 
-**Target state:** The function returns the modified value; the agent reads the signature and knows the function is a transformation, not a mutator.
+**Symptom:** A function that mutates one of its parameters in place; the agent reading the signature can't tell which parameters get mutated without reading the body.
 
-**Why apply it:** Side effects on inputs disappear from the agent's contract reasoning; the function reads as a pure transformation; composition and snapshotting work.
-
-**Tradeoff:** Callers must remember to capture the returned value; if any forget they keep the unmodified original, which the agent verifying must check at every call site (or rely on a readonly parameter type).
+**Goal:** The function returns the modified value; the agent reads the signature and knows the function is a transformation, not a mutator.
 
 ```js
 // Avoid:
@@ -689,6 +819,14 @@ function withTax(order) {
 order = withTax(order);
 ```
 
+**Pressure:** The agent reasoning about any call must check the function body to identify which parameters mutate; equality, snapshotting, and composition all become guarded.
+
+**Tradeoff:** Callers must remember to capture the returned value; if any forget they keep the unmodified original, which the agent verifying must check at every call site (or rely on a readonly parameter type).
+
+**Relief:** Side effects on inputs disappear from the agent's contract reasoning; the function reads as a pure transformation; composition and snapshotting work.
+
+**Trap:** Forcing return-modified-value on every in-place mutator — including ones where mutation is the contract callers want (performance-critical batch ops) — substitutes one mismatch for another.
+
 **Removes smells:** Mutable Data
 
 ---
@@ -698,11 +836,9 @@ description: Apply Substitute Algorithm when you see Long Function, Loops. The c
 
 # Apply: 51 — Substitute Algorithm
 
-**Target state:** The clearer algorithm replaces the bespoke; the agent reasons about a recognized pattern instead of reverse-engineering the original.
+**Symptom:** The agent encounters a convoluted or hand-rolled algorithm where a well-known pattern produces the same outputs; reasoning about the bespoke version is expensive per read.
 
-**Why apply it:** The agent recognizes the algorithm by name and reasons about it via its standard properties; correctness arguments become reusable.
-
-**Tradeoff:** Swapping algorithms wholesale forfeits behavioral safety unless every input boundary is characterized first; the agent that substitutes without characterization tests ships silent regressions.
+**Goal:** The clearer algorithm replaces the bespoke; the agent reasons about a recognized pattern instead of reverse-engineering the original.
 
 ```js
 // Avoid:
@@ -717,6 +853,14 @@ function found(people, n) {
 }
 ```
 
+**Pressure:** Every read of the bespoke algorithm pays the same decoding cost; the agent can't trust correctness without re-deriving the algorithm's invariants on every change.
+
+**Tradeoff:** Swapping algorithms wholesale forfeits behavioral safety unless every input boundary is characterized first; the agent that substitutes without characterization tests ships silent regressions.
+
+**Relief:** The agent recognizes the algorithm by name and reasons about it via its standard properties; correctness arguments become reusable.
+
+**Trap:** Substituting without characterization tests at every input boundary ships silent regressions where the original quietly handled edge cases the substitute handles differently.
+
 **Removes smells:** Long Function, Loops
 
 ### Encapsulation
@@ -728,11 +872,9 @@ description: Apply Encapsulate Variable when you see Global Data, Mutable Data. 
 
 # Apply: 06 — Encapsulate Variable
 
-**Target state:** All access goes through a small named function the agent can grep for, audit, and instrument as a single closed surface.
+**Symptom:** The agent finds a variable read and written from multiple consumers with no central function owning the access; reasoning about any read requires modeling every writer.
 
-**Why apply it:** The agent has one audit point for validation/logging/invariants; consumers don't need to change when the wrapper grows new behavior.
-
-**Tradeoff:** Indirection at every call site adds a hop; if any consumer leaks past the wrapper, the encapsulation's safety promise silently breaks and the agent assumes guarantees that don't hold.
+**Goal:** All access goes through a small named function the agent can grep for, audit, and instrument as a single closed surface.
 
 ```js
 // Avoid:
@@ -744,6 +886,14 @@ function defaultOwner() { return _defaultOwner; }
 function setDefaultOwner(o) { _defaultOwner = o; }
 ```
 
+**Pressure:** Any change to validation, logging, or invariants requires the agent to update every consumer; concurrent edits compound the search-and-update cost.
+
+**Tradeoff:** Indirection at every call site adds a hop; if any consumer leaks past the wrapper, the encapsulation's safety promise silently breaks and the agent assumes guarantees that don't hold.
+
+**Relief:** The agent has one audit point for validation/logging/invariants; consumers don't need to change when the wrapper grows new behavior.
+
+**Trap:** Wrapping the variable without enforcing wrapper-only access leaves leaks the agent doesn't see; the wrapper becomes a false safety signal.
+
 **Removes smells:** Global Data, Mutable Data
 
 ---
@@ -753,11 +903,9 @@ description: Apply Hide Delegate when you see Message Chains. Callers ask the cl
 
 # Apply: 41 — Hide Delegate
 
-**Target state:** Callers ask the closest object directly; the agent reasons about one boundary instead of traversing N.
+**Symptom:** The agent finds long dotted access paths through several object hops; renaming any intermediate field silently breaks every caller.
 
-**Why apply it:** Encapsulation tightens; the agent reasons about one boundary; intermediate objects can change shape without breaking callers.
-
-**Tradeoff:** Each hidden delegate adds a passthrough method on the host; for chains used in one place the passthrough is overhead the agent now maintains in two places.
+**Goal:** Callers ask the closest object directly; the agent reasons about one boundary instead of traversing N.
 
 ```js
 // Avoid:
@@ -768,6 +916,14 @@ const street = order.customer.address.street;
 const street = order.customerStreet();
 ```
 
+**Pressure:** Every link in the chain is a coupling point the agent holds in working memory; refactoring any intermediate shape requires updating every chain access.
+
+**Tradeoff:** Each hidden delegate adds a passthrough method on the host; for chains used in one place the passthrough is overhead the agent now maintains in two places.
+
+**Relief:** Encapsulation tightens; the agent reasons about one boundary; intermediate objects can change shape without breaking callers.
+
+**Trap:** Wrapping every dotted chain in passthroughs migrates the chain from call sites into the host's surface — the agent now wades through a wall of delegations to find real behavior.
+
 **Removes smells:** Message Chains
 
 ---
@@ -777,11 +933,9 @@ description: Apply Remove Middle Man when you see Middle Man. Callers talk to th
 
 # Apply: 42 — Remove Middle Man
 
-**Target state:** Callers talk to the real object directly; the agent's call traces are shorter and the implementation's location is obvious.
+**Symptom:** A class whose methods all delegate straight through to another object; the agent traces every call to the real implementation through the passthrough hop.
 
-**Why apply it:** Fewer files; shorter call stacks; the agent's plan-and-execute loop touches the real implementation directly.
-
-**Tradeoff:** Direct access exposes the real object's full surface to every consumer; the agent loses any encapsulation the middle man was providing (even if mostly cosmetic).
+**Goal:** Callers talk to the real object directly; the agent's call traces are shorter and the implementation's location is obvious.
 
 ```js
 // Avoid:
@@ -794,6 +948,14 @@ class Manager {
 manager.team.members();
 ```
 
+**Pressure:** The agent navigates the indirection on every reasoning step; refactoring the delegate's API requires the agent to update both classes in sync.
+
+**Tradeoff:** Direct access exposes the real object's full surface to every consumer; the agent loses any encapsulation the middle man was providing (even if mostly cosmetic).
+
+**Relief:** Fewer files; shorter call stacks; the agent's plan-and-execute loop touches the real implementation directly.
+
+**Trap:** Deleting a passthrough that was doing real work — authorization, validation, auditing — removes a load-bearing layer the agent didn't recognize because the trivial-looking delegation masked it.
+
 **Removes smells:** Middle Man
 
 ---
@@ -803,11 +965,9 @@ description: Apply Encapsulate Collection when you see Mutable Data, Insider Tra
 
 # Apply: 52 — Encapsulate Collection
 
-**Target state:** The owner exposes mutation methods (add, remove, replace); reads return snapshots or iterators; the agent reasons about collection invariants on the owner alone.
+**Symptom:** A class returns its internal collection directly; the agent reading any consumer cannot tell whether mutations will affect the owner without checking every consumer.
 
-**Why apply it:** The owner enforces invariants in one place; the agent refactoring the collection's internal shape stays local to the owner.
-
-**Tradeoff:** Returning a shallow copy on every read can hide bugs where callers expected mutation-back; the agent must be explicit about the read contract or risk silent no-ops.
+**Goal:** The owner exposes mutation methods (add, remove, replace); reads return snapshots or iterators; the agent reasons about collection invariants on the owner alone.
 
 ```js
 // Avoid:
@@ -825,6 +985,14 @@ class Person {
 }
 ```
 
+**Pressure:** Any consumer can mutate the collection in ways another consumer didn't expect; the agent verifying behavior must trace every read+mutation site to confirm invariants.
+
+**Tradeoff:** Returning a shallow copy on every read can hide bugs where callers expected mutation-back; the agent must be explicit about the read contract or risk silent no-ops.
+
+**Relief:** The owner enforces invariants in one place; the agent refactoring the collection's internal shape stays local to the owner.
+
+**Trap:** Returning copies silently changes the contract callers depended on — the agent shipping the encapsulation must verify every reader doesn't rely on mutate-the-returned-collection semantics.
+
 **Removes smells:** Mutable Data, Insider Trading
 
 ---
@@ -834,11 +1002,9 @@ description: Apply Encapsulate Record when you see Data Class, Primitive Obsessi
 
 # Apply: 53 — Encapsulate Record
 
-**Target state:** The record is a class with accessors; the agent reasons about its shape, invariants, and behavior in one definition.
+**Symptom:** A plain object passed across the codebase; the agent reading any consumer must inspect every other consumer to learn what shape the record actually has.
 
-**Why apply it:** Field renames stay internal; invariants enforce in one place; the agent reasons about the class as a real domain object.
-
-**Tradeoff:** Wrapping every record adds construction ceremony at every entry; for records without invariants or behavior to attract, the agent gains nothing for the per-call cost.
+**Goal:** The record is a class with accessors; the agent reasons about its shape, invariants, and behavior in one definition.
 
 ```js
 // Avoid:
@@ -854,6 +1020,14 @@ class Org {
 console.log(new Org(org).name());
 ```
 
+**Pressure:** Field changes ripple through every consumer; the agent must coordinate updates and verify each consumer respects the (implicit) contract.
+
+**Tradeoff:** Wrapping every record adds construction ceremony at every entry; for records without invariants or behavior to attract, the agent gains nothing for the per-call cost.
+
+**Relief:** Field renames stay internal; invariants enforce in one place; the agent reasons about the class as a real domain object.
+
+**Trap:** Wrapping records on principle without invariants or behavior to add creates classes the agent must instantiate everywhere with no encapsulation gain.
+
 **Removes smells:** Data Class, Primitive Obsession
 
 ---
@@ -863,11 +1037,9 @@ description: Apply Remove Setting Method when you see Mutable Data, Data Class. 
 
 # Apply: 54 — Remove Setting Method
 
-**Target state:** Construction is the only path to setting these fields; the agent reasons about the object as immutable-after-construction.
+**Symptom:** The agent finds setters on a class whose values should only be set at construction; every late-mutation site is using setters for one-shot assignment.
 
-**Why apply it:** The agent reasons about the class as immutable-after-construction; bugs from late mutation vanish; the API expresses what users can actually do.
-
-**Tradeoff:** Removing a setter forces every legitimate update through a more meaningful method; the agent must verify each setter call has a domain action that justifies replacing it.
+**Goal:** Construction is the only path to setting these fields; the agent reasons about the object as immutable-after-construction.
 
 ```js
 // Avoid:
@@ -882,6 +1054,14 @@ class Person {
 }
 ```
 
+**Pressure:** Late mutations break the agent's reasoning about invariants between operations; the agent must trace every setter call to verify timing assumptions.
+
+**Tradeoff:** Removing a setter forces every legitimate update through a more meaningful method; the agent must verify each setter call has a domain action that justifies replacing it.
+
+**Relief:** The agent reasons about the class as immutable-after-construction; bugs from late mutation vanish; the API expresses what users can actually do.
+
+**Trap:** Removing setters that meaningfully encoded a domain state change — like markPaid() coordinating paidAt+status — without replacing them with the equivalent domain method strips the semantic anchor.
+
 **Removes smells:** Mutable Data, Data Class
 
 ### Moving Features
@@ -893,11 +1073,9 @@ description: Apply Move Function when you see Feature Envy, Shotgun Surgery, Ins
 
 # Apply: 12 — Move Function
 
-**Target state:** Each function lives where its data lives; the agent loads one class to reason about one behavior.
+**Symptom:** A function's body references foreign-class data more than its own; the agent loading the function must also load the foreign class to verify any change.
 
-**Why apply it:** The function's data sits inside the agent's current reasoning context; verifying behavior touches one class instead of two.
-
-**Tradeoff:** Dependencies don't always travel cleanly — circular imports surface at the destination, and the agent's mental map of 'where does this live' briefly breaks until indices refresh.
+**Goal:** Each function lives where its data lives; the agent loads one class to reason about one behavior.
 
 ```js
 // Avoid:
@@ -917,6 +1095,14 @@ class Order { account; }
 order.account.isVip();
 ```
 
+**Pressure:** Each call to the envious function pulls a second class into the agent's working context; chained reasoning across the boundary compounds the load.
+
+**Tradeoff:** Dependencies don't always travel cleanly — circular imports surface at the destination, and the agent's mental map of 'where does this live' briefly breaks until indices refresh.
+
+**Relief:** The function's data sits inside the agent's current reasoning context; verifying behavior touches one class instead of two.
+
+**Trap:** Mechanical move-the-function-to-the-data on every cross-class read creates a fan-out the agent must follow at every call site — the cure becomes a worse smell than the original.
+
 **Removes smells:** Feature Envy, Shotgun Surgery, Insider Trading, Divergent Change
 
 ---
@@ -926,11 +1112,9 @@ description: Apply Move Field when you see Shotgun Surgery, Insider Trading. Eac
 
 # Apply: 13 — Move Field
 
-**Target state:** Each field lives where its lifecycle is owned; the agent loads one class to reason about both the field and its determining data.
+**Symptom:** The agent finds a field on class A whose value is determined by data on class B; reasoning about the field's value requires loading B to verify the derivation.
 
-**Why apply it:** Class boundaries align with data ownership; the agent reasons about mutations locally; refactoring becomes safer because the field's true owner is visible.
-
-**Tradeoff:** Every reader of the original class now reaches across the new boundary; coupling drops at the field's new home but reappears at each consumer the agent must follow.
+**Goal:** Each field lives where its lifecycle is owned; the agent loads one class to reason about both the field and its determining data.
 
 ```js
 // Avoid:
@@ -950,6 +1134,14 @@ class Customer { plan; }
 customer.plan.discountRate;
 ```
 
+**Pressure:** Every consumer must maintain the cross-class invariant; the agent verifying any change must coordinate updates across both classes.
+
+**Tradeoff:** Every reader of the original class now reaches across the new boundary; coupling drops at the field's new home but reappears at each consumer the agent must follow.
+
+**Relief:** Class boundaries align with data ownership; the agent reasons about mutations locally; refactoring becomes safer because the field's true owner is visible.
+
+**Trap:** Moving fields purely on derivation grounds — without checking whether the original class's identity depends on the field's presence — breaks consumer expectations the agent didn't model.
+
 **Removes smells:** Shotgun Surgery, Insider Trading
 
 ---
@@ -959,11 +1151,9 @@ description: Apply Extract Class when you see Data Clumps, Temporary Field, Larg
 
 # Apply: 39 — Extract Class
 
-**Target state:** Each class has one purpose; the agent loads a small focused file to reason about any single concept.
+**Symptom:** A class whose surface mixes multiple cohesive sub-concepts; the agent reasoning about any single concept must skim past the others to find what it needs.
 
-**Why apply it:** Smaller focused units; the agent tests one concept at a time and reasons about each class as a coherent whole.
-
-**Tradeoff:** Extracting too eagerly — 1-2 fields with no behavior — adds a class file the agent must load with no encapsulation gain.
+**Goal:** Each class has one purpose; the agent loads a small focused file to reason about any single concept.
 
 ```js
 // Avoid:
@@ -983,6 +1173,14 @@ class Phone {
 class Person { name; phone; }
 ```
 
+**Pressure:** The agent's reasoning context per method inflates with unrelated members; changes to one concept require reasoning about all of them.
+
+**Tradeoff:** Extracting too eagerly — 1-2 fields with no behavior — adds a class file the agent must load with no encapsulation gain.
+
+**Relief:** Smaller focused units; the agent tests one concept at a time and reasons about each class as a coherent whole.
+
+**Trap:** Extracting candidate concepts that are just trivial field groups creates class files the agent must navigate without buying any encapsulation gain.
+
 **Removes smells:** Data Clumps, Temporary Field, Large Class, Primitive Obsession
 
 ---
@@ -992,11 +1190,9 @@ description: Apply Inline Class when you see Lazy Element, Speculative Generalit
 
 # Apply: 55 — Inline Class
 
-**Target state:** The class folds into its primary collaborator; the agent loads one file for what was two.
+**Symptom:** A class with too few responsibilities for its own file; the agent loads the class to reason about behavior that would naturally live with the absorber.
 
-**Why apply it:** Fewer files; shorter call paths; the absorber's coherence improves when it owns the methods it was orchestrating.
-
-**Tradeoff:** If the absorber is already large, inlining pushes it past its complexity budget — the agent now loads a god-class to reason about what was previously separated.
+**Goal:** The class folds into its primary collaborator; the agent loads one file for what was two.
 
 ```js
 // Avoid:
@@ -1015,6 +1211,14 @@ class Shipment {
 }
 ```
 
+**Pressure:** Every reference site costs a file-jump the agent must pay; the indirection is overhead for trivial behavior.
+
+**Tradeoff:** If the absorber is already large, inlining pushes it past its complexity budget — the agent now loads a god-class to reason about what was previously separated.
+
+**Relief:** Fewer files; shorter call paths; the absorber's coherence improves when it owns the methods it was orchestrating.
+
+**Trap:** Inlining into an already-large class creates a worse Large Class smell — the agent must reason about a god-class instead of two focused ones.
+
 **Removes smells:** Lazy Element, Speculative Generality
 
 ### Organizing Data
@@ -1026,11 +1230,9 @@ description: Apply Replace Primitive with Object when you see Primitive Obsessio
 
 # Apply: 40 — Replace Primitive with Object
 
-**Target state:** Each domain concept has its own typed wrapper; the agent's type checker catches wrong-primitive-in-wrong-slot before runtime.
+**Symptom:** Function signatures use raw strings and numbers where domain concepts hide; the agent cannot tell from the type whether an argument is the right kind of thing.
 
-**Why apply it:** Wrong-primitive misuse becomes a type error the agent catches without runtime testing; behavior accretes around the concept where the agent expects to find it.
-
-**Tradeoff:** Each wrapper is a class the agent must instantiate at every entry point; for primitives without domain rules the wrapper is overhead with no return.
+**Goal:** Each domain concept has its own typed wrapper; the agent's type checker catches wrong-primitive-in-wrong-slot before runtime.
 
 ```js
 // Avoid:
@@ -1045,6 +1247,14 @@ function priceFor(money) {
 }
 ```
 
+**Pressure:** The agent must inspect call-site context (variable names, surrounding code) to verify a primitive is the right kind; validation and formatting scatter.
+
+**Tradeoff:** Each wrapper is a class the agent must instantiate at every entry point; for primitives without domain rules the wrapper is overhead with no return.
+
+**Relief:** Wrong-primitive misuse becomes a type error the agent catches without runtime testing; behavior accretes around the concept where the agent expects to find it.
+
+**Trap:** Wrapping every primitive — including ones with no domain rules — adds boilerplate the agent must navigate at every signature with no reasoning benefit.
+
 **Removes smells:** Primitive Obsession
 
 ---
@@ -1054,11 +1264,9 @@ description: Apply Change Reference to Value when you see Mutable Data. The obje
 
 # Apply: 56 — Change Reference to Value
 
-**Target state:** The object is immutable + equal-by-content; the agent reasons about value semantics without modeling write timing.
+**Symptom:** A class with public mutable fields used by many consumers; the agent reasoning about any read must consider every other writer.
 
-**Why apply it:** Concurrency hazards disappear; the type system can mark fields readonly; the agent reasons about the object as a stable value.
-
-**Tradeoff:** Comparison semantics shift from identity to equality; every call site that depended on === or identity caches needs the agent's review and update.
+**Goal:** The object is immutable + equal-by-content; the agent reasons about value semantics without modeling write timing.
 
 ```js
 // Avoid:
@@ -1076,6 +1284,14 @@ class Phone {
 }
 ```
 
+**Pressure:** The agent must trace every writer to model state at any read; concurrent reasoning is practically impossible.
+
+**Tradeoff:** Comparison semantics shift from identity to equality; every call site that depended on === or identity caches needs the agent's review and update.
+
+**Relief:** Concurrency hazards disappear; the type system can mark fields readonly; the agent reasons about the object as a stable value.
+
+**Trap:** Switching domain entities (Customer, Account) to value semantics strips the identity the agent's consumers depended on — equality replaces 'this specific thing' with 'anything that looks like it'.
+
 **Removes smells:** Mutable Data
 
 ---
@@ -1085,11 +1301,9 @@ description: Apply Change Value to Reference when you see Duplicated Code. The e
 
 # Apply: 57 — Change Value to Reference
 
-**Target state:** The entity exists once; the agent reasons about one canonical object referenced everywhere.
+**Symptom:** Duplicate copies of a logically-single entity scattered across the codebase; the agent updating the entity must find and update every copy consistently.
 
-**Why apply it:** Updates land in one place; storage shrinks; the agent reasons about the entity as a single referent with meaningful identity.
-
-**Tradeoff:** Sharing references introduces lifetime and visibility ambiguities (who owns this? when does it get freed?) the agent must reason about; the original value-copies sidestepped this.
+**Goal:** The entity exists once; the agent reasons about one canonical object referenced everywhere.
 
 ```js
 // Avoid:
@@ -1100,6 +1314,14 @@ orders.forEach(o => o.customer = { name: 'Acme' });
 const acme = customerRepository.find('Acme');
 orders.forEach(o => o.customer = acme);
 ```
+
+**Pressure:** The agent must coordinate updates across every copy; identity becomes ambiguous and the agent can't tell which copy is canonical.
+
+**Tradeoff:** Sharing references introduces lifetime and visibility ambiguities (who owns this? when does it get freed?) the agent must reason about; the original value-copies sidestepped this.
+
+**Relief:** Updates land in one place; storage shrinks; the agent reasons about the entity as a single referent with meaningful identity.
+
+**Trap:** Sharing references without explicit ownership creates lifetime ambiguities the agent must model — the cure introduces a different category of bug than the original duplication.
 
 **Removes smells:** Duplicated Code
 
@@ -1112,11 +1334,9 @@ description: Apply Decompose Conditional when you see Long Function, Comments. C
 
 # Apply: 21 — Decompose Conditional
 
-**Target state:** Conditions read as named domain decisions; the agent reasons about isSummer(date) instead of re-deriving the month range.
+**Symptom:** Multi-clause conditional expressions whose domain meaning isn't readable from the syntax; the agent must parse the expression every time it encounters it.
 
-**Why apply it:** The agent reasons about named domain decisions; the branching logic reads top-to-bottom as a story.
-
-**Tradeoff:** Extracted names that aren't crisper than the original condition add a layer of indirection — the agent now follows a name to find the same expression.
+**Goal:** Conditions read as named domain decisions; the agent reasons about isSummer(date) instead of re-deriving the month range.
 
 ```js
 // Avoid:
@@ -1132,6 +1352,14 @@ charge = isSummer(date)
   : winterCharge(qty);
 ```
 
+**Pressure:** The agent re-parses the expression at every reference; debugging the condition's value requires the agent to mentally evaluate the full chain.
+
+**Tradeoff:** Extracted names that aren't crisper than the original condition add a layer of indirection — the agent now follows a name to find the same expression.
+
+**Relief:** The agent reasons about named domain decisions; the branching logic reads top-to-bottom as a story.
+
+**Trap:** Extracting names that don't sharpen the condition — `isMonthBetweenFiveAndEight` instead of `isSummer` — adds indirection without revealing intent.
+
 **Removes smells:** Long Function, Comments
 
 ---
@@ -1141,11 +1369,9 @@ description: Apply Consolidate Conditional Expression when you see Duplicated Co
 
 # Apply: 22 — Consolidate Conditional Expression
 
-**Target state:** The conditions collapse into one named predicate; the agent reasons about one rule with one action.
+**Symptom:** Multiple conditions in sequence lead to the same action; the agent must verify each branch leads to identical behavior and that adding a new condition won't accidentally diverge.
 
-**Why apply it:** The agent reasons about one named predicate with one consequent; new conditions extend in one place.
-
-**Tradeoff:** If the conditions encode independent reasons (different rules that happen to produce the same outcome today), collapsing them hides distinctions the agent will need to re-split later.
+**Goal:** The conditions collapse into one named predicate; the agent reasons about one rule with one action.
 
 ```js
 // Avoid:
@@ -1157,6 +1383,14 @@ if (employee.isPartTime)           return 0;
 if (isIneligibleForBonus(employee)) return 0;
 ```
 
+**Pressure:** Adding or modifying any branch's behavior requires the agent to update every branch consistently; the shared rationale is invisible.
+
+**Tradeoff:** If the conditions encode independent reasons (different rules that happen to produce the same outcome today), collapsing them hides distinctions the agent will need to re-split later.
+
+**Relief:** The agent reasons about one named predicate with one consequent; new conditions extend in one place.
+
+**Trap:** Collapsing conditions that look the same but encode independent rules hides distinctions the agent will need to re-split when one rule evolves differently from the others.
+
 **Removes smells:** Duplicated Code
 
 ---
@@ -1166,11 +1400,9 @@ description: Apply Replace Nested Conditional with Guard Clauses when you see Lo
 
 # Apply: 23 — Replace Nested Conditional with Guard Clauses
 
-**Target state:** Edge cases bail out early; the main flow is unindented and reads linearly as the dominant story.
+**Symptom:** A function with deeply nested if/else where the happy path is buried under indentation; the agent must trace through edge-case branches to find the main flow.
 
-**Why apply it:** The agent reads the happy path linearly with edge cases as exceptions; new edge cases land at the top without disturbing the main flow.
-
-**Tradeoff:** Early returns can duplicate work if multiple paths share follow-up logic; the agent inlining guards must verify the shared work is genuinely separable.
+**Goal:** Edge cases bail out early; the main flow is unindented and reads linearly as the dominant story.
 
 ```js
 // Avoid:
@@ -1194,6 +1426,14 @@ function payAmount(employee) {
 }
 ```
 
+**Pressure:** The agent's parsing of the function's intent is obscured by indentation; reasoning about the happy path requires tracking which edge cases have already been ruled out.
+
+**Tradeoff:** Early returns can duplicate work if multiple paths share follow-up logic; the agent inlining guards must verify the shared work is genuinely separable.
+
+**Relief:** The agent reads the happy path linearly with edge cases as exceptions; new edge cases land at the top without disturbing the main flow.
+
+**Trap:** Inlining guards for every condition — including ones that shared follow-up work — fragments the shared logic across early-return branches the agent must keep consistent.
+
 **Removes smells:** Long Function, Comments
 
 ---
@@ -1203,11 +1443,9 @@ description: Apply Replace Conditional with Polymorphism when you see Repeated S
 
 # Apply: 24 — Replace Conditional with Polymorphism
 
-**Target state:** Each case is a class implementing a shared interface; the agent adds a new case by adding one class, and the type system tells it what's still missing.
+**Symptom:** A switch on a type code that appears in multiple files; the agent adding a new case must grep for every site and update each consistently or risk silent inconsistency.
 
-**Why apply it:** Adding a new variant is mechanical and the type checker enforces completeness; the agent's plan-and-execute loop for new cases is bounded.
-
-**Tradeoff:** Polymorphic dispatch is implicit at call sites — the agent can no longer see the full set of branches in one place and must enumerate subclasses across files to reason about behavior.
+**Goal:** Each case is a class implementing a shared interface; the agent adds a new case by adding one class, and the type system tells it what's still missing.
 
 ```js
 // Avoid:
@@ -1220,6 +1458,14 @@ switch (event.kind) {
 event.handle(); // ClickEvent and KeyEvent each implement handle()
 ```
 
+**Pressure:** Dispatch logic duplicates across files; the agent must enumerate and update every switch on every addition, with no compile-time check that the set is complete.
+
+**Tradeoff:** Polymorphic dispatch is implicit at call sites — the agent can no longer see the full set of branches in one place and must enumerate subclasses across files to reason about behavior.
+
+**Relief:** Adding a new variant is mechanical and the type checker enforces completeness; the agent's plan-and-execute loop for new cases is bounded.
+
+**Trap:** Replacing every switch with polymorphism — including ones with two stable cases — creates a class hierarchy the agent must navigate without buying any extension flexibility.
+
 **Removes smells:** Repeated Switches, Primitive Obsession
 
 ---
@@ -1229,11 +1475,9 @@ description: Apply Introduce Special Case when you see Repeated Switches, Commen
 
 # Apply: 25 — Introduce Special Case
 
-**Target state:** The special case responds to the same interface as the real case; the agent reasons without branching at every call site.
+**Symptom:** The agent finds the same null-or-special check repeating across multiple consumers; consistency depends on every consumer remembering the pattern.
 
-**Why apply it:** The agent reasons polymorphically; the special behavior lives in one class and consumers don't branch.
-
-**Tradeoff:** Adding a Null Object class for a special case used in only one place creates ceremony around what was a one-line check; the agent now loads a class to handle one branch.
+**Goal:** The special case responds to the same interface as the real case; the agent reasons without branching at every call site.
 
 ```js
 // Avoid:
@@ -1242,6 +1486,14 @@ const name = customer === 'unknown' ? 'occupant' : customer.name;
 // Prefer:
 const name = customer.name; // UnknownCustomer.name returns 'occupant'
 ```
+
+**Pressure:** Every consumer is a chance to miss the check; the agent verifying consistency must audit every site.
+
+**Tradeoff:** Adding a Null Object class for a special case used in only one place creates ceremony around what was a one-line check; the agent now loads a class to handle one branch.
+
+**Relief:** The agent reasons polymorphically; the special behavior lives in one class and consumers don't branch.
+
+**Trap:** Introducing a Null Object class for special checks used in only one place creates a class the agent must load and reason about with no consistency gain.
 
 **Removes smells:** Repeated Switches, Comments
 
@@ -1252,11 +1504,9 @@ description: Apply Replace Control Flag with Break when you see Loops, Long Func
 
 # Apply: 58 — Replace Control Flag with Break
 
-**Target state:** The exit happens at the moment it's decided via break/return/continue; the agent reads the loop's termination as a direct statement.
+**Symptom:** A loop maintaining a boolean flag to decide when to stop; the agent reasoning about termination must track the flag's state through every iteration.
 
-**Why apply it:** The agent reads termination as a direct statement at the point of decision; the loop's intent becomes literal.
-
-**Tradeoff:** If the loop body is large, the break point becomes hidden inside the body and the agent must scan to find termination; extract a function around the body to keep the exit obvious.
+**Goal:** The exit happens at the moment it's decided via break/return/continue; the agent reads the loop's termination as a direct statement.
 
 ```js
 // Avoid:
@@ -1277,6 +1527,14 @@ for (const p of people) {
 }
 ```
 
+**Pressure:** The agent must mentally simulate the flag's lifecycle across iterations; bugs hide where the flag isn't set when expected.
+
+**Tradeoff:** If the loop body is large, the break point becomes hidden inside the body and the agent must scan to find termination; extract a function around the body to keep the exit obvious.
+
+**Relief:** The agent reads termination as a direct statement at the point of decision; the loop's intent becomes literal.
+
+**Trap:** Replacing flags with breaks in large loop bodies buries the exit point — the agent must scan the body to find termination, which can be harder than tracking the flag.
+
 **Removes smells:** Loops, Long Function
 
 ### Refactoring APIs
@@ -1288,11 +1546,9 @@ description: Apply Change Function Declaration when you see Mysterious Name, Lon
 
 # Apply: 05 — Change Function Declaration
 
-**Target state:** Names and signatures express what the function does; the agent reasons about call sites from the signature alone.
+**Symptom:** A function whose name or signature doesn't match its behavior; the agent inferring intent from the call site gets misled and must read the body to verify.
 
-**Why apply it:** Call sites read fluently; the agent's signature-based reasoning becomes trustworthy; mismatches surface at the boundary.
-
-**Tradeoff:** Every caller pays for the change at once; for cross-team consumers, the agent must coordinate updates or risk breaking external code.
+**Goal:** Names and signatures express what the function does; the agent reasons about call sites from the signature alone.
 
 ```js
 // Avoid:
@@ -1306,6 +1562,14 @@ function circumference(radius) {
 }
 ```
 
+**Pressure:** The agent must read the function body to verify call-site intent; chained edits compound the cost as the agent re-derives intent at every site.
+
+**Tradeoff:** Every caller pays for the change at once; for cross-team consumers, the agent must coordinate updates or risk breaking external code.
+
+**Relief:** Call sites read fluently; the agent's signature-based reasoning becomes trustworthy; mismatches surface at the boundary.
+
+**Trap:** Reshaping signatures across team boundaries without coordination forces other consumers to rebuild — the agent shipping the change may not see the downstream breakage.
+
 **Removes smells:** Mysterious Name, Long Parameter List, Alternative Classes with Different Interfaces
 
 ---
@@ -1315,11 +1579,9 @@ description: Apply Introduce Parameter Object when you see Long Parameter List, 
 
 # Apply: 08 — Introduce Parameter Object
 
-**Target state:** The clump becomes a named value object the agent passes through as a single token; structure validation happens once at construction.
+**Symptom:** The agent sees the same field group appearing across multiple signatures; every site re-parses the same shape and verifies the same ordering.
 
-**Why apply it:** Operations on the clump (formatting, validation, equality) live with it; the agent reasons about one named concept instead of N coupled fields.
-
-**Tradeoff:** Constructing the object at every call adds an allocation and a name the agent must learn; if the clump appears in <3 places the wrapper is overhead.
+**Goal:** The clump becomes a named value object the agent passes through as a single token; structure validation happens once at construction.
 
 ```js
 // Avoid:
@@ -1334,6 +1596,14 @@ function recordTemperature(range, value)   { /* ... */ }
 function alertIfOutOfRange(range, reading) { /* ... */ }
 ```
 
+**Pressure:** Adding or reordering a field touches every signature; the agent must find and update each consistently or risk silent positional drift.
+
+**Tradeoff:** Constructing the object at every call adds an allocation and a name the agent must learn; if the clump appears in <3 places the wrapper is overhead.
+
+**Relief:** Operations on the clump (formatting, validation, equality) live with it; the agent reasons about one named concept instead of N coupled fields.
+
+**Trap:** Wrapping coincidental field groups creates fake value objects the agent must construct and destructure with no comprehension gain.
+
 **Removes smells:** Long Parameter List, Data Clumps
 
 ---
@@ -1343,11 +1613,9 @@ description: Apply Introduce Assertion when you see Comments, Mutable Data. Inva
 
 # Apply: 26 — Introduce Assertion
 
-**Target state:** Invariants are stated explicitly; the agent reads them and reasons about behavior under their guarantee.
+**Symptom:** Code that depends on unwritten invariants the agent must reconstruct from context; bugs that violate the invariant surface far from the source.
 
-**Why apply it:** Invariants fail loudly at the source; the agent's debugging traces are short; assumptions become enforceable contracts.
-
-**Tradeoff:** Assertions used as control flow couple production behavior to debug-mode invariants; the agent that conflates the two ships a flow-dependent change disguised as documentation.
+**Goal:** Invariants are stated explicitly; the agent reads them and reasons about behavior under their guarantee.
 
 ```js
 // Avoid:
@@ -1359,6 +1627,14 @@ if (rate <= 0) throw new Error('rate must be positive');
 const tax = base * rate;
 ```
 
+**Pressure:** The agent must reconstruct invariants from surrounding code; bugs surface far from the source and tracing them costs reasoning hops.
+
+**Tradeoff:** Assertions used as control flow couple production behavior to debug-mode invariants; the agent that conflates the two ships a flow-dependent change disguised as documentation.
+
+**Relief:** Invariants fail loudly at the source; the agent's debugging traces are short; assumptions become enforceable contracts.
+
+**Trap:** Coupling production behavior to assertion presence/absence — the agent reads them as documentation but the runtime depends on them firing or not.
+
 **Removes smells:** Comments, Mutable Data
 
 ---
@@ -1368,11 +1644,9 @@ description: Apply Separate Query from Modifier when you see Mutable Data. Funct
 
 # Apply: 27 — Separate Query from Modifier
 
-**Target state:** Functions either return or mutate, never both; the agent composes queries without surprise side effects.
+**Symptom:** A function the agent calls for a query also mutates state; the agent reasoning about safety must trace the mutation across consumers.
 
-**Why apply it:** The agent reasons about side effects locally; queries compose cleanly; tests target each shape independently.
-
-**Tradeoff:** If the modification and query are genuinely atomic (find-and-remove, compare-and-swap), splitting them introduces a race window the agent must close at every call site.
+**Goal:** Functions either return or mutate, never both; the agent composes queries without surprise side effects.
 
 ```js
 // Avoid:
@@ -1390,6 +1664,14 @@ function alertMiscreant(people) {
 }
 ```
 
+**Pressure:** Every call to the function pays for both contracts; the agent can't query without triggering mutation, which complicates testing and composition.
+
+**Tradeoff:** If the modification and query are genuinely atomic (find-and-remove, compare-and-swap), splitting them introduces a race window the agent must close at every call site.
+
+**Relief:** The agent reasons about side effects locally; queries compose cleanly; tests target each shape independently.
+
+**Trap:** Splitting atomic query-and-modify operations introduces race windows the agent must reason about at every call site — the cure becomes worse than the smell.
+
 **Removes smells:** Mutable Data
 
 ---
@@ -1399,11 +1681,9 @@ description: Apply Parameterize Function when you see Duplicated Code. One canon
 
 # Apply: 28 — Parameterize Function
 
-**Target state:** One canonical function with a parameter; the agent reasons about one body and verifies parameter values at call sites.
+**Symptom:** The agent finds near-identical functions differing only in literal values; consistency depends on every variant staying in sync.
 
-**Why apply it:** One canonical implementation the agent reasons about; new variations are new parameter values, not new code paths.
-
-**Tradeoff:** If the variations encode conceptually different operations, the parameterized function grows flags and special cases the agent must thread through — worse than the original duplication.
+**Goal:** One canonical function with a parameter; the agent reasons about one body and verifies parameter values at call sites.
 
 ```js
 // Avoid:
@@ -1414,6 +1694,14 @@ function fivePercentRaise(person) { person.salary *= 1.05; }
 function raise(person, factor) { person.salary *= 1 + factor; }
 ```
 
+**Pressure:** Bug fixes must land in every variant; the agent must find and update each consistently or risk drift.
+
+**Tradeoff:** If the variations encode conceptually different operations, the parameterized function grows flags and special cases the agent must thread through — worse than the original duplication.
+
+**Relief:** One canonical implementation the agent reasons about; new variations are new parameter values, not new code paths.
+
+**Trap:** Parameterizing conceptually different operations accumulates flag-driven branches the agent must reason about — the function becomes a switch statement in disguise.
+
 **Removes smells:** Duplicated Code
 
 ---
@@ -1423,11 +1711,9 @@ description: Apply Remove Flag Argument when you see Long Parameter List. Each f
 
 # Apply: 29 — Remove Flag Argument
 
-**Target state:** Each flag value becomes a named function; the agent reads call sites as direct invocations of the intended behavior.
+**Symptom:** A function with a flag parameter that dispatches to different internal behaviors; the agent must trace the flag's value through the body to verify which branch any call exercises.
 
-**Why apply it:** Call sites read fluently; the agent reasons about one function per concern.
-
-**Tradeoff:** If the branches share substantial body, splitting produces duplication the agent must keep in sync; pair this with Extract Function for shared internals.
+**Goal:** Each flag value becomes a named function; the agent reads call sites as direct invocations of the intended behavior.
 
 ```js
 // Avoid:
@@ -1441,6 +1727,14 @@ function setHeight(value) { /* ... */ }
 function setWidth(value)  { /* ... */ }
 ```
 
+**Pressure:** The agent must reason about flag values at every call site; the function's body conflates multiple concerns the agent must mentally split.
+
+**Tradeoff:** If the branches share substantial body, splitting produces duplication the agent must keep in sync; pair this with Extract Function for shared internals.
+
+**Relief:** Call sites read fluently; the agent reasons about one function per concern.
+
+**Trap:** Splitting flag-dispatched functions without extracting shared body creates N copies of the same logic the agent must keep in sync — the cure becomes the duplication smell.
+
 **Removes smells:** Long Parameter List
 
 ---
@@ -1450,11 +1744,9 @@ description: Apply Preserve Whole Object when you see Long Parameter List, Data 
 
 # Apply: 30 — Preserve Whole Object
 
-**Target state:** The function takes the object; the agent updates one place when the function needs new fields.
+**Symptom:** The agent sees call sites unpacking multiple fields from an object to pass to a function; adding any field the function later needs touches every call site.
 
-**Why apply it:** Signatures shrink; adding a needed field is an internal change; the agent reasons about one parameter at every call.
-
-**Tradeoff:** Passing the whole object couples the function to the object's full surface; the agent reasoning about the function must consider what other fields it might quietly read.
+**Goal:** The function takes the object; the agent updates one place when the function needs new fields.
 
 ```js
 // Avoid:
@@ -1463,6 +1755,14 @@ if (room.lowTemp < range.low || room.highTemp > range.high) { /* ... */ }
 // Prefer:
 if (range.includes(room)) { /* ... */ }
 ```
+
+**Pressure:** Every call site is a coordination point; the agent verifying a signature change must update every unpacking explicitly.
+
+**Tradeoff:** Passing the whole object couples the function to the object's full surface; the agent reasoning about the function must consider what other fields it might quietly read.
+
+**Relief:** Signatures shrink; adding a needed field is an internal change; the agent reasons about one parameter at every call.
+
+**Trap:** Passing whole objects when only one field is needed couples the function to the object's full surface the agent must consider as the function's input scope.
 
 **Removes smells:** Long Parameter List, Data Clumps
 
@@ -1473,11 +1773,9 @@ description: Apply Replace Parameter with Query when you see Long Parameter List
 
 # Apply: 31 — Replace Parameter with Query
 
-**Target state:** The function computes its own answer; the agent calls it without pre-computing the inputs.
+**Symptom:** A function takes parameters its callers computed from data the function already has access to; the agent verifying any call must reproduce the caller's computation.
 
-**Why apply it:** Signatures shrink; the agent calls the function directly without reproducing caller-side derivations.
-
-**Tradeoff:** If the query is expensive or has side effects, replacing the parameter multiplies cost or introduces hidden coupling the agent must reason about.
+**Goal:** The function computes its own answer; the agent calls it without pre-computing the inputs.
 
 ```js
 // Avoid:
@@ -1489,6 +1787,14 @@ const final = discounted(order, basePrice, level);
 const final = discounted(order); // computes basePrice and level itself
 ```
 
+**Pressure:** Every caller pays the homework cost; the duplication of derivation logic scatters and the agent must keep callers in sync with the function's expectations.
+
+**Tradeoff:** If the query is expensive or has side effects, replacing the parameter multiplies cost or introduces hidden coupling the agent must reason about.
+
+**Relief:** Signatures shrink; the agent calls the function directly without reproducing caller-side derivations.
+
+**Trap:** Replacing parameters with queries that are expensive or have side effects multiplies cost or introduces hidden coupling the agent reads as 'just a parameter swap'.
+
 **Removes smells:** Long Parameter List
 
 ---
@@ -1498,11 +1804,9 @@ description: Apply Replace Query with Parameter when you see Mutable Data, Insid
 
 # Apply: 59 — Replace Query with Parameter
 
-**Target state:** Dependencies are visible in the signature; the agent reasons about the function as a pure transformation of its inputs.
+**Symptom:** A function reads from a query (global, singleton, instance state) instead of accepting the value as a parameter; the agent reasoning about it must model the query's state.
 
-**Why apply it:** The agent reasons about pure transformations; tests target the function in isolation; signatures document dependencies.
-
-**Tradeoff:** Pushing every internal query to a parameter bloats signatures the agent must thread through call sites — appropriate only for queries that touch global or volatile state.
+**Goal:** Dependencies are visible in the signature; the agent reasons about the function as a pure transformation of its inputs.
 
 ```js
 // Avoid:
@@ -1516,6 +1820,14 @@ function rebate(order, rate) {
 }
 ```
 
+**Pressure:** The agent cannot test or compose the function without reproducing the query's state; reasoning about side effects requires modeling global timing.
+
+**Tradeoff:** Pushing every internal query to a parameter bloats signatures the agent must thread through call sites — appropriate only for queries that touch global or volatile state.
+
+**Relief:** The agent reasons about pure transformations; tests target the function in isolation; signatures document dependencies.
+
+**Trap:** Externalizing every internal query — including ones reading stable encapsulated state — bloats signatures the agent must thread through every call site for marginal isolation benefit.
+
 **Removes smells:** Mutable Data, Insider Trading
 
 ---
@@ -1525,11 +1837,9 @@ description: Apply Replace Constructor with Factory Function when you see Primit
 
 # Apply: 32 — Replace Constructor with Factory Function
 
-**Target state:** Construction goes through a named factory the agent can extend with validation, polymorphism, or caching as one location.
+**Symptom:** The agent finds constructors used directly where construction needs validation, subclass selection, or caching — none of which constructors can express.
 
-**Why apply it:** The agent extends construction in one place; consumers don't depend on which concrete class they're getting.
-
-**Tradeoff:** The factory hides the actual class from callers; the agent must ensure the factory's name still expresses the produced shape clearly or call sites become opaque.
+**Goal:** Construction goes through a named factory the agent can extend with validation, polymorphism, or caching as one location.
 
 ```js
 // Avoid:
@@ -1542,6 +1852,14 @@ function createEngineer(name, salary) {
 const employee = createEngineer(name, salary);
 ```
 
+**Pressure:** The agent's reasoning about construction must consider pre-construction logic scattered at every call site; constructors hide the capability for the patterns the code actually needs.
+
+**Tradeoff:** The factory hides the actual class from callers; the agent must ensure the factory's name still expresses the produced shape clearly or call sites become opaque.
+
+**Relief:** The agent extends construction in one place; consumers don't depend on which concrete class they're getting.
+
+**Trap:** Wrapping every constructor in a factory adds an indirection layer the agent must navigate without buying any new construction capability.
+
 **Removes smells:** Primitive Obsession, Speculative Generality
 
 ---
@@ -1551,11 +1869,9 @@ description: Apply Replace Error Code with Exception when you see Comments. Fail
 
 # Apply: 60 — Replace Error Code with Exception
 
-**Target state:** Failures throw exceptions the agent reasons about as separate control flow; the type system marks the failure path.
+**Symptom:** The agent finds functions returning numeric or string codes for failure; verifying error handling requires the agent to trace every caller and check whether the code is inspected.
 
-**Why apply it:** The agent reasons about success and failure paths separately; cleanup happens via finally / try-with; forgetting to handle no longer silently swallows.
-
-**Tradeoff:** Exceptions for predictable conditions misuse the mechanism; the agent ships try/catch around expected outcomes that should be values.
+**Goal:** Failures throw exceptions the agent reasons about as separate control flow; the type system marks the failure path.
 
 ```js
 // Avoid:
@@ -1572,6 +1888,14 @@ function withdraw(amount) {
 }
 ```
 
+**Pressure:** Every caller is a chance to silently swallow the error; the agent verifying correctness must audit every call site for the check.
+
+**Tradeoff:** Exceptions for predictable conditions misuse the mechanism; the agent ships try/catch around expected outcomes that should be values.
+
+**Relief:** The agent reasons about success and failure paths separately; cleanup happens via finally / try-with; forgetting to handle no longer silently swallows.
+
+**Trap:** Throwing for predictable conditions (not-found, validation failure) makes expected outcomes look like bugs to the agent reading the catch blocks.
+
 **Removes smells:** Comments
 
 ---
@@ -1581,11 +1905,9 @@ description: Apply Replace Exception with Precheck when you see Comments. The pr
 
 # Apply: 61 — Replace Exception with Precheck
 
-**Target state:** The precheck appears at the point of decision; the agent reads the code top-to-bottom as the rule, with exceptions reserved for truly exceptional cases.
+**Symptom:** The agent finds try/catch for conditions the caller could check directly; control flow via exceptions obscures the rule.
 
-**Why apply it:** The agent reads the rule top-to-bottom; debuggers stop catching benign throws; exception handlers reserve for truly exceptional cases.
-
-**Tradeoff:** Race conditions: the precheck may pass and the operation still fail (TOCTOU); the agent using prechecks must verify the caller can check the condition atomically.
+**Goal:** The precheck appears at the point of decision; the agent reads the code top-to-bottom as the rule, with exceptions reserved for truly exceptional cases.
 
 ```js
 // Avoid:
@@ -1600,6 +1922,14 @@ if (i >= amounts.length) return 0;
 return amounts[i] / 100;
 ```
 
+**Pressure:** The agent debugging exception flow must reason about catch handlers; benign throws fire breakpoints; the rule that 'should fire' isn't obvious from reading.
+
+**Tradeoff:** Race conditions: the precheck may pass and the operation still fail (TOCTOU); the agent using prechecks must verify the caller can check the condition atomically.
+
+**Relief:** The agent reads the rule top-to-bottom; debuggers stop catching benign throws; exception handlers reserve for truly exceptional cases.
+
+**Trap:** Replacing exceptions with prechecks for conditions the caller can't atomically verify introduces race windows the agent's local tests won't catch.
+
 **Removes smells:** Comments
 
 ### Dealing with Inheritance
@@ -1611,11 +1941,9 @@ description: Apply Pull Up Method when you see Duplicated Code, Alternative Clas
 
 # Apply: 33 — Pull Up Method
 
-**Target state:** The method lives on the shared superclass; the agent reasons about one implementation that all subclasses inherit.
+**Symptom:** Two or more subclasses implement the same method identically; the agent verifying behavior must check every subclass and confirm they actually agree.
 
-**Why apply it:** One implementation; the agent reasons about one place for the shared behavior; subclasses focus on what's actually different.
-
-**Tradeoff:** If the methods only superficially resemble each other (same name, different semantics), pulling up creates a fake-shared abstraction the agent must constantly disambiguate.
+**Goal:** The method lives on the shared superclass; the agent reasons about one implementation that all subclasses inherit.
 
 ```js
 // Avoid:
@@ -1628,6 +1956,14 @@ class Manager  extends Employee {}
 class Engineer extends Employee {}
 ```
 
+**Pressure:** Bug fixes must land in every copy; the agent verifying consistency must update every subclass and risk drift.
+
+**Tradeoff:** If the methods only superficially resemble each other (same name, different semantics), pulling up creates a fake-shared abstraction the agent must constantly disambiguate.
+
+**Relief:** One implementation; the agent reasons about one place for the shared behavior; subclasses focus on what's actually different.
+
+**Trap:** Pulling up superficially-similar methods creates fake-shared behavior the agent must constantly verify means the same thing across subclasses.
+
 **Removes smells:** Duplicated Code, Alternative Classes with Different Interfaces
 
 ---
@@ -1637,11 +1973,9 @@ description: Apply Push Down Method when you see Refused Bequest, Large Class. T
 
 # Apply: 34 — Push Down Method
 
-**Target state:** The method lives on the subclass that uses it; the agent's reasoning about the parent's surface is accurate to what most instances support.
+**Symptom:** A method on the parent class used by only one subclass; the agent reading the parent's surface sees methods that don't apply to most instances.
 
-**Why apply it:** The parent's surface shrinks; subclasses that don't need the method aren't burdened; the agent reasons about each subclass's contract accurately.
-
-**Tradeoff:** If the parent occasionally consults the method for type checks or polymorphic dispatch, pushing it down forces awkward downcasts at every consumer the agent must verify.
+**Goal:** The method lives on the subclass that uses it; the agent's reasoning about the parent's surface is accurate to what most instances support.
 
 ```js
 // Avoid:
@@ -1655,6 +1989,14 @@ class Salesperson extends Employee {
 }
 ```
 
+**Pressure:** The parent's interface is muddied with subclass-specific methods; the agent can't tell which methods apply to which subclass without inspecting usage.
+
+**Tradeoff:** If the parent occasionally consults the method for type checks or polymorphic dispatch, pushing it down forces awkward downcasts at every consumer the agent must verify.
+
+**Relief:** The parent's surface shrinks; subclasses that don't need the method aren't burdened; the agent reasons about each subclass's contract accurately.
+
+**Trap:** Pushing down methods the parent occasionally needs for dispatch forces downcasts at every consumer the agent must add and verify.
+
 **Removes smells:** Refused Bequest, Large Class
 
 ---
@@ -1664,11 +2006,9 @@ description: Apply Replace Type Code with Subclasses when you see Repeated Switc
 
 # Apply: 35 — Replace Type Code with Subclasses
 
-**Target state:** Each kind is a subclass; the agent adds a new kind by adding one class, and the type system tells it what's still missing.
+**Symptom:** A class with a kind field plus methods that switch on it; the agent adding a new kind must find every switch and update each consistently.
 
-**Why apply it:** Adding a new kind is mechanical and type-system-enforced; the agent's plan-and-execute loop for new variants is bounded.
-
-**Tradeoff:** If only one or two switches exist on the type code, the subclass hierarchy is over-design; the agent now navigates a class tree for what was a single switch.
+**Goal:** Each kind is a subclass; the agent adds a new kind by adding one class, and the type system tells it what's still missing.
 
 ```js
 // Avoid:
@@ -1692,6 +2032,14 @@ class Manager extends Employee {
 }
 ```
 
+**Pressure:** The agent must enumerate every switch on every addition; the type system can't enforce completeness so the agent verifies by grep.
+
+**Tradeoff:** If only one or two switches exist on the type code, the subclass hierarchy is over-design; the agent now navigates a class tree for what was a single switch.
+
+**Relief:** Adding a new kind is mechanical and type-system-enforced; the agent's plan-and-execute loop for new variants is bounded.
+
+**Trap:** Subclassing for type codes used in only one or two switches creates a hierarchy the agent must navigate for a coordination cost that was already small.
+
 **Removes smells:** Repeated Switches, Primitive Obsession
 
 ---
@@ -1701,11 +2049,9 @@ description: Apply Extract Superclass when you see Duplicated Code, Alternative 
 
 # Apply: 36 — Extract Superclass
 
-**Target state:** The shared structure lives in a common parent; the agent reasons about shared behavior in one place.
+**Symptom:** Two classes with substantial shared structure (fields, methods); the agent verifying changes must update both consistently.
 
-**Why apply it:** Shared behavior lives in one place; the agent's reasoning about the relationship is documented in code via the inheritance link.
-
-**Tradeoff:** Inheritance is inflexible; for shallow duplication, the agent's downstream changes are constrained by the parent in ways composition (Extract Class) would have avoided.
+**Goal:** The shared structure lives in a common parent; the agent reasons about shared behavior in one place.
 
 ```js
 // Avoid:
@@ -1718,6 +2064,14 @@ class Employee   extends Party { salary; }
 class Department extends Party { budget; }
 ```
 
+**Pressure:** Bug fixes must land in both classes; the agent's reasoning about shared invariants must verify they hold identically across both.
+
+**Tradeoff:** Inheritance is inflexible; for shallow duplication, the agent's downstream changes are constrained by the parent in ways composition (Extract Class) would have avoided.
+
+**Relief:** Shared behavior lives in one place; the agent's reasoning about the relationship is documented in code via the inheritance link.
+
+**Trap:** Extracting superclasses for shallow duplication locks the agent into inheritance constraints when composition would have left both classes free to diverge.
+
 **Removes smells:** Duplicated Code, Alternative Classes with Different Interfaces
 
 ---
@@ -1727,11 +2081,9 @@ description: Apply Collapse Hierarchy when you see Lazy Element, Speculative Gen
 
 # Apply: 37 — Collapse Hierarchy
 
-**Target state:** The subclass folds into the parent; the agent reads one class instead of a degenerate two-class hierarchy.
+**Symptom:** A subclass that no longer differs meaningfully from its parent; the agent navigating the hierarchy traverses indirection for no behavioral variation.
 
-**Why apply it:** Smaller hierarchy; less ceremony; the agent loads one class instead of navigating a degenerate two-class chain.
-
-**Tradeoff:** If the subclass documents a future variation (extension point, planned divergence), collapsing destroys it; the agent that collapses without checking forecloses options.
+**Goal:** The subclass folds into the parent; the agent reads one class instead of a degenerate two-class hierarchy.
 
 ```js
 // Avoid:
@@ -1742,6 +2094,14 @@ class FullTimeEmployee extends Employee {}
 class Employee {}
 ```
 
+**Pressure:** The agent's reasoning pays the hierarchy ceremony cost on every reference; future maintenance touches both classes for any change.
+
+**Tradeoff:** If the subclass documents a future variation (extension point, planned divergence), collapsing destroys it; the agent that collapses without checking forecloses options.
+
+**Relief:** Smaller hierarchy; less ceremony; the agent loads one class instead of navigating a degenerate two-class chain.
+
+**Trap:** Collapsing subclasses that document planned future variation destroys extension points the agent will need to re-introduce later at higher cost.
+
 **Removes smells:** Lazy Element, Speculative Generality
 
 ---
@@ -1751,11 +2111,9 @@ description: Apply Replace Subclass with Delegate when you see Refused Bequest, 
 
 # Apply: 38 — Replace Subclass with Delegate
 
-**Target state:** Variants live in delegate objects swappable at runtime; the agent reasons about composition with explicit delegation calls.
+**Symptom:** A subclass that overrides several methods to implement variant behavior; the agent reasoning about polymorphic dispatch must enumerate variants across the hierarchy.
 
-**Why apply it:** Variants can be combined or swapped at runtime; Liskov violations vanish; the agent reasons about explicit delegation.
-
-**Tradeoff:** Composition is more verbose at construction sites; the agent loses syntactic polymorphism and must verify behavior through explicit delegation calls.
+**Goal:** Variants live in delegate objects swappable at runtime; the agent reasons about composition with explicit delegation calls.
 
 ```js
 // Avoid:
@@ -1771,6 +2129,14 @@ class Booking {
 }
 ```
 
+**Pressure:** Behavior can't change at runtime; combining variants requires multiple inheritance the agent must work around; Liskov violations hide in override behavior.
+
+**Tradeoff:** Composition is more verbose at construction sites; the agent loses syntactic polymorphism and must verify behavior through explicit delegation calls.
+
+**Relief:** Variants can be combined or swapped at runtime; Liskov violations vanish; the agent reasons about explicit delegation.
+
+**Trap:** Replacing every subclass — including ones where Liskov genuinely holds — pays construction-site verbosity without buying flexibility the agent will actually use.
+
 **Removes smells:** Refused Bequest, Insider Trading
 
 ---
@@ -1780,11 +2146,9 @@ description: Apply Pull Up Constructor Body when you see Duplicated Code. The sh
 
 # Apply: 62 — Pull Up Constructor Body
 
-**Target state:** The shared init lives in the parent's constructor and is called via super; the agent reasons about one initialization path.
+**Symptom:** Multiple subclass constructors initialize the same parent fields with the same logic; the agent verifying constructors must check every subclass for consistency.
 
-**Why apply it:** One canonical init; new subclasses inherit for free; the agent reasons about parent-state setup in one place.
-
-**Tradeoff:** If only some subclasses share the init logic, pulling it up forces the others to override or opt out; the agent verifying must check whether the shared init is genuinely common.
+**Goal:** The shared init lives in the parent's constructor and is called via super; the agent reasons about one initialization path.
 
 ```js
 // Avoid:
@@ -1799,6 +2163,14 @@ class Manager  extends Employee {}
 class Engineer extends Employee {}
 ```
 
+**Pressure:** Bug fixes in init logic must land in every subclass; the agent must update each consistently or risk silent drift.
+
+**Tradeoff:** If only some subclasses share the init logic, pulling it up forces the others to override or opt out; the agent verifying must check whether the shared init is genuinely common.
+
+**Relief:** One canonical init; new subclasses inherit for free; the agent reasons about parent-state setup in one place.
+
+**Trap:** Pulling up init logic only some subclasses need forces the others to override with awkward opt-outs the agent must reason about.
+
 **Removes smells:** Duplicated Code
 
 ---
@@ -1808,11 +2180,9 @@ description: Apply Pull Up Field when you see Duplicated Code. The field lives o
 
 # Apply: 63 — Pull Up Field
 
-**Target state:** The field lives on the shared parent; the agent reasons about one declaration and one ownership story.
+**Symptom:** A field declared identically across multiple subclasses; the agent verifying changes to the field's shape must update every subclass consistently.
 
-**Why apply it:** One source of truth for the field's type and default; subclasses focus on what they actually specialize.
-
-**Tradeoff:** If subclasses use the field with different defaults, visibility, or semantic role, pulling up creates surprise behavior the agent must constantly disambiguate.
+**Goal:** The field lives on the shared parent; the agent reasons about one declaration and one ownership story.
 
 ```js
 // Avoid:
@@ -1825,6 +2195,14 @@ class Manager  extends Employee {}
 class Engineer extends Employee {}
 ```
 
+**Pressure:** Refactoring the field's type or default requires the agent to touch every subclass; consistency drift hides bugs.
+
+**Tradeoff:** If subclasses use the field with different defaults, visibility, or semantic role, pulling up creates surprise behavior the agent must constantly disambiguate.
+
+**Relief:** One source of truth for the field's type and default; subclasses focus on what they actually specialize.
+
+**Trap:** Pulling up fields with divergent semantic roles creates a shared declaration that masks subclass-specific behavior the agent must constantly re-verify.
+
 **Removes smells:** Duplicated Code
 
 ---
@@ -1834,11 +2212,9 @@ description: Apply Push Down Field when you see Refused Bequest, Large Class. Th
 
 # Apply: 64 — Push Down Field
 
-**Target state:** The field lives on the subclass that uses it; the agent's reasoning about the parent matches what most instances actually carry.
+**Symptom:** A field on the parent class used by only one subclass; the agent reading the parent's shape sees storage that doesn't apply to most instances.
 
-**Why apply it:** Other subclasses no longer carry ignored storage; the parent's surface shrinks; the agent reasons about each subclass's shape accurately.
-
-**Tradeoff:** If the parent occasionally consults the field for type checks, pushing it down forces awkward downcasts the agent must add and verify at every consumer.
+**Goal:** The field lives on the subclass that uses it; the agent's reasoning about the parent matches what most instances actually carry.
 
 ```js
 // Avoid:
@@ -1851,6 +2227,14 @@ class Employee {}
 class Salesperson extends Employee { quota; }
 ```
 
+**Pressure:** The parent's storage carries dead weight; serialization includes ignored fields; the agent's reasoning about the parent's shape is muddied.
+
+**Tradeoff:** If the parent occasionally consults the field for type checks, pushing it down forces awkward downcasts the agent must add and verify at every consumer.
+
+**Relief:** Other subclasses no longer carry ignored storage; the parent's surface shrinks; the agent reasons about each subclass's shape accurately.
+
+**Trap:** Pushing down fields the parent occasionally consults for dispatch forces downcasts the agent must add at every consumer.
+
 **Removes smells:** Refused Bequest, Large Class
 
 ---
@@ -1860,11 +2244,9 @@ description: Apply Remove Subclass when you see Lazy Element, Speculative Genera
 
 # Apply: 65 — Remove Subclass
 
-**Target state:** The variant becomes a field on the parent; the agent reads variants as data instead of navigating a hierarchy.
+**Symptom:** Empty subclasses that encode a type code without behavior; the agent navigating the hierarchy traverses indirection for what could be a field.
 
-**Why apply it:** Smaller hierarchy; new variants are field values not new files; the agent reasons about variability as data.
-
-**Tradeoff:** If the subclass is referenced by name elsewhere (factories, registries, type-tests), removing it silently breaks those references the agent must find and update.
+**Goal:** The variant becomes a field on the parent; the agent reads variants as data instead of navigating a hierarchy.
 
 ```js
 // Avoid:
@@ -1878,6 +2260,14 @@ class Person {
 }
 ```
 
+**Pressure:** Every new variant is a new file the agent must create; the hierarchy ceremony costs reasoning without behavior payoff.
+
+**Tradeoff:** If the subclass is referenced by name elsewhere (factories, registries, type-tests), removing it silently breaks those references the agent must find and update.
+
+**Relief:** Smaller hierarchy; new variants are field values not new files; the agent reasons about variability as data.
+
+**Trap:** Removing subclasses referenced by factories, registries, or type-tests breaks those references — the agent must find every such consumer before deletion.
+
 **Removes smells:** Lazy Element, Speculative Generality
 
 ---
@@ -1887,11 +2277,9 @@ description: Apply Replace Superclass with Delegate when you see Refused Bequest
 
 # Apply: 66 — Replace Superclass with Delegate
 
-**Target state:** Composition replaces inheritance; the agent reasons about explicit delegation with no Liskov ambiguity.
+**Symptom:** A subclass that overrides parent methods to no-ops or 'unsupported'; the agent reasoning about polymorphic calls on parent-typed references cannot trust the contract.
 
-**Why apply it:** The misleading is-a relationship disappears; the agent's polymorphic reasoning becomes trustworthy because every reference type honors its declared contract.
-
-**Tradeoff:** Composition adds a forwarding method on the former subclass for every parent method exposed; the agent loses syntactic polymorphism and pays ceremony for explicit delegation.
+**Goal:** Composition replaces inheritance; the agent reasons about explicit delegation with no Liskov ambiguity.
 
 ```js
 // Avoid:
@@ -1906,6 +2294,14 @@ class CategoryItem {
 }
 ```
 
+**Pressure:** Liskov violations break the agent's polymorphic reasoning; the agent must defensively check at every call site whether the subclass honors the parent's contract.
+
+**Tradeoff:** Composition adds a forwarding method on the former subclass for every parent method exposed; the agent loses syntactic polymorphism and pays ceremony for explicit delegation.
+
+**Relief:** The misleading is-a relationship disappears; the agent's polymorphic reasoning becomes trustworthy because every reference type honors its declared contract.
+
+**Trap:** Replacing every inheritance — including ones where Liskov genuinely holds — pays forwarding ceremony at every method without buying any contract safety the agent actually needed.
+
 **Removes smells:** Refused Bequest, Insider Trading
 
 ---
@@ -1919,11 +2315,9 @@ description: Refuse Mysterious Name when token-level identifiers don't disambigu
 
 # Refuse: 01 — Mysterious Name
 
-**Trigger (refuse when you see):** Token-level identifiers don't disambiguate scope or domain — the agent must load surrounding context to answer 'what does this variable hold?' before any reasoning step succeeds.
+**Symptom:** Token-level identifiers don't disambiguate scope or domain — the agent must load surrounding context to answer 'what does this variable hold?' before any reasoning step succeeds.
 
-**Cost of leaving it in:** Every reasoning pass re-derives meaning from surrounding context; chained edits compound the cost and increase the chance of hallucinating a misread.
-
-**Target shape after refactoring:** Identifiers carry enough disambiguating information that the agent can reason about each symbol without a lookup hop.
+**Goal:** Identifiers carry enough disambiguating information that the agent can reason about each symbol without a lookup hop.
 
 ```js
 // Smellier:
@@ -1937,6 +2331,14 @@ function distance(speed, time) {
 }
 ```
 
+**Pressure:** Every reasoning pass re-derives meaning from surrounding context; chained edits compound the cost and increase the chance of hallucinating a misread.
+
+**Tradeoff:** Renames invalidate cached associations — commit history, RAG snippets, embedding indexes, and prior conversation context all carry the old name until they refresh.
+
+**Relief:** Fewer context-lookup hops per reasoning step; planning loops run cheaper and resist drift.
+
+**Trap:** Compulsive renaming generates spurious diffs that crowd the review surface and burn context the human reviewer has to skim past.
+
 **Apply refactorings:** Change Function Declaration, Rename Variable, Rename Field
 
 ---
@@ -1946,11 +2348,9 @@ description: Refuse Duplicated Code when near-identical code appears in multiple
 
 # Refuse: 02 — Duplicated Code
 
-**Trigger (refuse when you see):** Near-identical code appears in multiple files; every reasoning step about one copy must either deliberately ignore the others or repeat itself across them.
+**Symptom:** Near-identical code appears in multiple files; every reasoning step about one copy must either deliberately ignore the others or repeat itself across them.
 
-**Cost of leaving it in:** Edits propagate by hand across copies; the agent must remember to find every clone or ship inconsistent behavior that silently passes unit tests targeting only one copy.
-
-**Target shape after refactoring:** One canonical implementation the agent loads once and reasons about once, with variation parameterized at the call site.
+**Goal:** One canonical implementation the agent loads once and reasons about once, with variation parameterized at the call site.
 
 ```js
 // Smellier:
@@ -1967,6 +2367,14 @@ function lineTotal(items) {
 }
 ```
 
+**Pressure:** Edits propagate by hand across copies; the agent must remember to find every clone or ship inconsistent behavior that silently passes unit tests targeting only one copy.
+
+**Tradeoff:** The shared form introduces an indirection the agent must trace through; if the abstraction is wrong, every divergence becomes an exception that complicates reasoning at every call site.
+
+**Relief:** Bug fixes and feature additions land in one place; the agent's plan-and-execute loop touches one definition instead of N.
+
+**Trap:** Over-eager merging of superficially-similar code creates a leaky abstraction the agent must constantly special-case — reasoning becomes harder than reasoning about the original copies.
+
 **Apply refactorings:** Extract Function, Slide Statements, Pull Up Method
 
 ---
@@ -1976,11 +2384,9 @@ description: Refuse Long Function when a function whose token count exceeds the 
 
 # Refuse: 03 — Long Function
 
-**Trigger (refuse when you see):** A function whose token count exceeds the agent's reliable chunk-reasoning budget; verifying behavior preservation requires re-reading the entire span on every edit.
+**Symptom:** A function whose token count exceeds the agent's reliable chunk-reasoning budget; verifying behavior preservation requires re-reading the entire span on every edit.
 
-**Cost of leaving it in:** Every edit pays full re-read cost; chained changes compound context usage and increase the chance of missing a cross-statement invariant.
-
-**Target shape after refactoring:** Each function is a verifiable unit small enough that the agent can reason about its full behavior in a single reasoning step.
+**Goal:** Each function is a verifiable unit small enough that the agent can reason about its full behavior in a single reasoning step.
 
 ```js
 // Smellier:
@@ -2000,6 +2406,14 @@ function ship(order) {
 }
 ```
 
+**Pressure:** Every edit pays full re-read cost; chained changes compound context usage and increase the chance of missing a cross-statement invariant.
+
+**Tradeoff:** Splitting inflates context-window usage at orchestration time — the agent now loads N function definitions to follow what was once one body. Worth it when the orchestration outline is clearer than the linear body.
+
+**Relief:** Smaller diff surface per commit; behavior preservation verifiable per refactoring step; chained orchestrations work from named subroutines instead of re-derived semantics.
+
+**Trap:** Forces the agent to chase a dozen function definitions for what was once a 20-line procedure — context cost inflates and cross-function invariants disappear.
+
 **Apply refactorings:** Extract Function, Replace Temp with Query, Introduce Parameter Object, Preserve Whole Object, Replace Function with Command, Decompose Conditional, Split Loop, Replace Loop with Pipeline, Replace Control Flag with Break
 
 ---
@@ -2009,11 +2423,9 @@ description: Refuse Long Parameter List when a signature with so many positional
 
 # Refuse: 04 — Long Parameter List
 
-**Trigger (refuse when you see):** A signature with so many positional parameters that the agent must look up the function definition (or call-site documentation) before any invocation succeeds.
+**Symptom:** A signature with so many positional parameters that the agent must look up the function definition (or call-site documentation) before any invocation succeeds.
 
-**Cost of leaving it in:** Every call site is a chance to misorder arguments or miss one entirely; even with a type checker the agent pays a lookup cost on every invocation.
-
-**Target shape after refactoring:** Each parameter is either a domain concept the agent recognizes, or it's bundled into a named object the agent can pass through without unpacking.
+**Goal:** Each parameter is either a domain concept the agent recognizes, or it's bundled into a named object the agent can pass through without unpacking.
 
 ```js
 // Smellier:
@@ -2027,6 +2439,14 @@ function book(traveler, address, trip) {
 }
 ```
 
+**Pressure:** Every call site is a chance to misorder arguments or miss one entirely; even with a type checker the agent pays a lookup cost on every invocation.
+
+**Tradeoff:** A new parameter object adds a class the agent must load to construct values; if used in only one place the cost is pure overhead.
+
+**Relief:** Call sites become readable as named intent; the agent constructs and passes domain objects instead of remembering positional contracts.
+
+**Trap:** Synthesizing parameter objects that don't represent real domain concepts forces the agent through extra wrapping and unwrapping with no comprehension payoff — pure ceremony.
+
 **Apply refactorings:** Replace Parameter with Query, Preserve Whole Object, Introduce Parameter Object, Remove Flag Argument, Combine Functions into Class
 
 ---
@@ -2036,11 +2456,9 @@ description: Refuse Global Data when a module-level variable mutated from anywhe
 
 # Refuse: 05 — Global Data
 
-**Trigger (refuse when you see):** A module-level variable mutated from anywhere — the agent reading any single call site cannot bound its impact without scanning every consumer.
+**Symptom:** A module-level variable mutated from anywhere — the agent reading any single call site cannot bound its impact without scanning every consumer.
 
-**Cost of leaving it in:** Behavior depends on hidden write-order between callers the agent must discover one at a time; tracing any bug requires reconstructing a global mutation timeline.
-
-**Target shape after refactoring:** All reads and writes go through a named function the agent can grep for, find every consumer of, and reason about as a closed surface.
+**Goal:** All reads and writes go through a named function the agent can grep for, find every consumer of, and reason about as a closed surface.
 
 ```js
 // Smellier:
@@ -2057,6 +2475,14 @@ function getCurrentUser() {
 }
 ```
 
+**Pressure:** Behavior depends on hidden write-order between callers the agent must discover one at a time; tracing any bug requires reconstructing a global mutation timeline.
+
+**Tradeoff:** Wrapping the global doesn't eliminate the coupling — every reader still depends on the same shared state, and the agent still has to model the timeline to reason about reads.
+
+**Relief:** A single named function becomes the audit point; the agent can attach logging, validation, or cache logic in one place instead of chasing every consumer.
+
+**Trap:** Wrapping globals without narrowing access creates a false safety signal — the agent assumes the wrapper guarantees something it doesn't, and silent leaks become harder to diagnose.
+
 **Apply refactorings:** Encapsulate Variable
 
 ---
@@ -2066,11 +2492,9 @@ description: Refuse Mutable Data when fields the agent finds reassigned across m
 
 # Refuse: 06 — Mutable Data
 
-**Trigger (refuse when you see):** Fields the agent finds reassigned across multiple files with no obvious owner; reasoning about state at any moment requires tracing every writer.
+**Symptom:** Fields the agent finds reassigned across multiple files with no obvious owner; reasoning about state at any moment requires tracing every writer.
 
-**Cost of leaving it in:** The agent cannot answer 'what is this value here?' without modeling the full timeline of writes; concurrent reasoning becomes practically impossible.
-
-**Target shape after refactoring:** Mutation happens behind a named function with a clear contract, or the data is replaced rather than modified — the agent can locate every change in one place.
+**Goal:** Mutation happens behind a named function with a clear contract, or the data is replaced rather than modified — the agent can locate every change in one place.
 
 ```js
 // Smellier:
@@ -2083,6 +2507,14 @@ const order = { total: 100 };
 const final = addTax(applyDiscount(order));
 ```
 
+**Pressure:** The agent cannot answer 'what is this value here?' without modeling the full timeline of writes; concurrent reasoning becomes practically impossible.
+
+**Tradeoff:** Switching to immutable or encapsulated mutation can force the agent to construct new objects on every change; for hot-path mutation this trades reasoning clarity for runtime overhead.
+
+**Relief:** State changes become locatable and bisectable; the agent reasoning about behavior traces one entry point instead of N writers.
+
+**Trap:** Wrapping writes in setters that don't enforce anything (no validation, no event, no copy-on-write) keeps the mutation everywhere while pretending it's encapsulated — the agent is now misled by the API.
+
 **Apply refactorings:** Encapsulate Variable, Split Variable, Slide Statements, Extract Function, Separate Query from Modifier, Remove Setting Method, Replace Derived Variable with Query, Combine Functions into Class, Combine Functions into Transform, Change Reference to Value
 
 ---
@@ -2092,11 +2524,9 @@ description: Refuse Divergent Change when reading the module, the agent constant
 
 # Refuse: 07 — Divergent Change
 
-**Trigger (refuse when you see):** Reading the module, the agent constantly switches between conceptually unrelated regions (tax logic, UI logic, API logic); every cross-axis edit requires loading and reasoning about all of them.
+**Symptom:** Reading the module, the agent constantly switches between conceptually unrelated regions (tax logic, UI logic, API logic); every cross-axis edit requires loading and reasoning about all of them.
 
-**Cost of leaving it in:** Any single conceptual change touches code that also implements unrelated concerns; the agent must verify it didn't break the other axes on every edit.
-
-**Target shape after refactoring:** Each module varies along one axis; the agent loading it can predict what kinds of changes will touch it and bring only the relevant context.
+**Goal:** Each module varies along one axis; the agent loading it can predict what kinds of changes will touch it and bring only the relevant context.
 
 ```js
 // Smellier:
@@ -2112,6 +2542,14 @@ function rendered(cart) { return renderInvoice(cart); }
 function sent(html)    { return postToGateway(html); }
 ```
 
+**Pressure:** Any single conceptual change touches code that also implements unrelated concerns; the agent must verify it didn't break the other axes on every edit.
+
+**Tradeoff:** Splitting introduces a seam between modules; cross-cutting changes now require the agent to load and synchronize edits across both, raising context cost for those specific cases.
+
+**Relief:** One axis of change per module means the agent loads exactly the context relevant to the request, and concurrent edits along different axes don't interfere.
+
+**Trap:** Splitting on every minor distinction creates a fan-out of tiny modules the agent must navigate to reason about any meaningful behavior — abstraction overhead exceeds comprehension gain.
+
 **Apply refactorings:** Split Phase, Move Function, Extract Function, Extract Class
 
 ---
@@ -2121,11 +2559,9 @@ description: Refuse Shotgun Surgery when a single conceptual edit forces the age
 
 # Refuse: 08 — Shotgun Surgery
 
-**Trigger (refuse when you see):** A single conceptual edit forces the agent to identify, load, and modify many small sites — each one cheap individually but the search and completeness check is expensive.
+**Symptom:** A single conceptual edit forces the agent to identify, load, and modify many small sites — each one cheap individually but the search and completeness check is expensive.
 
-**Cost of leaving it in:** Every change carries a risk of missing a site the agent didn't grep for; reviewers (human or agent) can't easily verify completeness without re-running the same search.
-
-**Target shape after refactoring:** All code that varies together sits in one place; the agent loads one module to make any change along this axis and verifies completeness in one read.
+**Goal:** All code that varies together sits in one place; the agent loads one module to make any change along this axis and verifies completeness in one read.
 
 ```js
 // Smellier:
@@ -2139,6 +2575,14 @@ function logEvent({ event, user }) {
 }
 ```
 
+**Pressure:** Every change carries a risk of missing a site the agent didn't grep for; reviewers (human or agent) can't easily verify completeness without re-running the same search.
+
+**Tradeoff:** Consolidation creates a new boundary the agent must respect; previously-independent sites now route through one module that can become a contention point for unrelated edits.
+
+**Relief:** Change cost becomes proportional to the conceptual change; the agent reasons about one location instead of N scattered ones.
+
+**Trap:** Pulling every superficially-related edit into one module creates a god-module the agent now must reason about as a tangle of unrelated concerns — the smell migrated, not vanished.
+
 **Apply refactorings:** Move Function, Move Field, Combine Functions into Class, Combine Functions into Transform, Split Phase, Inline Function, Inline Class
 
 ---
@@ -2148,11 +2592,9 @@ description: Refuse Feature Envy when a method's body references foreign-class d
 
 # Refuse: 09 — Feature Envy
 
-**Trigger (refuse when you see):** A method's body references foreign-class data more than its own; the agent loading this method must also load the foreign class to verify any change.
+**Symptom:** A method's body references foreign-class data more than its own; the agent loading this method must also load the foreign class to verify any change.
 
-**Cost of leaving it in:** Each call to the envious method pulls a second class into the agent's working context; chained reasoning across the boundary compounds the load.
-
-**Target shape after refactoring:** Method bodies stay close to the data they read — the agent loads one class to reason about one behavior.
+**Goal:** Method bodies stay close to the data they read — the agent loads one class to reason about one behavior.
 
 ```js
 // Smellier:
@@ -2167,6 +2609,14 @@ class Item  { weight()      { return this.unitWeight * this.qty; } }
 class Order { totalWeight() { return this.items.reduce((s, i) => s + i.weight(), 0); } }
 ```
 
+**Pressure:** Each call to the envious method pulls a second class into the agent's working context; chained reasoning across the boundary compounds the load.
+
+**Tradeoff:** Moving the method may force additional cross-class dependencies the original boundary hid; the agent verifying the move must trace the new coupling at the destination class.
+
+**Relief:** The method's data sits inside the agent's current reasoning context; verifying behavior touches one class instead of two.
+
+**Trap:** Mechanical move-the-method-to-the-data on every cross-class read creates a fan-out the agent must follow at every call site — the cure becomes a worse smell than the original.
+
 **Apply refactorings:** Move Function, Extract Function
 
 ---
@@ -2176,11 +2626,9 @@ description: Refuse Data Clumps when the agent sees the same field group appeari
 
 # Refuse: 10 — Data Clumps
 
-**Trigger (refuse when you see):** The agent sees the same field group appearing across multiple signatures (parameters, fields, args) — every site re-parses the same shape and verifies the same ordering.
+**Symptom:** The agent sees the same field group appearing across multiple signatures (parameters, fields, args) — every site re-parses the same shape and verifies the same ordering.
 
-**Cost of leaving it in:** Adding or removing a field of the clump means touching every site; the agent must find them all and update each consistently or risk silent shape drift.
-
-**Target shape after refactoring:** The clump becomes a named value object the agent passes through as a single token; structure validation happens once at construction.
+**Goal:** The clump becomes a named value object the agent passes through as a single token; structure validation happens once at construction.
 
 ```js
 // Smellier:
@@ -2195,6 +2643,14 @@ function send(name, email, address) {
 }
 ```
 
+**Pressure:** Adding or removing a field of the clump means touching every site; the agent must find them all and update each consistently or risk silent shape drift.
+
+**Tradeoff:** Constructing the value object on every call adds an allocation and a name the agent must learn; if the bundle isn't reused it's pure ceremony.
+
+**Relief:** Operations on the clump (formatting, validation, equality) live with it; signatures shrink and the agent reasons about one named concept instead of N coupled fields.
+
+**Trap:** Wrapping coincidental field groups creates fake value objects the agent must construct and destructure with no comprehension gain — naming what isn't a concept doesn't help reason.
+
 **Apply refactorings:** Extract Class, Introduce Parameter Object, Preserve Whole Object
 
 ---
@@ -2204,11 +2660,9 @@ description: Refuse Primitive Obsession when function signatures use raw strings
 
 # Refuse: 11 — Primitive Obsession
 
-**Trigger (refuse when you see):** Function signatures use raw strings and numbers where domain concepts hide; the agent cannot tell from the type whether an argument is the right kind of thing.
+**Symptom:** Function signatures use raw strings and numbers where domain concepts hide; the agent cannot tell from the type whether an argument is the right kind of thing.
 
-**Cost of leaving it in:** The agent must inspect call-site context (variable names, surrounding code) to verify a primitive is the right kind; validation and formatting logic scatters across consumers.
-
-**Target shape after refactoring:** Each domain concept has its own typed wrapper; the agent's type checker catches wrong-primitive-in-wrong-slot mistakes before runtime.
+**Goal:** Each domain concept has its own typed wrapper; the agent's type checker catches wrong-primitive-in-wrong-slot mistakes before runtime.
 
 ```js
 // Smellier:
@@ -2223,6 +2677,14 @@ function priceFor(money) {
 }
 ```
 
+**Pressure:** The agent must inspect call-site context (variable names, surrounding code) to verify a primitive is the right kind; validation and formatting logic scatters across consumers.
+
+**Tradeoff:** Each wrapper is a class the agent must load and instantiate; for primitives used in only one place, the wrapper is more code than the original concern warranted.
+
+**Relief:** Wrong-primitive misuse becomes a type error the agent catches without runtime testing; behavior and rules accrete around the concept where the agent expects to find them.
+
+**Trap:** Wrapping every primitive — including ones with no domain rules or behavior — adds boilerplate the agent must navigate at every signature with no reasoning benefit.
+
 **Apply refactorings:** Replace Primitive with Object, Replace Type Code with Subclasses, Replace Conditional with Polymorphism, Extract Class, Introduce Parameter Object
 
 ---
@@ -2232,11 +2694,9 @@ description: Refuse Repeated Switches when the agent finds the same switch (or i
 
 # Refuse: 12 — Repeated Switches
 
-**Trigger (refuse when you see):** The agent finds the same switch (or if/else chain) over a type code in multiple files; adding a new case requires the agent to grep for every site and update each consistently.
+**Symptom:** The agent finds the same switch (or if/else chain) over a type code in multiple files; adding a new case requires the agent to grep for every site and update each consistently.
 
-**Cost of leaving it in:** Dispatch logic duplicates across files; new cases are easy to miss; chained edits across all switch sites compound the agent's review burden per change.
-
-**Target shape after refactoring:** Each case is a class implementing a shared interface; the agent adds a new case by adding one class, and the type checker tells it what's still missing.
+**Goal:** Each case is a class implementing a shared interface; the agent adds a new case by adding one class, and the type checker tells it what's still missing.
 
 ```js
 // Smellier:
@@ -2250,6 +2710,14 @@ switch (event.kind) {
 event.handle(); // ClickEvent, KeyEvent, DragEvent each implement handle()
 ```
 
+**Pressure:** Dispatch logic duplicates across files; new cases are easy to miss; chained edits across all switch sites compound the agent's review burden per change.
+
+**Tradeoff:** Polymorphic dispatch is implicit at call sites — the agent can no longer see the full set of branches in one place and must enumerate subclasses across files to reason about behavior.
+
+**Relief:** Adding a new variant is mechanical and the type checker enforces completeness; the agent's plan-and-execute loop for new cases is bounded.
+
+**Trap:** Replacing every switch with polymorphism, even ones with two stable cases, creates a class hierarchy the agent must navigate without buying any extension flexibility.
+
 **Apply refactorings:** Replace Conditional with Polymorphism
 
 ---
@@ -2259,11 +2727,9 @@ description: Refuse Loops when imperative for/while loops where filter, map, and
 
 # Refuse: 13 — Loops
 
-**Trigger (refuse when you see):** Imperative for/while loops where filter, map, and reduce concerns are mixed by hand; the agent cannot tell what the loop is producing without mentally executing it.
+**Symptom:** Imperative for/while loops where filter, map, and reduce concerns are mixed by hand; the agent cannot tell what the loop is producing without mentally executing it.
 
-**Cost of leaving it in:** The agent must mentally execute the loop to learn its result; off-by-one and accumulator bugs hide in the body and only surface at test time.
-
-**Target shape after refactoring:** The transformation reads as a sequence of named operations; the agent recognizes the shape (filter, map, reduce) without simulating the loop.
+**Goal:** The transformation reads as a sequence of named operations; the agent recognizes the shape (filter, map, reduce) without simulating the loop.
 
 ```js
 // Smellier:
@@ -2278,6 +2744,14 @@ const seniors = users
   .map(u => u.name);
 ```
 
+**Pressure:** The agent must mentally execute the loop to learn its result; off-by-one and accumulator bugs hide in the body and only surface at test time.
+
+**Tradeoff:** Pipeline form adds per-element call overhead and forces the agent to track intermediate collection types through the chain; for hot paths the runtime cost matters.
+
+**Relief:** Intent jumps off the page; the agent reasons about each step independently and the type signatures at each pipeline stage document the transformation.
+
+**Trap:** Forcing every loop into a pipeline — including ones with early-exit, side-effecting accumulators, or sequential dependencies — produces twisted .reduce() bodies the agent has to untangle to understand.
+
 **Apply refactorings:** Replace Loop with Pipeline
 
 ---
@@ -2287,11 +2761,9 @@ description: Refuse Lazy Element when a class, function, or namespace whose body
 
 # Refuse: 14 — Lazy Element
 
-**Trigger (refuse when you see):** A class, function, or namespace whose body the agent traces through only to find no decisions or transformations — every hop is pure overhead in reasoning context.
+**Symptom:** A class, function, or namespace whose body the agent traces through only to find no decisions or transformations — every hop is pure overhead in reasoning context.
 
-**Cost of leaving it in:** The agent navigates through layers that add nothing; future maintainers (human or agent) face a choice between leaving dead weight or extracting a real reason for it.
-
-**Target shape after refactoring:** Trivial wrappers disappear; the call site reads exactly as what's happening and the agent skips the indirection.
+**Goal:** Trivial wrappers disappear; the call site reads exactly as what's happening and the agent skips the indirection.
 
 ```js
 // Smellier:
@@ -2304,6 +2776,14 @@ const n = getName(user);
 const n = user.name;
 ```
 
+**Pressure:** The agent navigates through layers that add nothing; future maintainers (human or agent) face a choice between leaving dead weight or extracting a real reason for it.
+
+**Tradeoff:** Inlining scatters the wrapper's body across call sites; if the wrapper was a seam (mocking boundary, extension point), removing it forecloses options the agent might need later.
+
+**Relief:** Shorter call chains; the agent loads one fewer definition per reasoning step; the call site reads as exactly what's happening.
+
+**Trap:** Mechanically inlining everything that looks trivial — including wrappers that mark a real seam — collapses extension points the agent will need to re-introduce later at higher cost.
+
 **Apply refactorings:** Inline Function, Inline Class, Collapse Hierarchy
 
 ---
@@ -2313,11 +2793,9 @@ description: Refuse Speculative Generality when abstract base classes, hooks, co
 
 # Refuse: 15 — Speculative Generality
 
-**Trigger (refuse when you see):** Abstract base classes, hooks, configuration knobs, or parameters with no real call site exercising them — the agent must learn vocabulary it never gets to use.
+**Symptom:** Abstract base classes, hooks, configuration knobs, or parameters with no real call site exercising them — the agent must learn vocabulary it never gets to use.
 
-**Cost of leaving it in:** Tests cover branches no one exercises; readers (human and agent) learn dead vocabulary; refactoring proposals must consider phantom users that aren't real.
-
-**Target shape after refactoring:** The code expresses exactly what it does today; the agent's mental model has no concepts that don't correspond to active behavior.
+**Goal:** The code expresses exactly what it does today; the agent's mental model has no concepts that don't correspond to active behavior.
 
 ```js
 // Smellier:
@@ -2332,6 +2810,14 @@ function execute() {
 execute();
 ```
 
+**Pressure:** Tests cover branches no one exercises; readers (human and agent) learn dead vocabulary; refactoring proposals must consider phantom users that aren't real.
+
+**Tradeoff:** Removing speculative scaffolding is sometimes a real loss — the abstraction may document a coming feature or a deliberately-preserved seam; the agent collapsing it must verify no current or imminent caller relies on the option.
+
+**Relief:** Smaller surface; fewer concepts the agent must hold in its reasoning context; tests align with actual behavior so green tests mean live coverage.
+
+**Trap:** Collapsing every unused hook on sight removes options the team had reason to hold; the agent must judge intent before deleting, or risk shipping cleanups the maintainers reject.
+
 **Apply refactorings:** Collapse Hierarchy, Inline Function, Inline Class, Change Function Declaration, Remove Dead Code
 
 ---
@@ -2341,11 +2827,9 @@ description: Refuse Temporary Field when a class field the agent finds set to nu
 
 # Refuse: 16 — Temporary Field
 
-**Trigger (refuse when you see):** A class field the agent finds set to null or default for most of the object's lifetime, populated only inside one method's flow — the agent must verify which methods care.
+**Symptom:** A class field the agent finds set to null or default for most of the object's lifetime, populated only inside one method's flow — the agent must verify which methods care.
 
-**Cost of leaving it in:** The agent must trace the conditions under which the field is meaningful; null-checks scatter across consumers; class invariants weaken because the field has no defined lifecycle.
-
-**Target shape after refactoring:** Temporary state lives in a dedicated class that exists only when relevant; the agent loads the temporary type only when reasoning about that flow.
+**Goal:** Temporary state lives in a dedicated class that exists only when relevant; the agent loads the temporary type only when reasoning about that flow.
 
 ```js
 // Smellier:
@@ -2361,6 +2845,14 @@ class Order    { ship() { return new Shipment(this); } }
 class Shipment { /* owns the track */ }
 ```
 
+**Pressure:** The agent must trace the conditions under which the field is meaningful; null-checks scatter across consumers; class invariants weaken because the field has no defined lifecycle.
+
+**Tradeoff:** Extracting a new class adds a type the agent must load to reason about the flow; for genuinely one-shot uses the class is more code than the original field warranted.
+
+**Relief:** Null-checks vanish; the agent reasons about a class with a clear lifecycle; class invariants tighten so reasoning about the host class doesn't have to consider the unused state.
+
+**Trap:** Extracting a class for every short-lived field — including ones with truly local use — creates new types the agent must load with no comprehension gain over the original encapsulated field.
+
 **Apply refactorings:** Extract Class, Move Function, Introduce Special Case
 
 ---
@@ -2370,11 +2862,9 @@ description: Refuse Message Chains when long dotted access paths the agent must 
 
 # Refuse: 17 — Message Chains
 
-**Trigger (refuse when you see):** Long dotted access paths the agent must trace through several object hops to understand any single read; renaming any intermediate field breaks every caller silently.
+**Symptom:** Long dotted access paths the agent must trace through several object hops to understand any single read; renaming any intermediate field breaks every caller silently.
 
-**Cost of leaving it in:** Every link in the chain is a coupling point the agent must hold in working memory; refactoring any intermediate shape requires the agent to find and update every chained access.
-
-**Target shape after refactoring:** Callers ask the closest object for what they want; the agent reasons about one boundary instead of traversing N.
+**Goal:** Callers ask the closest object for what they want; the agent reasons about one boundary instead of traversing N.
 
 ```js
 // Smellier:
@@ -2383,6 +2873,14 @@ const street = order.customer.address.street;
 // Fresher:
 const street = order.customerStreet();
 ```
+
+**Pressure:** Every link in the chain is a coupling point the agent must hold in working memory; refactoring any intermediate shape requires the agent to find and update every chained access.
+
+**Tradeoff:** Adding passthrough methods on the host class grows its surface; for chains used in one place the passthrough is overhead the agent now maintains in two places.
+
+**Relief:** Encapsulation tightens; intermediate objects can change shape without breaking callers; the agent reasoning about a caller doesn't load every link in the chain.
+
+**Trap:** Wrapping every dotted chain in passthroughs migrates the smell from call sites into the host class's surface — the agent now reads a wall of delegation methods to find any real behavior.
 
 **Apply refactorings:** Hide Delegate, Extract Function, Move Function
 
@@ -2393,11 +2891,9 @@ description: Refuse Middle Man when a class whose methods all delegate straight 
 
 # Refuse: 18 — Middle Man
 
-**Trigger (refuse when you see):** A class whose methods all delegate straight through to another object — the agent traces every call to the real implementation, paying a hop for no decision.
+**Symptom:** A class whose methods all delegate straight through to another object — the agent traces every call to the real implementation, paying a hop for no decision.
 
-**Cost of leaving it in:** An entire indirection layer the agent must navigate per method; the agent reading code through the middle man re-traces the delegation on every reasoning step.
-
-**Target shape after refactoring:** Callers talk to the real object directly; the agent's call traces are shorter and the real implementation's location is obvious.
+**Goal:** Callers talk to the real object directly; the agent's call traces are shorter and the real implementation's location is obvious.
 
 ```js
 // Smellier:
@@ -2412,6 +2908,14 @@ class Manager {
 manager.team.members();
 ```
 
+**Pressure:** An entire indirection layer the agent must navigate per method; the agent reading code through the middle man re-traces the delegation on every reasoning step.
+
+**Tradeoff:** Direct access exposes the underlying object's full surface to every consumer; the agent loses any encapsulation the middle man was providing (even if mostly cosmetic).
+
+**Relief:** Fewer files; shorter call stacks; the agent's plan-and-execute loop touches the real implementation directly without the passthrough hop.
+
+**Trap:** Deleting a passthrough that was actually doing real work — authorization, validation, auditing — removes a load-bearing layer the agent didn't recognize because the trivial-looking delegation masked it.
+
 **Apply refactorings:** Remove Middle Man, Inline Function, Replace Superclass with Delegate, Replace Subclass with Delegate
 
 ---
@@ -2421,11 +2925,9 @@ description: Refuse Insider Trading when module A reaches into module B's privat
 
 # Refuse: 19 — Insider Trading
 
-**Trigger (refuse when you see):** Module A reaches into module B's private fields or undocumented behavior; the agent reasoning about A must also load B's internals to make any change.
+**Symptom:** Module A reaches into module B's private fields or undocumented behavior; the agent reasoning about A must also load B's internals to make any change.
 
-**Cost of leaving it in:** Refactoring one module silently breaks the other in ways the type system doesn't catch; the agent must trace cross-module assumptions on every edit.
-
-**Target shape after refactoring:** Cooperation flows through a narrow named interface the agent can read once; A's reasoning context excludes B's implementation details.
+**Goal:** Cooperation flows through a narrow named interface the agent can read once; A's reasoning context excludes B's implementation details.
 
 ```js
 // Smellier:
@@ -2441,6 +2943,14 @@ class A { value() { return this._data.value; } }
 class B { read(a) { return a.value(); } }
 ```
 
+**Pressure:** Refactoring one module silently breaks the other in ways the type system doesn't catch; the agent must trace cross-module assumptions on every edit.
+
+**Tradeoff:** Defining a real public interface adds a contract the agent must respect at both ends; until the interface stabilizes, every change forces synchronized edits across both modules.
+
+**Relief:** Module boundaries become real seams the agent can reason about independently; tests exercise the public surface and refactoring stays local.
+
+**Trap:** Erecting elaborate public APIs between modules that genuinely belong together creates a fake boundary the agent must navigate at every interaction with no isolation gain.
+
 **Apply refactorings:** Move Function, Move Field, Hide Delegate, Replace Subclass with Delegate, Replace Superclass with Delegate
 
 ---
@@ -2450,11 +2960,9 @@ description: Refuse Large Class when a class file with so many fields and method
 
 # Refuse: 20 — Large Class
 
-**Trigger (refuse when you see):** A class file with so many fields and methods that the agent cannot load it as a coherent unit; multiple unrelated responsibilities sit under one name.
+**Symptom:** A class file with so many fields and methods that the agent cannot load it as a coherent unit; multiple unrelated responsibilities sit under one name.
 
-**Cost of leaving it in:** Cognitive context inflates with every irrelevant member; the agent reading any single method must skim past unrelated fields and helpers to find what it needs.
-
-**Target shape after refactoring:** Each class has one cohesive purpose; the agent loads a small focused file to reason about any single behavior.
+**Goal:** Each class has one cohesive purpose; the agent loads a small focused file to reason about any single behavior.
 
 ```js
 // Smellier:
@@ -2468,6 +2976,14 @@ class Customer { /* name, email */ }
 class Shipping { /* address, track */ }
 ```
 
+**Pressure:** Cognitive context inflates with every irrelevant member; the agent reading any single method must skim past unrelated fields and helpers to find what it needs.
+
+**Tradeoff:** Splitting creates new collaborator relationships the agent must trace across files; what was one load now becomes N loads and the agent must understand how the pieces interact.
+
+**Relief:** Smaller, focused units; the agent's reasoning context per method is tight; tests target one concern at a time.
+
+**Trap:** Splitting on superficial groupings produces fragments that don't cohere on their own — the agent now navigates several files to understand what was previously one coherent (if large) concept.
+
 **Apply refactorings:** Extract Class, Extract Superclass, Replace Type Code with Subclasses
 
 ---
@@ -2477,11 +2993,9 @@ description: Refuse Alternative Classes with Different Interfaces when two class
 
 # Refuse: 21 — Alternative Classes with Different Interfaces
 
-**Trigger (refuse when you see):** Two classes the agent recognizes as doing similar things but with mismatched method names and signatures; the agent must learn both vocabularies and translate between them.
+**Symptom:** Two classes the agent recognizes as doing similar things but with mismatched method names and signatures; the agent must learn both vocabularies and translate between them.
 
-**Cost of leaving it in:** Substitution becomes copy-paste; abstraction over the two is impossible; the agent must hold both interfaces in working memory to use either.
-
-**Target shape after refactoring:** Equivalent operations have equivalent signatures; the agent uses one mental model and the type system enforces substitutability.
+**Goal:** Equivalent operations have equivalent signatures; the agent uses one mental model and the type system enforces substitutability.
 
 ```js
 // Smellier:
@@ -2493,6 +3007,14 @@ class CSVExporter  implements Exporter { write(rows) {} }
 class JSONExporter implements Exporter { write(rows) {} }
 ```
 
+**Pressure:** Substitution becomes copy-paste; abstraction over the two is impossible; the agent must hold both interfaces in working memory to use either.
+
+**Tradeoff:** Aligning the interfaces forces renames across both classes and every consumer; the agent verifying the alignment must update every call site and confirm the new common contract holds for both.
+
+**Relief:** Polymorphic use becomes possible; new alternatives plug in without bespoke adapters; the agent reasons about the operation once.
+
+**Trap:** Forcing two classes into a shared interface despite genuinely different contracts produces an abstraction the agent must constantly special-case — important distinctions hide behind a fake polymorphism.
+
 **Apply refactorings:** Change Function Declaration, Move Function, Extract Superclass
 
 ---
@@ -2502,11 +3024,9 @@ description: Refuse Data Class when a class whose surface is only getters and se
 
 # Refuse: 22 — Data Class
 
-**Trigger (refuse when you see):** A class whose surface is only getters and setters; all real behavior lives in consumers, scattered across files the agent must locate to reason about anything domain-meaningful.
+**Symptom:** A class whose surface is only getters and setters; all real behavior lives in consumers, scattered across files the agent must locate to reason about anything domain-meaningful.
 
-**Cost of leaving it in:** Domain logic scatters across consumers; the agent must search the codebase to find any operation; class invariants aren't enforced so the agent must defensively check them at every consumer.
-
-**Target shape after refactoring:** Behavior that belongs with the data lives on the class; the agent loading the class finds the operations and invariants it expects, in one place.
+**Goal:** Behavior that belongs with the data lives on the class; the agent loading the class finds the operations and invariants it expects, in one place.
 
 ```js
 // Smellier:
@@ -2523,6 +3043,14 @@ class Address {
 }
 ```
 
+**Pressure:** Domain logic scatters across consumers; the agent must search the codebase to find any operation; class invariants aren't enforced so the agent must defensively check them at every consumer.
+
+**Tradeoff:** Migrating behavior onto the class can pull new collaborators into its definition; consumers shrink but the class's surface grows and its dependencies multiply.
+
+**Relief:** Invariants are enforceable in one place; the agent reasons about the class as a real domain object instead of chasing operations across consumers.
+
+**Trap:** Attaching every operation that touches the data — including ones that belong to use cases or services — turns the data class into a god object the agent must load to reason about anything in the surrounding domain.
+
 **Apply refactorings:** Encapsulate Record, Remove Setting Method, Move Function, Extract Function, Split Phase
 
 ---
@@ -2532,11 +3060,9 @@ description: Refuse Refused Bequest when a subclass overriding parent methods to
 
 # Refuse: 23 — Refused Bequest
 
-**Trigger (refuse when you see):** A subclass overriding parent methods to no-ops, throwing 'unsupported', or quietly ignoring inherited behavior — the agent cannot trust polymorphic calls on parent-typed references.
+**Symptom:** A subclass overriding parent methods to no-ops, throwing 'unsupported', or quietly ignoring inherited behavior — the agent cannot trust polymorphic calls on parent-typed references.
 
-**Cost of leaving it in:** Liskov violations: the agent cannot trust subclass instances to honor the parent contract, so polymorphism becomes a trap that the agent must defensively check at every call site.
-
-**Target shape after refactoring:** Sharing happens via composition (a held delegate) instead of forced inheritance; every reference type honors its contract.
+**Goal:** Sharing happens via composition (a held delegate) instead of forced inheritance; every reference type honors its contract.
 
 ```js
 // Smellier:
@@ -2551,6 +3077,14 @@ class Dog {
 }
 ```
 
+**Pressure:** Liskov violations: the agent cannot trust subclass instances to honor the parent contract, so polymorphism becomes a trap that the agent must defensively check at every call site.
+
+**Tradeoff:** Composition is more verbose at construction; the agent loses syntactic polymorphism and must verify behavior through explicit delegation calls instead of relying on inheritance dispatch.
+
+**Relief:** Each class has only what it needs; the agent's polymorphic reasoning becomes trustworthy because every reference type honors its declared contract.
+
+**Trap:** Replacing every inheritance relationship with composition, including ones where Liskov genuinely holds, pays construction verbosity at every site without buying any safety the original inheritance didn't provide.
+
 **Apply refactorings:** Push Down Method, Push Down Field, Replace Subclass with Delegate, Replace Superclass with Delegate
 
 ---
@@ -2560,11 +3094,9 @@ description: Refuse Comments when comments explaining what the next block does o
 
 # Refuse: 24 — Comments
 
-**Trigger (refuse when you see):** Comments explaining what the next block does or what a function returns; the agent loading the comment plus the code carries two sources of truth that may have drifted apart.
+**Symptom:** Comments explaining what the next block does or what a function returns; the agent loading the comment plus the code carries two sources of truth that may have drifted apart.
 
-**Cost of leaving it in:** The code didn't reveal its intent so the comment is patching an unnamed function or unclear variable; the agent must reconcile both sources and risk acting on the stale one.
-
-**Target shape after refactoring:** Names tell the agent what the comment was trying to say; comments survive only when they document a non-obvious WHY (hidden constraint, invariant, workaround).
+**Goal:** Names tell the agent what the comment was trying to say; comments survive only when they document a non-obvious WHY (hidden constraint, invariant, workaround).
 
 ```js
 // Smellier:
@@ -2574,5 +3106,13 @@ charge(c, t * 1.1);
 // Fresher:
 chargeWithTax(customer, total);
 ```
+
+**Pressure:** The code didn't reveal its intent so the comment is patching an unnamed function or unclear variable; the agent must reconcile both sources and risk acting on the stale one.
+
+**Tradeoff:** Renaming to express the comment's content ripples across consumers (cross-repo greps, embedding indexes, prior conversation context) the agent must accept will drift stale for a window.
+
+**Relief:** The agent trusts names as the source of truth; reasoning steps don't need to cross-reference comments that might be wrong; the code is the documentation.
+
+**Trap:** Deleting every comment in a cleanup pass — including ones documenting hidden constraints, historical context, or invariants names can't express — strips load-bearing context the agent will need later.
 
 **Apply refactorings:** Extract Function, Change Function Declaration, Introduce Assertion

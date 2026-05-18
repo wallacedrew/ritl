@@ -5,11 +5,9 @@ description: Apply Split Variable when you see Mysterious Name, Mutable Data. Ea
 
 # Apply: 18 — Split Variable
 
-**Target state:** Each variable holds one role with a stable name; the agent reasons about names without tracking reassignment timeline.
+**Symptom:** The agent finds a variable reassigned with values of conceptually different types or domains; reasoning about any expression involving it requires knowing which role is currently active.
 
-**Why apply it:** The agent reasons about each variable as a stable name; the type system can narrow each role; each use becomes independently refactorable.
-
-**Tradeoff:** If the two uses were actually coupled (shared init, synchronized update), splitting forces the agent to re-derive the coupling across two variables.
+**Goal:** Each variable holds one role with a stable name; the agent reasons about names without tracking reassignment timeline.
 
 ```js
 // Avoid:
@@ -24,5 +22,13 @@ console.log(perimeter);
 const area = height * width;
 console.log(area);
 ```
+
+**Pressure:** The agent must trace through reassignments to know what any reference currently means; type-narrowing in unions becomes guesswork at every read site.
+
+**Tradeoff:** If the two uses were actually coupled (shared init, synchronized update), splitting forces the agent to re-derive the coupling across two variables.
+
+**Relief:** The agent reasons about each variable as a stable name; the type system can narrow each role; each use becomes independently refactorable.
+
+**Trap:** Splitting variables whose uses genuinely shared state forces the agent to re-establish the coupling outside the variable, complicating the original logic.
 
 **Removes smells:** Mysterious Name, Mutable Data

@@ -5,11 +5,9 @@ description: Apply Change Value to Reference when you see Duplicated Code. The e
 
 # Apply: 57 — Change Value to Reference
 
-**Target state:** The entity exists once; the agent reasons about one canonical object referenced everywhere.
+**Symptom:** Duplicate copies of a logically-single entity scattered across the codebase; the agent updating the entity must find and update every copy consistently.
 
-**Why apply it:** Updates land in one place; storage shrinks; the agent reasons about the entity as a single referent with meaningful identity.
-
-**Tradeoff:** Sharing references introduces lifetime and visibility ambiguities (who owns this? when does it get freed?) the agent must reason about; the original value-copies sidestepped this.
+**Goal:** The entity exists once; the agent reasons about one canonical object referenced everywhere.
 
 ```js
 // Avoid:
@@ -20,5 +18,13 @@ orders.forEach(o => o.customer = { name: 'Acme' });
 const acme = customerRepository.find('Acme');
 orders.forEach(o => o.customer = acme);
 ```
+
+**Pressure:** The agent must coordinate updates across every copy; identity becomes ambiguous and the agent can't tell which copy is canonical.
+
+**Tradeoff:** Sharing references introduces lifetime and visibility ambiguities (who owns this? when does it get freed?) the agent must reason about; the original value-copies sidestepped this.
+
+**Relief:** Updates land in one place; storage shrinks; the agent reasons about the entity as a single referent with meaningful identity.
+
+**Trap:** Sharing references without explicit ownership creates lifetime ambiguities the agent must model — the cure introduces a different category of bug than the original duplication.
 
 **Removes smells:** Duplicated Code

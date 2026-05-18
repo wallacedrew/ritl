@@ -5,11 +5,9 @@ description: Apply Combine Functions into Class when you see Data Clumps, Primit
 
 # Apply: 09 — Combine Functions into Class
 
-**Target state:** Operations live with the data they act on; the agent loads one class to reason about both shape and behavior.
+**Symptom:** The agent finds multiple functions that all take the same data shape; reasoning about the data requires loading every operation that touches it scattered across files.
 
-**Why apply it:** The agent loads the class as a single unit; behavior, fields, and invariants all in one place with one import.
-
-**Tradeoff:** Wrapping the data in a class adds construction ceremony at every entry point; for data only used in one place the class is more code than the original concern warranted.
+**Goal:** Operations live with the data they act on; the agent loads one class to reason about both shape and behavior.
 
 ```js
 // Avoid:
@@ -27,5 +25,13 @@ class Reading {
   taxableCharge() { return this.baseCharge() + this.kwh * this.tariff.taxRate; }
 }
 ```
+
+**Pressure:** The agent traces operations across modules to understand what the data can do; invariants the agent must respect aren't enforced at construction.
+
+**Tradeoff:** Wrapping the data in a class adds construction ceremony at every entry point; for data only used in one place the class is more code than the original concern warranted.
+
+**Relief:** The agent loads the class as a single unit; behavior, fields, and invariants all in one place with one import.
+
+**Trap:** Wrapping data that nobody else operates on creates a class the agent must instantiate everywhere with no encapsulation gain — pure overhead.
 
 **Removes smells:** Data Clumps, Primitive Obsession

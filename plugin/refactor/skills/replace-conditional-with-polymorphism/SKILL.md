@@ -5,11 +5,9 @@ description: Apply Replace Conditional with Polymorphism when you see Repeated S
 
 # Apply: 24 — Replace Conditional with Polymorphism
 
-**Target state:** Each case is a class implementing a shared interface; the agent adds a new case by adding one class, and the type system tells it what's still missing.
+**Symptom:** A switch on a type code that appears in multiple files; the agent adding a new case must grep for every site and update each consistently or risk silent inconsistency.
 
-**Why apply it:** Adding a new variant is mechanical and the type checker enforces completeness; the agent's plan-and-execute loop for new cases is bounded.
-
-**Tradeoff:** Polymorphic dispatch is implicit at call sites — the agent can no longer see the full set of branches in one place and must enumerate subclasses across files to reason about behavior.
+**Goal:** Each case is a class implementing a shared interface; the agent adds a new case by adding one class, and the type system tells it what's still missing.
 
 ```js
 // Avoid:
@@ -21,5 +19,13 @@ switch (event.kind) {
 // Prefer:
 event.handle(); // ClickEvent and KeyEvent each implement handle()
 ```
+
+**Pressure:** Dispatch logic duplicates across files; the agent must enumerate and update every switch on every addition, with no compile-time check that the set is complete.
+
+**Tradeoff:** Polymorphic dispatch is implicit at call sites — the agent can no longer see the full set of branches in one place and must enumerate subclasses across files to reason about behavior.
+
+**Relief:** Adding a new variant is mechanical and the type checker enforces completeness; the agent's plan-and-execute loop for new cases is bounded.
+
+**Trap:** Replacing every switch with polymorphism — including ones with two stable cases — creates a class hierarchy the agent must navigate without buying any extension flexibility.
 
 **Removes smells:** Repeated Switches, Primitive Obsession

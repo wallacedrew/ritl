@@ -5,11 +5,9 @@ description: Apply Slide Statements when you see Long Function, Comments. Relate
 
 # Apply: 14 — Slide Statements
 
-**Target state:** Related statements sit next to each other; the agent reads the function as a sequence of cohesive blocks ready for extraction.
+**Symptom:** A function whose related statements are interleaved with unrelated work; the agent reasoning about any sub-step must track state across non-adjacent lines.
 
-**Why apply it:** The function reads as cohesive blocks the agent can extract or reason about as units; setup for further refactoring becomes mechanical.
-
-**Tradeoff:** Sliding can silently change behavior if statements aren't truly independent (hidden side effects, timing dependencies, observer effects); the agent verifying the slide must confirm independence at every gap.
+**Goal:** Related statements sit next to each other; the agent reads the function as a sequence of cohesive blocks ready for extraction.
 
 ```js
 // Avoid:
@@ -24,5 +22,13 @@ const tax = basePrice * 0.1;
 logPriceCalc(basePrice);
 logTaxCalc(tax);
 ```
+
+**Pressure:** The agent holds partial sub-step state across non-adjacent lines; reasoning about any single concern requires tracking the others through the interleave.
+
+**Tradeoff:** Sliding can silently change behavior if statements aren't truly independent (hidden side effects, timing dependencies, observer effects); the agent verifying the slide must confirm independence at every gap.
+
+**Relief:** The function reads as cohesive blocks the agent can extract or reason about as units; setup for further refactoring becomes mechanical.
+
+**Trap:** Aggressive sliding without verifying side-effect ordering — observer logs, time reads, async dispatch — silently changes behavior the agent's local tests may not catch.
 
 **Removes smells:** Long Function, Comments

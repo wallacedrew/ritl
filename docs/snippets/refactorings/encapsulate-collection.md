@@ -5,11 +5,9 @@ description: Apply Encapsulate Collection when you see Mutable Data, Insider Tra
 
 # Apply: 52 — Encapsulate Collection
 
-**Target state:** The owner exposes mutation methods (add, remove, replace); reads return snapshots or iterators; the agent reasons about collection invariants on the owner alone.
+**Symptom:** A class returns its internal collection directly; the agent reading any consumer cannot tell whether mutations will affect the owner without checking every consumer.
 
-**Why apply it:** The owner enforces invariants in one place; the agent refactoring the collection's internal shape stays local to the owner.
-
-**Tradeoff:** Returning a shallow copy on every read can hide bugs where callers expected mutation-back; the agent must be explicit about the read contract or risk silent no-ops.
+**Goal:** The owner exposes mutation methods (add, remove, replace); reads return snapshots or iterators; the agent reasons about collection invariants on the owner alone.
 
 ```js
 // Avoid:
@@ -26,5 +24,13 @@ class Person {
   drop(course)    { this.#courses = this.#courses.filter(c => c !== course); }
 }
 ```
+
+**Pressure:** Any consumer can mutate the collection in ways another consumer didn't expect; the agent verifying behavior must trace every read+mutation site to confirm invariants.
+
+**Tradeoff:** Returning a shallow copy on every read can hide bugs where callers expected mutation-back; the agent must be explicit about the read contract or risk silent no-ops.
+
+**Relief:** The owner enforces invariants in one place; the agent refactoring the collection's internal shape stays local to the owner.
+
+**Trap:** Returning copies silently changes the contract callers depended on — the agent shipping the encapsulation must verify every reader doesn't rely on mutate-the-returned-collection semantics.
 
 **Removes smells:** Mutable Data, Insider Trading

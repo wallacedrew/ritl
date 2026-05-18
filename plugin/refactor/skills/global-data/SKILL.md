@@ -5,11 +5,9 @@ description: Refuse Global Data when a module-level variable mutated from anywhe
 
 # Refuse: 05 — Global Data
 
-**Trigger (refuse when you see):** A module-level variable mutated from anywhere — the agent reading any single call site cannot bound its impact without scanning every consumer.
+**Symptom:** A module-level variable mutated from anywhere — the agent reading any single call site cannot bound its impact without scanning every consumer.
 
-**Cost of leaving it in:** Behavior depends on hidden write-order between callers the agent must discover one at a time; tracing any bug requires reconstructing a global mutation timeline.
-
-**Target shape after refactoring:** All reads and writes go through a named function the agent can grep for, find every consumer of, and reason about as a closed surface.
+**Goal:** All reads and writes go through a named function the agent can grep for, find every consumer of, and reason about as a closed surface.
 
 ```js
 // Smellier:
@@ -25,5 +23,13 @@ function getCurrentUser() {
   return currentUser;
 }
 ```
+
+**Pressure:** Behavior depends on hidden write-order between callers the agent must discover one at a time; tracing any bug requires reconstructing a global mutation timeline.
+
+**Tradeoff:** Wrapping the global doesn't eliminate the coupling — every reader still depends on the same shared state, and the agent still has to model the timeline to reason about reads.
+
+**Relief:** A single named function becomes the audit point; the agent can attach logging, validation, or cache logic in one place instead of chasing every consumer.
+
+**Trap:** Wrapping globals without narrowing access creates a false safety signal — the agent assumes the wrapper guarantees something it doesn't, and silent leaks become harder to diagnose.
 
 **Apply refactorings:** Encapsulate Variable

@@ -48,8 +48,13 @@ describe("smell per-entity snippet is a valid Claude SKILL.md", () => {
     expect(snippet).toMatch(/^# Refuse: 01 — Mysterious Name$/m);
   });
 
-  it("preserves the existing body content (Trigger, code, Apply refactorings)", () => {
-    expect(snippet).toContain("**Trigger");
+  it("renders all six force sections + code + cross-link", () => {
+    expect(snippet).toContain("**Symptom:**");
+    expect(snippet).toContain("**Goal:**");
+    expect(snippet).toContain("**Pressure:**");
+    expect(snippet).toContain("**Tradeoff:**");
+    expect(snippet).toContain("**Relief:**");
+    expect(snippet).toContain("**Trap:**");
     expect(snippet).toContain("**Apply refactorings:**");
     expect(snippet).toContain("function distance(speed, time)");
   });

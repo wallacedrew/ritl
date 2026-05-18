@@ -5,11 +5,9 @@ description: Apply Preserve Whole Object when you see Long Parameter List, Data 
 
 # Apply: 30 — Preserve Whole Object
 
-**Target state:** The function takes the object; the agent updates one place when the function needs new fields.
+**Symptom:** The agent sees call sites unpacking multiple fields from an object to pass to a function; adding any field the function later needs touches every call site.
 
-**Why apply it:** Signatures shrink; adding a needed field is an internal change; the agent reasons about one parameter at every call.
-
-**Tradeoff:** Passing the whole object couples the function to the object's full surface; the agent reasoning about the function must consider what other fields it might quietly read.
+**Goal:** The function takes the object; the agent updates one place when the function needs new fields.
 
 ```js
 // Avoid:
@@ -18,5 +16,13 @@ if (room.lowTemp < range.low || room.highTemp > range.high) { /* ... */ }
 // Prefer:
 if (range.includes(room)) { /* ... */ }
 ```
+
+**Pressure:** Every call site is a coordination point; the agent verifying a signature change must update every unpacking explicitly.
+
+**Tradeoff:** Passing the whole object couples the function to the object's full surface; the agent reasoning about the function must consider what other fields it might quietly read.
+
+**Relief:** Signatures shrink; adding a needed field is an internal change; the agent reasons about one parameter at every call.
+
+**Trap:** Passing whole objects when only one field is needed couples the function to the object's full surface the agent must consider as the function's input scope.
 
 **Removes smells:** Long Parameter List, Data Clumps

@@ -48,8 +48,13 @@ describe("refactoring per-entity snippet is a valid Claude SKILL.md", () => {
     expect(snippet).toMatch(/^# Apply: 01 — Extract Function$/m);
   });
 
-  it("preserves the existing body content (Target state, code, Removes smells)", () => {
-    expect(snippet).toContain("**Target state:**");
+  it("renders all six force sections + code + cross-link", () => {
+    expect(snippet).toContain("**Symptom:**");
+    expect(snippet).toContain("**Goal:**");
+    expect(snippet).toContain("**Pressure:**");
+    expect(snippet).toContain("**Tradeoff:**");
+    expect(snippet).toContain("**Relief:**");
+    expect(snippet).toContain("**Trap:**");
     expect(snippet).toContain("**Removes smells:** Long Function, Duplicated Code, Comments");
     expect(snippet).toContain("subtotalAfterBulkDiscount(invoice);");
   });

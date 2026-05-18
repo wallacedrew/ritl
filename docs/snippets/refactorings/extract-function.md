@@ -5,11 +5,9 @@ description: Apply Extract Function when you see Long Function, Duplicated Code,
 
 # Apply: 01 — Extract Function
 
-**Target state:** Each function is a verifiable unit small enough that the agent can reason about its full behavior in a single reasoning step.
+**Symptom:** A function whose token count exceeds the agent's reliable chunk-reasoning budget; verifying behavior preservation requires re-reading the entire span on every edit.
 
-**Why apply it:** Smaller diff surface per commit; behavior preservation verifiable per refactoring step; chained orchestrations work from named subroutines instead of re-derived semantics.
-
-**Tradeoff:** Each extracted helper inflates context-window cost by one definition the next reasoning step must load; over-extracting blows effective working memory.
+**Goal:** Each function is a verifiable unit small enough that the agent can reason about its full behavior in a single reasoning step.
 
 ```js
 // Avoid:
@@ -30,5 +28,13 @@ function invoiceTotal(invoice) {
   return roundToCents(withTax);
 }
 ```
+
+**Pressure:** Every edit pays full re-read cost; chained changes compound context usage and increase the chance of missing a cross-statement invariant.
+
+**Tradeoff:** Each extracted helper inflates context-window cost by one definition the next reasoning step must load; over-extracting blows effective working memory.
+
+**Relief:** Smaller diff surface per commit; behavior preservation verifiable per refactoring step; chained orchestrations work from named subroutines instead of re-derived semantics.
+
+**Trap:** Forces the agent to chase a dozen function definitions to follow what was once a 20-line procedure — context cost inflates and cross-function invariants disappear.
 
 **Removes smells:** Long Function, Duplicated Code, Comments

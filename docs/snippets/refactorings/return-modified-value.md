@@ -5,11 +5,9 @@ description: Apply Return Modified Value when you see Mutable Data. The function
 
 # Apply: 50 — Return Modified Value
 
-**Target state:** The function returns the modified value; the agent reads the signature and knows the function is a transformation, not a mutator.
+**Symptom:** A function that mutates one of its parameters in place; the agent reading the signature can't tell which parameters get mutated without reading the body.
 
-**Why apply it:** Side effects on inputs disappear from the agent's contract reasoning; the function reads as a pure transformation; composition and snapshotting work.
-
-**Tradeoff:** Callers must remember to capture the returned value; if any forget they keep the unmodified original, which the agent verifying must check at every call site (or rely on a readonly parameter type).
+**Goal:** The function returns the modified value; the agent reads the signature and knows the function is a transformation, not a mutator.
 
 ```js
 // Avoid:
@@ -24,5 +22,13 @@ function withTax(order) {
 }
 order = withTax(order);
 ```
+
+**Pressure:** The agent reasoning about any call must check the function body to identify which parameters mutate; equality, snapshotting, and composition all become guarded.
+
+**Tradeoff:** Callers must remember to capture the returned value; if any forget they keep the unmodified original, which the agent verifying must check at every call site (or rely on a readonly parameter type).
+
+**Relief:** Side effects on inputs disappear from the agent's contract reasoning; the function reads as a pure transformation; composition and snapshotting work.
+
+**Trap:** Forcing return-modified-value on every in-place mutator — including ones where mutation is the contract callers want (performance-critical batch ops) — substitutes one mismatch for another.
 
 **Removes smells:** Mutable Data

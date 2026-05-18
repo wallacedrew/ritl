@@ -5,11 +5,9 @@ description: Apply Introduce Parameter Object when you see Long Parameter List, 
 
 # Apply: 08 — Introduce Parameter Object
 
-**Target state:** The clump becomes a named value object the agent passes through as a single token; structure validation happens once at construction.
+**Symptom:** The agent sees the same field group appearing across multiple signatures; every site re-parses the same shape and verifies the same ordering.
 
-**Why apply it:** Operations on the clump (formatting, validation, equality) live with it; the agent reasons about one named concept instead of N coupled fields.
-
-**Tradeoff:** Constructing the object at every call adds an allocation and a name the agent must learn; if the clump appears in <3 places the wrapper is overhead.
+**Goal:** The clump becomes a named value object the agent passes through as a single token; structure validation happens once at construction.
 
 ```js
 // Avoid:
@@ -23,5 +21,13 @@ class NumberRange {
 function recordTemperature(range, value)   { /* ... */ }
 function alertIfOutOfRange(range, reading) { /* ... */ }
 ```
+
+**Pressure:** Adding or reordering a field touches every signature; the agent must find and update each consistently or risk silent positional drift.
+
+**Tradeoff:** Constructing the object at every call adds an allocation and a name the agent must learn; if the clump appears in <3 places the wrapper is overhead.
+
+**Relief:** Operations on the clump (formatting, validation, equality) live with it; the agent reasons about one named concept instead of N coupled fields.
+
+**Trap:** Wrapping coincidental field groups creates fake value objects the agent must construct and destructure with no comprehension gain.
 
 **Removes smells:** Long Parameter List, Data Clumps

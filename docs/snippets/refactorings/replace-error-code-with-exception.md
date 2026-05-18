@@ -5,11 +5,9 @@ description: Apply Replace Error Code with Exception when you see Comments. Fail
 
 # Apply: 60 — Replace Error Code with Exception
 
-**Target state:** Failures throw exceptions the agent reasons about as separate control flow; the type system marks the failure path.
+**Symptom:** The agent finds functions returning numeric or string codes for failure; verifying error handling requires the agent to trace every caller and check whether the code is inspected.
 
-**Why apply it:** The agent reasons about success and failure paths separately; cleanup happens via finally / try-with; forgetting to handle no longer silently swallows.
-
-**Tradeoff:** Exceptions for predictable conditions misuse the mechanism; the agent ships try/catch around expected outcomes that should be values.
+**Goal:** Failures throw exceptions the agent reasons about as separate control flow; the type system marks the failure path.
 
 ```js
 // Avoid:
@@ -25,5 +23,13 @@ function withdraw(amount) {
   balance -= amount;
 }
 ```
+
+**Pressure:** Every caller is a chance to silently swallow the error; the agent verifying correctness must audit every call site for the check.
+
+**Tradeoff:** Exceptions for predictable conditions misuse the mechanism; the agent ships try/catch around expected outcomes that should be values.
+
+**Relief:** The agent reasons about success and failure paths separately; cleanup happens via finally / try-with; forgetting to handle no longer silently swallows.
+
+**Trap:** Throwing for predictable conditions (not-found, validation failure) makes expected outcomes look like bugs to the agent reading the catch blocks.
 
 **Removes smells:** Comments

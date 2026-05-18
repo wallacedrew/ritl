@@ -5,11 +5,9 @@ description: Apply Inline Class when you see Lazy Element, Speculative Generalit
 
 # Apply: 55 — Inline Class
 
-**Target state:** The class folds into its primary collaborator; the agent loads one file for what was two.
+**Symptom:** A class with too few responsibilities for its own file; the agent loads the class to reason about behavior that would naturally live with the absorber.
 
-**Why apply it:** Fewer files; shorter call paths; the absorber's coherence improves when it owns the methods it was orchestrating.
-
-**Tradeoff:** If the absorber is already large, inlining pushes it past its complexity budget — the agent now loads a god-class to reason about what was previously separated.
+**Goal:** The class folds into its primary collaborator; the agent loads one file for what was two.
 
 ```js
 // Avoid:
@@ -27,5 +25,13 @@ class Shipment {
   display() { return `${this.shippingCompany}: ${this.trackingNumber}`; }
 }
 ```
+
+**Pressure:** Every reference site costs a file-jump the agent must pay; the indirection is overhead for trivial behavior.
+
+**Tradeoff:** If the absorber is already large, inlining pushes it past its complexity budget — the agent now loads a god-class to reason about what was previously separated.
+
+**Relief:** Fewer files; shorter call paths; the absorber's coherence improves when it owns the methods it was orchestrating.
+
+**Trap:** Inlining into an already-large class creates a worse Large Class smell — the agent must reason about a god-class instead of two focused ones.
 
 **Removes smells:** Lazy Element, Speculative Generality

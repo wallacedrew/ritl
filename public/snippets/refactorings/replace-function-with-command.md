@@ -5,11 +5,9 @@ description: Apply Replace Function with Command when you see Long Function. Sub
 
 # Apply: 48 — Replace Function with Command
 
-**Target state:** Sub-steps become named methods sharing state via fields; the agent reasons about each step in isolation and extracts/tests them independently.
+**Symptom:** A function whose body holds many shared locals across conceptually distinct sub-steps; the agent extracting any step must thread temps through helper parameters.
 
-**Why apply it:** Each sub-step becomes a named method on the command; the agent extracts and tests them in pieces without rewiring shared state.
-
-**Tradeoff:** Command ceremony (constructor + execute + named private methods) is overhead for functions without genuine multi-step state; the agent now navigates a class where one function used to suffice.
+**Goal:** Sub-steps become named methods sharing state via fields; the agent reasons about each step in isolation and extracts/tests them independently.
 
 ```js
 // Avoid:
@@ -33,5 +31,13 @@ class Scorer {
 }
 new Scorer(candidate).execute();
 ```
+
+**Pressure:** Every step the agent wants to extract drags shared state through parameter lists; the function's algorithm shape resists decomposition.
+
+**Tradeoff:** Command ceremony (constructor + execute + named private methods) is overhead for functions without genuine multi-step state; the agent now navigates a class where one function used to suffice.
+
+**Relief:** Each sub-step becomes a named method on the command; the agent extracts and tests them in pieces without rewiring shared state.
+
+**Trap:** Promoting every long function to a command — including ones with no genuine shared state — adds class ceremony the agent must navigate without gaining any decomposition advantage.
 
 **Removes smells:** Long Function

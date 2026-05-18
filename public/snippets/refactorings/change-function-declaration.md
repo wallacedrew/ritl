@@ -5,11 +5,9 @@ description: Apply Change Function Declaration when you see Mysterious Name, Lon
 
 # Apply: 05 — Change Function Declaration
 
-**Target state:** Names and signatures express what the function does; the agent reasons about call sites from the signature alone.
+**Symptom:** A function whose name or signature doesn't match its behavior; the agent inferring intent from the call site gets misled and must read the body to verify.
 
-**Why apply it:** Call sites read fluently; the agent's signature-based reasoning becomes trustworthy; mismatches surface at the boundary.
-
-**Tradeoff:** Every caller pays for the change at once; for cross-team consumers, the agent must coordinate updates or risk breaking external code.
+**Goal:** Names and signatures express what the function does; the agent reasons about call sites from the signature alone.
 
 ```js
 // Avoid:
@@ -22,5 +20,13 @@ function circumference(radius) {
   return 2 * Math.PI * radius;
 }
 ```
+
+**Pressure:** The agent must read the function body to verify call-site intent; chained edits compound the cost as the agent re-derives intent at every site.
+
+**Tradeoff:** Every caller pays for the change at once; for cross-team consumers, the agent must coordinate updates or risk breaking external code.
+
+**Relief:** Call sites read fluently; the agent's signature-based reasoning becomes trustworthy; mismatches surface at the boundary.
+
+**Trap:** Reshaping signatures across team boundaries without coordination forces other consumers to rebuild — the agent shipping the change may not see the downstream breakage.
 
 **Removes smells:** Mysterious Name, Long Parameter List, Alternative Classes with Different Interfaces

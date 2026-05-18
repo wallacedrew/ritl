@@ -5,11 +5,9 @@ description: Apply Replace Temp with Query when you see Long Function, Mutable D
 
 # Apply: 47 — Replace Temp with Query
 
-**Target state:** Computations become named queries the agent can reference by name from anywhere; functions decompose without dragging the temp's lifetime.
+**Symptom:** The agent finds a local variable assigned once from a computation and referenced multiple times; the temp's existence couples the rest of the function to the computation's locality.
 
-**Why apply it:** The agent's plan-and-execute loop for Extract Function becomes mechanical; the named query is reusable anywhere it makes sense.
-
-**Tradeoff:** If the temp wraps an expensive calculation called many times, naive replacement multiplies cost; the agent verifying performance must measure or cache before substituting.
+**Goal:** Computations become named queries the agent can reference by name from anywhere; functions decompose without dragging the temp's lifetime.
 
 ```js
 // Avoid:
@@ -26,5 +24,13 @@ function bill() {
 }
 function basePrice() { return qty * itemPrice; }
 ```
+
+**Pressure:** The agent extracting parts of the function must thread the temp through every extracted helper; the named computation can't be reused outside the function.
+
+**Tradeoff:** If the temp wraps an expensive calculation called many times, naive replacement multiplies cost; the agent verifying performance must measure or cache before substituting.
+
+**Relief:** The agent's plan-and-execute loop for Extract Function becomes mechanical; the named query is reusable anywhere it makes sense.
+
+**Trap:** Replacing temps that wrap expensive computations called many times multiplies runtime cost the agent's local tests may not catch.
 
 **Removes smells:** Long Function, Mutable Data
