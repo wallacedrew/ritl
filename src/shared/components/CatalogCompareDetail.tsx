@@ -1,0 +1,62 @@
+import Container from "@mui/material/Container";
+import Divider from "@mui/material/Divider";
+import Stack from "@mui/material/Stack";
+
+import BeforeAfterCodeBlocks from "@/shared/components/BeforeAfterCodeBlocks";
+import CatalogBackLink from "@/shared/components/CatalogBackLink";
+import CatalogEntryHeader from "@/shared/components/CatalogEntryHeader";
+import CatalogPrevNext from "@/shared/components/CatalogPrevNext";
+import CatalogSection from "@/shared/components/CatalogSection";
+import CatalogSectionCompare from "@/shared/components/CatalogSectionCompare";
+import LensSwitcher from "@/shared/components/LensSwitcher";
+import type { CatalogEntry } from "@/shared/lib/CatalogEntry";
+import type { CatalogNeighbors } from "@/shared/lib/CatalogNeighbors";
+
+interface CatalogCompareDetailProps {
+  entry: CatalogEntry;
+  number: number;
+  backLinkHref: string;
+  backLinkLabel: string;
+  beforeLabel: string;
+  afterLabel: string;
+  neighbors: CatalogNeighbors;
+}
+
+export default function CatalogCompareDetail({
+  entry,
+  number,
+  backLinkHref,
+  backLinkLabel,
+  beforeLabel,
+  afterLabel,
+  neighbors,
+}: CatalogCompareDetailProps) {
+  const human = entry.forcesFor("human");
+  const agent = entry.forcesFor("agent");
+
+  return (
+    <Container maxWidth="lg" sx={{ py: 4 }}>
+      <Stack spacing={3}>
+        <CatalogBackLink href={backLinkHref} label={backLinkLabel} />
+        <CatalogEntryHeader name={entry.name} number={number} relatedNames={entry.nemeses} />
+        <LensSwitcher entry={entry} currentView="compare" />
+        <Divider />
+        {entry.safetyNet && <CatalogSection label="Safety net" body={entry.safetyNet.toString()} />}
+        <CatalogSectionCompare label="Symptom" human={human.symptom} agent={agent.symptom} />
+        <CatalogSectionCompare label="Goal" human={human.goal} agent={agent.goal} />
+        <BeforeAfterCodeBlocks
+          beforeLabel={beforeLabel}
+          afterLabel={afterLabel}
+          beforeCode={entry.before}
+          afterCode={entry.after}
+        />
+        <CatalogSectionCompare label="Pressure" human={human.pressure} agent={agent.pressure} />
+        <CatalogSectionCompare label="Tradeoff" human={human.tradeoff} agent={agent.tradeoff} />
+        <CatalogSectionCompare label="Relief" human={human.relief} agent={agent.relief} />
+        <CatalogSectionCompare label="Trap" human={human.trap} agent={agent.trap} />
+        <Divider />
+        <CatalogPrevNext prev={neighbors.prev} next={neighbors.next} />
+      </Stack>
+    </Container>
+  );
+}
