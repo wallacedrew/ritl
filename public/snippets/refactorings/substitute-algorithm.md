@@ -1,15 +1,15 @@
 ---
 name: substitute-algorithm
-description: Apply Substitute Algorithm when you see Long Function, Loops. An opaque or convoluted algorithm gets replaced by a clearer one (often from a library or well-known pattern) that produces the same outputs.
+description: Apply Substitute Algorithm when you see Long Function, Loops. The clearer algorithm replaces the bespoke; the agent reasons about a recognized pattern instead of reverse-engineering the original.
 ---
 
 # Apply: 51 — Substitute Algorithm
 
-**Target state:** An opaque or convoluted algorithm gets replaced by a clearer one (often from a library or well-known pattern) that produces the same outputs.
+**Target state:** The clearer algorithm replaces the bespoke; the agent reasons about a recognized pattern instead of reverse-engineering the original.
 
-**Why apply it:** Future maintainers read the well-known pattern instead of decoding the bespoke implementation; performance and correctness usually improve.
+**Why apply it:** The agent recognizes the algorithm by name and reasons about it via its standard properties; correctness arguments become reusable.
 
-**Tradeoff:** Swapping algorithms wholesale forfeits behavioral safety — characterize the function with tests at every input boundary you care about before substituting.
+**Tradeoff:** Swapping algorithms wholesale forfeits behavioral safety unless every input boundary is characterized first; the agent that substitutes without characterization tests ships silent regressions.
 
 ```js
 // Avoid:

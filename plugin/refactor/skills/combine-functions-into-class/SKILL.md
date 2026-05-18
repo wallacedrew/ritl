@@ -1,15 +1,15 @@
 ---
 name: combine-functions-into-class
-description: Apply Combine Functions into Class when you see Data Clumps, Primitive Obsession. Functions that all act on the same data live alongside it as methods; calls become method calls on a domain object.
+description: Apply Combine Functions into Class when you see Data Clumps, Primitive Obsession. Operations live with the data they act on; the agent loads one class to reason about both shape and behavior.
 ---
 
 # Apply: 09 — Combine Functions into Class
 
-**Target state:** Functions that all act on the same data live alongside it as methods; calls become method calls on a domain object.
+**Target state:** Operations live with the data they act on; the agent loads one class to reason about both shape and behavior.
 
-**Why apply it:** Encapsulation tightens; tests target the class; new operations land in one obvious place.
+**Why apply it:** The agent loads the class as a single unit; behavior, fields, and invariants all in one place with one import.
 
-**Tradeoff:** Wrapping passive data in a class that nobody else uses adds ceremony — only combine when 2+ functions take the same data and would benefit from co-located behavior.
+**Tradeoff:** Wrapping the data in a class adds construction ceremony at every entry point; for data only used in one place the class is more code than the original concern warranted.
 
 ```js
 // Avoid:

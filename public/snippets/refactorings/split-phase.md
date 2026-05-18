@@ -1,15 +1,15 @@
 ---
 name: split-phase
-description: Apply Split Phase when you see Divergent Change, Long Function. Each phase reads and writes its own well-defined inputs and outputs; the seam between them is data, not control flow.
+description: Apply Split Phase when you see Divergent Change, Long Function. Each phase reads and writes its own well-defined inputs and outputs; the agent reasons about phases independently with the intermediate shape as the contract.
 ---
 
 # Apply: 11 — Split Phase
 
-**Target state:** Each phase reads and writes its own well-defined inputs and outputs; the seam between them is data, not control flow.
+**Target state:** Each phase reads and writes its own well-defined inputs and outputs; the agent reasons about phases independently with the intermediate shape as the contract.
 
-**Why apply it:** Phases evolve independently; tests target each phase in isolation; the intermediate shape becomes a documented contract.
+**Why apply it:** Each phase becomes the agent's unit of reasoning; the intermediate shape documents the contract; testing and modification isolate to one phase at a time.
 
-**Tradeoff:** An intermediate data structure between the phases is overhead — earn it by separating two clearly different concerns.
+**Tradeoff:** The intermediate data structure is overhead; for functions where the two phases are tightly coupled (shared mutable locals, observer effects), splitting adds a seam without buying isolation.
 
 ```js
 // Avoid:

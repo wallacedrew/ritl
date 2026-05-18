@@ -220,20 +220,20 @@
     "safetyNet": "unit test",
     "forces": {
       "human": {
-        "symptom": "[human symptom not yet authored]",
+        "symptom": "Two or more functions all take the same data shape as their first parameter and operate on its fields — passive data being acted on from outside.",
         "goal": "Functions that all act on the same data live alongside it as methods; calls become method calls on a domain object.",
-        "pressure": "[human pressure not yet authored]",
+        "pressure": "The data's invariants aren't enforced anywhere; logic that belongs together scatters across modules; new operations have to re-import the data shape and re-derive its rules.",
         "tradeoff": "Wrapping passive data in a class that nobody else uses adds ceremony — only combine when 2+ functions take the same data and would benefit from co-located behavior.",
         "relief": "Encapsulation tightens; tests target the class; new operations land in one obvious place.",
-        "trap": "[human trap not yet authored]"
+        "trap": "Wrapping passive data in a class that nobody else needs to be a class — adds construction ceremony at every entry point with no encapsulation gain."
       },
       "agent": {
-        "symptom": "[agent symptom not yet authored]",
-        "goal": "[agent goal not yet authored]",
-        "pressure": "[agent pressure not yet authored]",
-        "tradeoff": "[agent tradeoff not yet authored]",
-        "relief": "[agent relief not yet authored]",
-        "trap": "[agent trap not yet authored]"
+        "symptom": "The agent finds multiple functions that all take the same data shape; reasoning about the data requires loading every operation that touches it scattered across files.",
+        "goal": "Operations live with the data they act on; the agent loads one class to reason about both shape and behavior.",
+        "pressure": "The agent traces operations across modules to understand what the data can do; invariants the agent must respect aren't enforced at construction.",
+        "tradeoff": "Wrapping the data in a class adds construction ceremony at every entry point; for data only used in one place the class is more code than the original concern warranted.",
+        "relief": "The agent loads the class as a single unit; behavior, fields, and invariants all in one place with one import.",
+        "trap": "Wrapping data that nobody else operates on creates a class the agent must instantiate everywhere with no encapsulation gain — pure overhead."
       }
     }
   },
@@ -246,20 +246,20 @@
     "safetyNet": "unit test",
     "forces": {
       "human": {
-        "symptom": "[human symptom not yet authored]",
+        "symptom": "Multiple consumers compute the same derived values from the same source data, each independently re-deriving the result.",
         "goal": "Multiple derived values from the same source come from one transform that produces an enriched record.",
-        "pressure": "[human pressure not yet authored]",
+        "pressure": "Derivations drift between consumers as they age; bugs hide where two consumers compute slightly different versions; performance suffers from redundant computation.",
         "tradeoff": "Building a transform up-front when only one derivation exists is BDUF — wait for the second derivation before introducing the transform.",
         "relief": "Derivations stay consistent (no two callers compute slightly different versions); cache invalidation becomes obvious.",
-        "trap": "[human trap not yet authored]"
+        "trap": "Building a transform up-front when only one consumer derives anything — BDUF abstraction that adds an intermediate type without an active second user."
       },
       "agent": {
-        "symptom": "[agent symptom not yet authored]",
-        "goal": "[agent goal not yet authored]",
-        "pressure": "[agent pressure not yet authored]",
-        "tradeoff": "[agent tradeoff not yet authored]",
-        "relief": "[agent relief not yet authored]",
-        "trap": "[agent trap not yet authored]"
+        "symptom": "The agent encounters consumers each independently computing the same derived values from the same source; reasoning about consistency requires tracing every derivation.",
+        "goal": "One transform produces the enriched record; the agent reasons about derivations in one place and consumers read named fields.",
+        "pressure": "Each consumer re-derives the same values; the agent can't trust them to be consistent and must verify equivalence on every change.",
+        "tradeoff": "Building the transform when only one consumer exists creates an intermediate type the agent must learn before its second use justifies it.",
+        "relief": "Derivations are consistent by construction; the agent reads field accesses on the enriched record instead of computing across the codebase.",
+        "trap": "Pre-building transforms for hypothetical consumers creates intermediate shapes the agent must understand and maintain with no active reuse."
       }
     }
   },
@@ -272,20 +272,20 @@
     "safetyNet": "unit test",
     "forces": {
       "human": {
-        "symptom": "[human symptom not yet authored]",
+        "symptom": "A function that mixes two clearly different concerns — pricing AND rendering, parsing AND validating, fetching AND transforming — interleaved through shared locals.",
         "goal": "Each phase reads and writes its own well-defined inputs and outputs; the seam between them is data, not control flow.",
-        "pressure": "[human pressure not yet authored]",
+        "pressure": "Each concern can't be tested or evolved independently; changes to one concern risk breaking the other; the function's intent gets buried under coordination work.",
         "tradeoff": "An intermediate data structure between the phases is overhead — earn it by separating two clearly different concerns.",
         "relief": "Phases evolve independently; tests target each phase in isolation; the intermediate shape becomes a documented contract.",
-        "trap": "[human trap not yet authored]"
+        "trap": "Splitting phases that genuinely belong together — work where the second phase needs to mutate state the first phase set up in subtle ways — fragments coherent logic across an artificial seam."
       },
       "agent": {
-        "symptom": "[agent symptom not yet authored]",
-        "goal": "[agent goal not yet authored]",
-        "pressure": "[agent pressure not yet authored]",
-        "tradeoff": "[agent tradeoff not yet authored]",
-        "relief": "[agent relief not yet authored]",
-        "trap": "[agent trap not yet authored]"
+        "symptom": "The agent finds a function that conflates two concerns in interleaved code; reasoning about either concern requires tracing through the other.",
+        "goal": "Each phase reads and writes its own well-defined inputs and outputs; the agent reasons about phases independently with the intermediate shape as the contract.",
+        "pressure": "The agent must trace interleaved concerns through one function body; testing or modifying either requires reasoning about both.",
+        "tradeoff": "The intermediate data structure is overhead; for functions where the two phases are tightly coupled (shared mutable locals, observer effects), splitting adds a seam without buying isolation.",
+        "relief": "Each phase becomes the agent's unit of reasoning; the intermediate shape documents the contract; testing and modification isolate to one phase at a time.",
+        "trap": "Splitting tightly-coupled phases creates an artificial seam the agent must coordinate across — the intermediate shape leaks one phase's implementation into the next."
       }
     }
   },
@@ -454,20 +454,20 @@
     "safetyNet": "types/compiler",
     "forces": {
       "human": {
-        "symptom": "[human symptom not yet authored]",
+        "symptom": "A single variable (often named `temp`, `result`, `value`) reassigned multiple times to hold conceptually distinct values — perimeter, then area; current iteration result, then accumulator.",
         "goal": "Each variable has one role; reassignment patterns reflect distinct purposes rather than reused storage.",
-        "pressure": "[human pressure not yet authored]",
+        "pressure": "The reader must track which role the variable currently holds; bugs hide where one role's update accidentally clobbers another; refactoring either use is impossible without disentangling.",
         "tradeoff": "If the two uses were actually coupled — shared init or synchronized update — splitting them invites drift the single mutation kept in sync.",
         "relief": "Names match purpose; the type system can narrow each role; refactoring each use becomes local.",
-        "trap": "[human trap not yet authored]"
+        "trap": "Splitting variables whose uses were genuinely coupled — accumulator that depends on a previous-iteration version of itself — fragments coherent state into separate variables that have to re-establish the coupling."
       },
       "agent": {
-        "symptom": "[agent symptom not yet authored]",
-        "goal": "[agent goal not yet authored]",
-        "pressure": "[agent pressure not yet authored]",
-        "tradeoff": "[agent tradeoff not yet authored]",
-        "relief": "[agent relief not yet authored]",
-        "trap": "[agent trap not yet authored]"
+        "symptom": "The agent finds a variable reassigned with values of conceptually different types or domains; reasoning about any expression involving it requires knowing which role is currently active.",
+        "goal": "Each variable holds one role with a stable name; the agent reasons about names without tracking reassignment timeline.",
+        "pressure": "The agent must trace through reassignments to know what any reference currently means; type-narrowing in unions becomes guesswork at every read site.",
+        "tradeoff": "If the two uses were actually coupled (shared init, synchronized update), splitting forces the agent to re-derive the coupling across two variables.",
+        "relief": "The agent reasons about each variable as a stable name; the type system can narrow each role; each use becomes independently refactorable.",
+        "trap": "Splitting variables whose uses genuinely shared state forces the agent to re-establish the coupling outside the variable, complicating the original logic."
       }
     }
   },
@@ -506,20 +506,20 @@
     "safetyNet": "unit test",
     "forces": {
       "human": {
-        "symptom": "[human symptom not yet authored]",
+        "symptom": "A field that mirrors values computed from other fields, updated by hand at multiple write sites — `total` updated every time `items` changes.",
         "goal": "Values computed from other state are computed on demand; no separate field needs to be kept in sync.",
-        "pressure": "[human pressure not yet authored]",
+        "pressure": "The derived field can drift from its source; every writer of the underlying field must remember to update the derived one; bugs are 'why is total wrong here?' instead of local.",
         "tradeoff": "If the derivation is expensive and the source rarely changes, recomputing on every read may be wasteful — measure before deciding.",
         "relief": "Mutation scope shrinks; reasoning about state is simpler; no chance of the derived field drifting from its source.",
-        "trap": "[human trap not yet authored]"
+        "trap": "Replacing every derived value with a query — even ones that wrap an expensive computation called many times per render — substitutes correctness for runtime cost that matters."
       },
       "agent": {
-        "symptom": "[agent symptom not yet authored]",
-        "goal": "[agent goal not yet authored]",
-        "pressure": "[agent pressure not yet authored]",
-        "tradeoff": "[agent tradeoff not yet authored]",
-        "relief": "[agent relief not yet authored]",
-        "trap": "[agent trap not yet authored]"
+        "symptom": "The agent finds a field whose value mirrors a computation on other fields; every writer of the source field must update the derived field consistently or the values drift.",
+        "goal": "Derived values are computed on demand; the agent reasons about state by reading source fields and trusting derivations.",
+        "pressure": "The agent must trace every writer of the source field to verify the derived field stays in sync; bugs hide where one writer forgot to update the derivation.",
+        "tradeoff": "Recomputing on every read can multiply cost if the derivation is expensive and the source rarely changes; the agent verifying performance must measure before deciding.",
+        "relief": "Mutation scope shrinks to source fields; the agent reasons about state without modeling derivation update timing; consistency is by construction.",
+        "trap": "Replacing every derived field with a query — including ones wrapping expensive computations called many times — trades runtime cost for correctness without measuring the impact."
       }
     }
   },
@@ -1130,20 +1130,20 @@
     "safetyNet": "unit test",
     "forces": {
       "human": {
-        "symptom": "[human symptom not yet authored]",
+        "symptom": "The same setup (logging, validation, metric tick) or follow-up code appears around every call to a function — repeated boilerplate at every call site.",
         "goal": "Setup or follow-up that happens around every call to a function moves inside the function, so the caller's contract shrinks.",
-        "pressure": "[human pressure not yet authored]",
+        "pressure": "Every caller must remember the boilerplate; missing it produces inconsistent behavior the function doesn't enforce; updates to the boilerplate touch every caller.",
         "tradeoff": "If the moved statements aren't always wanted, the function grows a flag argument — verify every caller really needs the moved behavior.",
         "relief": "One fewer thing to remember at the call site; consistency is enforced by the function's definition, not by convention.",
-        "trap": "[human trap not yet authored]"
+        "trap": "Moving statements into a function that some callers don't actually want — the function grows a flag argument to make the moved behavior conditional, which is a worse smell."
       },
       "agent": {
-        "symptom": "[agent symptom not yet authored]",
-        "goal": "[agent goal not yet authored]",
-        "pressure": "[agent pressure not yet authored]",
-        "tradeoff": "[agent tradeoff not yet authored]",
-        "relief": "[agent relief not yet authored]",
-        "trap": "[agent trap not yet authored]"
+        "symptom": "The agent finds the same setup or follow-up code around every call to a function; consistency depends on every caller remembering the pattern.",
+        "goal": "The function owns its setup and follow-up; the agent verifies behavior at the function definition instead of auditing every call site.",
+        "pressure": "Every caller is a chance to miss the boilerplate or misorder it; the agent verifying consistency must check every site individually.",
+        "tradeoff": "If some callers genuinely don't want the moved behavior, the function grows a flag argument and the agent must reason about which mode each caller wants.",
+        "relief": "The agent reasons about the function's full contract from its definition; consistency is enforced by the function, not by convention.",
+        "trap": "Moving statements into a function some callers don't want adds a flag argument the agent must thread through every call site — substitutes one boilerplate for another."
       }
     }
   },
@@ -1156,20 +1156,20 @@
     "safetyNet": "unit test",
     "forces": {
       "human": {
-        "symptom": "[human symptom not yet authored]",
+        "symptom": "A function whose body mixes its core responsibility with statements that genuinely vary per caller — different logging contexts, different post-processing, different metric labels.",
         "goal": "Statements that vary by caller move out of the function so each caller chooses its own setup or follow-up.",
-        "pressure": "[human pressure not yet authored]",
+        "pressure": "The function's single responsibility is obscured by per-caller variations baked in; adding a new caller forces extending the function's branches.",
         "tradeoff": "If most callers want the moved statements, you've created duplication — the inverse of Move Statements into Function is only an improvement when callers genuinely differ.",
         "relief": "The function's body becomes about its single responsibility; callers express their differences directly.",
-        "trap": "[human trap not yet authored]"
+        "trap": "Pushing statements to callers when most callers want them anyway — creates duplication at every call site while the original function was perfectly clear."
       },
       "agent": {
-        "symptom": "[agent symptom not yet authored]",
-        "goal": "[agent goal not yet authored]",
-        "pressure": "[agent pressure not yet authored]",
-        "tradeoff": "[agent tradeoff not yet authored]",
-        "relief": "[agent relief not yet authored]",
-        "trap": "[agent trap not yet authored]"
+        "symptom": "The agent finds a function body whose statements vary by caller context — logging contexts, post-processing flags, metric labels baked into one body via branches.",
+        "goal": "The function's body addresses one responsibility; callers express their differences at the call site.",
+        "pressure": "Adding a new caller forces extending the function's branches; the agent must reason about which branch applies and verify branch coverage at every site.",
+        "tradeoff": "If most callers want the moved statements, the agent now sees duplicated boilerplate at every call site — the inverse smell.",
+        "relief": "The function's contract narrows to its single responsibility; callers express variation explicitly; the agent reasons about one body and one branch per caller.",
+        "trap": "Pushing statements to callers when most callers want them creates duplication the agent must keep in sync across every site — substitutes one smell for another."
       }
     }
   },
@@ -1182,20 +1182,20 @@
     "safetyNet": "types/compiler",
     "forces": {
       "human": {
-        "symptom": "[human symptom not yet authored]",
+        "symptom": "Inline code that reproduces what a named function in the codebase already does — a boolean check `candidate >= low && candidate <= high` when `between(value, low, high)` exists.",
         "goal": "When inline code reproduces what a named function already does, the inline copy is replaced by a call.",
-        "pressure": "[human pressure not yet authored]",
+        "pressure": "Two implementations of the same thing drift over time; bug fixes don't propagate; future readers wonder if the inline version is intentionally different.",
         "tradeoff": "If the existing function's name doesn't quite match the local intent, the call site reads as a near-miss; consider Change Function Declaration first.",
         "relief": "One canonical implementation; the name labels the intent; future improvements to the function reach every site that used to inline.",
-        "trap": "[human trap not yet authored]"
+        "trap": "Replacing inline code with a call to an existing function whose name doesn't quite match — the call site reads as a near-miss instead of as exactly what's happening."
       },
       "agent": {
-        "symptom": "[agent symptom not yet authored]",
-        "goal": "[agent goal not yet authored]",
-        "pressure": "[agent pressure not yet authored]",
-        "tradeoff": "[agent tradeoff not yet authored]",
-        "relief": "[agent relief not yet authored]",
-        "trap": "[agent trap not yet authored]"
+        "symptom": "The agent finds inline code that reproduces the body of a named function elsewhere in the codebase; consistency depends on both implementations staying in sync.",
+        "goal": "One canonical implementation the agent loads once and references everywhere; the name labels the intent at every call site.",
+        "pressure": "Two implementations drift over time; the agent verifying changes must update both or risk inconsistency the type checker doesn't catch.",
+        "tradeoff": "If the existing function's name doesn't quite match the local intent, the agent reads the call site as a near-miss and must verify the semantic match at every replacement.",
+        "relief": "The agent reasons about one definition; future improvements reach every site that used to inline; consistency is enforced by reference.",
+        "trap": "Replacing inline code with a call to a poorly-named function smears semantic mismatch across the codebase — the agent must constantly verify that the function's name still describes the local use."
       }
     }
   },
@@ -1208,20 +1208,20 @@
     "safetyNet": "unit test",
     "forces": {
       "human": {
-        "symptom": "[human symptom not yet authored]",
+        "symptom": "A local variable assigned once from a computation, then referenced one or more times within the same function — `const basePrice = qty * itemPrice;` used multiple times in the body.",
         "goal": "A local variable assigned once from a computation becomes a function that returns that computation on demand.",
-        "pressure": "[human pressure not yet authored]",
+        "pressure": "The temp's lifetime constrains how the surrounding function can be split; Extract Function must drag the temp along; the named computation is locked inside one function.",
         "tradeoff": "If the temp wraps an expensive calculation called many times, naive replacement may multiply cost — measure or cache before deciding.",
         "relief": "Extract Function becomes easier (the query has a name and stable scope); the temp's lifetime no longer constrains how the surrounding function is split.",
-        "trap": "[human trap not yet authored]"
+        "trap": "Replacing every temp with a query — including ones wrapping an expensive computation referenced many times — multiplies runtime cost without any structural gain."
       },
       "agent": {
-        "symptom": "[agent symptom not yet authored]",
-        "goal": "[agent goal not yet authored]",
-        "pressure": "[agent pressure not yet authored]",
-        "tradeoff": "[agent tradeoff not yet authored]",
-        "relief": "[agent relief not yet authored]",
-        "trap": "[agent trap not yet authored]"
+        "symptom": "The agent finds a local variable assigned once from a computation and referenced multiple times; the temp's existence couples the rest of the function to the computation's locality.",
+        "goal": "Computations become named queries the agent can reference by name from anywhere; functions decompose without dragging the temp's lifetime.",
+        "pressure": "The agent extracting parts of the function must thread the temp through every extracted helper; the named computation can't be reused outside the function.",
+        "tradeoff": "If the temp wraps an expensive calculation called many times, naive replacement multiplies cost; the agent verifying performance must measure or cache before substituting.",
+        "relief": "The agent's plan-and-execute loop for Extract Function becomes mechanical; the named query is reusable anywhere it makes sense.",
+        "trap": "Replacing temps that wrap expensive computations called many times multiplies runtime cost the agent's local tests may not catch."
       }
     }
   },
@@ -1312,20 +1312,20 @@
     "safetyNet": "characterization test",
     "forces": {
       "human": {
-        "symptom": "[human symptom not yet authored]",
+        "symptom": "An opaque, convoluted, or hand-rolled algorithm where a clearer and well-known pattern (often library-provided) produces the same outputs.",
         "goal": "An opaque or convoluted algorithm gets replaced by a clearer one (often from a library or well-known pattern) that produces the same outputs.",
-        "pressure": "[human pressure not yet authored]",
+        "pressure": "Future readers spend cycles decoding the bespoke version; correctness arguments stay local to this implementation; performance characteristics are unknown.",
         "tradeoff": "Swapping algorithms wholesale forfeits behavioral safety — characterize the function with tests at every input boundary you care about before substituting.",
         "relief": "Future maintainers read the well-known pattern instead of decoding the bespoke implementation; performance and correctness usually improve.",
-        "trap": "[human trap not yet authored]"
+        "trap": "Swapping algorithms without characterizing every input boundary the original handled — including the off-by-one cases the original quietly got right that the substitute might get differently."
       },
       "agent": {
-        "symptom": "[agent symptom not yet authored]",
-        "goal": "[agent goal not yet authored]",
-        "pressure": "[agent pressure not yet authored]",
-        "tradeoff": "[agent tradeoff not yet authored]",
-        "relief": "[agent relief not yet authored]",
-        "trap": "[agent trap not yet authored]"
+        "symptom": "The agent encounters a convoluted or hand-rolled algorithm where a well-known pattern produces the same outputs; reasoning about the bespoke version is expensive per read.",
+        "goal": "The clearer algorithm replaces the bespoke; the agent reasons about a recognized pattern instead of reverse-engineering the original.",
+        "pressure": "Every read of the bespoke algorithm pays the same decoding cost; the agent can't trust correctness without re-deriving the algorithm's invariants on every change.",
+        "tradeoff": "Swapping algorithms wholesale forfeits behavioral safety unless every input boundary is characterized first; the agent that substitutes without characterization tests ships silent regressions.",
+        "relief": "The agent recognizes the algorithm by name and reasons about it via its standard properties; correctness arguments become reusable.",
+        "trap": "Substituting without characterization tests at every input boundary ships silent regressions where the original quietly handled edge cases the substitute handles differently."
       }
     }
   },

@@ -237,16 +237,16 @@ return order.basePrice > 1000;
 
 ---
 name: combine-functions-into-class
-description: Apply Combine Functions into Class when you see Data Clumps, Primitive Obsession. Functions that all act on the same data live alongside it as methods; calls become method calls on a domain object.
+description: Apply Combine Functions into Class when you see Data Clumps, Primitive Obsession. Operations live with the data they act on; the agent loads one class to reason about both shape and behavior.
 ---
 
 # Apply: 09 — Combine Functions into Class
 
-**Target state:** Functions that all act on the same data live alongside it as methods; calls become method calls on a domain object.
+**Target state:** Operations live with the data they act on; the agent loads one class to reason about both shape and behavior.
 
-**Why apply it:** Encapsulation tightens; tests target the class; new operations land in one obvious place.
+**Why apply it:** The agent loads the class as a single unit; behavior, fields, and invariants all in one place with one import.
 
-**Tradeoff:** Wrapping passive data in a class that nobody else uses adds ceremony — only combine when 2+ functions take the same data and would benefit from co-located behavior.
+**Tradeoff:** Wrapping the data in a class adds construction ceremony at every entry point; for data only used in one place the class is more code than the original concern warranted.
 
 ```js
 // Avoid:
@@ -269,16 +269,16 @@ class Reading {
 
 ---
 name: combine-functions-into-transform
-description: Apply Combine Functions into Transform when you see Data Clumps, Mutable Data. Multiple derived values from the same source come from one transform that produces an enriched record.
+description: Apply Combine Functions into Transform when you see Data Clumps, Mutable Data. One transform produces the enriched record; the agent reasons about derivations in one place and consumers read named fields.
 ---
 
 # Apply: 10 — Combine Functions into Transform
 
-**Target state:** Multiple derived values from the same source come from one transform that produces an enriched record.
+**Target state:** One transform produces the enriched record; the agent reasons about derivations in one place and consumers read named fields.
 
-**Why apply it:** Derivations stay consistent (no two callers compute slightly different versions); cache invalidation becomes obvious.
+**Why apply it:** Derivations are consistent by construction; the agent reads field accesses on the enriched record instead of computing across the codebase.
 
-**Tradeoff:** Building a transform up-front when only one derivation exists is BDUF — wait for the second derivation before introducing the transform.
+**Tradeoff:** Building the transform when only one consumer exists creates an intermediate type the agent must learn before its second use justifies it.
 
 ```js
 // Avoid:
@@ -305,16 +305,16 @@ const discount = r.baseCharge * 0.95;
 
 ---
 name: split-phase
-description: Apply Split Phase when you see Divergent Change, Long Function. Each phase reads and writes its own well-defined inputs and outputs; the seam between them is data, not control flow.
+description: Apply Split Phase when you see Divergent Change, Long Function. Each phase reads and writes its own well-defined inputs and outputs; the agent reasons about phases independently with the intermediate shape as the contract.
 ---
 
 # Apply: 11 — Split Phase
 
-**Target state:** Each phase reads and writes its own well-defined inputs and outputs; the seam between them is data, not control flow.
+**Target state:** Each phase reads and writes its own well-defined inputs and outputs; the agent reasons about phases independently with the intermediate shape as the contract.
 
-**Why apply it:** Phases evolve independently; tests target each phase in isolation; the intermediate shape becomes a documented contract.
+**Why apply it:** Each phase becomes the agent's unit of reasoning; the intermediate shape documents the contract; testing and modification isolate to one phase at a time.
 
-**Tradeoff:** An intermediate data structure between the phases is overhead — earn it by separating two clearly different concerns.
+**Tradeoff:** The intermediate data structure is overhead; for functions where the two phases are tightly coupled (shared mutable locals, observer effects), splitting adds a seam without buying isolation.
 
 ```js
 // Avoid:
@@ -427,16 +427,16 @@ const seniors = users
 
 ---
 name: replace-derived-variable-with-query
-description: Apply Replace Derived Variable with Query when you see Mutable Data. Values computed from other state are computed on demand; no separate field needs to be kept in sync.
+description: Apply Replace Derived Variable with Query when you see Mutable Data. Derived values are computed on demand; the agent reasons about state by reading source fields and trusting derivations.
 ---
 
 # Apply: 20 — Replace Derived Variable with Query
 
-**Target state:** Values computed from other state are computed on demand; no separate field needs to be kept in sync.
+**Target state:** Derived values are computed on demand; the agent reasons about state by reading source fields and trusting derivations.
 
-**Why apply it:** Mutation scope shrinks; reasoning about state is simpler; no chance of the derived field drifting from its source.
+**Why apply it:** Mutation scope shrinks to source fields; the agent reasons about state without modeling derivation update timing; consistency is by construction.
 
-**Tradeoff:** If the derivation is expensive and the source rarely changes, recomputing on every read may be wasteful — measure before deciding.
+**Tradeoff:** Recomputing on every read can multiply cost if the derivation is expensive and the source rarely changes; the agent verifying performance must measure before deciding.
 
 ```js
 // Avoid:
@@ -458,16 +458,16 @@ class Order {
 
 ---
 name: split-variable
-description: Apply Split Variable when you see Mysterious Name, Mutable Data. Each variable has one role; reassignment patterns reflect distinct purposes rather than reused storage.
+description: Apply Split Variable when you see Mysterious Name, Mutable Data. Each variable holds one role with a stable name; the agent reasons about names without tracking reassignment timeline.
 ---
 
 # Apply: 18 — Split Variable
 
-**Target state:** Each variable has one role; reassignment patterns reflect distinct purposes rather than reused storage.
+**Target state:** Each variable holds one role with a stable name; the agent reasons about names without tracking reassignment timeline.
 
-**Why apply it:** Names match purpose; the type system can narrow each role; refactoring each use becomes local.
+**Why apply it:** The agent reasons about each variable as a stable name; the type system can narrow each role; each use becomes independently refactorable.
 
-**Tradeoff:** If the two uses were actually coupled — shared init or synchronized update — splitting them invites drift the single mutation kept in sync.
+**Tradeoff:** If the two uses were actually coupled (shared init, synchronized update), splitting forces the agent to re-derive the coupling across two variables.
 
 ```js
 // Avoid:
@@ -487,16 +487,16 @@ console.log(area);
 
 ---
 name: move-statements-into-function
-description: Apply Move Statements into Function when you see Duplicated Code. Setup or follow-up that happens around every call to a function moves inside the function, so the caller's contract shrinks.
+description: Apply Move Statements into Function when you see Duplicated Code. The function owns its setup and follow-up; the agent verifies behavior at the function definition instead of auditing every call site.
 ---
 
 # Apply: 44 — Move Statements into Function
 
-**Target state:** Setup or follow-up that happens around every call to a function moves inside the function, so the caller's contract shrinks.
+**Target state:** The function owns its setup and follow-up; the agent verifies behavior at the function definition instead of auditing every call site.
 
-**Why apply it:** One fewer thing to remember at the call site; consistency is enforced by the function's definition, not by convention.
+**Why apply it:** The agent reasons about the function's full contract from its definition; consistency is enforced by the function, not by convention.
 
-**Tradeoff:** If the moved statements aren't always wanted, the function grows a flag argument — verify every caller really needs the moved behavior.
+**Tradeoff:** If some callers genuinely don't want the moved behavior, the function grows a flag argument and the agent must reason about which mode each caller wants.
 
 ```js
 // Avoid:
@@ -516,16 +516,16 @@ function fetchLogged(url) {
 
 ---
 name: move-statements-to-callers
-description: Apply Move Statements to Callers when you see Divergent Change. Statements that vary by caller move out of the function so each caller chooses its own setup or follow-up.
+description: Apply Move Statements to Callers when you see Divergent Change. The function's body addresses one responsibility; callers express their differences at the call site.
 ---
 
 # Apply: 45 — Move Statements to Callers
 
-**Target state:** Statements that vary by caller move out of the function so each caller chooses its own setup or follow-up.
+**Target state:** The function's body addresses one responsibility; callers express their differences at the call site.
 
-**Why apply it:** The function's body becomes about its single responsibility; callers express their differences directly.
+**Why apply it:** The function's contract narrows to its single responsibility; callers express variation explicitly; the agent reasons about one body and one branch per caller.
 
-**Tradeoff:** If most callers want the moved statements, you've created duplication — the inverse of Move Statements into Function is only an improvement when callers genuinely differ.
+**Tradeoff:** If most callers want the moved statements, the agent now sees duplicated boilerplate at every call site — the inverse smell.
 
 ```js
 // Avoid:
@@ -544,16 +544,16 @@ metrics.tick();
 
 ---
 name: replace-inline-code-with-function-call
-description: Apply Replace Inline Code with Function Call when you see Duplicated Code. When inline code reproduces what a named function already does, the inline copy is replaced by a call.
+description: Apply Replace Inline Code with Function Call when you see Duplicated Code. One canonical implementation the agent loads once and references everywhere; the name labels the intent at every call site.
 ---
 
 # Apply: 46 — Replace Inline Code with Function Call
 
-**Target state:** When inline code reproduces what a named function already does, the inline copy is replaced by a call.
+**Target state:** One canonical implementation the agent loads once and references everywhere; the name labels the intent at every call site.
 
-**Why apply it:** One canonical implementation; the name labels the intent; future improvements to the function reach every site that used to inline.
+**Why apply it:** The agent reasons about one definition; future improvements reach every site that used to inline; consistency is enforced by reference.
 
-**Tradeoff:** If the existing function's name doesn't quite match the local intent, the call site reads as a near-miss; consider Change Function Declaration first.
+**Tradeoff:** If the existing function's name doesn't quite match the local intent, the agent reads the call site as a near-miss and must verify the semantic match at every replacement.
 
 ```js
 // Avoid:
@@ -567,16 +567,16 @@ const inRange = between(candidate, low, high);
 
 ---
 name: replace-temp-with-query
-description: Apply Replace Temp with Query when you see Long Function, Mutable Data. A local variable assigned once from a computation becomes a function that returns that computation on demand.
+description: Apply Replace Temp with Query when you see Long Function, Mutable Data. Computations become named queries the agent can reference by name from anywhere; functions decompose without dragging the temp's lifetime.
 ---
 
 # Apply: 47 — Replace Temp with Query
 
-**Target state:** A local variable assigned once from a computation becomes a function that returns that computation on demand.
+**Target state:** Computations become named queries the agent can reference by name from anywhere; functions decompose without dragging the temp's lifetime.
 
-**Why apply it:** Extract Function becomes easier (the query has a name and stable scope); the temp's lifetime no longer constrains how the surrounding function is split.
+**Why apply it:** The agent's plan-and-execute loop for Extract Function becomes mechanical; the named query is reusable anywhere it makes sense.
 
-**Tradeoff:** If the temp wraps an expensive calculation called many times, naive replacement may multiply cost — measure or cache before deciding.
+**Tradeoff:** If the temp wraps an expensive calculation called many times, naive replacement multiplies cost; the agent verifying performance must measure or cache before substituting.
 
 ```js
 // Avoid:
@@ -693,16 +693,16 @@ order = withTax(order);
 
 ---
 name: substitute-algorithm
-description: Apply Substitute Algorithm when you see Long Function, Loops. An opaque or convoluted algorithm gets replaced by a clearer one (often from a library or well-known pattern) that produces the same outputs.
+description: Apply Substitute Algorithm when you see Long Function, Loops. The clearer algorithm replaces the bespoke; the agent reasons about a recognized pattern instead of reverse-engineering the original.
 ---
 
 # Apply: 51 — Substitute Algorithm
 
-**Target state:** An opaque or convoluted algorithm gets replaced by a clearer one (often from a library or well-known pattern) that produces the same outputs.
+**Target state:** The clearer algorithm replaces the bespoke; the agent reasons about a recognized pattern instead of reverse-engineering the original.
 
-**Why apply it:** Future maintainers read the well-known pattern instead of decoding the bespoke implementation; performance and correctness usually improve.
+**Why apply it:** The agent recognizes the algorithm by name and reasons about it via its standard properties; correctness arguments become reusable.
 
-**Tradeoff:** Swapping algorithms wholesale forfeits behavioral safety — characterize the function with tests at every input boundary you care about before substituting.
+**Tradeoff:** Swapping algorithms wholesale forfeits behavioral safety unless every input boundary is characterized first; the agent that substitutes without characterization tests ships silent regressions.
 
 ```js
 // Avoid:

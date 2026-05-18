@@ -1,15 +1,15 @@
 ---
 name: combine-functions-into-transform
-description: Apply Combine Functions into Transform when you see Data Clumps, Mutable Data. Multiple derived values from the same source come from one transform that produces an enriched record.
+description: Apply Combine Functions into Transform when you see Data Clumps, Mutable Data. One transform produces the enriched record; the agent reasons about derivations in one place and consumers read named fields.
 ---
 
 # Apply: 10 — Combine Functions into Transform
 
-**Target state:** Multiple derived values from the same source come from one transform that produces an enriched record.
+**Target state:** One transform produces the enriched record; the agent reasons about derivations in one place and consumers read named fields.
 
-**Why apply it:** Derivations stay consistent (no two callers compute slightly different versions); cache invalidation becomes obvious.
+**Why apply it:** Derivations are consistent by construction; the agent reads field accesses on the enriched record instead of computing across the codebase.
 
-**Tradeoff:** Building a transform up-front when only one derivation exists is BDUF — wait for the second derivation before introducing the transform.
+**Tradeoff:** Building the transform when only one consumer exists creates an intermediate type the agent must learn before its second use justifies it.
 
 ```js
 // Avoid:

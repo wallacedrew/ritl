@@ -1,15 +1,15 @@
 ---
 name: split-variable
-description: Apply Split Variable when you see Mysterious Name, Mutable Data. Each variable has one role; reassignment patterns reflect distinct purposes rather than reused storage.
+description: Apply Split Variable when you see Mysterious Name, Mutable Data. Each variable holds one role with a stable name; the agent reasons about names without tracking reassignment timeline.
 ---
 
 # Apply: 18 — Split Variable
 
-**Target state:** Each variable has one role; reassignment patterns reflect distinct purposes rather than reused storage.
+**Target state:** Each variable holds one role with a stable name; the agent reasons about names without tracking reassignment timeline.
 
-**Why apply it:** Names match purpose; the type system can narrow each role; refactoring each use becomes local.
+**Why apply it:** The agent reasons about each variable as a stable name; the type system can narrow each role; each use becomes independently refactorable.
 
-**Tradeoff:** If the two uses were actually coupled — shared init or synchronized update — splitting them invites drift the single mutation kept in sync.
+**Tradeoff:** If the two uses were actually coupled (shared init, synchronized update), splitting forces the agent to re-derive the coupling across two variables.
 
 ```js
 // Avoid:

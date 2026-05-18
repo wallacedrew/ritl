@@ -1,15 +1,15 @@
 ---
 name: replace-derived-variable-with-query
-description: Apply Replace Derived Variable with Query when you see Mutable Data. Values computed from other state are computed on demand; no separate field needs to be kept in sync.
+description: Apply Replace Derived Variable with Query when you see Mutable Data. Derived values are computed on demand; the agent reasons about state by reading source fields and trusting derivations.
 ---
 
 # Apply: 20 — Replace Derived Variable with Query
 
-**Target state:** Values computed from other state are computed on demand; no separate field needs to be kept in sync.
+**Target state:** Derived values are computed on demand; the agent reasons about state by reading source fields and trusting derivations.
 
-**Why apply it:** Mutation scope shrinks; reasoning about state is simpler; no chance of the derived field drifting from its source.
+**Why apply it:** Mutation scope shrinks to source fields; the agent reasons about state without modeling derivation update timing; consistency is by construction.
 
-**Tradeoff:** If the derivation is expensive and the source rarely changes, recomputing on every read may be wasteful — measure before deciding.
+**Tradeoff:** Recomputing on every read can multiply cost if the derivation is expensive and the source rarely changes; the agent verifying performance must measure before deciding.
 
 ```js
 // Avoid:
