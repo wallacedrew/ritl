@@ -6,6 +6,7 @@ import BeforeAfterCodeBlocks from "@/shared/components/BeforeAfterCodeBlocks";
 import CatalogBackLink from "@/shared/components/CatalogBackLink";
 import CatalogEntryHeader from "@/shared/components/CatalogEntryHeader";
 import CatalogPrevNext from "@/shared/components/CatalogPrevNext";
+import CatalogPrevNextStrip from "@/shared/components/CatalogPrevNextStrip";
 import CatalogSection from "@/shared/components/CatalogSection";
 import CatalogSectionCompare from "@/shared/components/CatalogSectionCompare";
 import LensSwitcher from "@/shared/components/LensSwitcher";
@@ -39,6 +40,7 @@ export default function CatalogCompareDetail({
       <Stack spacing={3}>
         <CatalogBackLink href={backLinkHref} label={backLinkLabel} />
         <CatalogEntryHeader name={entry.name} number={number} relatedNames={entry.nemeses} />
+        <CatalogPrevNextStrip neighbors={neighbors} />
         <LensSwitcher entry={entry} currentView="compare" />
         <Divider />
         {entry.safetyNet && <CatalogSection label="Safety net" body={entry.safetyNet.toString()} />}
