@@ -1,15 +1,15 @@
 ---
 name: replace-loop-with-pipeline
-description: Apply Replace Loop with Pipeline when you see Loops. Filter / map / reduce expresses the transformation as a sequence of named operations; intent jumps off the page.
+description: Apply Replace Loop with Pipeline when you see Loops. Transformations read as named operation sequences (filter, map, reduce); the agent recognizes the shape without simulating the loop.
 ---
 
 # Apply: 16 — Replace Loop with Pipeline
 
-**Target state:** Filter / map / reduce expresses the transformation as a sequence of named operations; intent jumps off the page.
+**Target state:** Transformations read as named operation sequences (filter, map, reduce); the agent recognizes the shape without simulating the loop.
 
-**Why apply it:** Off-by-one and accumulator bugs vanish; each step is independently testable.
+**Why apply it:** Intent is readable; the agent reasons about each pipeline stage independently with type signatures documenting the transformation.
 
-**Tradeoff:** Pipelines add a tiny per-element function-call overhead — usually negligible, but profile if you're in a hot path.
+**Tradeoff:** Pipeline form adds per-element call overhead and forces the agent to track intermediate collection types through the chain; for hot paths the runtime cost matters.
 
 ```js
 // Avoid:

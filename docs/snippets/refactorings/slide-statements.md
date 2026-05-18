@@ -1,15 +1,15 @@
 ---
 name: slide-statements
-description: Apply Slide Statements when you see Long Function, Comments. Related statements sit next to each other; the function reads as a sequence of cohesive sub-steps that are easy to extract.
+description: Apply Slide Statements when you see Long Function, Comments. Related statements sit next to each other; the agent reads the function as a sequence of cohesive blocks ready for extraction.
 ---
 
 # Apply: 14 — Slide Statements
 
-**Target state:** Related statements sit next to each other; the function reads as a sequence of cohesive sub-steps that are easy to extract.
+**Target state:** Related statements sit next to each other; the agent reads the function as a sequence of cohesive blocks ready for extraction.
 
-**Why apply it:** Setup for Extract Function becomes trivial; the implicit grouping inside the function becomes explicit.
+**Why apply it:** The function reads as cohesive blocks the agent can extract or reason about as units; setup for further refactoring becomes mechanical.
 
-**Tradeoff:** Reordering can change behavior if statements aren't actually independent — verify side effects and dependencies before sliding.
+**Tradeoff:** Sliding can silently change behavior if statements aren't truly independent (hidden side effects, timing dependencies, observer effects); the agent verifying the slide must confirm independence at every gap.
 
 ```js
 // Avoid:

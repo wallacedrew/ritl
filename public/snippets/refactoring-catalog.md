@@ -15,16 +15,16 @@ when you want auto-invocable skills under `~/.claude/skills/<slug>/SKILL.md`.
 
 ---
 name: rename-variable
-description: Apply Rename Variable when you see Mysterious Name. Variable names match the domain role they play, not their implementation type or scratch nature.
+description: Apply Rename Variable when you see Mysterious Name. Variable names carry enough disambiguating information that the agent can reason about each symbol without a lookup hop.
 ---
 
 # Apply: 07 — Rename Variable
 
-**Target state:** Variable names match the domain role they play, not their implementation type or scratch nature.
+**Target state:** Variable names carry enough disambiguating information that the agent can reason about each symbol without a lookup hop.
 
-**Why apply it:** Reading the variable's name tells you everything you need without checking its definition.
+**Why apply it:** Fewer context-lookup hops per reasoning step; planning loops run cheaper and resist drift.
 
-**Tradeoff:** The IDE renames code, not the world around it — cross-repo greps, commit history, comments, and string-literal references silently drift stale.
+**Tradeoff:** Renames invalidate cached associations — commit history, RAG snippets, embedding indexes, and prior conversation context all carry the old name until they refresh.
 
 ```js
 // Avoid:
@@ -38,16 +38,16 @@ const area = height * width;
 
 ---
 name: rename-field
-description: Apply Rename Field when you see Mysterious Name. Field names match the domain role they play; readers don't need to inspect usage to know what a field means.
+description: Apply Rename Field when you see Mysterious Name. Field names carry domain meaning so the agent can interpret reads and writes without examining the class definition.
 ---
 
 # Apply: 19 — Rename Field
 
-**Target state:** Field names match the domain role they play; readers don't need to inspect usage to know what a field means.
+**Target state:** Field names carry domain meaning so the agent can interpret reads and writes without examining the class definition.
 
-**Why apply it:** Stronger encapsulation; future-you reads the class definition and immediately understands its shape.
+**Why apply it:** The agent reasons about field access with the field's name as ground truth; consumer-side reasoning becomes self-documenting.
 
-**Tradeoff:** Same drift as Rename Variable, amplified across the field's read/write surface and any persistence shadows (DB columns, JSON schemas, APIs).
+**Tradeoff:** Renaming a field invalidates more cached associations than a variable rename — persistence layers (DB columns, JSON schemas, API contracts) carry the old name until they update.
 
 ```js
 // Avoid:
@@ -69,16 +69,16 @@ console.log(position.title);  // clearly the role
 
 ---
 name: remove-dead-code
-description: Apply Remove Dead Code when you see Speculative Generality, Comments. Every line in the codebase is reachable and used; readers don't waste cycles on phantom branches.
+description: Apply Remove Dead Code when you see Speculative Generality, Comments. Every definition the agent encounters is reachable; reasoning about behavior doesn't have to consider phantom paths.
 ---
 
 # Apply: 17 — Remove Dead Code
 
-**Target state:** Every line in the codebase is reachable and used; readers don't waste cycles on phantom branches.
+**Target state:** Every definition the agent encounters is reachable; reasoning about behavior doesn't have to consider phantom paths.
 
-**Why apply it:** Smaller surface, faster reading, fewer false leads when debugging.
+**Why apply it:** The agent's reasoning context shrinks; static analysis becomes ground truth; planning loops don't waste cycles on phantom paths.
 
-**Tradeoff:** You give up the option to revive without a git dive — and 'dead' under static analysis can still be reachable via reflection, dynamic dispatch, or external callers.
+**Tradeoff:** Deletion is one-way under static analysis but reachability can hide in reflection, dynamic dispatch, external callers, or runtime config — the agent that deletes without checking risks a regression nothing catches.
 
 ```js
 // Avoid:
@@ -93,16 +93,16 @@ function discount(order) { /* the real one */ }
 
 ---
 name: replace-magic-literal
-description: Apply Replace Magic Literal when you see Mysterious Name, Comments. Bare numbers and strings that encode domain concepts become named constants whose name says what the value represents.
+description: Apply Replace Magic Literal when you see Mysterious Name, Comments. Domain-meaningful values have named constants the agent can reference by name; the constant's name documents what the value represents.
 ---
 
 # Apply: 43 — Replace Magic Literal
 
-**Target state:** Bare numbers and strings that encode domain concepts become named constants whose name says what the value represents.
+**Target state:** Domain-meaningful values have named constants the agent can reference by name; the constant's name documents what the value represents.
 
-**Why apply it:** Searches by domain term find every callsite; changing the value is one edit; the constant invites code-side documentation when it's truly load-bearing.
+**Why apply it:** The agent reasons about values by name with the type system enforcing valid uses; changing the value is one edit the type checker confirms.
 
-**Tradeoff:** Naming every literal can drown the file in trivia — only name literals that carry domain meaning the surrounding code can't speak.
+**Tradeoff:** Each new named constant is an import the agent must locate and resolve; over-naming creates a vocabulary the agent must learn for marginal disambiguation benefit.
 
 ```js
 // Avoid:
@@ -158,16 +158,16 @@ function invoiceTotal(invoice) {
 
 ---
 name: inline-function
-description: Apply Inline Function when you see Lazy Element, Speculative Generality. Trivial wrappers vanish; the call site reads as exactly what's happening.
+description: Apply Inline Function when you see Lazy Element, Speculative Generality. Trivial wrappers disappear from the agent's working context; call sites read as exactly what's happening.
 ---
 
 # Apply: 02 — Inline Function
 
-**Target state:** Trivial wrappers vanish; the call site reads as exactly what's happening.
+**Target state:** Trivial wrappers disappear from the agent's working context; call sites read as exactly what's happening.
 
-**Why apply it:** One fewer indirection to follow when reading; smaller surface to maintain.
+**Why apply it:** Shorter call chains; the agent loads one fewer definition per reasoning step.
 
-**Tradeoff:** If the function had a meaningful name covering several call sites, inlining can scatter the intent — only inline when the body is as clear as the wrapper.
+**Tradeoff:** Inlining scatters the wrapper's body across call sites; if the wrapper was a seam (mocking boundary, extension point), removing it forecloses options the agent might need later.
 
 ```js
 // Avoid:
@@ -188,16 +188,16 @@ function rating(driver) {
 
 ---
 name: extract-variable
-description: Apply Extract Variable when you see Mysterious Name, Comments. A complex expression earns a name that says what it represents in the domain.
+description: Apply Extract Variable when you see Mysterious Name, Comments. Intermediate values have names the agent can reference directly; reasoning about the expression decomposes into reasoning about named sub-values.
 ---
 
 # Apply: 03 — Extract Variable
 
-**Target state:** A complex expression earns a name that says what it represents in the domain.
+**Target state:** Intermediate values have names the agent can reference directly; reasoning about the expression decomposes into reasoning about named sub-values.
 
-**Why apply it:** Reusable in nearby code; debugging shows the intermediate value; comments explaining the expression become unnecessary.
+**Why apply it:** The agent references named intermediate values; expression-level reasoning becomes reference-level reasoning, which is cheaper.
 
-**Tradeoff:** Over-extracting tiny expressions clutters scope with one-shot names; extract when the expression carries domain meaning the surrounding code can't speak.
+**Tradeoff:** Each extracted variable is a name in the agent's local scope; over-extraction creates scope clutter the agent must navigate to find what's actually relevant.
 
 ```js
 // Avoid:
@@ -213,16 +213,16 @@ if (basePrice - bulkDiscount > 1000) { /* ... */ }
 
 ---
 name: inline-variable
-description: Apply Inline Variable when you see Lazy Element. Single-use variables that just rename their right-hand side disappear; the expression speaks for itself.
+description: Apply Inline Variable when you see Lazy Element. Single-use variables that rename without semantic gain disappear; expressions speak for themselves.
 ---
 
 # Apply: 04 — Inline Variable
 
-**Target state:** Single-use variables that just rename their right-hand side disappear; the expression speaks for itself.
+**Target state:** Single-use variables that rename without semantic gain disappear; expressions speak for themselves.
 
-**Why apply it:** Less local clutter, fewer redundant names, smaller scopes to track.
+**Why apply it:** Less local clutter in the agent's scope table; expressions read as themselves.
 
-**Tradeoff:** Inlining a name that did carry domain meaning costs readability — only inline when the expression is already self-explanatory.
+**Tradeoff:** Inlining a variable that did carry domain meaning forces the agent to interpret the bare expression every time instead of reading the named concept.
 
 ```js
 // Avoid:
@@ -341,16 +341,16 @@ function render({ items, totalCents }) {
 
 ---
 name: slide-statements
-description: Apply Slide Statements when you see Long Function, Comments. Related statements sit next to each other; the function reads as a sequence of cohesive sub-steps that are easy to extract.
+description: Apply Slide Statements when you see Long Function, Comments. Related statements sit next to each other; the agent reads the function as a sequence of cohesive blocks ready for extraction.
 ---
 
 # Apply: 14 — Slide Statements
 
-**Target state:** Related statements sit next to each other; the function reads as a sequence of cohesive sub-steps that are easy to extract.
+**Target state:** Related statements sit next to each other; the agent reads the function as a sequence of cohesive blocks ready for extraction.
 
-**Why apply it:** Setup for Extract Function becomes trivial; the implicit grouping inside the function becomes explicit.
+**Why apply it:** The function reads as cohesive blocks the agent can extract or reason about as units; setup for further refactoring becomes mechanical.
 
-**Tradeoff:** Reordering can change behavior if statements aren't actually independent — verify side effects and dependencies before sliding.
+**Tradeoff:** Sliding can silently change behavior if statements aren't truly independent (hidden side effects, timing dependencies, observer effects); the agent verifying the slide must confirm independence at every gap.
 
 ```js
 // Avoid:
@@ -370,16 +370,16 @@ logTaxCalc(tax);
 
 ---
 name: split-loop
-description: Apply Split Loop when you see Long Function, Loops. Each loop does one thing; mixed-purpose loops separate into named single-purpose passes.
+description: Apply Split Loop when you see Long Function, Loops. Each loop does one thing; the agent reasons about one concern per loop and can replace each loop independently with a pipeline.
 ---
 
 # Apply: 15 — Split Loop
 
-**Target state:** Each loop does one thing; mixed-purpose loops separate into named single-purpose passes.
+**Target state:** Each loop does one thing; the agent reasons about one concern per loop and can replace each loop independently with a pipeline.
 
-**Why apply it:** Each loop can then be replaced by a pipeline or extracted by name; bugs concentrate in one purpose at a time.
+**Why apply it:** Each loop becomes an independently-replaceable unit (pipeline candidate); the agent's edit surface per concern shrinks.
 
-**Tradeoff:** Two loops over the same collection are slower than one — only split when the doubled cost is dwarfed by the readability gain (which it usually is).
+**Tradeoff:** Two loops over the same collection cost more per iteration than one; for hot paths the runtime overhead matters and the agent verifying performance must measure.
 
 ```js
 // Avoid:
@@ -399,16 +399,16 @@ const youngest    = Math.min(...people.map(p => p.age));
 
 ---
 name: replace-loop-with-pipeline
-description: Apply Replace Loop with Pipeline when you see Loops. Filter / map / reduce expresses the transformation as a sequence of named operations; intent jumps off the page.
+description: Apply Replace Loop with Pipeline when you see Loops. Transformations read as named operation sequences (filter, map, reduce); the agent recognizes the shape without simulating the loop.
 ---
 
 # Apply: 16 — Replace Loop with Pipeline
 
-**Target state:** Filter / map / reduce expresses the transformation as a sequence of named operations; intent jumps off the page.
+**Target state:** Transformations read as named operation sequences (filter, map, reduce); the agent recognizes the shape without simulating the loop.
 
-**Why apply it:** Off-by-one and accumulator bugs vanish; each step is independently testable.
+**Why apply it:** Intent is readable; the agent reasons about each pipeline stage independently with type signatures documenting the transformation.
 
-**Tradeoff:** Pipelines add a tiny per-element function-call overhead — usually negligible, but profile if you're in a hot path.
+**Tradeoff:** Pipeline form adds per-element call overhead and forces the agent to track intermediate collection types through the chain; for hot paths the runtime cost matters.
 
 ```js
 // Avoid:

@@ -1,15 +1,15 @@
 ---
 name: extract-variable
-description: Apply Extract Variable when you see Mysterious Name, Comments. A complex expression earns a name that says what it represents in the domain.
+description: Apply Extract Variable when you see Mysterious Name, Comments. Intermediate values have names the agent can reference directly; reasoning about the expression decomposes into reasoning about named sub-values.
 ---
 
 # Apply: 03 — Extract Variable
 
-**Target state:** A complex expression earns a name that says what it represents in the domain.
+**Target state:** Intermediate values have names the agent can reference directly; reasoning about the expression decomposes into reasoning about named sub-values.
 
-**Why apply it:** Reusable in nearby code; debugging shows the intermediate value; comments explaining the expression become unnecessary.
+**Why apply it:** The agent references named intermediate values; expression-level reasoning becomes reference-level reasoning, which is cheaper.
 
-**Tradeoff:** Over-extracting tiny expressions clutters scope with one-shot names; extract when the expression carries domain meaning the surrounding code can't speak.
+**Tradeoff:** Each extracted variable is a name in the agent's local scope; over-extraction creates scope clutter the agent must navigate to find what's actually relevant.
 
 ```js
 // Avoid:

@@ -1,15 +1,15 @@
 ---
 name: split-loop
-description: Apply Split Loop when you see Long Function, Loops. Each loop does one thing; mixed-purpose loops separate into named single-purpose passes.
+description: Apply Split Loop when you see Long Function, Loops. Each loop does one thing; the agent reasons about one concern per loop and can replace each loop independently with a pipeline.
 ---
 
 # Apply: 15 — Split Loop
 
-**Target state:** Each loop does one thing; mixed-purpose loops separate into named single-purpose passes.
+**Target state:** Each loop does one thing; the agent reasons about one concern per loop and can replace each loop independently with a pipeline.
 
-**Why apply it:** Each loop can then be replaced by a pipeline or extracted by name; bugs concentrate in one purpose at a time.
+**Why apply it:** Each loop becomes an independently-replaceable unit (pipeline candidate); the agent's edit surface per concern shrinks.
 
-**Tradeoff:** Two loops over the same collection are slower than one — only split when the doubled cost is dwarfed by the readability gain (which it usually is).
+**Tradeoff:** Two loops over the same collection cost more per iteration than one; for hot paths the runtime overhead matters and the agent verifying performance must measure.
 
 ```js
 // Avoid:

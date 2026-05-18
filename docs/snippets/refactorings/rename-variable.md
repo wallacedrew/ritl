@@ -1,15 +1,15 @@
 ---
 name: rename-variable
-description: Apply Rename Variable when you see Mysterious Name. Variable names match the domain role they play, not their implementation type or scratch nature.
+description: Apply Rename Variable when you see Mysterious Name. Variable names carry enough disambiguating information that the agent can reason about each symbol without a lookup hop.
 ---
 
 # Apply: 07 — Rename Variable
 
-**Target state:** Variable names match the domain role they play, not their implementation type or scratch nature.
+**Target state:** Variable names carry enough disambiguating information that the agent can reason about each symbol without a lookup hop.
 
-**Why apply it:** Reading the variable's name tells you everything you need without checking its definition.
+**Why apply it:** Fewer context-lookup hops per reasoning step; planning loops run cheaper and resist drift.
 
-**Tradeoff:** The IDE renames code, not the world around it — cross-repo greps, commit history, comments, and string-literal references silently drift stale.
+**Tradeoff:** Renames invalidate cached associations — commit history, RAG snippets, embedding indexes, and prior conversation context all carry the old name until they refresh.
 
 ```js
 // Avoid:

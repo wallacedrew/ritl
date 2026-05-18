@@ -34,20 +34,20 @@
     "safetyNet": "unit test",
     "forces": {
       "human": {
-        "symptom": "[human symptom not yet authored]",
+        "symptom": "A function whose name is no clearer than its body — wrappers that add no semantic value (`moreThanFive(n) { return n > 5 }`), pass-through functions called only once, or thin abstractions over trivial expressions.",
         "goal": "Trivial wrappers vanish; the call site reads as exactly what's happening.",
-        "pressure": "[human pressure not yet authored]",
+        "pressure": "Readers pay a hop to look up the wrapper only to find it adds nothing; the indirection crowds the file with definitions that don't earn their keep.",
         "tradeoff": "If the function had a meaningful name covering several call sites, inlining can scatter the intent — only inline when the body is as clear as the wrapper.",
         "relief": "One fewer indirection to follow when reading; smaller surface to maintain.",
-        "trap": "[human trap not yet authored]"
+        "trap": "Inlining wrappers that genuinely add meaning — `isOverdue(invoice)` is clearer than `invoice.dueDate < today()` even if mechanically identical — strips the named domain concept."
       },
       "agent": {
-        "symptom": "[agent symptom not yet authored]",
-        "goal": "[agent goal not yet authored]",
-        "pressure": "[agent pressure not yet authored]",
-        "tradeoff": "[agent tradeoff not yet authored]",
-        "relief": "[agent relief not yet authored]",
-        "trap": "[agent trap not yet authored]"
+        "symptom": "A function whose body the agent must trace through only to find no decisions or transformations — every reference site pays a context-load hop for no reasoning gain.",
+        "goal": "Trivial wrappers disappear from the agent's working context; call sites read as exactly what's happening.",
+        "pressure": "The agent loads the wrapper definition to verify any change touching it; the indirection is a tax on every reasoning step.",
+        "tradeoff": "Inlining scatters the wrapper's body across call sites; if the wrapper was a seam (mocking boundary, extension point), removing it forecloses options the agent might need later.",
+        "relief": "Shorter call chains; the agent loads one fewer definition per reasoning step.",
+        "trap": "Mechanically inlining every short function — including ones that name a real domain concept — collapses semantic anchors the agent uses to reason about behavior."
       }
     }
   },
@@ -60,20 +60,20 @@
     "safetyNet": "types/compiler",
     "forces": {
       "human": {
-        "symptom": "[human symptom not yet authored]",
+        "symptom": "A long expression in a conditional, return statement, or method argument that the reader must mentally parse — multiple operations on multiple inputs producing one value.",
         "goal": "A complex expression earns a name that says what it represents in the domain.",
-        "pressure": "[human pressure not yet authored]",
+        "pressure": "Readers pay parsing cost every time; debugging the value requires breakpoints inside the expression; comments scatter to explain what subexpressions mean.",
         "tradeoff": "Over-extracting tiny expressions clutters scope with one-shot names; extract when the expression carries domain meaning the surrounding code can't speak.",
         "relief": "Reusable in nearby code; debugging shows the intermediate value; comments explaining the expression become unnecessary.",
-        "trap": "[human trap not yet authored]"
+        "trap": "Extracting every short expression — including ones already self-explanatory — clutters scope with one-shot names that obscure rather than reveal intent."
       },
       "agent": {
-        "symptom": "[agent symptom not yet authored]",
-        "goal": "[agent goal not yet authored]",
-        "pressure": "[agent pressure not yet authored]",
-        "tradeoff": "[agent tradeoff not yet authored]",
-        "relief": "[agent relief not yet authored]",
-        "trap": "[agent trap not yet authored]"
+        "symptom": "An expression complex enough that the agent must parse it sub-step by sub-step to interpret; subsequent reasoning about the value requires re-parsing the full expression.",
+        "goal": "Intermediate values have names the agent can reference directly; reasoning about the expression decomposes into reasoning about named sub-values.",
+        "pressure": "The agent re-parses complex expressions at every reference; debugging requires the agent to mentally evaluate the full subexpression chain.",
+        "tradeoff": "Each extracted variable is a name in the agent's local scope; over-extraction creates scope clutter the agent must navigate to find what's actually relevant.",
+        "relief": "The agent references named intermediate values; expression-level reasoning becomes reference-level reasoning, which is cheaper.",
+        "trap": "Extracting every sub-expression — including ones already obvious — bloats the agent's scope table with names that document nothing the agent didn't already know."
       }
     }
   },
@@ -86,20 +86,20 @@
     "safetyNet": "types/compiler",
     "forces": {
       "human": {
-        "symptom": "[human symptom not yet authored]",
+        "symptom": "A local variable that's just a rename of its right-hand side — `const basePrice = order.basePrice;` — adding no domain meaning the original expression didn't already carry.",
         "goal": "Single-use variables that just rename their right-hand side disappear; the expression speaks for itself.",
-        "pressure": "[human pressure not yet authored]",
+        "pressure": "Readers track an extra name for nothing; small scopes balloon with redundant references; the variable's existence implies meaning it doesn't have.",
         "tradeoff": "Inlining a name that did carry domain meaning costs readability — only inline when the expression is already self-explanatory.",
         "relief": "Less local clutter, fewer redundant names, smaller scopes to track.",
-        "trap": "[human trap not yet authored]"
+        "trap": "Inlining a variable whose name did carry domain meaning — collapsing `const annualRate = 0.05` to bare `0.05` strips the named constant the reader needed."
       },
       "agent": {
-        "symptom": "[agent symptom not yet authored]",
-        "goal": "[agent goal not yet authored]",
-        "pressure": "[agent pressure not yet authored]",
-        "tradeoff": "[agent tradeoff not yet authored]",
-        "relief": "[agent relief not yet authored]",
-        "trap": "[agent trap not yet authored]"
+        "symptom": "A local variable whose value is the same as its right-hand expression and whose name adds no semantic information beyond the expression itself.",
+        "goal": "Single-use variables that rename without semantic gain disappear; expressions speak for themselves.",
+        "pressure": "The agent tracks an extra name in scope for no reasoning benefit; reference resolution becomes a tiny hop to a definition that adds nothing.",
+        "tradeoff": "Inlining a variable that did carry domain meaning forces the agent to interpret the bare expression every time instead of reading the named concept.",
+        "relief": "Less local clutter in the agent's scope table; expressions read as themselves.",
+        "trap": "Inlining variables that named non-obvious intermediate values forces the agent to repeatedly parse the same expression across every reference site."
       }
     }
   },
@@ -168,20 +168,20 @@
     "safetyNet": "types/compiler",
     "forces": {
       "human": {
-        "symptom": "[human symptom not yet authored]",
+        "symptom": "A variable named `t`, `temp`, `data`, `result`, or any other identifier that requires the reader to inspect its assignment to know what it holds.",
         "goal": "Variable names match the domain role they play, not their implementation type or scratch nature.",
-        "pressure": "[human pressure not yet authored]",
+        "pressure": "Every reader pays a re-comprehension cost when they encounter the variable; bugs hide in the gap between what the name suggests and what the code does.",
         "tradeoff": "The IDE renames code, not the world around it — cross-repo greps, commit history, comments, and string-literal references silently drift stale.",
         "relief": "Reading the variable's name tells you everything you need without checking its definition.",
-        "trap": "[human trap not yet authored]"
+        "trap": "Renaming bikeshedding — endless rename churn for marginal clarity gains while the actual code structure stays unimproved."
       },
       "agent": {
-        "symptom": "[agent symptom not yet authored]",
-        "goal": "[agent goal not yet authored]",
-        "pressure": "[agent pressure not yet authored]",
-        "tradeoff": "[agent tradeoff not yet authored]",
-        "relief": "[agent relief not yet authored]",
-        "trap": "[agent trap not yet authored]"
+        "symptom": "The agent encounters a variable whose identifier doesn't disambiguate scope or domain; reasoning about any expression involving the variable requires loading the surrounding context first.",
+        "goal": "Variable names carry enough disambiguating information that the agent can reason about each symbol without a lookup hop.",
+        "pressure": "Every reasoning pass re-derives meaning from surrounding context; chained edits compound the cost.",
+        "tradeoff": "Renames invalidate cached associations — commit history, RAG snippets, embedding indexes, and prior conversation context all carry the old name until they refresh.",
+        "relief": "Fewer context-lookup hops per reasoning step; planning loops run cheaper and resist drift.",
+        "trap": "Compulsive renaming generates spurious diffs that crowd the review surface and burn context the human reviewer has to skim past."
       }
     }
   },
@@ -350,20 +350,20 @@
     "safetyNet": "unit test",
     "forces": {
       "human": {
-        "symptom": "[human symptom not yet authored]",
+        "symptom": "A function where related statements are scattered with interleaved unrelated work — assignments to logically-coupled variables separated by lines that don't share their concern.",
         "goal": "Related statements sit next to each other; the function reads as a sequence of cohesive sub-steps that are easy to extract.",
-        "pressure": "[human pressure not yet authored]",
+        "pressure": "Reader must hold partial sub-step state in working memory across unrelated statements; the implicit grouping inside the function stays implicit and obstructs further refactoring.",
         "tradeoff": "Reordering can change behavior if statements aren't actually independent — verify side effects and dependencies before sliding.",
         "relief": "Setup for Extract Function becomes trivial; the implicit grouping inside the function becomes explicit.",
-        "trap": "[human trap not yet authored]"
+        "trap": "Reordering statements without verifying independence — sliding past a statement with hidden side effects (logging that observes state, time-sensitive read) silently changes behavior."
       },
       "agent": {
-        "symptom": "[agent symptom not yet authored]",
-        "goal": "[agent goal not yet authored]",
-        "pressure": "[agent pressure not yet authored]",
-        "tradeoff": "[agent tradeoff not yet authored]",
-        "relief": "[agent relief not yet authored]",
-        "trap": "[agent trap not yet authored]"
+        "symptom": "A function whose related statements are interleaved with unrelated work; the agent reasoning about any sub-step must track state across non-adjacent lines.",
+        "goal": "Related statements sit next to each other; the agent reads the function as a sequence of cohesive blocks ready for extraction.",
+        "pressure": "The agent holds partial sub-step state across non-adjacent lines; reasoning about any single concern requires tracking the others through the interleave.",
+        "tradeoff": "Sliding can silently change behavior if statements aren't truly independent (hidden side effects, timing dependencies, observer effects); the agent verifying the slide must confirm independence at every gap.",
+        "relief": "The function reads as cohesive blocks the agent can extract or reason about as units; setup for further refactoring becomes mechanical.",
+        "trap": "Aggressive sliding without verifying side-effect ordering — observer logs, time reads, async dispatch — silently changes behavior the agent's local tests may not catch."
       }
     }
   },
@@ -376,20 +376,20 @@
     "safetyNet": "unit test",
     "forces": {
       "human": {
-        "symptom": "[human symptom not yet authored]",
+        "symptom": "A single loop iterating one collection but doing multiple unrelated jobs — accumulating a sum, finding a minimum, building a derived list, all interwoven in the loop body.",
         "goal": "Each loop does one thing; mixed-purpose loops separate into named single-purpose passes.",
-        "pressure": "[human pressure not yet authored]",
+        "pressure": "Each line of the body could touch any of the loop's concerns; reasoning about one purpose requires holding all of them; bugs hide where concerns share an iteration variable.",
         "tradeoff": "Two loops over the same collection are slower than one — only split when the doubled cost is dwarfed by the readability gain (which it usually is).",
         "relief": "Each loop can then be replaced by a pipeline or extracted by name; bugs concentrate in one purpose at a time.",
-        "trap": "[human trap not yet authored]"
+        "trap": "Splitting a loop whose concerns genuinely share state — running total AND previous value, where each iteration depends on the previous — fragments coupled logic into pieces that have to re-derive shared state."
       },
       "agent": {
-        "symptom": "[agent symptom not yet authored]",
-        "goal": "[agent goal not yet authored]",
-        "pressure": "[agent pressure not yet authored]",
-        "tradeoff": "[agent tradeoff not yet authored]",
-        "relief": "[agent relief not yet authored]",
-        "trap": "[agent trap not yet authored]"
+        "symptom": "A single loop body that mixes filter, map, reduce, and side-effect concerns; the agent verifying any change must trace all concerns through the same iteration.",
+        "goal": "Each loop does one thing; the agent reasons about one concern per loop and can replace each loop independently with a pipeline.",
+        "pressure": "The agent's per-line reasoning must account for every concern the loop body addresses; changing one concern risks silent interaction with the others.",
+        "tradeoff": "Two loops over the same collection cost more per iteration than one; for hot paths the runtime overhead matters and the agent verifying performance must measure.",
+        "relief": "Each loop becomes an independently-replaceable unit (pipeline candidate); the agent's edit surface per concern shrinks.",
+        "trap": "Splitting loops whose concerns share per-iteration state — accumulator-of-running-difference, look-behind logic — fragments coupled state the agent must now re-derive in each split."
       }
     }
   },
@@ -402,20 +402,20 @@
     "safetyNet": "unit test",
     "forces": {
       "human": {
-        "symptom": "[human symptom not yet authored]",
+        "symptom": "Imperative for/while loops where filter, map, and reduce concerns are mixed by hand — the reader must mentally execute the body to learn what's being produced.",
         "goal": "Filter / map / reduce expresses the transformation as a sequence of named operations; intent jumps off the page.",
-        "pressure": "[human pressure not yet authored]",
+        "pressure": "Off-by-one errors and accumulator bugs hide in the body and only surface at test time; intent is buried under the mechanism.",
         "tradeoff": "Pipelines add a tiny per-element function-call overhead — usually negligible, but profile if you're in a hot path.",
         "relief": "Off-by-one and accumulator bugs vanish; each step is independently testable.",
-        "trap": "[human trap not yet authored]"
+        "trap": "Forcing every loop into a pipeline — including ones with early-exit, side-effect accumulators, or genuinely sequential dependencies — produces twisted .reduce() bodies harder to read than the original."
       },
       "agent": {
-        "symptom": "[agent symptom not yet authored]",
-        "goal": "[agent goal not yet authored]",
-        "pressure": "[agent pressure not yet authored]",
-        "tradeoff": "[agent tradeoff not yet authored]",
-        "relief": "[agent relief not yet authored]",
-        "trap": "[agent trap not yet authored]"
+        "symptom": "Imperative for/while loops where the agent must mentally execute the body to learn the result; the loop's purpose isn't readable from its shape.",
+        "goal": "Transformations read as named operation sequences (filter, map, reduce); the agent recognizes the shape without simulating the loop.",
+        "pressure": "The agent must trace the loop body step by step to verify behavior; off-by-one bugs hide where the agent's mental simulation diverges from runtime.",
+        "tradeoff": "Pipeline form adds per-element call overhead and forces the agent to track intermediate collection types through the chain; for hot paths the runtime cost matters.",
+        "relief": "Intent is readable; the agent reasons about each pipeline stage independently with type signatures documenting the transformation.",
+        "trap": "Forcing every loop into a pipeline — including ones with early-exit, side-effects, or sequential dependencies — produces twisted .reduce() bodies the agent has to untangle to understand."
       }
     }
   },
@@ -428,20 +428,20 @@
     "safetyNet": "types/compiler",
     "forces": {
       "human": {
-        "symptom": "[human symptom not yet authored]",
+        "symptom": "Functions, branches, fields, or imports that no static analysis or human reader can reach — last commented out, last touched years ago, or referenced only by code that itself was removed.",
         "goal": "Every line in the codebase is reachable and used; readers don't waste cycles on phantom branches.",
-        "pressure": "[human pressure not yet authored]",
+        "pressure": "Readers spend cycles understanding code that never runs; debuggers stop in places that look meaningful but aren't; refactoring proposals have to consider phantom users.",
         "tradeoff": "You give up the option to revive without a git dive — and 'dead' under static analysis can still be reachable via reflection, dynamic dispatch, or external callers.",
         "relief": "Smaller surface, faster reading, fewer false leads when debugging.",
-        "trap": "[human trap not yet authored]"
+        "trap": "Deleting code that looks dead but is reached via reflection, dynamic dispatch, external callers, or test fixtures — the cleanup ships a regression because static analysis lied."
       },
       "agent": {
-        "symptom": "[agent symptom not yet authored]",
-        "goal": "[agent goal not yet authored]",
-        "pressure": "[agent pressure not yet authored]",
-        "tradeoff": "[agent tradeoff not yet authored]",
-        "relief": "[agent relief not yet authored]",
-        "trap": "[agent trap not yet authored]"
+        "symptom": "The agent finds code (functions, branches, fields) with no inbound references the type system or grep can locate; reasoning about reachability requires assuming static analysis is complete.",
+        "goal": "Every definition the agent encounters is reachable; reasoning about behavior doesn't have to consider phantom paths.",
+        "pressure": "The agent's plan-and-execute loop has to consider dead branches as live until proven otherwise; tests pass while code-walking analyses include dead surface area.",
+        "tradeoff": "Deletion is one-way under static analysis but reachability can hide in reflection, dynamic dispatch, external callers, or runtime config — the agent that deletes without checking risks a regression nothing catches.",
+        "relief": "The agent's reasoning context shrinks; static analysis becomes ground truth; planning loops don't waste cycles on phantom paths.",
+        "trap": "Aggressive deletion based purely on grep/static-analysis evidence misses reflection-reachable, plugin-loaded, or externally-referenced code — the cleanup ships a silent regression the agent's tests don't catch."
       }
     }
   },
@@ -480,20 +480,20 @@
     "safetyNet": "types/compiler",
     "forces": {
       "human": {
-        "symptom": "[human symptom not yet authored]",
+        "symptom": "A class field whose name is ambiguous (`name` on a Position class — role name or person?), shadowed by language keywords, or describes implementation type rather than domain role.",
         "goal": "Field names match the domain role they play; readers don't need to inspect usage to know what a field means.",
-        "pressure": "[human pressure not yet authored]",
+        "pressure": "Every reader/writer of the class must figure out what the field means from context; bugs surface when readers assume the wrong meaning.",
         "tradeoff": "Same drift as Rename Variable, amplified across the field's read/write surface and any persistence shadows (DB columns, JSON schemas, APIs).",
         "relief": "Stronger encapsulation; future-you reads the class definition and immediately understands its shape.",
-        "trap": "[human trap not yet authored]"
+        "trap": "Renaming a field without updating the persistence shadow — DB columns, JSON schema, API responses still use the old name and break serialization/deserialization silently."
       },
       "agent": {
-        "symptom": "[agent symptom not yet authored]",
-        "goal": "[agent goal not yet authored]",
-        "pressure": "[agent pressure not yet authored]",
-        "tradeoff": "[agent tradeoff not yet authored]",
-        "relief": "[agent relief not yet authored]",
-        "trap": "[agent trap not yet authored]"
+        "symptom": "A class field the agent must contextualize against surrounding code to interpret; reasoning about any read/write touches the field plus the class-shape context.",
+        "goal": "Field names carry domain meaning so the agent can interpret reads and writes without examining the class definition.",
+        "pressure": "The agent re-derives field meaning at every access site; ambiguity compounds with the number of consumers.",
+        "tradeoff": "Renaming a field invalidates more cached associations than a variable rename — persistence layers (DB columns, JSON schemas, API contracts) carry the old name until they update.",
+        "relief": "The agent reasons about field access with the field's name as ground truth; consumer-side reasoning becomes self-documenting.",
+        "trap": "Renaming fields purely for cosmetic preference creates churn across persistence + API surfaces the agent must coordinate without comprehension gain."
       }
     }
   },
@@ -1104,20 +1104,20 @@
     "safetyNet": "types/compiler",
     "forces": {
       "human": {
-        "symptom": "[human symptom not yet authored]",
+        "symptom": "Numbers (1.609, 86400, 0.05) and strings ('admin', 'USD') inline in code where the value carries domain meaning that the literal alone can't express.",
         "goal": "Bare numbers and strings that encode domain concepts become named constants whose name says what the value represents.",
-        "pressure": "[human pressure not yet authored]",
+        "pressure": "Searching by domain term ('kilometers per mile') doesn't find the conversion; changing the value means hunting every occurrence; comments accumulate to explain what the constant means.",
         "tradeoff": "Naming every literal can drown the file in trivia — only name literals that carry domain meaning the surrounding code can't speak.",
         "relief": "Searches by domain term find every callsite; changing the value is one edit; the constant invites code-side documentation when it's truly load-bearing.",
-        "trap": "[human trap not yet authored]"
+        "trap": "Naming every literal — including loop indices, array offsets, status code 200 — drowns the file in trivia and breaks the eye's pattern-recognition for genuinely meaningful constants."
       },
       "agent": {
-        "symptom": "[agent symptom not yet authored]",
-        "goal": "[agent goal not yet authored]",
-        "pressure": "[agent pressure not yet authored]",
-        "tradeoff": "[agent tradeoff not yet authored]",
-        "relief": "[agent relief not yet authored]",
-        "trap": "[agent trap not yet authored]"
+        "symptom": "The agent encounters a bare number or string whose meaning requires loading the surrounding context to interpret; refactoring the value means finding every occurrence by character match.",
+        "goal": "Domain-meaningful values have named constants the agent can reference by name; the constant's name documents what the value represents.",
+        "pressure": "The agent must trace context to interpret bare literals; changing a value requires text-search across the codebase with no semantic guarantee of completeness.",
+        "tradeoff": "Each new named constant is an import the agent must locate and resolve; over-naming creates a vocabulary the agent must learn for marginal disambiguation benefit.",
+        "relief": "The agent reasons about values by name with the type system enforcing valid uses; changing the value is one edit the type checker confirms.",
+        "trap": "Naming every literal — including indices, loop bounds, and obvious status codes — bloats the agent's mental constant table without comprehension gain."
       }
     }
   },

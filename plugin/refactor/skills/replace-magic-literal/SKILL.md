@@ -1,15 +1,15 @@
 ---
 name: replace-magic-literal
-description: Apply Replace Magic Literal when you see Mysterious Name, Comments. Bare numbers and strings that encode domain concepts become named constants whose name says what the value represents.
+description: Apply Replace Magic Literal when you see Mysterious Name, Comments. Domain-meaningful values have named constants the agent can reference by name; the constant's name documents what the value represents.
 ---
 
 # Apply: 43 — Replace Magic Literal
 
-**Target state:** Bare numbers and strings that encode domain concepts become named constants whose name says what the value represents.
+**Target state:** Domain-meaningful values have named constants the agent can reference by name; the constant's name documents what the value represents.
 
-**Why apply it:** Searches by domain term find every callsite; changing the value is one edit; the constant invites code-side documentation when it's truly load-bearing.
+**Why apply it:** The agent reasons about values by name with the type system enforcing valid uses; changing the value is one edit the type checker confirms.
 
-**Tradeoff:** Naming every literal can drown the file in trivia — only name literals that carry domain meaning the surrounding code can't speak.
+**Tradeoff:** Each new named constant is an import the agent must locate and resolve; over-naming creates a vocabulary the agent must learn for marginal disambiguation benefit.
 
 ```js
 // Avoid:

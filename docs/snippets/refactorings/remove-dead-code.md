@@ -1,15 +1,15 @@
 ---
 name: remove-dead-code
-description: Apply Remove Dead Code when you see Speculative Generality, Comments. Every line in the codebase is reachable and used; readers don't waste cycles on phantom branches.
+description: Apply Remove Dead Code when you see Speculative Generality, Comments. Every definition the agent encounters is reachable; reasoning about behavior doesn't have to consider phantom paths.
 ---
 
 # Apply: 17 — Remove Dead Code
 
-**Target state:** Every line in the codebase is reachable and used; readers don't waste cycles on phantom branches.
+**Target state:** Every definition the agent encounters is reachable; reasoning about behavior doesn't have to consider phantom paths.
 
-**Why apply it:** Smaller surface, faster reading, fewer false leads when debugging.
+**Why apply it:** The agent's reasoning context shrinks; static analysis becomes ground truth; planning loops don't waste cycles on phantom paths.
 
-**Tradeoff:** You give up the option to revive without a git dive — and 'dead' under static analysis can still be reachable via reflection, dynamic dispatch, or external callers.
+**Tradeoff:** Deletion is one-way under static analysis but reachability can hide in reflection, dynamic dispatch, external callers, or runtime config — the agent that deletes without checking risks a regression nothing catches.
 
 ```js
 // Avoid:

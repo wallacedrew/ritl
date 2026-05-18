@@ -1,15 +1,15 @@
 ---
 name: rename-field
-description: Apply Rename Field when you see Mysterious Name. Field names match the domain role they play; readers don't need to inspect usage to know what a field means.
+description: Apply Rename Field when you see Mysterious Name. Field names carry domain meaning so the agent can interpret reads and writes without examining the class definition.
 ---
 
 # Apply: 19 — Rename Field
 
-**Target state:** Field names match the domain role they play; readers don't need to inspect usage to know what a field means.
+**Target state:** Field names carry domain meaning so the agent can interpret reads and writes without examining the class definition.
 
-**Why apply it:** Stronger encapsulation; future-you reads the class definition and immediately understands its shape.
+**Why apply it:** The agent reasons about field access with the field's name as ground truth; consumer-side reasoning becomes self-documenting.
 
-**Tradeoff:** Same drift as Rename Variable, amplified across the field's read/write surface and any persistence shadows (DB columns, JSON schemas, APIs).
+**Tradeoff:** Renaming a field invalidates more cached associations than a variable rename — persistence layers (DB columns, JSON schemas, API contracts) carry the old name until they update.
 
 ```js
 // Avoid:

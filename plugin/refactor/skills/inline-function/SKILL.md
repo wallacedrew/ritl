@@ -1,15 +1,15 @@
 ---
 name: inline-function
-description: Apply Inline Function when you see Lazy Element, Speculative Generality. Trivial wrappers vanish; the call site reads as exactly what's happening.
+description: Apply Inline Function when you see Lazy Element, Speculative Generality. Trivial wrappers disappear from the agent's working context; call sites read as exactly what's happening.
 ---
 
 # Apply: 02 — Inline Function
 
-**Target state:** Trivial wrappers vanish; the call site reads as exactly what's happening.
+**Target state:** Trivial wrappers disappear from the agent's working context; call sites read as exactly what's happening.
 
-**Why apply it:** One fewer indirection to follow when reading; smaller surface to maintain.
+**Why apply it:** Shorter call chains; the agent loads one fewer definition per reasoning step.
 
-**Tradeoff:** If the function had a meaningful name covering several call sites, inlining can scatter the intent — only inline when the body is as clear as the wrapper.
+**Tradeoff:** Inlining scatters the wrapper's body across call sites; if the wrapper was a seam (mocking boundary, extension point), removing it forecloses options the agent might need later.
 
 ```js
 // Avoid:
