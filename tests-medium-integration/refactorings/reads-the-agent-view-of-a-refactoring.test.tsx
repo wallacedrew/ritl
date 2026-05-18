@@ -21,8 +21,11 @@ describe("user reads the agent view of a refactoring", () => {
     expect(screen.getByText(/^Relief$/)).toBeInTheDocument();
     expect(screen.getByText(/^Trap$/)).toBeInTheDocument();
 
-    // Cross-lens back-link points to the human view
-    const backToHuman = screen.getByRole("link", { name: /View as human/ });
+    // Cross-lens nav: links to human + compare; current view (Agent) is plain text
+    const backToHuman = screen.getByRole("link", { name: "Human" });
     expect(backToHuman).toHaveAttribute("href", "/refactorings/extract-function");
+
+    const toCompare = screen.getByRole("link", { name: "Compare" });
+    expect(toCompare).toHaveAttribute("href", "/refactorings/extract-function/compare");
   });
 });

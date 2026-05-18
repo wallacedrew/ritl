@@ -69,6 +69,10 @@ describe("CatalogEntry", () => {
     expect(makeEntry().agentHref()).toBe("/smells/long-function/agent");
   });
 
+  it("compareHref appends /compare to the href", () => {
+    expect(makeEntry().compareHref()).toBe("/smells/long-function/compare");
+  });
+
   it("optional safetyNet is undefined when not provided", () => {
     expect(makeEntry().safetyNet).toBeUndefined();
   });

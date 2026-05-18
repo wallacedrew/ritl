@@ -62,6 +62,10 @@ export class CatalogEntry {
     return `${this.href()}/agent`;
   }
 
+  compareHref(): string {
+    return `${this.href()}/compare`;
+  }
+
   equals(other: CatalogEntry): boolean {
     return this.catalog === other.catalog && this.name.equals(other.name);
   }

@@ -28,7 +28,10 @@ describe("user reads a refactoring detail with smell cross-links", () => {
 
     expect(screen.getByRole("button", { name: /preview Markdown/i })).toBeInTheDocument();
 
-    const viewAsAgentLink = screen.getByRole("link", { name: /View as agent/ });
+    const viewAsAgentLink = screen.getByRole("link", { name: "Agent" });
     expect(viewAsAgentLink).toHaveAttribute("href", "/refactorings/extract-function/agent");
+
+    const viewAsCompareLink = screen.getByRole("link", { name: "Compare" });
+    expect(viewAsCompareLink).toHaveAttribute("href", "/refactorings/extract-function/compare");
   });
 });

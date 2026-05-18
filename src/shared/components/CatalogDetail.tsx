@@ -1,14 +1,13 @@
 import Container from "@mui/material/Container";
 import Divider from "@mui/material/Divider";
 import Stack from "@mui/material/Stack";
-import Typography from "@mui/material/Typography";
-import NextLink from "next/link";
 
 import BeforeAfterCodeBlocks from "@/shared/components/BeforeAfterCodeBlocks";
 import CatalogBackLink from "@/shared/components/CatalogBackLink";
 import CatalogEntryHeader from "@/shared/components/CatalogEntryHeader";
 import CatalogPrevNext from "@/shared/components/CatalogPrevNext";
 import CatalogSection from "@/shared/components/CatalogSection";
+import LensSwitcher from "@/shared/components/LensSwitcher";
 import type { CatalogEntry, Lens } from "@/shared/lib/CatalogEntry";
 import type { CatalogNeighbors } from "@/shared/lib/CatalogNeighbors";
 
@@ -34,17 +33,13 @@ export default function CatalogDetail({
   neighbors,
 }: CatalogDetailProps) {
   const forces = entry.forcesFor(lens);
-  const crossLensHref = lens === "human" ? entry.agentHref() : entry.href();
-  const crossLensLabel = lens === "human" ? "View as agent →" : "← View as human";
 
   return (
     <Container maxWidth="md" sx={{ py: 4 }}>
       <Stack spacing={3}>
         <CatalogBackLink href={backLinkHref} label={backLinkLabel} />
         <CatalogEntryHeader name={entry.name} number={number} relatedNames={entry.nemeses} />
-        <Typography variant="body2">
-          <NextLink href={crossLensHref}>{crossLensLabel}</NextLink>
-        </Typography>
+        <LensSwitcher entry={entry} currentView={lens} />
         <Divider />
         {entry.safetyNet && <CatalogSection label="Safety net" body={entry.safetyNet.toString()} />}
         <CatalogSection label="Symptom" body={forces.symptom} />

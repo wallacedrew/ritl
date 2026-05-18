@@ -16,7 +16,10 @@ describe("user reads the agent view of a smell", () => {
     expect(screen.getByText(/token-level identifiers/i)).toBeInTheDocument();
     expect(screen.getByText(/fewer context-lookup hops/i)).toBeInTheDocument();
 
-    const backToHuman = screen.getByRole("link", { name: /View as human/ });
+    const backToHuman = screen.getByRole("link", { name: "Human" });
     expect(backToHuman).toHaveAttribute("href", "/smells/mysterious-name");
+
+    const toCompare = screen.getByRole("link", { name: "Compare" });
+    expect(toCompare).toHaveAttribute("href", "/smells/mysterious-name/compare");
   });
 });
