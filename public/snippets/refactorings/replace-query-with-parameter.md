@@ -1,15 +1,15 @@
 ---
 name: replace-query-with-parameter
-description: Apply Replace Query with Parameter when you see Mutable Data, Insider Trading. A function that reads from a query (global, singleton, instance state) instead accepts the value as a parameter and becomes referentially transparent.
+description: Apply Replace Query with Parameter when you see Mutable Data, Insider Trading. Dependencies are visible in the signature; the agent reasons about the function as a pure transformation of its inputs.
 ---
 
 # Apply: 59 — Replace Query with Parameter
 
-**Target state:** A function that reads from a query (global, singleton, instance state) instead accepts the value as a parameter and becomes referentially transparent.
+**Target state:** Dependencies are visible in the signature; the agent reasons about the function as a pure transformation of its inputs.
 
-**Why apply it:** The function becomes testable in isolation; its dependencies are visible in its signature; pure-function reasoning becomes possible.
+**Why apply it:** The agent reasons about pure transformations; tests target the function in isolation; signatures document dependencies.
 
-**Tradeoff:** Passing the value pushes the responsibility onto callers; for many call sites, signatures grow noisily — prefer this when the query touches global or volatile state.
+**Tradeoff:** Pushing every internal query to a parameter bloats signatures the agent must thread through call sites — appropriate only for queries that touch global or volatile state.
 
 ```js
 // Avoid:

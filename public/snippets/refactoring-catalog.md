@@ -1283,16 +1283,16 @@ for (const p of people) {
 
 ---
 name: change-function-declaration
-description: Apply Change Function Declaration when you see Mysterious Name, Long Parameter List, Alternative Classes with Different Interfaces. Function names match what they actually do; parameter lists carry only what the function needs, in the order callers expect.
+description: Apply Change Function Declaration when you see Mysterious Name, Long Parameter List, Alternative Classes with Different Interfaces. Names and signatures express what the function does; the agent reasons about call sites from the signature alone.
 ---
 
 # Apply: 05 — Change Function Declaration
 
-**Target state:** Function names match what they actually do; parameter lists carry only what the function needs, in the order callers expect.
+**Target state:** Names and signatures express what the function does; the agent reasons about call sites from the signature alone.
 
-**Why apply it:** Call sites read fluently; mismatches between expectation and behavior surface immediately at the boundary.
+**Why apply it:** Call sites read fluently; the agent's signature-based reasoning becomes trustworthy; mismatches surface at the boundary.
 
-**Tradeoff:** Every caller pays for the signature change at once, even those whose call sites were already fine; other-team callers get forced coordination.
+**Tradeoff:** Every caller pays for the change at once; for cross-team consumers, the agent must coordinate updates or risk breaking external code.
 
 ```js
 // Avoid:
@@ -1310,16 +1310,16 @@ function circumference(radius) {
 
 ---
 name: introduce-parameter-object
-description: Apply Introduce Parameter Object when you see Long Parameter List, Data Clumps. Related arguments travel together as one well-named value object that the function (and callers) refer to by name.
+description: Apply Introduce Parameter Object when you see Long Parameter List, Data Clumps. The clump becomes a named value object the agent passes through as a single token; structure validation happens once at construction.
 ---
 
 # Apply: 08 — Introduce Parameter Object
 
-**Target state:** Related arguments travel together as one well-named value object that the function (and callers) refer to by name.
+**Target state:** The clump becomes a named value object the agent passes through as a single token; structure validation happens once at construction.
 
-**Why apply it:** Adding a related field is one type change instead of touching every call site; intent is named.
+**Why apply it:** Operations on the clump (formatting, validation, equality) live with it; the agent reasons about one named concept instead of N coupled fields.
 
-**Tradeoff:** Premature parameter objects hide which fields are actually needed by which method — wait until the clump appears in 3+ places before extracting.
+**Tradeoff:** Constructing the object at every call adds an allocation and a name the agent must learn; if the clump appears in <3 places the wrapper is overhead.
 
 ```js
 // Avoid:
@@ -1338,16 +1338,16 @@ function alertIfOutOfRange(range, reading) { /* ... */ }
 
 ---
 name: introduce-assertion
-description: Apply Introduce Assertion when you see Comments, Mutable Data. Invariants the code assumes are stated explicitly; readers don't need to deduce them.
+description: Apply Introduce Assertion when you see Comments, Mutable Data. Invariants are stated explicitly; the agent reads them and reasons about behavior under their guarantee.
 ---
 
 # Apply: 26 — Introduce Assertion
 
-**Target state:** Invariants the code assumes are stated explicitly; readers don't need to deduce them.
+**Target state:** Invariants are stated explicitly; the agent reads them and reasons about behavior under their guarantee.
 
-**Why apply it:** Bugs that violate the invariant fail loudly at the source instead of bubbling out as mysterious downstream errors.
+**Why apply it:** Invariants fail loudly at the source; the agent's debugging traces are short; assumptions become enforceable contracts.
 
-**Tradeoff:** Assertions used as control flow couple production behavior to debug-mode invariants — keep them as runtime contracts that should never fire.
+**Tradeoff:** Assertions used as control flow couple production behavior to debug-mode invariants; the agent that conflates the two ships a flow-dependent change disguised as documentation.
 
 ```js
 // Avoid:
@@ -1363,16 +1363,16 @@ const tax = base * rate;
 
 ---
 name: separate-query-from-modifier
-description: Apply Separate Query from Modifier when you see Mutable Data. Functions either return a value or mutate state, never both — callers can compose them without surprise.
+description: Apply Separate Query from Modifier when you see Mutable Data. Functions either return or mutate, never both; the agent composes queries without surprise side effects.
 ---
 
 # Apply: 27 — Separate Query from Modifier
 
-**Target state:** Functions either return a value or mutate state, never both — callers can compose them without surprise.
+**Target state:** Functions either return or mutate, never both; the agent composes queries without surprise side effects.
 
-**Why apply it:** Reasoning about side effects is local; tests target each shape independently.
+**Why apply it:** The agent reasons about side effects locally; queries compose cleanly; tests target each shape independently.
 
-**Tradeoff:** If the modification and the query truly cannot be separated (e.g. find-and-remove on a queue), the constraint is fundamental — leave the combined operation but document it.
+**Tradeoff:** If the modification and query are genuinely atomic (find-and-remove, compare-and-swap), splitting them introduces a race window the agent must close at every call site.
 
 ```js
 // Avoid:
@@ -1394,16 +1394,16 @@ function alertMiscreant(people) {
 
 ---
 name: parameterize-function
-description: Apply Parameterize Function when you see Duplicated Code. Two near-identical functions that differ only in literal values combine into one with a parameter.
+description: Apply Parameterize Function when you see Duplicated Code. One canonical function with a parameter; the agent reasons about one body and verifies parameter values at call sites.
 ---
 
 # Apply: 28 — Parameterize Function
 
-**Target state:** Two near-identical functions that differ only in literal values combine into one with a parameter.
+**Target state:** One canonical function with a parameter; the agent reasons about one body and verifies parameter values at call sites.
 
-**Why apply it:** One canonical implementation; new variations are new parameter values, not new functions.
+**Why apply it:** One canonical implementation the agent reasons about; new variations are new parameter values, not new code paths.
 
-**Tradeoff:** If the variations are conceptually different operations, one parameterized function will accumulate flags and special cases — keep them separate then.
+**Tradeoff:** If the variations encode conceptually different operations, the parameterized function grows flags and special cases the agent must thread through — worse than the original duplication.
 
 ```js
 // Avoid:
@@ -1418,16 +1418,16 @@ function raise(person, factor) { person.salary *= 1 + factor; }
 
 ---
 name: remove-flag-argument
-description: Apply Remove Flag Argument when you see Long Parameter List. Each flag value becomes its own well-named function; callers say what they mean rather than passing booleans.
+description: Apply Remove Flag Argument when you see Long Parameter List. Each flag value becomes a named function; the agent reads call sites as direct invocations of the intended behavior.
 ---
 
 # Apply: 29 — Remove Flag Argument
 
-**Target state:** Each flag value becomes its own well-named function; callers say what they mean rather than passing booleans.
+**Target state:** Each flag value becomes a named function; the agent reads call sites as direct invocations of the intended behavior.
 
-**Why apply it:** Call sites read fluently; new variations land as new functions instead of new switch cases.
+**Why apply it:** Call sites read fluently; the agent reasons about one function per concern.
 
-**Tradeoff:** Two replacement functions with similar bodies introduce duplication — pair this with Extract Function for shared internals.
+**Tradeoff:** If the branches share substantial body, splitting produces duplication the agent must keep in sync; pair this with Extract Function for shared internals.
 
 ```js
 // Avoid:
@@ -1445,16 +1445,16 @@ function setWidth(value)  { /* ... */ }
 
 ---
 name: preserve-whole-object
-description: Apply Preserve Whole Object when you see Long Parameter List, Data Clumps. Instead of pulling several values out of an object to pass them in, pass the object itself.
+description: Apply Preserve Whole Object when you see Long Parameter List, Data Clumps. The function takes the object; the agent updates one place when the function needs new fields.
 ---
 
 # Apply: 30 — Preserve Whole Object
 
-**Target state:** Instead of pulling several values out of an object to pass them in, pass the object itself.
+**Target state:** The function takes the object; the agent updates one place when the function needs new fields.
 
-**Why apply it:** Signatures shrink; adding a needed field is internal; consumers don't have to plumb new arguments through.
+**Why apply it:** Signatures shrink; adding a needed field is an internal change; the agent reasons about one parameter at every call.
 
-**Tradeoff:** Passing the whole object adds coupling to its full surface — only do this when the called function might reasonably need other parts of the object.
+**Tradeoff:** Passing the whole object couples the function to the object's full surface; the agent reasoning about the function must consider what other fields it might quietly read.
 
 ```js
 // Avoid:
@@ -1468,16 +1468,16 @@ if (range.includes(room)) { /* ... */ }
 
 ---
 name: replace-parameter-with-query
-description: Apply Replace Parameter with Query when you see Long Parameter List. When a function can compute its own answer from already-available state, callers don't have to pre-compute it.
+description: Apply Replace Parameter with Query when you see Long Parameter List. The function computes its own answer; the agent calls it without pre-computing the inputs.
 ---
 
 # Apply: 31 — Replace Parameter with Query
 
-**Target state:** When a function can compute its own answer from already-available state, callers don't have to pre-compute it.
+**Target state:** The function computes its own answer; the agent calls it without pre-computing the inputs.
 
-**Why apply it:** Signatures shrink; consumers stop doing the function's homework.
+**Why apply it:** Signatures shrink; the agent calls the function directly without reproducing caller-side derivations.
 
-**Tradeoff:** If the query has side effects or is expensive, passing the value is genuinely better — only replace when the query is pure and cheap.
+**Tradeoff:** If the query is expensive or has side effects, replacing the parameter multiplies cost or introduces hidden coupling the agent must reason about.
 
 ```js
 // Avoid:
@@ -1493,16 +1493,16 @@ const final = discounted(order); // computes basePrice and level itself
 
 ---
 name: replace-query-with-parameter
-description: Apply Replace Query with Parameter when you see Mutable Data, Insider Trading. A function that reads from a query (global, singleton, instance state) instead accepts the value as a parameter and becomes referentially transparent.
+description: Apply Replace Query with Parameter when you see Mutable Data, Insider Trading. Dependencies are visible in the signature; the agent reasons about the function as a pure transformation of its inputs.
 ---
 
 # Apply: 59 — Replace Query with Parameter
 
-**Target state:** A function that reads from a query (global, singleton, instance state) instead accepts the value as a parameter and becomes referentially transparent.
+**Target state:** Dependencies are visible in the signature; the agent reasons about the function as a pure transformation of its inputs.
 
-**Why apply it:** The function becomes testable in isolation; its dependencies are visible in its signature; pure-function reasoning becomes possible.
+**Why apply it:** The agent reasons about pure transformations; tests target the function in isolation; signatures document dependencies.
 
-**Tradeoff:** Passing the value pushes the responsibility onto callers; for many call sites, signatures grow noisily — prefer this when the query touches global or volatile state.
+**Tradeoff:** Pushing every internal query to a parameter bloats signatures the agent must thread through call sites — appropriate only for queries that touch global or volatile state.
 
 ```js
 // Avoid:
@@ -1520,16 +1520,16 @@ function rebate(order, rate) {
 
 ---
 name: replace-constructor-with-factory-function
-description: Apply Replace Constructor with Factory Function when you see Primitive Obsession, Speculative Generality. Object creation goes through a named function that can validate, choose subclasses, or return cached instances.
+description: Apply Replace Constructor with Factory Function when you see Primitive Obsession, Speculative Generality. Construction goes through a named factory the agent can extend with validation, polymorphism, or caching as one location.
 ---
 
 # Apply: 32 — Replace Constructor with Factory Function
 
-**Target state:** Object creation goes through a named function that can validate, choose subclasses, or return cached instances.
+**Target state:** Construction goes through a named factory the agent can extend with validation, polymorphism, or caching as one location.
 
-**Why apply it:** Construction can vary per case; consumers don't depend on which concrete class they're getting.
+**Why apply it:** The agent extends construction in one place; consumers don't depend on which concrete class they're getting.
 
-**Tradeoff:** Hides the actual class from callers — make sure your factory's name still expresses the produced shape clearly.
+**Tradeoff:** The factory hides the actual class from callers; the agent must ensure the factory's name still expresses the produced shape clearly or call sites become opaque.
 
 ```js
 // Avoid:
@@ -1546,16 +1546,16 @@ const employee = createEngineer(name, salary);
 
 ---
 name: replace-error-code-with-exception
-description: Apply Replace Error Code with Exception when you see Comments. Numeric or string error codes that callers must remember to check are replaced with exceptions that propagate by default.
+description: Apply Replace Error Code with Exception when you see Comments. Failures throw exceptions the agent reasons about as separate control flow; the type system marks the failure path.
 ---
 
 # Apply: 60 — Replace Error Code with Exception
 
-**Target state:** Numeric or string error codes that callers must remember to check are replaced with exceptions that propagate by default.
+**Target state:** Failures throw exceptions the agent reasons about as separate control flow; the type system marks the failure path.
 
-**Why apply it:** Forgetting to check no longer silently swallows the error; the type system marks the failure path; cleanup happens via finally / try-with.
+**Why apply it:** The agent reasons about success and failure paths separately; cleanup happens via finally / try-with; forgetting to handle no longer silently swallows.
 
-**Tradeoff:** Exceptions for predictable conditions misuse the mechanism — only convert codes that represent genuine, exceptional, unrecoverable failures.
+**Tradeoff:** Exceptions for predictable conditions misuse the mechanism; the agent ships try/catch around expected outcomes that should be values.
 
 ```js
 // Avoid:
@@ -1576,16 +1576,16 @@ function withdraw(amount) {
 
 ---
 name: replace-exception-with-precheck
-description: Apply Replace Exception with Precheck when you see Comments. Exceptions used for predictable, checkable conditions become an explicit precheck the caller can perform, leaving exceptions for truly exceptional cases.
+description: Apply Replace Exception with Precheck when you see Comments. The precheck appears at the point of decision; the agent reads the code top-to-bottom as the rule, with exceptions reserved for truly exceptional cases.
 ---
 
 # Apply: 61 — Replace Exception with Precheck
 
-**Target state:** Exceptions used for predictable, checkable conditions become an explicit precheck the caller can perform, leaving exceptions for truly exceptional cases.
+**Target state:** The precheck appears at the point of decision; the agent reads the code top-to-bottom as the rule, with exceptions reserved for truly exceptional cases.
 
-**Why apply it:** The error path is local and visible; reading code top-to-bottom describes the rules rather than the failure response; debuggers stop catching benign throws.
+**Why apply it:** The agent reads the rule top-to-bottom; debuggers stop catching benign throws; exception handlers reserve for truly exceptional cases.
 
-**Tradeoff:** Race conditions: the precheck may pass and the operation still fail (TOCTOU). Use prechecks only for conditions the caller can verify without a race.
+**Tradeoff:** Race conditions: the precheck may pass and the operation still fail (TOCTOU); the agent using prechecks must verify the caller can check the condition atomically.
 
 ```js
 // Avoid:

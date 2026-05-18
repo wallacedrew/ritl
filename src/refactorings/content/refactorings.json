@@ -116,20 +116,20 @@
     "safetyNet": "types/compiler",
     "forces": {
       "human": {
-        "symptom": "[human symptom not yet authored]",
+        "symptom": "A function whose name doesn't match what it does, or whose parameter list carries unused/awkwardly-ordered arguments — readers must inspect the body to understand the call.",
         "goal": "Function names match what they actually do; parameter lists carry only what the function needs, in the order callers expect.",
-        "pressure": "[human pressure not yet authored]",
+        "pressure": "Every reader of a call site pays a comprehension cost; mismatches between name and behavior hide bugs; new callers learn the wrong abstraction from the wrong signature.",
         "tradeoff": "Every caller pays for the signature change at once, even those whose call sites were already fine; other-team callers get forced coordination.",
         "relief": "Call sites read fluently; mismatches between expectation and behavior surface immediately at the boundary.",
-        "trap": "[human trap not yet authored]"
+        "trap": "Renaming or reshaping signatures across team boundaries without coordination — forces other teams to rebuild their code in your PR's timeline."
       },
       "agent": {
-        "symptom": "[agent symptom not yet authored]",
-        "goal": "[agent goal not yet authored]",
-        "pressure": "[agent pressure not yet authored]",
-        "tradeoff": "[agent tradeoff not yet authored]",
-        "relief": "[agent relief not yet authored]",
-        "trap": "[agent trap not yet authored]"
+        "symptom": "A function whose name or signature doesn't match its behavior; the agent inferring intent from the call site gets misled and must read the body to verify.",
+        "goal": "Names and signatures express what the function does; the agent reasons about call sites from the signature alone.",
+        "pressure": "The agent must read the function body to verify call-site intent; chained edits compound the cost as the agent re-derives intent at every site.",
+        "tradeoff": "Every caller pays for the change at once; for cross-team consumers, the agent must coordinate updates or risk breaking external code.",
+        "relief": "Call sites read fluently; the agent's signature-based reasoning becomes trustworthy; mismatches surface at the boundary.",
+        "trap": "Reshaping signatures across team boundaries without coordination forces other consumers to rebuild — the agent shipping the change may not see the downstream breakage."
       }
     }
   },
@@ -194,20 +194,20 @@
     "safetyNet": "types/compiler",
     "forces": {
       "human": {
-        "symptom": "[human symptom not yet authored]",
+        "symptom": "The same group of fields (low, high; firstName, lastName; street, city, zip) appears as parameters across multiple functions — a clump traveling together with no name.",
         "goal": "Related arguments travel together as one well-named value object that the function (and callers) refer to by name.",
-        "pressure": "[human pressure not yet authored]",
+        "pressure": "Adding a field of the clump touches every signature; callers must remember positional order; the clump's identity stays invisible.",
         "tradeoff": "Premature parameter objects hide which fields are actually needed by which method — wait until the clump appears in 3+ places before extracting.",
         "relief": "Adding a related field is one type change instead of touching every call site; intent is named.",
-        "trap": "[human trap not yet authored]"
+        "trap": "Building parameter objects from coincidental groupings (params that happen to appear together but don't share a domain concept) — adds a class for ceremony without expressing meaning."
       },
       "agent": {
-        "symptom": "[agent symptom not yet authored]",
-        "goal": "[agent goal not yet authored]",
-        "pressure": "[agent pressure not yet authored]",
-        "tradeoff": "[agent tradeoff not yet authored]",
-        "relief": "[agent relief not yet authored]",
-        "trap": "[agent trap not yet authored]"
+        "symptom": "The agent sees the same field group appearing across multiple signatures; every site re-parses the same shape and verifies the same ordering.",
+        "goal": "The clump becomes a named value object the agent passes through as a single token; structure validation happens once at construction.",
+        "pressure": "Adding or reordering a field touches every signature; the agent must find and update each consistently or risk silent positional drift.",
+        "tradeoff": "Constructing the object at every call adds an allocation and a name the agent must learn; if the clump appears in <3 places the wrapper is overhead.",
+        "relief": "Operations on the clump (formatting, validation, equality) live with it; the agent reasons about one named concept instead of N coupled fields.",
+        "trap": "Wrapping coincidental field groups creates fake value objects the agent must construct and destructure with no comprehension gain."
       }
     }
   },
@@ -662,20 +662,20 @@
     "safetyNet": "unit test",
     "forces": {
       "human": {
-        "symptom": "[human symptom not yet authored]",
+        "symptom": "Code that depends on unwritten invariants — `const tax = base * rate;` that assumes rate > 0, with no enforcement and only a stale comment if any.",
         "goal": "Invariants the code assumes are stated explicitly; readers don't need to deduce them.",
-        "pressure": "[human pressure not yet authored]",
+        "pressure": "Bugs that violate the invariant bubble out as mysterious downstream errors; readers must reconstruct the invariant from context; the assumption drifts silently as the code evolves.",
         "tradeoff": "Assertions used as control flow couple production behavior to debug-mode invariants — keep them as runtime contracts that should never fire.",
         "relief": "Bugs that violate the invariant fail loudly at the source instead of bubbling out as mysterious downstream errors.",
-        "trap": "[human trap not yet authored]"
+        "trap": "Using assertions as control flow — production code that depends on the assertion firing or not firing becomes coupled to debug-mode behavior."
       },
       "agent": {
-        "symptom": "[agent symptom not yet authored]",
-        "goal": "[agent goal not yet authored]",
-        "pressure": "[agent pressure not yet authored]",
-        "tradeoff": "[agent tradeoff not yet authored]",
-        "relief": "[agent relief not yet authored]",
-        "trap": "[agent trap not yet authored]"
+        "symptom": "Code that depends on unwritten invariants the agent must reconstruct from context; bugs that violate the invariant surface far from the source.",
+        "goal": "Invariants are stated explicitly; the agent reads them and reasons about behavior under their guarantee.",
+        "pressure": "The agent must reconstruct invariants from surrounding code; bugs surface far from the source and tracing them costs reasoning hops.",
+        "tradeoff": "Assertions used as control flow couple production behavior to debug-mode invariants; the agent that conflates the two ships a flow-dependent change disguised as documentation.",
+        "relief": "Invariants fail loudly at the source; the agent's debugging traces are short; assumptions become enforceable contracts.",
+        "trap": "Coupling production behavior to assertion presence/absence — the agent reads them as documentation but the runtime depends on them firing or not."
       }
     }
   },
@@ -688,20 +688,20 @@
     "safetyNet": "types/compiler",
     "forces": {
       "human": {
-        "symptom": "[human symptom not yet authored]",
+        "symptom": "A function that both returns a value AND mutates state — `findMiscreant(people)` that returns the miscreant AND alerts them.",
         "goal": "Functions either return a value or mutate state, never both — callers can compose them without surprise.",
-        "pressure": "[human pressure not yet authored]",
+        "pressure": "Callers can't query without triggering the side effect; tests must work around the dual contract; reasoning about side effects becomes non-local.",
         "tradeoff": "If the modification and the query truly cannot be separated (e.g. find-and-remove on a queue), the constraint is fundamental — leave the combined operation but document it.",
         "relief": "Reasoning about side effects is local; tests target each shape independently.",
-        "trap": "[human trap not yet authored]"
+        "trap": "Splitting a function whose query and modification truly cannot be separated — find-and-remove on a queue, atomic compare-and-swap — fragments operations that need atomicity."
       },
       "agent": {
-        "symptom": "[agent symptom not yet authored]",
-        "goal": "[agent goal not yet authored]",
-        "pressure": "[agent pressure not yet authored]",
-        "tradeoff": "[agent tradeoff not yet authored]",
-        "relief": "[agent relief not yet authored]",
-        "trap": "[agent trap not yet authored]"
+        "symptom": "A function the agent calls for a query also mutates state; the agent reasoning about safety must trace the mutation across consumers.",
+        "goal": "Functions either return or mutate, never both; the agent composes queries without surprise side effects.",
+        "pressure": "Every call to the function pays for both contracts; the agent can't query without triggering mutation, which complicates testing and composition.",
+        "tradeoff": "If the modification and query are genuinely atomic (find-and-remove, compare-and-swap), splitting them introduces a race window the agent must close at every call site.",
+        "relief": "The agent reasons about side effects locally; queries compose cleanly; tests target each shape independently.",
+        "trap": "Splitting atomic query-and-modify operations introduces race windows the agent must reason about at every call site — the cure becomes worse than the smell."
       }
     }
   },
@@ -714,20 +714,20 @@
     "safetyNet": "types/compiler",
     "forces": {
       "human": {
-        "symptom": "[human symptom not yet authored]",
+        "symptom": "Two or more near-identical functions that differ only in literal values — `tenPercentRaise(person)` and `fivePercentRaise(person)` differ only in 1.10 vs 1.05.",
         "goal": "Two near-identical functions that differ only in literal values combine into one with a parameter.",
-        "pressure": "[human pressure not yet authored]",
+        "pressure": "Bug fixes must land in every variant; new variants are new functions; the shared shape isn't expressed anywhere.",
         "tradeoff": "If the variations are conceptually different operations, one parameterized function will accumulate flags and special cases — keep them separate then.",
         "relief": "One canonical implementation; new variations are new parameter values, not new functions.",
-        "trap": "[human trap not yet authored]"
+        "trap": "Parameterizing functions whose variations are conceptually different operations — the parameterized function accumulates flags and special cases that overwhelm the original simplicity."
       },
       "agent": {
-        "symptom": "[agent symptom not yet authored]",
-        "goal": "[agent goal not yet authored]",
-        "pressure": "[agent pressure not yet authored]",
-        "tradeoff": "[agent tradeoff not yet authored]",
-        "relief": "[agent relief not yet authored]",
-        "trap": "[agent trap not yet authored]"
+        "symptom": "The agent finds near-identical functions differing only in literal values; consistency depends on every variant staying in sync.",
+        "goal": "One canonical function with a parameter; the agent reasons about one body and verifies parameter values at call sites.",
+        "pressure": "Bug fixes must land in every variant; the agent must find and update each consistently or risk drift.",
+        "tradeoff": "If the variations encode conceptually different operations, the parameterized function grows flags and special cases the agent must thread through — worse than the original duplication.",
+        "relief": "One canonical implementation the agent reasons about; new variations are new parameter values, not new code paths.",
+        "trap": "Parameterizing conceptually different operations accumulates flag-driven branches the agent must reason about — the function becomes a switch statement in disguise."
       }
     }
   },
@@ -740,20 +740,20 @@
     "safetyNet": "types/compiler",
     "forces": {
       "human": {
-        "symptom": "[human symptom not yet authored]",
+        "symptom": "A function with a boolean (or enum) flag parameter that dispatches to different internal behaviors — `setDimension('height', value)` vs `setDimension('width', value)`.",
         "goal": "Each flag value becomes its own well-named function; callers say what they mean rather than passing booleans.",
-        "pressure": "[human pressure not yet authored]",
+        "pressure": "Call sites must remember the flag's meaning; the function's body is a switch the agent reads through to find each branch; new flag values touch one body that handles many concerns.",
         "tradeoff": "Two replacement functions with similar bodies introduce duplication — pair this with Extract Function for shared internals.",
         "relief": "Call sites read fluently; new variations land as new functions instead of new switch cases.",
-        "trap": "[human trap not yet authored]"
+        "trap": "Splitting flag-dispatched functions whose branches are mostly shared body — produces N functions with N copies of the same body, inverting the original abstraction."
       },
       "agent": {
-        "symptom": "[agent symptom not yet authored]",
-        "goal": "[agent goal not yet authored]",
-        "pressure": "[agent pressure not yet authored]",
-        "tradeoff": "[agent tradeoff not yet authored]",
-        "relief": "[agent relief not yet authored]",
-        "trap": "[agent trap not yet authored]"
+        "symptom": "A function with a flag parameter that dispatches to different internal behaviors; the agent must trace the flag's value through the body to verify which branch any call exercises.",
+        "goal": "Each flag value becomes a named function; the agent reads call sites as direct invocations of the intended behavior.",
+        "pressure": "The agent must reason about flag values at every call site; the function's body conflates multiple concerns the agent must mentally split.",
+        "tradeoff": "If the branches share substantial body, splitting produces duplication the agent must keep in sync; pair this with Extract Function for shared internals.",
+        "relief": "Call sites read fluently; the agent reasons about one function per concern.",
+        "trap": "Splitting flag-dispatched functions without extracting shared body creates N copies of the same logic the agent must keep in sync — the cure becomes the duplication smell."
       }
     }
   },
@@ -766,20 +766,20 @@
     "safetyNet": "types/compiler",
     "forces": {
       "human": {
-        "symptom": "[human symptom not yet authored]",
+        "symptom": "A function call that pulls several fields out of an object to pass them in — `f(room.lowTemp, room.highTemp, room.humidity)` instead of `f(room)`.",
         "goal": "Instead of pulling several values out of an object to pass them in, pass the object itself.",
-        "pressure": "[human pressure not yet authored]",
+        "pressure": "Adding a new field that the function needs touches every call site; the function's contract is verbose and shifts every time it grows.",
         "tradeoff": "Passing the whole object adds coupling to its full surface — only do this when the called function might reasonably need other parts of the object.",
         "relief": "Signatures shrink; adding a needed field is internal; consumers don't have to plumb new arguments through.",
-        "trap": "[human trap not yet authored]"
+        "trap": "Passing whole objects when the function only needs one field — introduces unnecessary coupling to the object's full surface."
       },
       "agent": {
-        "symptom": "[agent symptom not yet authored]",
-        "goal": "[agent goal not yet authored]",
-        "pressure": "[agent pressure not yet authored]",
-        "tradeoff": "[agent tradeoff not yet authored]",
-        "relief": "[agent relief not yet authored]",
-        "trap": "[agent trap not yet authored]"
+        "symptom": "The agent sees call sites unpacking multiple fields from an object to pass to a function; adding any field the function later needs touches every call site.",
+        "goal": "The function takes the object; the agent updates one place when the function needs new fields.",
+        "pressure": "Every call site is a coordination point; the agent verifying a signature change must update every unpacking explicitly.",
+        "tradeoff": "Passing the whole object couples the function to the object's full surface; the agent reasoning about the function must consider what other fields it might quietly read.",
+        "relief": "Signatures shrink; adding a needed field is an internal change; the agent reasons about one parameter at every call.",
+        "trap": "Passing whole objects when only one field is needed couples the function to the object's full surface the agent must consider as the function's input scope."
       }
     }
   },
@@ -792,20 +792,20 @@
     "safetyNet": "unit test",
     "forces": {
       "human": {
-        "symptom": "[human symptom not yet authored]",
+        "symptom": "A function that takes a parameter the caller computed from data already available to the function — `discounted(order, basePrice, level)` where the function can compute basePrice and level itself.",
         "goal": "When a function can compute its own answer from already-available state, callers don't have to pre-compute it.",
-        "pressure": "[human pressure not yet authored]",
+        "pressure": "Every caller pays the homework cost; signatures inflate with values the function can derive; the duplication of derivation logic scatters.",
         "tradeoff": "If the query has side effects or is expensive, passing the value is genuinely better — only replace when the query is pure and cheap.",
         "relief": "Signatures shrink; consumers stop doing the function's homework.",
-        "trap": "[human trap not yet authored]"
+        "trap": "Replacing parameters with queries when the query is expensive or has side effects — multiplies cost and introduces hidden coupling."
       },
       "agent": {
-        "symptom": "[agent symptom not yet authored]",
-        "goal": "[agent goal not yet authored]",
-        "pressure": "[agent pressure not yet authored]",
-        "tradeoff": "[agent tradeoff not yet authored]",
-        "relief": "[agent relief not yet authored]",
-        "trap": "[agent trap not yet authored]"
+        "symptom": "A function takes parameters its callers computed from data the function already has access to; the agent verifying any call must reproduce the caller's computation.",
+        "goal": "The function computes its own answer; the agent calls it without pre-computing the inputs.",
+        "pressure": "Every caller pays the homework cost; the duplication of derivation logic scatters and the agent must keep callers in sync with the function's expectations.",
+        "tradeoff": "If the query is expensive or has side effects, replacing the parameter multiplies cost or introduces hidden coupling the agent must reason about.",
+        "relief": "Signatures shrink; the agent calls the function directly without reproducing caller-side derivations.",
+        "trap": "Replacing parameters with queries that are expensive or have side effects multiplies cost or introduces hidden coupling the agent reads as 'just a parameter swap'."
       }
     }
   },
@@ -818,20 +818,20 @@
     "safetyNet": "types/compiler",
     "forces": {
       "human": {
-        "symptom": "[human symptom not yet authored]",
+        "symptom": "Object creation directly via `new Class(...)` where the construction logic needs validation, subclass selection, or instance caching but the constructor can't express any of it.",
         "goal": "Object creation goes through a named function that can validate, choose subclasses, or return cached instances.",
-        "pressure": "[human pressure not yet authored]",
+        "pressure": "Constructors can't validate, return subclasses, or cache; consumers either accept the limitation or scatter pre-construction logic at every call site.",
         "tradeoff": "Hides the actual class from callers — make sure your factory's name still expresses the produced shape clearly.",
         "relief": "Construction can vary per case; consumers don't depend on which concrete class they're getting.",
-        "trap": "[human trap not yet authored]"
+        "trap": "Wrapping every constructor in a factory function for principle — adds a layer of indirection without buying validation, polymorphism, or caching capability."
       },
       "agent": {
-        "symptom": "[agent symptom not yet authored]",
-        "goal": "[agent goal not yet authored]",
-        "pressure": "[agent pressure not yet authored]",
-        "tradeoff": "[agent tradeoff not yet authored]",
-        "relief": "[agent relief not yet authored]",
-        "trap": "[agent trap not yet authored]"
+        "symptom": "The agent finds constructors used directly where construction needs validation, subclass selection, or caching — none of which constructors can express.",
+        "goal": "Construction goes through a named factory the agent can extend with validation, polymorphism, or caching as one location.",
+        "pressure": "The agent's reasoning about construction must consider pre-construction logic scattered at every call site; constructors hide the capability for the patterns the code actually needs.",
+        "tradeoff": "The factory hides the actual class from callers; the agent must ensure the factory's name still expresses the produced shape clearly or call sites become opaque.",
+        "relief": "The agent extends construction in one place; consumers don't depend on which concrete class they're getting.",
+        "trap": "Wrapping every constructor in a factory adds an indirection layer the agent must navigate without buying any new construction capability."
       }
     }
   },
@@ -1520,20 +1520,20 @@
     "safetyNet": "types/compiler",
     "forces": {
       "human": {
-        "symptom": "[human symptom not yet authored]",
+        "symptom": "A function that internally reads from a query — global state, singleton, instance field — instead of receiving the value as a parameter.",
         "goal": "A function that reads from a query (global, singleton, instance state) instead accepts the value as a parameter and becomes referentially transparent.",
-        "pressure": "[human pressure not yet authored]",
+        "pressure": "The function isn't testable in isolation; its dependencies are hidden in the body; pure-function reasoning is blocked.",
         "tradeoff": "Passing the value pushes the responsibility onto callers; for many call sites, signatures grow noisily — prefer this when the query touches global or volatile state.",
         "relief": "The function becomes testable in isolation; its dependencies are visible in its signature; pure-function reasoning becomes possible.",
-        "trap": "[human trap not yet authored]"
+        "trap": "Pushing every internal query out to parameters — including ones that read from stable, well-encapsulated state — bloats signatures with values that didn't need to be explicit."
       },
       "agent": {
-        "symptom": "[agent symptom not yet authored]",
-        "goal": "[agent goal not yet authored]",
-        "pressure": "[agent pressure not yet authored]",
-        "tradeoff": "[agent tradeoff not yet authored]",
-        "relief": "[agent relief not yet authored]",
-        "trap": "[agent trap not yet authored]"
+        "symptom": "A function reads from a query (global, singleton, instance state) instead of accepting the value as a parameter; the agent reasoning about it must model the query's state.",
+        "goal": "Dependencies are visible in the signature; the agent reasons about the function as a pure transformation of its inputs.",
+        "pressure": "The agent cannot test or compose the function without reproducing the query's state; reasoning about side effects requires modeling global timing.",
+        "tradeoff": "Pushing every internal query to a parameter bloats signatures the agent must thread through call sites — appropriate only for queries that touch global or volatile state.",
+        "relief": "The agent reasons about pure transformations; tests target the function in isolation; signatures document dependencies.",
+        "trap": "Externalizing every internal query — including ones reading stable encapsulated state — bloats signatures the agent must thread through every call site for marginal isolation benefit."
       }
     }
   },
@@ -1546,20 +1546,20 @@
     "safetyNet": "characterization test",
     "forces": {
       "human": {
-        "symptom": "[human symptom not yet authored]",
+        "symptom": "Functions returning numeric or string codes for failure — `withdraw(amount)` returning -1 for insufficient funds — relying on callers to check and propagate.",
         "goal": "Numeric or string error codes that callers must remember to check are replaced with exceptions that propagate by default.",
-        "pressure": "[human pressure not yet authored]",
+        "pressure": "Forgetting to check silently swallows the error; the type system can't enforce the check; cleanup logic scatters across consumers.",
         "tradeoff": "Exceptions for predictable conditions misuse the mechanism — only convert codes that represent genuine, exceptional, unrecoverable failures.",
         "relief": "Forgetting to check no longer silently swallows the error; the type system marks the failure path; cleanup happens via finally / try-with.",
-        "trap": "[human trap not yet authored]"
+        "trap": "Using exceptions for predictable conditions — turning every error code into an exception introduces control flow via throws that callers must catch."
       },
       "agent": {
-        "symptom": "[agent symptom not yet authored]",
-        "goal": "[agent goal not yet authored]",
-        "pressure": "[agent pressure not yet authored]",
-        "tradeoff": "[agent tradeoff not yet authored]",
-        "relief": "[agent relief not yet authored]",
-        "trap": "[agent trap not yet authored]"
+        "symptom": "The agent finds functions returning numeric or string codes for failure; verifying error handling requires the agent to trace every caller and check whether the code is inspected.",
+        "goal": "Failures throw exceptions the agent reasons about as separate control flow; the type system marks the failure path.",
+        "pressure": "Every caller is a chance to silently swallow the error; the agent verifying correctness must audit every call site for the check.",
+        "tradeoff": "Exceptions for predictable conditions misuse the mechanism; the agent ships try/catch around expected outcomes that should be values.",
+        "relief": "The agent reasons about success and failure paths separately; cleanup happens via finally / try-with; forgetting to handle no longer silently swallows.",
+        "trap": "Throwing for predictable conditions (not-found, validation failure) makes expected outcomes look like bugs to the agent reading the catch blocks."
       }
     }
   },
@@ -1572,20 +1572,20 @@
     "safetyNet": "characterization test",
     "forces": {
       "human": {
-        "symptom": "[human symptom not yet authored]",
+        "symptom": "Code that uses try/catch for conditions the caller could check directly — `try { amounts[i] / 100 } catch { return 0 }` where checking bounds is mechanical.",
         "goal": "Exceptions used for predictable, checkable conditions become an explicit precheck the caller can perform, leaving exceptions for truly exceptional cases.",
-        "pressure": "[human pressure not yet authored]",
+        "pressure": "Exception flow obscures the rule; debuggers stop on benign throws; reasoning about the happy path requires reading the catch handler.",
         "tradeoff": "Race conditions: the precheck may pass and the operation still fail (TOCTOU). Use prechecks only for conditions the caller can verify without a race.",
         "relief": "The error path is local and visible; reading code top-to-bottom describes the rules rather than the failure response; debuggers stop catching benign throws.",
-        "trap": "[human trap not yet authored]"
+        "trap": "Replacing every exception with a precheck — including ones for conditions the caller can't atomically verify (TOCTOU race windows)."
       },
       "agent": {
-        "symptom": "[agent symptom not yet authored]",
-        "goal": "[agent goal not yet authored]",
-        "pressure": "[agent pressure not yet authored]",
-        "tradeoff": "[agent tradeoff not yet authored]",
-        "relief": "[agent relief not yet authored]",
-        "trap": "[agent trap not yet authored]"
+        "symptom": "The agent finds try/catch for conditions the caller could check directly; control flow via exceptions obscures the rule.",
+        "goal": "The precheck appears at the point of decision; the agent reads the code top-to-bottom as the rule, with exceptions reserved for truly exceptional cases.",
+        "pressure": "The agent debugging exception flow must reason about catch handlers; benign throws fire breakpoints; the rule that 'should fire' isn't obvious from reading.",
+        "tradeoff": "Race conditions: the precheck may pass and the operation still fail (TOCTOU); the agent using prechecks must verify the caller can check the condition atomically.",
+        "relief": "The agent reads the rule top-to-bottom; debuggers stop catching benign throws; exception handlers reserve for truly exceptional cases.",
+        "trap": "Replacing exceptions with prechecks for conditions the caller can't atomically verify introduces race windows the agent's local tests won't catch."
       }
     }
   },

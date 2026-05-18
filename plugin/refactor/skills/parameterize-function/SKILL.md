@@ -1,15 +1,15 @@
 ---
 name: parameterize-function
-description: Apply Parameterize Function when you see Duplicated Code. Two near-identical functions that differ only in literal values combine into one with a parameter.
+description: Apply Parameterize Function when you see Duplicated Code. One canonical function with a parameter; the agent reasons about one body and verifies parameter values at call sites.
 ---
 
 # Apply: 28 — Parameterize Function
 
-**Target state:** Two near-identical functions that differ only in literal values combine into one with a parameter.
+**Target state:** One canonical function with a parameter; the agent reasons about one body and verifies parameter values at call sites.
 
-**Why apply it:** One canonical implementation; new variations are new parameter values, not new functions.
+**Why apply it:** One canonical implementation the agent reasons about; new variations are new parameter values, not new code paths.
 
-**Tradeoff:** If the variations are conceptually different operations, one parameterized function will accumulate flags and special cases — keep them separate then.
+**Tradeoff:** If the variations encode conceptually different operations, the parameterized function grows flags and special cases the agent must thread through — worse than the original duplication.
 
 ```js
 // Avoid:

@@ -1,15 +1,15 @@
 ---
 name: replace-constructor-with-factory-function
-description: Apply Replace Constructor with Factory Function when you see Primitive Obsession, Speculative Generality. Object creation goes through a named function that can validate, choose subclasses, or return cached instances.
+description: Apply Replace Constructor with Factory Function when you see Primitive Obsession, Speculative Generality. Construction goes through a named factory the agent can extend with validation, polymorphism, or caching as one location.
 ---
 
 # Apply: 32 — Replace Constructor with Factory Function
 
-**Target state:** Object creation goes through a named function that can validate, choose subclasses, or return cached instances.
+**Target state:** Construction goes through a named factory the agent can extend with validation, polymorphism, or caching as one location.
 
-**Why apply it:** Construction can vary per case; consumers don't depend on which concrete class they're getting.
+**Why apply it:** The agent extends construction in one place; consumers don't depend on which concrete class they're getting.
 
-**Tradeoff:** Hides the actual class from callers — make sure your factory's name still expresses the produced shape clearly.
+**Tradeoff:** The factory hides the actual class from callers; the agent must ensure the factory's name still expresses the produced shape clearly or call sites become opaque.
 
 ```js
 // Avoid:

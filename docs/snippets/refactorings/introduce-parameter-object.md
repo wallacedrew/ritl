@@ -1,15 +1,15 @@
 ---
 name: introduce-parameter-object
-description: Apply Introduce Parameter Object when you see Long Parameter List, Data Clumps. Related arguments travel together as one well-named value object that the function (and callers) refer to by name.
+description: Apply Introduce Parameter Object when you see Long Parameter List, Data Clumps. The clump becomes a named value object the agent passes through as a single token; structure validation happens once at construction.
 ---
 
 # Apply: 08 — Introduce Parameter Object
 
-**Target state:** Related arguments travel together as one well-named value object that the function (and callers) refer to by name.
+**Target state:** The clump becomes a named value object the agent passes through as a single token; structure validation happens once at construction.
 
-**Why apply it:** Adding a related field is one type change instead of touching every call site; intent is named.
+**Why apply it:** Operations on the clump (formatting, validation, equality) live with it; the agent reasons about one named concept instead of N coupled fields.
 
-**Tradeoff:** Premature parameter objects hide which fields are actually needed by which method — wait until the clump appears in 3+ places before extracting.
+**Tradeoff:** Constructing the object at every call adds an allocation and a name the agent must learn; if the clump appears in <3 places the wrapper is overhead.
 
 ```js
 // Avoid:

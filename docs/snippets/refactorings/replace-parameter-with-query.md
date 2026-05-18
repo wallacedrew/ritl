@@ -1,15 +1,15 @@
 ---
 name: replace-parameter-with-query
-description: Apply Replace Parameter with Query when you see Long Parameter List. When a function can compute its own answer from already-available state, callers don't have to pre-compute it.
+description: Apply Replace Parameter with Query when you see Long Parameter List. The function computes its own answer; the agent calls it without pre-computing the inputs.
 ---
 
 # Apply: 31 — Replace Parameter with Query
 
-**Target state:** When a function can compute its own answer from already-available state, callers don't have to pre-compute it.
+**Target state:** The function computes its own answer; the agent calls it without pre-computing the inputs.
 
-**Why apply it:** Signatures shrink; consumers stop doing the function's homework.
+**Why apply it:** Signatures shrink; the agent calls the function directly without reproducing caller-side derivations.
 
-**Tradeoff:** If the query has side effects or is expensive, passing the value is genuinely better — only replace when the query is pure and cheap.
+**Tradeoff:** If the query is expensive or has side effects, replacing the parameter multiplies cost or introduces hidden coupling the agent must reason about.
 
 ```js
 // Avoid:

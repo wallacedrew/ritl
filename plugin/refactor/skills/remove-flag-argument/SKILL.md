@@ -1,15 +1,15 @@
 ---
 name: remove-flag-argument
-description: Apply Remove Flag Argument when you see Long Parameter List. Each flag value becomes its own well-named function; callers say what they mean rather than passing booleans.
+description: Apply Remove Flag Argument when you see Long Parameter List. Each flag value becomes a named function; the agent reads call sites as direct invocations of the intended behavior.
 ---
 
 # Apply: 29 — Remove Flag Argument
 
-**Target state:** Each flag value becomes its own well-named function; callers say what they mean rather than passing booleans.
+**Target state:** Each flag value becomes a named function; the agent reads call sites as direct invocations of the intended behavior.
 
-**Why apply it:** Call sites read fluently; new variations land as new functions instead of new switch cases.
+**Why apply it:** Call sites read fluently; the agent reasons about one function per concern.
 
-**Tradeoff:** Two replacement functions with similar bodies introduce duplication — pair this with Extract Function for shared internals.
+**Tradeoff:** If the branches share substantial body, splitting produces duplication the agent must keep in sync; pair this with Extract Function for shared internals.
 
 ```js
 // Avoid:

@@ -1,15 +1,15 @@
 ---
 name: separate-query-from-modifier
-description: Apply Separate Query from Modifier when you see Mutable Data. Functions either return a value or mutate state, never both — callers can compose them without surprise.
+description: Apply Separate Query from Modifier when you see Mutable Data. Functions either return or mutate, never both; the agent composes queries without surprise side effects.
 ---
 
 # Apply: 27 — Separate Query from Modifier
 
-**Target state:** Functions either return a value or mutate state, never both — callers can compose them without surprise.
+**Target state:** Functions either return or mutate, never both; the agent composes queries without surprise side effects.
 
-**Why apply it:** Reasoning about side effects is local; tests target each shape independently.
+**Why apply it:** The agent reasons about side effects locally; queries compose cleanly; tests target each shape independently.
 
-**Tradeoff:** If the modification and the query truly cannot be separated (e.g. find-and-remove on a queue), the constraint is fundamental — leave the combined operation but document it.
+**Tradeoff:** If the modification and query are genuinely atomic (find-and-remove, compare-and-swap), splitting them introduces a race window the agent must close at every call site.
 
 ```js
 // Avoid:

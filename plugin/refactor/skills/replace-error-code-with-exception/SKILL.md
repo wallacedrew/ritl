@@ -1,15 +1,15 @@
 ---
 name: replace-error-code-with-exception
-description: Apply Replace Error Code with Exception when you see Comments. Numeric or string error codes that callers must remember to check are replaced with exceptions that propagate by default.
+description: Apply Replace Error Code with Exception when you see Comments. Failures throw exceptions the agent reasons about as separate control flow; the type system marks the failure path.
 ---
 
 # Apply: 60 — Replace Error Code with Exception
 
-**Target state:** Numeric or string error codes that callers must remember to check are replaced with exceptions that propagate by default.
+**Target state:** Failures throw exceptions the agent reasons about as separate control flow; the type system marks the failure path.
 
-**Why apply it:** Forgetting to check no longer silently swallows the error; the type system marks the failure path; cleanup happens via finally / try-with.
+**Why apply it:** The agent reasons about success and failure paths separately; cleanup happens via finally / try-with; forgetting to handle no longer silently swallows.
 
-**Tradeoff:** Exceptions for predictable conditions misuse the mechanism — only convert codes that represent genuine, exceptional, unrecoverable failures.
+**Tradeoff:** Exceptions for predictable conditions misuse the mechanism; the agent ships try/catch around expected outcomes that should be values.
 
 ```js
 // Avoid:

@@ -1,15 +1,15 @@
 ---
 name: preserve-whole-object
-description: Apply Preserve Whole Object when you see Long Parameter List, Data Clumps. Instead of pulling several values out of an object to pass them in, pass the object itself.
+description: Apply Preserve Whole Object when you see Long Parameter List, Data Clumps. The function takes the object; the agent updates one place when the function needs new fields.
 ---
 
 # Apply: 30 — Preserve Whole Object
 
-**Target state:** Instead of pulling several values out of an object to pass them in, pass the object itself.
+**Target state:** The function takes the object; the agent updates one place when the function needs new fields.
 
-**Why apply it:** Signatures shrink; adding a needed field is internal; consumers don't have to plumb new arguments through.
+**Why apply it:** Signatures shrink; adding a needed field is an internal change; the agent reasons about one parameter at every call.
 
-**Tradeoff:** Passing the whole object adds coupling to its full surface — only do this when the called function might reasonably need other parts of the object.
+**Tradeoff:** Passing the whole object couples the function to the object's full surface; the agent reasoning about the function must consider what other fields it might quietly read.
 
 ```js
 // Avoid:
