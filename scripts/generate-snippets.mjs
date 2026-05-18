@@ -180,12 +180,7 @@ function routingDescriptionForRefactoring(r) {
 }
 
 function agentLensForces(entry) {
-  // Prefer the agent lens when it has real content; fall back to human
-  // when agent content is still a `[... not yet authored]` placeholder
-  // (transitional state during a content sprint).
-  const agent = entry.forces.agent;
-  const looksAuthored = typeof agent?.symptom === "string" && !agent.symptom.startsWith("[");
-  return looksAuthored ? agent : entry.forces.human;
+  return entry.forces.agent;
 }
 
 function routingDescriptionForSmell(s) {
