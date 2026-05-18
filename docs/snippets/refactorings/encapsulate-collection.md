@@ -1,15 +1,15 @@
 ---
 name: encapsulate-collection
-description: Apply Encapsulate Collection when you see Mutable Data, Insider Trading. A class's internal collection is never returned directly; callers add or remove via methods on the class, and reads return a snapshot or iterator.
+description: Apply Encapsulate Collection when you see Mutable Data, Insider Trading. The owner exposes mutation methods (add, remove, replace); reads return snapshots or iterators; the agent reasons about collection invariants on the owner alone.
 ---
 
 # Apply: 52 — Encapsulate Collection
 
-**Target state:** A class's internal collection is never returned directly; callers add or remove via methods on the class, and reads return a snapshot or iterator.
+**Target state:** The owner exposes mutation methods (add, remove, replace); reads return snapshots or iterators; the agent reasons about collection invariants on the owner alone.
 
-**Why apply it:** The owner can enforce invariants (uniqueness, ordering, max size); refactoring the collection's internal shape is local.
+**Why apply it:** The owner enforces invariants in one place; the agent refactoring the collection's internal shape stays local to the owner.
 
-**Tradeoff:** Returning a shallow copy on every read can hide bugs where callers expected mutation to be reflected — be explicit about the contract.
+**Tradeoff:** Returning a shallow copy on every read can hide bugs where callers expected mutation-back; the agent must be explicit about the read contract or risk silent no-ops.
 
 ```js
 // Avoid:

@@ -1,15 +1,15 @@
 ---
 name: hide-delegate
-description: Apply Hide Delegate when you see Message Chains. Callers ask the closest object for what they want; the object delegates internally without exposing its collaborators.
+description: Apply Hide Delegate when you see Message Chains. Callers ask the closest object directly; the agent reasons about one boundary instead of traversing N.
 ---
 
 # Apply: 41 — Hide Delegate
 
-**Target state:** Callers ask the closest object for what they want; the object delegates internally without exposing its collaborators.
+**Target state:** Callers ask the closest object directly; the agent reasons about one boundary instead of traversing N.
 
-**Why apply it:** Encapsulation tightens; intermediate objects can change shape without breaking callers.
+**Why apply it:** Encapsulation tightens; the agent reasons about one boundary; intermediate objects can change shape without breaking callers.
 
-**Tradeoff:** Adds a passthrough method on the parent for every delegated operation — only worth it for operations that are repeated across consumers.
+**Tradeoff:** Each hidden delegate adds a passthrough method on the host; for chains used in one place the passthrough is overhead the agent now maintains in two places.
 
 ```js
 // Avoid:

@@ -1,15 +1,15 @@
 ---
 name: replace-function-with-command
-description: Apply Replace Function with Command when you see Long Function. A function with rich internal state becomes an object whose methods can share that state — easier to extract, name, and test in pieces.
+description: Apply Replace Function with Command when you see Long Function. Sub-steps become named methods sharing state via fields; the agent reasons about each step in isolation and extracts/tests them independently.
 ---
 
 # Apply: 48 — Replace Function with Command
 
-**Target state:** A function with rich internal state becomes an object whose methods can share that state — easier to extract, name, and test in pieces.
+**Target state:** Sub-steps become named methods sharing state via fields; the agent reasons about each step in isolation and extracts/tests them independently.
 
-**Why apply it:** Long sequences become labeled steps; tests target each step on the command; subclasses or strategies can vary parts of the algorithm.
+**Why apply it:** Each sub-step becomes a named method on the command; the agent extracts and tests them in pieces without rewiring shared state.
 
-**Tradeoff:** Promoting a function to a command adds ceremony (constructor, method calls). Only worth it when the function genuinely needs its own intermediate state or multiple entry points.
+**Tradeoff:** Command ceremony (constructor + execute + named private methods) is overhead for functions without genuine multi-step state; the agent now navigates a class where one function used to suffice.
 
 ```js
 // Avoid:

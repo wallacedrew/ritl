@@ -1,15 +1,15 @@
 ---
 name: remove-setting-method
-description: Apply Remove Setting Method when you see Mutable Data, Data Class. Fields whose values should only be set at construction lose their setters; callers either construct a new object or call a domain method that changes the field as a side effect of doing real work.
+description: Apply Remove Setting Method when you see Mutable Data, Data Class. Construction is the only path to setting these fields; the agent reasons about the object as immutable-after-construction.
 ---
 
 # Apply: 54 — Remove Setting Method
 
-**Target state:** Fields whose values should only be set at construction lose their setters; callers either construct a new object or call a domain method that changes the field as a side effect of doing real work.
+**Target state:** Construction is the only path to setting these fields; the agent reasons about the object as immutable-after-construction.
 
-**Why apply it:** Immutable-by-default classes; bugs from late mutation vanish; the API expresses what users can actually do.
+**Why apply it:** The agent reasons about the class as immutable-after-construction; bugs from late mutation vanish; the API expresses what users can actually do.
 
-**Tradeoff:** Removing a setter forces every legitimate update through a more meaningful method — verify there's a domain action behind every setter call before deleting it.
+**Tradeoff:** Removing a setter forces every legitimate update through a more meaningful method; the agent must verify each setter call has a domain action that justifies replacing it.
 
 ```js
 // Avoid:

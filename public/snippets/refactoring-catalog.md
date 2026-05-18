@@ -598,16 +598,16 @@ function basePrice() { return qty * itemPrice; }
 
 ---
 name: replace-function-with-command
-description: Apply Replace Function with Command when you see Long Function. A function with rich internal state becomes an object whose methods can share that state — easier to extract, name, and test in pieces.
+description: Apply Replace Function with Command when you see Long Function. Sub-steps become named methods sharing state via fields; the agent reasons about each step in isolation and extracts/tests them independently.
 ---
 
 # Apply: 48 — Replace Function with Command
 
-**Target state:** A function with rich internal state becomes an object whose methods can share that state — easier to extract, name, and test in pieces.
+**Target state:** Sub-steps become named methods sharing state via fields; the agent reasons about each step in isolation and extracts/tests them independently.
 
-**Why apply it:** Long sequences become labeled steps; tests target each step on the command; subclasses or strategies can vary parts of the algorithm.
+**Why apply it:** Each sub-step becomes a named method on the command; the agent extracts and tests them in pieces without rewiring shared state.
 
-**Tradeoff:** Promoting a function to a command adds ceremony (constructor, method calls). Only worth it when the function genuinely needs its own intermediate state or multiple entry points.
+**Tradeoff:** Command ceremony (constructor + execute + named private methods) is overhead for functions without genuine multi-step state; the agent now navigates a class where one function used to suffice.
 
 ```js
 // Avoid:
@@ -636,16 +636,16 @@ new Scorer(candidate).execute();
 
 ---
 name: replace-command-with-function
-description: Apply Replace Command with Function when you see Speculative Generality, Lazy Element. A command object whose execute() does everything in one shot collapses back to a plain function.
+description: Apply Replace Command with Function when you see Speculative Generality, Lazy Element. The command collapses to a plain function; the agent's call sites become direct invocations.
 ---
 
 # Apply: 49 — Replace Command with Function
 
-**Target state:** A command object whose execute() does everything in one shot collapses back to a plain function.
+**Target state:** The command collapses to a plain function; the agent's call sites become direct invocations.
 
-**Why apply it:** Fewer files, fewer constructors, less indirection — the caller sees one function instead of build-then-execute.
+**Why apply it:** Fewer files; shorter call stacks; the agent's plan-and-execute loop touches the function directly without the construct-then-call hop.
 
-**Tradeoff:** If the command holds genuinely useful intermediate state, flattening to a function regrows the temps it eliminated — confirm there's no real reuse first.
+**Tradeoff:** If the command held genuinely useful intermediate state, collapsing regrows the temps it eliminated; the agent verifying the collapse must check whether any internal decomposition is load-bearing.
 
 ```js
 // Avoid:
@@ -664,16 +664,16 @@ charge(c, o);
 
 ---
 name: return-modified-value
-description: Apply Return Modified Value when you see Mutable Data. Instead of mutating a parameter in place, the function returns the modified value so the caller reassigns.
+description: Apply Return Modified Value when you see Mutable Data. The function returns the modified value; the agent reads the signature and knows the function is a transformation, not a mutator.
 ---
 
 # Apply: 50 — Return Modified Value
 
-**Target state:** Instead of mutating a parameter in place, the function returns the modified value so the caller reassigns.
+**Target state:** The function returns the modified value; the agent reads the signature and knows the function is a transformation, not a mutator.
 
-**Why apply it:** Side effects on inputs disappear; the function reads as a transformation; equality and snapshotting become possible.
+**Why apply it:** Side effects on inputs disappear from the agent's contract reasoning; the function reads as a pure transformation; composition and snapshotting work.
 
-**Tradeoff:** Callers must remember to capture the returned value; if any forget, they keep the unmodified original. Mark the parameter readonly so the type system helps.
+**Tradeoff:** Callers must remember to capture the returned value; if any forget they keep the unmodified original, which the agent verifying must check at every call site (or rely on a readonly parameter type).
 
 ```js
 // Avoid:
@@ -723,16 +723,16 @@ function found(people, n) {
 
 ---
 name: encapsulate-variable
-description: Apply Encapsulate Variable when you see Global Data, Mutable Data. All reads and writes pass through a small named function that owns validation, logging, and invariants.
+description: Apply Encapsulate Variable when you see Global Data, Mutable Data. All access goes through a small named function the agent can grep for, audit, and instrument as a single closed surface.
 ---
 
 # Apply: 06 — Encapsulate Variable
 
-**Target state:** All reads and writes pass through a small named function that owns validation, logging, and invariants.
+**Target state:** All access goes through a small named function the agent can grep for, audit, and instrument as a single closed surface.
 
-**Why apply it:** A bug fix or audit becomes a one-line addition inside the wrapper; consumers never need to change.
+**Why apply it:** The agent has one audit point for validation/logging/invariants; consumers don't need to change when the wrapper grows new behavior.
 
-**Tradeoff:** Adds a layer of indirection that pays off only when every access goes through the wrapper — leakage of direct access undoes the benefit.
+**Tradeoff:** Indirection at every call site adds a hop; if any consumer leaks past the wrapper, the encapsulation's safety promise silently breaks and the agent assumes guarantees that don't hold.
 
 ```js
 // Avoid:
@@ -748,16 +748,16 @@ function setDefaultOwner(o) { _defaultOwner = o; }
 
 ---
 name: hide-delegate
-description: Apply Hide Delegate when you see Message Chains. Callers ask the closest object for what they want; the object delegates internally without exposing its collaborators.
+description: Apply Hide Delegate when you see Message Chains. Callers ask the closest object directly; the agent reasons about one boundary instead of traversing N.
 ---
 
 # Apply: 41 — Hide Delegate
 
-**Target state:** Callers ask the closest object for what they want; the object delegates internally without exposing its collaborators.
+**Target state:** Callers ask the closest object directly; the agent reasons about one boundary instead of traversing N.
 
-**Why apply it:** Encapsulation tightens; intermediate objects can change shape without breaking callers.
+**Why apply it:** Encapsulation tightens; the agent reasons about one boundary; intermediate objects can change shape without breaking callers.
 
-**Tradeoff:** Adds a passthrough method on the parent for every delegated operation — only worth it for operations that are repeated across consumers.
+**Tradeoff:** Each hidden delegate adds a passthrough method on the host; for chains used in one place the passthrough is overhead the agent now maintains in two places.
 
 ```js
 // Avoid:
@@ -772,16 +772,16 @@ const street = order.customerStreet();
 
 ---
 name: remove-middle-man
-description: Apply Remove Middle Man when you see Middle Man. Callers talk directly to the real object; trivial passthroughs are deleted.
+description: Apply Remove Middle Man when you see Middle Man. Callers talk to the real object directly; the agent's call traces are shorter and the implementation's location is obvious.
 ---
 
 # Apply: 42 — Remove Middle Man
 
-**Target state:** Callers talk directly to the real object; trivial passthroughs are deleted.
+**Target state:** Callers talk to the real object directly; the agent's call traces are shorter and the implementation's location is obvious.
 
-**Why apply it:** Fewer files, shorter call stacks, the implementation's location is obvious.
+**Why apply it:** Fewer files; shorter call stacks; the agent's plan-and-execute loop touches the real implementation directly.
 
-**Tradeoff:** Direct access to the delegate exposes its surface to every consumer — only remove the middle man when most of its methods are passthroughs.
+**Tradeoff:** Direct access exposes the real object's full surface to every consumer; the agent loses any encapsulation the middle man was providing (even if mostly cosmetic).
 
 ```js
 // Avoid:
@@ -798,16 +798,16 @@ manager.team.members();
 
 ---
 name: encapsulate-collection
-description: Apply Encapsulate Collection when you see Mutable Data, Insider Trading. A class's internal collection is never returned directly; callers add or remove via methods on the class, and reads return a snapshot or iterator.
+description: Apply Encapsulate Collection when you see Mutable Data, Insider Trading. The owner exposes mutation methods (add, remove, replace); reads return snapshots or iterators; the agent reasons about collection invariants on the owner alone.
 ---
 
 # Apply: 52 — Encapsulate Collection
 
-**Target state:** A class's internal collection is never returned directly; callers add or remove via methods on the class, and reads return a snapshot or iterator.
+**Target state:** The owner exposes mutation methods (add, remove, replace); reads return snapshots or iterators; the agent reasons about collection invariants on the owner alone.
 
-**Why apply it:** The owner can enforce invariants (uniqueness, ordering, max size); refactoring the collection's internal shape is local.
+**Why apply it:** The owner enforces invariants in one place; the agent refactoring the collection's internal shape stays local to the owner.
 
-**Tradeoff:** Returning a shallow copy on every read can hide bugs where callers expected mutation to be reflected — be explicit about the contract.
+**Tradeoff:** Returning a shallow copy on every read can hide bugs where callers expected mutation-back; the agent must be explicit about the read contract or risk silent no-ops.
 
 ```js
 // Avoid:
@@ -829,16 +829,16 @@ class Person {
 
 ---
 name: encapsulate-record
-description: Apply Encapsulate Record when you see Data Class, Primitive Obsession. A bare record (plain object with public fields) becomes a class whose properties are accessed through methods that can validate, log, or derive.
+description: Apply Encapsulate Record when you see Data Class, Primitive Obsession. The record is a class with accessors; the agent reasons about its shape, invariants, and behavior in one definition.
 ---
 
 # Apply: 53 — Encapsulate Record
 
-**Target state:** A bare record (plain object with public fields) becomes a class whose properties are accessed through methods that can validate, log, or derive.
+**Target state:** The record is a class with accessors; the agent reasons about its shape, invariants, and behavior in one definition.
 
-**Why apply it:** Field renames stay internal; invariants can be enforced on every read or write; the record becomes a real domain object.
+**Why apply it:** Field renames stay internal; invariants enforce in one place; the agent reasons about the class as a real domain object.
 
-**Tradeoff:** Wrapping every record adds ceremony — only worth it when behavior or validation will accrete around the data.
+**Tradeoff:** Wrapping every record adds construction ceremony at every entry; for records without invariants or behavior to attract, the agent gains nothing for the per-call cost.
 
 ```js
 // Avoid:
@@ -858,16 +858,16 @@ console.log(new Org(org).name());
 
 ---
 name: remove-setting-method
-description: Apply Remove Setting Method when you see Mutable Data, Data Class. Fields whose values should only be set at construction lose their setters; callers either construct a new object or call a domain method that changes the field as a side effect of doing real work.
+description: Apply Remove Setting Method when you see Mutable Data, Data Class. Construction is the only path to setting these fields; the agent reasons about the object as immutable-after-construction.
 ---
 
 # Apply: 54 — Remove Setting Method
 
-**Target state:** Fields whose values should only be set at construction lose their setters; callers either construct a new object or call a domain method that changes the field as a side effect of doing real work.
+**Target state:** Construction is the only path to setting these fields; the agent reasons about the object as immutable-after-construction.
 
-**Why apply it:** Immutable-by-default classes; bugs from late mutation vanish; the API expresses what users can actually do.
+**Why apply it:** The agent reasons about the class as immutable-after-construction; bugs from late mutation vanish; the API expresses what users can actually do.
 
-**Tradeoff:** Removing a setter forces every legitimate update through a more meaningful method — verify there's a domain action behind every setter call before deleting it.
+**Tradeoff:** Removing a setter forces every legitimate update through a more meaningful method; the agent must verify each setter call has a domain action that justifies replacing it.
 
 ```js
 // Avoid:
@@ -921,16 +921,16 @@ order.account.isVip();
 
 ---
 name: move-field
-description: Apply Move Field when you see Shotgun Surgery, Insider Trading. Each field belongs to the class that owns its lifecycle; cross-class reaching disappears.
+description: Apply Move Field when you see Shotgun Surgery, Insider Trading. Each field lives where its lifecycle is owned; the agent loads one class to reason about both the field and its determining data.
 ---
 
 # Apply: 13 — Move Field
 
-**Target state:** Each field belongs to the class that owns its lifecycle; cross-class reaching disappears.
+**Target state:** Each field lives where its lifecycle is owned; the agent loads one class to reason about both the field and its determining data.
 
-**Why apply it:** Class boundaries align with data ownership; mutations are local; refactoring becomes safer.
+**Why apply it:** Class boundaries align with data ownership; the agent reasons about mutations locally; refactoring becomes safer because the field's true owner is visible.
 
-**Tradeoff:** Every reader of the original class now reaches across the new class boundary — coupling drops at the field's new home but reappears at each consumer.
+**Tradeoff:** Every reader of the original class now reaches across the new boundary; coupling drops at the field's new home but reappears at each consumer the agent must follow.
 
 ```js
 // Avoid:

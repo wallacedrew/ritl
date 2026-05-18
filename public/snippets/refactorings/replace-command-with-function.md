@@ -1,15 +1,15 @@
 ---
 name: replace-command-with-function
-description: Apply Replace Command with Function when you see Speculative Generality, Lazy Element. A command object whose execute() does everything in one shot collapses back to a plain function.
+description: Apply Replace Command with Function when you see Speculative Generality, Lazy Element. The command collapses to a plain function; the agent's call sites become direct invocations.
 ---
 
 # Apply: 49 — Replace Command with Function
 
-**Target state:** A command object whose execute() does everything in one shot collapses back to a plain function.
+**Target state:** The command collapses to a plain function; the agent's call sites become direct invocations.
 
-**Why apply it:** Fewer files, fewer constructors, less indirection — the caller sees one function instead of build-then-execute.
+**Why apply it:** Fewer files; shorter call stacks; the agent's plan-and-execute loop touches the function directly without the construct-then-call hop.
 
-**Tradeoff:** If the command holds genuinely useful intermediate state, flattening to a function regrows the temps it eliminated — confirm there's no real reuse first.
+**Tradeoff:** If the command held genuinely useful intermediate state, collapsing regrows the temps it eliminated; the agent verifying the collapse must check whether any internal decomposition is load-bearing.
 
 ```js
 // Avoid:

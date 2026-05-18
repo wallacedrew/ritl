@@ -1,15 +1,15 @@
 ---
 name: return-modified-value
-description: Apply Return Modified Value when you see Mutable Data. Instead of mutating a parameter in place, the function returns the modified value so the caller reassigns.
+description: Apply Return Modified Value when you see Mutable Data. The function returns the modified value; the agent reads the signature and knows the function is a transformation, not a mutator.
 ---
 
 # Apply: 50 — Return Modified Value
 
-**Target state:** Instead of mutating a parameter in place, the function returns the modified value so the caller reassigns.
+**Target state:** The function returns the modified value; the agent reads the signature and knows the function is a transformation, not a mutator.
 
-**Why apply it:** Side effects on inputs disappear; the function reads as a transformation; equality and snapshotting become possible.
+**Why apply it:** Side effects on inputs disappear from the agent's contract reasoning; the function reads as a pure transformation; composition and snapshotting work.
 
-**Tradeoff:** Callers must remember to capture the returned value; if any forget, they keep the unmodified original. Mark the parameter readonly so the type system helps.
+**Tradeoff:** Callers must remember to capture the returned value; if any forget they keep the unmodified original, which the agent verifying must check at every call site (or rely on a readonly parameter type).
 
 ```js
 // Avoid:

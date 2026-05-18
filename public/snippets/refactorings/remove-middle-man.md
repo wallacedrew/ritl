@@ -1,15 +1,15 @@
 ---
 name: remove-middle-man
-description: Apply Remove Middle Man when you see Middle Man. Callers talk directly to the real object; trivial passthroughs are deleted.
+description: Apply Remove Middle Man when you see Middle Man. Callers talk to the real object directly; the agent's call traces are shorter and the implementation's location is obvious.
 ---
 
 # Apply: 42 — Remove Middle Man
 
-**Target state:** Callers talk directly to the real object; trivial passthroughs are deleted.
+**Target state:** Callers talk to the real object directly; the agent's call traces are shorter and the implementation's location is obvious.
 
-**Why apply it:** Fewer files, shorter call stacks, the implementation's location is obvious.
+**Why apply it:** Fewer files; shorter call stacks; the agent's plan-and-execute loop touches the real implementation directly.
 
-**Tradeoff:** Direct access to the delegate exposes its surface to every consumer — only remove the middle man when most of its methods are passthroughs.
+**Tradeoff:** Direct access exposes the real object's full surface to every consumer; the agent loses any encapsulation the middle man was providing (even if mostly cosmetic).
 
 ```js
 // Avoid:

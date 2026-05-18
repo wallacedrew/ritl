@@ -1,15 +1,15 @@
 ---
 name: encapsulate-variable
-description: Apply Encapsulate Variable when you see Global Data, Mutable Data. All reads and writes pass through a small named function that owns validation, logging, and invariants.
+description: Apply Encapsulate Variable when you see Global Data, Mutable Data. All access goes through a small named function the agent can grep for, audit, and instrument as a single closed surface.
 ---
 
 # Apply: 06 — Encapsulate Variable
 
-**Target state:** All reads and writes pass through a small named function that owns validation, logging, and invariants.
+**Target state:** All access goes through a small named function the agent can grep for, audit, and instrument as a single closed surface.
 
-**Why apply it:** A bug fix or audit becomes a one-line addition inside the wrapper; consumers never need to change.
+**Why apply it:** The agent has one audit point for validation/logging/invariants; consumers don't need to change when the wrapper grows new behavior.
 
-**Tradeoff:** Adds a layer of indirection that pays off only when every access goes through the wrapper — leakage of direct access undoes the benefit.
+**Tradeoff:** Indirection at every call site adds a hop; if any consumer leaks past the wrapper, the encapsulation's safety promise silently breaks and the agent assumes guarantees that don't hold.
 
 ```js
 // Avoid:

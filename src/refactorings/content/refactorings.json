@@ -142,20 +142,20 @@
     "safetyNet": "unit test",
     "forces": {
       "human": {
-        "symptom": "[human symptom not yet authored]",
+        "symptom": "A module-level variable or shared mutable state read and written directly from any consumer — no central audit point for changes.",
         "goal": "All reads and writes pass through a small named function that owns validation, logging, and invariants.",
-        "pressure": "[human pressure not yet authored]",
+        "pressure": "Adding validation, logging, or invariant checks requires touching every consumer; bugs from concurrent mutation hide in the gaps; the variable's lifetime is implicit.",
         "tradeoff": "Adds a layer of indirection that pays off only when every access goes through the wrapper — leakage of direct access undoes the benefit.",
         "relief": "A bug fix or audit becomes a one-line addition inside the wrapper; consumers never need to change.",
-        "trap": "[human trap not yet authored]"
+        "trap": "Adding a getter/setter wrapper without removing the direct access — adds indirection ceremony while consumers still bypass the wrapper, so the encapsulation provides no real guarantee."
       },
       "agent": {
-        "symptom": "[agent symptom not yet authored]",
-        "goal": "[agent goal not yet authored]",
-        "pressure": "[agent pressure not yet authored]",
-        "tradeoff": "[agent tradeoff not yet authored]",
-        "relief": "[agent relief not yet authored]",
-        "trap": "[agent trap not yet authored]"
+        "symptom": "The agent finds a variable read and written from multiple consumers with no central function owning the access; reasoning about any read requires modeling every writer.",
+        "goal": "All access goes through a small named function the agent can grep for, audit, and instrument as a single closed surface.",
+        "pressure": "Any change to validation, logging, or invariants requires the agent to update every consumer; concurrent edits compound the search-and-update cost.",
+        "tradeoff": "Indirection at every call site adds a hop; if any consumer leaks past the wrapper, the encapsulation's safety promise silently breaks and the agent assumes guarantees that don't hold.",
+        "relief": "The agent has one audit point for validation/logging/invariants; consumers don't need to change when the wrapper grows new behavior.",
+        "trap": "Wrapping the variable without enforcing wrapper-only access leaves leaks the agent doesn't see; the wrapper becomes a false safety signal."
       }
     }
   },
@@ -324,20 +324,20 @@
     "safetyNet": "types/compiler",
     "forces": {
       "human": {
-        "symptom": "[human symptom not yet authored]",
+        "symptom": "A field on class A whose value is determined by data on class B (`customer.discountRate` set from `customer.plan.kind`) — the field belongs with the data it's derived from.",
         "goal": "Each field belongs to the class that owns its lifecycle; cross-class reaching disappears.",
-        "pressure": "[human pressure not yet authored]",
+        "pressure": "Every consumer of A must maintain the cross-class invariant; refactoring B's data shape breaks A in non-obvious ways; the field's true owner is invisible.",
         "tradeoff": "Every reader of the original class now reaches across the new class boundary — coupling drops at the field's new home but reappears at each consumer.",
         "relief": "Class boundaries align with data ownership; mutations are local; refactoring becomes safer.",
-        "trap": "[human trap not yet authored]"
+        "trap": "Moving fields whose presence on the original class is part of the class's identity — even when the value derives elsewhere, moving the field can break consumer expectations."
       },
       "agent": {
-        "symptom": "[agent symptom not yet authored]",
-        "goal": "[agent goal not yet authored]",
-        "pressure": "[agent pressure not yet authored]",
-        "tradeoff": "[agent tradeoff not yet authored]",
-        "relief": "[agent relief not yet authored]",
-        "trap": "[agent trap not yet authored]"
+        "symptom": "The agent finds a field on class A whose value is determined by data on class B; reasoning about the field's value requires loading B to verify the derivation.",
+        "goal": "Each field lives where its lifecycle is owned; the agent loads one class to reason about both the field and its determining data.",
+        "pressure": "Every consumer must maintain the cross-class invariant; the agent verifying any change must coordinate updates across both classes.",
+        "tradeoff": "Every reader of the original class now reaches across the new boundary; coupling drops at the field's new home but reappears at each consumer the agent must follow.",
+        "relief": "Class boundaries align with data ownership; the agent reasons about mutations locally; refactoring becomes safer because the field's true owner is visible.",
+        "trap": "Moving fields purely on derivation grounds — without checking whether the original class's identity depends on the field's presence — breaks consumer expectations the agent didn't model."
       }
     }
   },
@@ -1052,20 +1052,20 @@
     "safetyNet": "types/compiler",
     "forces": {
       "human": {
-        "symptom": "[human symptom not yet authored]",
+        "symptom": "Callers use long dotted access paths to walk through one object to reach another's data — `order.customer.address.street` exposes every intermediate boundary.",
         "goal": "Callers ask the closest object for what they want; the object delegates internally without exposing its collaborators.",
-        "pressure": "[human pressure not yet authored]",
+        "pressure": "Every link in the chain is a coupling point; renaming any intermediate field breaks every caller; consumers depend on the full graph shape.",
         "tradeoff": "Adds a passthrough method on the parent for every delegated operation — only worth it for operations that are repeated across consumers.",
         "relief": "Encapsulation tightens; intermediate objects can change shape without breaking callers.",
-        "trap": "[human trap not yet authored]"
+        "trap": "Wrapping every dotted access in a passthrough — including chains used only once where the wrapper adds cost without removing real coupling."
       },
       "agent": {
-        "symptom": "[agent symptom not yet authored]",
-        "goal": "[agent goal not yet authored]",
-        "pressure": "[agent pressure not yet authored]",
-        "tradeoff": "[agent tradeoff not yet authored]",
-        "relief": "[agent relief not yet authored]",
-        "trap": "[agent trap not yet authored]"
+        "symptom": "The agent finds long dotted access paths through several object hops; renaming any intermediate field silently breaks every caller.",
+        "goal": "Callers ask the closest object directly; the agent reasons about one boundary instead of traversing N.",
+        "pressure": "Every link in the chain is a coupling point the agent holds in working memory; refactoring any intermediate shape requires updating every chain access.",
+        "tradeoff": "Each hidden delegate adds a passthrough method on the host; for chains used in one place the passthrough is overhead the agent now maintains in two places.",
+        "relief": "Encapsulation tightens; the agent reasons about one boundary; intermediate objects can change shape without breaking callers.",
+        "trap": "Wrapping every dotted chain in passthroughs migrates the chain from call sites into the host's surface — the agent now wades through a wall of delegations to find real behavior."
       }
     }
   },
@@ -1078,20 +1078,20 @@
     "safetyNet": "types/compiler",
     "forces": {
       "human": {
-        "symptom": "[human symptom not yet authored]",
+        "symptom": "A class whose methods are nearly all delegations to one collaborator object — no decisions, no transformations, just passthrough.",
         "goal": "Callers talk directly to the real object; trivial passthroughs are deleted.",
-        "pressure": "[human pressure not yet authored]",
+        "pressure": "Every consumer pays a hop to reach the real implementation; the middle man adds file count and indirection with no value; future maintenance must update both classes for any change to the delegated API.",
         "tradeoff": "Direct access to the delegate exposes its surface to every consumer — only remove the middle man when most of its methods are passthroughs.",
         "relief": "Fewer files, shorter call stacks, the implementation's location is obvious.",
-        "trap": "[human trap not yet authored]"
+        "trap": "Deleting a middle man that's actually doing real work — authorization, validation, auditing — that the trivial-looking delegations were quietly enforcing."
       },
       "agent": {
-        "symptom": "[agent symptom not yet authored]",
-        "goal": "[agent goal not yet authored]",
-        "pressure": "[agent pressure not yet authored]",
-        "tradeoff": "[agent tradeoff not yet authored]",
-        "relief": "[agent relief not yet authored]",
-        "trap": "[agent trap not yet authored]"
+        "symptom": "A class whose methods all delegate straight through to another object; the agent traces every call to the real implementation through the passthrough hop.",
+        "goal": "Callers talk to the real object directly; the agent's call traces are shorter and the implementation's location is obvious.",
+        "pressure": "The agent navigates the indirection on every reasoning step; refactoring the delegate's API requires the agent to update both classes in sync.",
+        "tradeoff": "Direct access exposes the real object's full surface to every consumer; the agent loses any encapsulation the middle man was providing (even if mostly cosmetic).",
+        "relief": "Fewer files; shorter call stacks; the agent's plan-and-execute loop touches the real implementation directly.",
+        "trap": "Deleting a passthrough that was doing real work — authorization, validation, auditing — removes a load-bearing layer the agent didn't recognize because the trivial-looking delegation masked it."
       }
     }
   },
@@ -1234,20 +1234,20 @@
     "safetyNet": "characterization test",
     "forces": {
       "human": {
-        "symptom": "[human symptom not yet authored]",
+        "symptom": "A long function with many local variables and conceptually distinct sub-steps that all share state — the function body reads as a multi-stage algorithm coordinating temps.",
         "goal": "A function with rich internal state becomes an object whose methods can share that state — easier to extract, name, and test in pieces.",
-        "pressure": "[human pressure not yet authored]",
+        "pressure": "Extracting sub-steps means threading every shared temp through helper parameters; reasoning about any single step requires holding the whole state in working memory.",
         "tradeoff": "Promoting a function to a command adds ceremony (constructor, method calls). Only worth it when the function genuinely needs its own intermediate state or multiple entry points.",
         "relief": "Long sequences become labeled steps; tests target each step on the command; subclasses or strategies can vary parts of the algorithm.",
-        "trap": "[human trap not yet authored]"
+        "trap": "Promoting a simple function (no shared state, no multiple entry points) to a command — adds constructor + execute() ceremony around a body that worked as a plain function."
       },
       "agent": {
-        "symptom": "[agent symptom not yet authored]",
-        "goal": "[agent goal not yet authored]",
-        "pressure": "[agent pressure not yet authored]",
-        "tradeoff": "[agent tradeoff not yet authored]",
-        "relief": "[agent relief not yet authored]",
-        "trap": "[agent trap not yet authored]"
+        "symptom": "A function whose body holds many shared locals across conceptually distinct sub-steps; the agent extracting any step must thread temps through helper parameters.",
+        "goal": "Sub-steps become named methods sharing state via fields; the agent reasons about each step in isolation and extracts/tests them independently.",
+        "pressure": "Every step the agent wants to extract drags shared state through parameter lists; the function's algorithm shape resists decomposition.",
+        "tradeoff": "Command ceremony (constructor + execute + named private methods) is overhead for functions without genuine multi-step state; the agent now navigates a class where one function used to suffice.",
+        "relief": "Each sub-step becomes a named method on the command; the agent extracts and tests them in pieces without rewiring shared state.",
+        "trap": "Promoting every long function to a command — including ones with no genuine shared state — adds class ceremony the agent must navigate without gaining any decomposition advantage."
       }
     }
   },
@@ -1260,20 +1260,20 @@
     "safetyNet": "characterization test",
     "forces": {
       "human": {
-        "symptom": "[human symptom not yet authored]",
+        "symptom": "A command class whose execute() method does everything in one shot — fields and methods exist but no real sub-step structure justifies the class.",
         "goal": "A command object whose execute() does everything in one shot collapses back to a plain function.",
-        "pressure": "[human pressure not yet authored]",
+        "pressure": "Callers go through build-then-execute ceremony for what could be one function call; the class adds file count and indirection without internal decomposition benefit.",
         "tradeoff": "If the command holds genuinely useful intermediate state, flattening to a function regrows the temps it eliminated — confirm there's no real reuse first.",
         "relief": "Fewer files, fewer constructors, less indirection — the caller sees one function instead of build-then-execute.",
-        "trap": "[human trap not yet authored]"
+        "trap": "Collapsing a command that holds genuinely useful intermediate state — flattening it forces the agent to regrow the temps the command eliminated and re-thread them through helper params."
       },
       "agent": {
-        "symptom": "[agent symptom not yet authored]",
-        "goal": "[agent goal not yet authored]",
-        "pressure": "[agent pressure not yet authored]",
-        "tradeoff": "[agent tradeoff not yet authored]",
-        "relief": "[agent relief not yet authored]",
-        "trap": "[agent trap not yet authored]"
+        "symptom": "A command class whose execute() does the work in one shot with no sub-step decomposition; callers go through construct-then-call ceremony for what could be one function.",
+        "goal": "The command collapses to a plain function; the agent's call sites become direct invocations.",
+        "pressure": "Every caller pays the construct-then-call hop; the agent reasoning about behavior loads a class to find a single function.",
+        "tradeoff": "If the command held genuinely useful intermediate state, collapsing regrows the temps it eliminated; the agent verifying the collapse must check whether any internal decomposition is load-bearing.",
+        "relief": "Fewer files; shorter call stacks; the agent's plan-and-execute loop touches the function directly without the construct-then-call hop.",
+        "trap": "Collapsing commands that genuinely decomposed into named sub-steps regrows the temps they eliminated and the function-with-many-locals smell returns."
       }
     }
   },
@@ -1286,20 +1286,20 @@
     "safetyNet": "types/compiler",
     "forces": {
       "human": {
-        "symptom": "[human symptom not yet authored]",
+        "symptom": "A function that mutates one of its parameters in place and returns nothing — `addTax(order)` modifies `order.total` directly.",
         "goal": "Instead of mutating a parameter in place, the function returns the modified value so the caller reassigns.",
-        "pressure": "[human pressure not yet authored]",
+        "pressure": "Callers can't tell from the signature that a parameter is being mutated; snapshotting and equality become unreliable; functional composition is blocked.",
         "tradeoff": "Callers must remember to capture the returned value; if any forget, they keep the unmodified original. Mark the parameter readonly so the type system helps.",
         "relief": "Side effects on inputs disappear; the function reads as a transformation; equality and snapshotting become possible.",
-        "trap": "[human trap not yet authored]"
+        "trap": "Refactoring every parameter-mutator to return-modified-value, including ones where the in-place mutation is genuinely the contract callers want — a performance-sensitive batch operation, for example."
       },
       "agent": {
-        "symptom": "[agent symptom not yet authored]",
-        "goal": "[agent goal not yet authored]",
-        "pressure": "[agent pressure not yet authored]",
-        "tradeoff": "[agent tradeoff not yet authored]",
-        "relief": "[agent relief not yet authored]",
-        "trap": "[agent trap not yet authored]"
+        "symptom": "A function that mutates one of its parameters in place; the agent reading the signature can't tell which parameters get mutated without reading the body.",
+        "goal": "The function returns the modified value; the agent reads the signature and knows the function is a transformation, not a mutator.",
+        "pressure": "The agent reasoning about any call must check the function body to identify which parameters mutate; equality, snapshotting, and composition all become guarded.",
+        "tradeoff": "Callers must remember to capture the returned value; if any forget they keep the unmodified original, which the agent verifying must check at every call site (or rely on a readonly parameter type).",
+        "relief": "Side effects on inputs disappear from the agent's contract reasoning; the function reads as a pure transformation; composition and snapshotting work.",
+        "trap": "Forcing return-modified-value on every in-place mutator — including ones where mutation is the contract callers want (performance-critical batch ops) — substitutes one mismatch for another."
       }
     }
   },
@@ -1338,20 +1338,20 @@
     "safetyNet": "characterization test",
     "forces": {
       "human": {
-        "symptom": "[human symptom not yet authored]",
+        "symptom": "A class exposes a collection field directly (getter returning the internal array, public field, etc.) — callers can mutate the collection from outside.",
         "goal": "A class's internal collection is never returned directly; callers add or remove via methods on the class, and reads return a snapshot or iterator.",
-        "pressure": "[human pressure not yet authored]",
+        "pressure": "Invariants on the collection (size, uniqueness, ordering) can't be enforced; bugs hide where one consumer mutates the collection in a way another assumed wouldn't happen.",
         "tradeoff": "Returning a shallow copy on every read can hide bugs where callers expected mutation to be reflected — be explicit about the contract.",
         "relief": "The owner can enforce invariants (uniqueness, ordering, max size); refactoring the collection's internal shape is local.",
-        "trap": "[human trap not yet authored]"
+        "trap": "Returning a shallow copy on every read without telling callers — they expect mutations to be reflected, get silent no-ops, and bugs appear in unexpected places."
       },
       "agent": {
-        "symptom": "[agent symptom not yet authored]",
-        "goal": "[agent goal not yet authored]",
-        "pressure": "[agent pressure not yet authored]",
-        "tradeoff": "[agent tradeoff not yet authored]",
-        "relief": "[agent relief not yet authored]",
-        "trap": "[agent trap not yet authored]"
+        "symptom": "A class returns its internal collection directly; the agent reading any consumer cannot tell whether mutations will affect the owner without checking every consumer.",
+        "goal": "The owner exposes mutation methods (add, remove, replace); reads return snapshots or iterators; the agent reasons about collection invariants on the owner alone.",
+        "pressure": "Any consumer can mutate the collection in ways another consumer didn't expect; the agent verifying behavior must trace every read+mutation site to confirm invariants.",
+        "tradeoff": "Returning a shallow copy on every read can hide bugs where callers expected mutation-back; the agent must be explicit about the read contract or risk silent no-ops.",
+        "relief": "The owner enforces invariants in one place; the agent refactoring the collection's internal shape stays local to the owner.",
+        "trap": "Returning copies silently changes the contract callers depended on — the agent shipping the encapsulation must verify every reader doesn't rely on mutate-the-returned-collection semantics."
       }
     }
   },
@@ -1364,20 +1364,20 @@
     "safetyNet": "unit test",
     "forces": {
       "human": {
-        "symptom": "[human symptom not yet authored]",
+        "symptom": "A plain object passed around the codebase whose fields are read and written by anyone — `org.name = '...'` from any consumer.",
         "goal": "A bare record (plain object with public fields) becomes a class whose properties are accessed through methods that can validate, log, or derive.",
-        "pressure": "[human pressure not yet authored]",
+        "pressure": "Field renames touch every reader/writer; validation can't be enforced; the record's invariants drift as consumers diverge in their assumptions.",
         "tradeoff": "Wrapping every record adds ceremony — only worth it when behavior or validation will accrete around the data.",
         "relief": "Field renames stay internal; invariants can be enforced on every read or write; the record becomes a real domain object.",
-        "trap": "[human trap not yet authored]"
+        "trap": "Wrapping every record on principle — even ones with no validation needs, no derivation, no behavior to attract — adds construction ceremony at every entry point."
       },
       "agent": {
-        "symptom": "[agent symptom not yet authored]",
-        "goal": "[agent goal not yet authored]",
-        "pressure": "[agent pressure not yet authored]",
-        "tradeoff": "[agent tradeoff not yet authored]",
-        "relief": "[agent relief not yet authored]",
-        "trap": "[agent trap not yet authored]"
+        "symptom": "A plain object passed across the codebase; the agent reading any consumer must inspect every other consumer to learn what shape the record actually has.",
+        "goal": "The record is a class with accessors; the agent reasons about its shape, invariants, and behavior in one definition.",
+        "pressure": "Field changes ripple through every consumer; the agent must coordinate updates and verify each consumer respects the (implicit) contract.",
+        "tradeoff": "Wrapping every record adds construction ceremony at every entry; for records without invariants or behavior to attract, the agent gains nothing for the per-call cost.",
+        "relief": "Field renames stay internal; invariants enforce in one place; the agent reasons about the class as a real domain object.",
+        "trap": "Wrapping records on principle without invariants or behavior to add creates classes the agent must instantiate everywhere with no encapsulation gain."
       }
     }
   },
@@ -1390,20 +1390,20 @@
     "safetyNet": "types/compiler",
     "forces": {
       "human": {
-        "symptom": "[human symptom not yet authored]",
+        "symptom": "A class with setters whose values should only be set at construction — every late-mutation site is using the setter for what should be a one-shot assignment.",
         "goal": "Fields whose values should only be set at construction lose their setters; callers either construct a new object or call a domain method that changes the field as a side effect of doing real work.",
-        "pressure": "[human pressure not yet authored]",
+        "pressure": "Late mutations introduce timing-dependent bugs; consumers can't trust the object's invariants between operations; immutability arguments break.",
         "tradeoff": "Removing a setter forces every legitimate update through a more meaningful method — verify there's a domain action behind every setter call before deleting it.",
         "relief": "Immutable-by-default classes; bugs from late mutation vanish; the API expresses what users can actually do.",
-        "trap": "[human trap not yet authored]"
+        "trap": "Removing setters that genuinely encode a meaningful state change — a `markPaid()` setter that mutates `paidAt` and `status` together — without replacing them with a richer domain method."
       },
       "agent": {
-        "symptom": "[agent symptom not yet authored]",
-        "goal": "[agent goal not yet authored]",
-        "pressure": "[agent pressure not yet authored]",
-        "tradeoff": "[agent tradeoff not yet authored]",
-        "relief": "[agent relief not yet authored]",
-        "trap": "[agent trap not yet authored]"
+        "symptom": "The agent finds setters on a class whose values should only be set at construction; every late-mutation site is using setters for one-shot assignment.",
+        "goal": "Construction is the only path to setting these fields; the agent reasons about the object as immutable-after-construction.",
+        "pressure": "Late mutations break the agent's reasoning about invariants between operations; the agent must trace every setter call to verify timing assumptions.",
+        "tradeoff": "Removing a setter forces every legitimate update through a more meaningful method; the agent must verify each setter call has a domain action that justifies replacing it.",
+        "relief": "The agent reasons about the class as immutable-after-construction; bugs from late mutation vanish; the API expresses what users can actually do.",
+        "trap": "Removing setters that meaningfully encoded a domain state change — like markPaid() coordinating paidAt+status — without replacing them with the equivalent domain method strips the semantic anchor."
       }
     }
   },
