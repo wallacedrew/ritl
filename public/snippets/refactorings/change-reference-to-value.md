@@ -1,15 +1,15 @@
 ---
 name: change-reference-to-value
-description: Apply Change Reference to Value when you see Mutable Data. An object treated as a sharable record (with setters) becomes a value object — immutable, equal by content, replaced rather than mutated.
+description: Apply Change Reference to Value when you see Mutable Data. The object is immutable + equal-by-content; the agent reasons about value semantics without modeling write timing.
 ---
 
 # Apply: 56 — Change Reference to Value
 
-**Target state:** An object treated as a sharable record (with setters) becomes a value object — immutable, equal by content, replaced rather than mutated.
+**Target state:** The object is immutable + equal-by-content; the agent reasons about value semantics without modeling write timing.
 
-**Why apply it:** Concurrency hazards disappear; the type system can mark fields readonly; the object can travel safely across boundaries.
+**Why apply it:** Concurrency hazards disappear; the type system can mark fields readonly; the agent reasons about the object as a stable value.
 
-**Tradeoff:** Comparison semantics shift from identity to equality — every call site that depended on `===` or identity caches needs review.
+**Tradeoff:** Comparison semantics shift from identity to equality; every call site that depended on === or identity caches needs the agent's review and update.
 
 ```js
 // Avoid:

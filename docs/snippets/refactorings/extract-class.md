@@ -1,15 +1,15 @@
 ---
 name: extract-class
-description: Apply Extract Class when you see Data Clumps, Temporary Field, Large Class, Primitive Obsession. A cohesive sub-concept inside a class becomes its own class with its own name, fields, and methods.
+description: Apply Extract Class when you see Data Clumps, Temporary Field, Large Class, Primitive Obsession. Each class has one purpose; the agent loads a small focused file to reason about any single concept.
 ---
 
 # Apply: 39 — Extract Class
 
-**Target state:** A cohesive sub-concept inside a class becomes its own class with its own name, fields, and methods.
+**Target state:** Each class has one purpose; the agent loads a small focused file to reason about any single concept.
 
-**Why apply it:** Each class has one purpose; tests target the small unit; the parent class shrinks.
+**Why apply it:** Smaller focused units; the agent tests one concept at a time and reasons about each class as a coherent whole.
 
-**Tradeoff:** Premature class extraction adds ceremony — extract when 3+ fields and at least one operation cluster around a single concept that the parent class doesn't own.
+**Tradeoff:** Extracting too eagerly — 1-2 fields with no behavior — adds a class file the agent must load with no encapsulation gain.
 
 ```js
 // Avoid:

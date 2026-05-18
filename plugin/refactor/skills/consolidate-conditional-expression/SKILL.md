@@ -1,15 +1,15 @@
 ---
 name: consolidate-conditional-expression
-description: Apply Consolidate Conditional Expression when you see Duplicated Code. Multiple conditions leading to the same action collapse into one named predicate.
+description: Apply Consolidate Conditional Expression when you see Duplicated Code. The conditions collapse into one named predicate; the agent reasons about one rule with one action.
 ---
 
 # Apply: 22 — Consolidate Conditional Expression
 
-**Target state:** Multiple conditions leading to the same action collapse into one named predicate.
+**Target state:** The conditions collapse into one named predicate; the agent reasons about one rule with one action.
 
-**Why apply it:** The shared rationale becomes visible and namable; new conditions extend one place instead of N.
+**Why apply it:** The agent reasons about one named predicate with one consequent; new conditions extend in one place.
 
-**Tradeoff:** Combining conditions can hide their independent reasons — only consolidate when they truly express the same business rule.
+**Tradeoff:** If the conditions encode independent reasons (different rules that happen to produce the same outcome today), collapsing them hides distinctions the agent will need to re-split later.
 
 ```js
 // Avoid:

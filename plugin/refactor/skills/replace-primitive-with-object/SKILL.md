@@ -1,15 +1,15 @@
 ---
 name: replace-primitive-with-object
-description: Apply Replace Primitive with Object when you see Primitive Obsession. Each domain concept has a small typed home — Money, PhoneNumber, OrderId — that knows its rules.
+description: Apply Replace Primitive with Object when you see Primitive Obsession. Each domain concept has its own typed wrapper; the agent's type checker catches wrong-primitive-in-wrong-slot before runtime.
 ---
 
 # Apply: 40 — Replace Primitive with Object
 
-**Target state:** Each domain concept has a small typed home — Money, PhoneNumber, OrderId — that knows its rules.
+**Target state:** Each domain concept has its own typed wrapper; the agent's type checker catches wrong-primitive-in-wrong-slot before runtime.
 
-**Why apply it:** Misuse becomes a type error; behavior accretes around the concept; refactoring is local to the wrapper.
+**Why apply it:** Wrong-primitive misuse becomes a type error the agent catches without runtime testing; behavior accretes around the concept where the agent expects to find it.
 
-**Tradeoff:** Wrapping every primitive is overkill — wrap when the concept needs validation, formatting, or domain-specific behavior beyond what the primitive offers.
+**Tradeoff:** Each wrapper is a class the agent must instantiate at every entry point; for primitives without domain rules the wrapper is overhead with no return.
 
 ```js
 // Avoid:

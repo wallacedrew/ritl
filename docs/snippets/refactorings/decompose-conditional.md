@@ -1,15 +1,15 @@
 ---
 name: decompose-conditional
-description: Apply Decompose Conditional when you see Long Function, Comments. Conditions and their consequents read as named domain decisions; isInSummer(), discountFor(date), etc.
+description: Apply Decompose Conditional when you see Long Function, Comments. Conditions read as named domain decisions; the agent reasons about isSummer(date) instead of re-deriving the month range.
 ---
 
 # Apply: 21 — Decompose Conditional
 
-**Target state:** Conditions and their consequents read as named domain decisions: isInSummer(), discountFor(date), etc.
+**Target state:** Conditions read as named domain decisions; the agent reasons about isSummer(date) instead of re-deriving the month range.
 
-**Why apply it:** The branching logic reads top-to-bottom as a story; bugs concentrate in the named pieces.
+**Why apply it:** The agent reasons about named domain decisions; the branching logic reads top-to-bottom as a story.
 
-**Tradeoff:** Names that aren't crisper than the underlying condition add ceremony — only extract when the named function/variable says something the condition can't.
+**Tradeoff:** Extracted names that aren't crisper than the original condition add a layer of indirection — the agent now follows a name to find the same expression.
 
 ```js
 // Avoid:

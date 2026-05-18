@@ -1,15 +1,15 @@
 ---
 name: introduce-special-case
-description: Apply Introduce Special Case when you see Repeated Switches, Comments. A repeating null-or-special check becomes a Null Object (or Special Case) that responds sensibly to the same interface.
+description: Apply Introduce Special Case when you see Repeated Switches, Comments. The special case responds to the same interface as the real case; the agent reasons without branching at every call site.
 ---
 
 # Apply: 25 — Introduce Special Case
 
-**Target state:** A repeating null-or-special check becomes a Null Object (or Special Case) that responds sensibly to the same interface.
+**Target state:** The special case responds to the same interface as the real case; the agent reasons without branching at every call site.
 
-**Why apply it:** Callers stop branching on identity; the special behavior lives in one place.
+**Why apply it:** The agent reasons polymorphically; the special behavior lives in one class and consumers don't branch.
 
-**Tradeoff:** Adds a tiny class for one case; only worthwhile when the special case appears in 2+ consumers.
+**Tradeoff:** Adding a Null Object class for a special case used in only one place creates ceremony around what was a one-line check; the agent now loads a class to handle one branch.
 
 ```js
 // Avoid:

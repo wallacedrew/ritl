@@ -1,15 +1,15 @@
 ---
 name: inline-class
-description: Apply Inline Class when you see Lazy Element, Speculative Generality. A class with too few responsibilities to deserve its own file folds into a class it collaborates with most.
+description: Apply Inline Class when you see Lazy Element, Speculative Generality. The class folds into its primary collaborator; the agent loads one file for what was two.
 ---
 
 # Apply: 55 — Inline Class
 
-**Target state:** A class with too few responsibilities to deserve its own file folds into a class it collaborates with most.
+**Target state:** The class folds into its primary collaborator; the agent loads one file for what was two.
 
-**Why apply it:** Fewer files, fewer constructors, shorter call paths; the absorbing class's coherence improves when it gains the methods it was already orchestrating.
+**Why apply it:** Fewer files; shorter call paths; the absorber's coherence improves when it owns the methods it was orchestrating.
 
-**Tradeoff:** If the absorbing class was already large, inlining piles more onto it — fold in only when the absorber stays under its complexity budget afterward.
+**Tradeoff:** If the absorber is already large, inlining pushes it past its complexity budget — the agent now loads a god-class to reason about what was previously separated.
 
 ```js
 // Avoid:

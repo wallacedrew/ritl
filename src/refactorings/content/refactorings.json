@@ -532,20 +532,20 @@
     "safetyNet": "unit test",
     "forces": {
       "human": {
-        "symptom": "[human symptom not yet authored]",
+        "symptom": "Multi-clause conditionals whose meaning isn't obvious from the expression — `if (date.getMonth() >= 5 && date.getMonth() <= 8)` instead of `if (isSummer(date))`.",
         "goal": "Conditions and their consequents read as named domain decisions: isInSummer(), discountFor(date), etc.",
-        "pressure": "[human pressure not yet authored]",
+        "pressure": "Readers parse the expression every time; comments accumulate to explain what it means; debugging requires evaluating the expression mentally.",
         "tradeoff": "Names that aren't crisper than the underlying condition add ceremony — only extract when the named function/variable says something the condition can't.",
         "relief": "The branching logic reads top-to-bottom as a story; bugs concentrate in the named pieces.",
-        "trap": "[human trap not yet authored]"
+        "trap": "Extracting names that aren't crisper than the underlying condition — adds a layer of indirection without revealing intent."
       },
       "agent": {
-        "symptom": "[agent symptom not yet authored]",
-        "goal": "[agent goal not yet authored]",
-        "pressure": "[agent pressure not yet authored]",
-        "tradeoff": "[agent tradeoff not yet authored]",
-        "relief": "[agent relief not yet authored]",
-        "trap": "[agent trap not yet authored]"
+        "symptom": "Multi-clause conditional expressions whose domain meaning isn't readable from the syntax; the agent must parse the expression every time it encounters it.",
+        "goal": "Conditions read as named domain decisions; the agent reasons about isSummer(date) instead of re-deriving the month range.",
+        "pressure": "The agent re-parses the expression at every reference; debugging the condition's value requires the agent to mentally evaluate the full chain.",
+        "tradeoff": "Extracted names that aren't crisper than the original condition add a layer of indirection — the agent now follows a name to find the same expression.",
+        "relief": "The agent reasons about named domain decisions; the branching logic reads top-to-bottom as a story.",
+        "trap": "Extracting names that don't sharpen the condition — `isMonthBetweenFiveAndEight` instead of `isSummer` — adds indirection without revealing intent."
       }
     }
   },
@@ -558,20 +558,20 @@
     "safetyNet": "unit test",
     "forces": {
       "human": {
-        "symptom": "[human symptom not yet authored]",
+        "symptom": "Multiple conditions in sequence (or chained) leading to the same action — three guard clauses each returning 0, or three branches each running the same handler.",
         "goal": "Multiple conditions leading to the same action collapse into one named predicate.",
-        "pressure": "[human pressure not yet authored]",
+        "pressure": "The shared rationale is invisible; adding a new condition with the same effect means touching N places; bugs hide where one of the branches diverges accidentally.",
         "tradeoff": "Combining conditions can hide their independent reasons — only consolidate when they truly express the same business rule.",
         "relief": "The shared rationale becomes visible and namable; new conditions extend one place instead of N.",
-        "trap": "[human trap not yet authored]"
+        "trap": "Combining conditions that look the same but encode independent reasons — the consolidated predicate hides distinct rules that need to evolve separately."
       },
       "agent": {
-        "symptom": "[agent symptom not yet authored]",
-        "goal": "[agent goal not yet authored]",
-        "pressure": "[agent pressure not yet authored]",
-        "tradeoff": "[agent tradeoff not yet authored]",
-        "relief": "[agent relief not yet authored]",
-        "trap": "[agent trap not yet authored]"
+        "symptom": "Multiple conditions in sequence lead to the same action; the agent must verify each branch leads to identical behavior and that adding a new condition won't accidentally diverge.",
+        "goal": "The conditions collapse into one named predicate; the agent reasons about one rule with one action.",
+        "pressure": "Adding or modifying any branch's behavior requires the agent to update every branch consistently; the shared rationale is invisible.",
+        "tradeoff": "If the conditions encode independent reasons (different rules that happen to produce the same outcome today), collapsing them hides distinctions the agent will need to re-split later.",
+        "relief": "The agent reasons about one named predicate with one consequent; new conditions extend in one place.",
+        "trap": "Collapsing conditions that look the same but encode independent rules hides distinctions the agent will need to re-split when one rule evolves differently from the others."
       }
     }
   },
@@ -584,20 +584,20 @@
     "safetyNet": "unit test",
     "forces": {
       "human": {
-        "symptom": "[human symptom not yet authored]",
+        "symptom": "Functions with deeply nested if/else where the happy path is buried inside multiple levels of indentation, and edge cases are conditionals around the main flow.",
         "goal": "Edge cases bail out early at the top of the function; the main flow is unindented and tells the happy path linearly.",
-        "pressure": "[human pressure not yet authored]",
+        "pressure": "The dominant case is hidden under indentation; readers must trace down through edge-case branches to find the main flow; new edge cases extend an already-tangled structure.",
         "tradeoff": "If multiple paths share work, premature returns can duplicate that work — extract first, then guard.",
         "relief": "Indentation drops; the dominant case is obvious; new edge cases land at the top without disturbing the rest.",
-        "trap": "[human trap not yet authored]"
+        "trap": "Inlining guard clauses for every condition — including ones where the edge case shares work with the main path; the early returns duplicate work the structure was sharing."
       },
       "agent": {
-        "symptom": "[agent symptom not yet authored]",
-        "goal": "[agent goal not yet authored]",
-        "pressure": "[agent pressure not yet authored]",
-        "tradeoff": "[agent tradeoff not yet authored]",
-        "relief": "[agent relief not yet authored]",
-        "trap": "[agent trap not yet authored]"
+        "symptom": "A function with deeply nested if/else where the happy path is buried under indentation; the agent must trace through edge-case branches to find the main flow.",
+        "goal": "Edge cases bail out early; the main flow is unindented and reads linearly as the dominant story.",
+        "pressure": "The agent's parsing of the function's intent is obscured by indentation; reasoning about the happy path requires tracking which edge cases have already been ruled out.",
+        "tradeoff": "Early returns can duplicate work if multiple paths share follow-up logic; the agent inlining guards must verify the shared work is genuinely separable.",
+        "relief": "The agent reads the happy path linearly with edge cases as exceptions; new edge cases land at the top without disturbing the main flow.",
+        "trap": "Inlining guards for every condition — including ones that shared follow-up work — fragments the shared logic across early-return branches the agent must keep consistent."
       }
     }
   },
@@ -636,20 +636,20 @@
     "safetyNet": "characterization test",
     "forces": {
       "human": {
-        "symptom": "[human symptom not yet authored]",
+        "symptom": "The same null-or-special check repeats across multiple consumers — `customer === 'unknown' ? 'occupant' : customer.name` scattered across files.",
         "goal": "A repeating null-or-special check becomes a Null Object (or Special Case) that responds sensibly to the same interface.",
-        "pressure": "[human pressure not yet authored]",
+        "pressure": "Every consumer must remember the check; behavior for the special case drifts as consumers diverge; bugs hide where one consumer forgot the check.",
         "tradeoff": "Adds a tiny class for one case; only worthwhile when the special case appears in 2+ consumers.",
         "relief": "Callers stop branching on identity; the special behavior lives in one place.",
-        "trap": "[human trap not yet authored]"
+        "trap": "Adding a Null Object (or Special Case) class for a special check used in only one place — creates a class for a one-off conditional."
       },
       "agent": {
-        "symptom": "[agent symptom not yet authored]",
-        "goal": "[agent goal not yet authored]",
-        "pressure": "[agent pressure not yet authored]",
-        "tradeoff": "[agent tradeoff not yet authored]",
-        "relief": "[agent relief not yet authored]",
-        "trap": "[agent trap not yet authored]"
+        "symptom": "The agent finds the same null-or-special check repeating across multiple consumers; consistency depends on every consumer remembering the pattern.",
+        "goal": "The special case responds to the same interface as the real case; the agent reasons without branching at every call site.",
+        "pressure": "Every consumer is a chance to miss the check; the agent verifying consistency must audit every site.",
+        "tradeoff": "Adding a Null Object class for a special case used in only one place creates ceremony around what was a one-line check; the agent now loads a class to handle one branch.",
+        "relief": "The agent reasons polymorphically; the special behavior lives in one class and consumers don't branch.",
+        "trap": "Introducing a Null Object class for special checks used in only one place creates a class the agent must load and reason about with no consistency gain."
       }
     }
   },
@@ -1000,20 +1000,20 @@
     "safetyNet": "unit test",
     "forces": {
       "human": {
-        "symptom": "[human symptom not yet authored]",
+        "symptom": "A class with multiple cohesive sub-concepts inside it — Person carrying officeAreaCode + officeNumber + telephoneNumber() method, where Phone is hiding.",
         "goal": "A cohesive sub-concept inside a class becomes its own class with its own name, fields, and methods.",
-        "pressure": "[human pressure not yet authored]",
+        "pressure": "The parent class's surface grows past what one type should own; tests touch unrelated concerns together; changes to one concept risk side effects on another.",
         "tradeoff": "Premature class extraction adds ceremony — extract when 3+ fields and at least one operation cluster around a single concept that the parent class doesn't own.",
         "relief": "Each class has one purpose; tests target the small unit; the parent class shrinks.",
-        "trap": "[human trap not yet authored]"
+        "trap": "Extracting a class when the candidate concept is just 1-2 fields without behavior — adds a class file with no encapsulation gain."
       },
       "agent": {
-        "symptom": "[agent symptom not yet authored]",
-        "goal": "[agent goal not yet authored]",
-        "pressure": "[agent pressure not yet authored]",
-        "tradeoff": "[agent tradeoff not yet authored]",
-        "relief": "[agent relief not yet authored]",
-        "trap": "[agent trap not yet authored]"
+        "symptom": "A class whose surface mixes multiple cohesive sub-concepts; the agent reasoning about any single concept must skim past the others to find what it needs.",
+        "goal": "Each class has one purpose; the agent loads a small focused file to reason about any single concept.",
+        "pressure": "The agent's reasoning context per method inflates with unrelated members; changes to one concept require reasoning about all of them.",
+        "tradeoff": "Extracting too eagerly — 1-2 fields with no behavior — adds a class file the agent must load with no encapsulation gain.",
+        "relief": "Smaller focused units; the agent tests one concept at a time and reasons about each class as a coherent whole.",
+        "trap": "Extracting candidate concepts that are just trivial field groups creates class files the agent must navigate without buying any encapsulation gain."
       }
     }
   },
@@ -1026,20 +1026,20 @@
     "safetyNet": "types/compiler",
     "forces": {
       "human": {
-        "symptom": "[human symptom not yet authored]",
+        "symptom": "Domain concepts (Money, PhoneNumber, OrderId, Currency) represented as raw strings, numbers, or booleans — the type system can't tell two domains apart.",
         "goal": "Each domain concept has a small typed home — Money, PhoneNumber, OrderId — that knows its rules.",
-        "pressure": "[human pressure not yet authored]",
+        "pressure": "Validation and formatting scatter across every consumer; the wrong primitive in the wrong slot compiles fine and fails at runtime; behavior that belongs with the concept has nowhere to live.",
         "tradeoff": "Wrapping every primitive is overkill — wrap when the concept needs validation, formatting, or domain-specific behavior beyond what the primitive offers.",
         "relief": "Misuse becomes a type error; behavior accretes around the concept; refactoring is local to the wrapper.",
-        "trap": "[human trap not yet authored]"
+        "trap": "Wrapping every primitive on principle — Name, Title, Description as separate classes whose only methods are toString() — adds typing ceremony without enforcing any domain rule."
       },
       "agent": {
-        "symptom": "[agent symptom not yet authored]",
-        "goal": "[agent goal not yet authored]",
-        "pressure": "[agent pressure not yet authored]",
-        "tradeoff": "[agent tradeoff not yet authored]",
-        "relief": "[agent relief not yet authored]",
-        "trap": "[agent trap not yet authored]"
+        "symptom": "Function signatures use raw strings and numbers where domain concepts hide; the agent cannot tell from the type whether an argument is the right kind of thing.",
+        "goal": "Each domain concept has its own typed wrapper; the agent's type checker catches wrong-primitive-in-wrong-slot before runtime.",
+        "pressure": "The agent must inspect call-site context (variable names, surrounding code) to verify a primitive is the right kind; validation and formatting scatter.",
+        "tradeoff": "Each wrapper is a class the agent must instantiate at every entry point; for primitives without domain rules the wrapper is overhead with no return.",
+        "relief": "Wrong-primitive misuse becomes a type error the agent catches without runtime testing; behavior accretes around the concept where the agent expects to find it.",
+        "trap": "Wrapping every primitive — including ones with no domain rules — adds boilerplate the agent must navigate at every signature with no reasoning benefit."
       }
     }
   },
@@ -1416,20 +1416,20 @@
     "safetyNet": "types/compiler",
     "forces": {
       "human": {
-        "symptom": "[human symptom not yet authored]",
+        "symptom": "A class with too few responsibilities to deserve its own file — one or two trivial methods that the absorbing class would naturally own.",
         "goal": "A class with too few responsibilities to deserve its own file folds into a class it collaborates with most.",
-        "pressure": "[human pressure not yet authored]",
+        "pressure": "Readers pay file-jump cost for triviality; the indirection adds surface without providing real encapsulation.",
         "tradeoff": "If the absorbing class was already large, inlining piles more onto it — fold in only when the absorber stays under its complexity budget afterward.",
         "relief": "Fewer files, fewer constructors, shorter call paths; the absorbing class's coherence improves when it gains the methods it was already orchestrating.",
-        "trap": "[human trap not yet authored]"
+        "trap": "Inlining into a class that's already large — the absorber crosses its complexity budget and creates a worse Large Class smell than the inlined class was solving."
       },
       "agent": {
-        "symptom": "[agent symptom not yet authored]",
-        "goal": "[agent goal not yet authored]",
-        "pressure": "[agent pressure not yet authored]",
-        "tradeoff": "[agent tradeoff not yet authored]",
-        "relief": "[agent relief not yet authored]",
-        "trap": "[agent trap not yet authored]"
+        "symptom": "A class with too few responsibilities for its own file; the agent loads the class to reason about behavior that would naturally live with the absorber.",
+        "goal": "The class folds into its primary collaborator; the agent loads one file for what was two.",
+        "pressure": "Every reference site costs a file-jump the agent must pay; the indirection is overhead for trivial behavior.",
+        "tradeoff": "If the absorber is already large, inlining pushes it past its complexity budget — the agent now loads a god-class to reason about what was previously separated.",
+        "relief": "Fewer files; shorter call paths; the absorber's coherence improves when it owns the methods it was orchestrating.",
+        "trap": "Inlining into an already-large class creates a worse Large Class smell — the agent must reason about a god-class instead of two focused ones."
       }
     }
   },
@@ -1442,20 +1442,20 @@
     "safetyNet": "characterization test",
     "forces": {
       "human": {
-        "symptom": "[human symptom not yet authored]",
+        "symptom": "A class treated as a sharable record (with public mutable fields or setters) used by many consumers — mutating it in one place affects every reader.",
         "goal": "An object treated as a sharable record (with setters) becomes a value object — immutable, equal by content, replaced rather than mutated.",
-        "pressure": "[human pressure not yet authored]",
+        "pressure": "Concurrent reasoning becomes hazardous; the type system can't enforce immutability; consumers can't trust the object's state between operations.",
         "tradeoff": "Comparison semantics shift from identity to equality — every call site that depended on `===` or identity caches needs review.",
         "relief": "Concurrency hazards disappear; the type system can mark fields readonly; the object can travel safely across boundaries.",
-        "trap": "[human trap not yet authored]"
+        "trap": "Switching to value semantics for objects that genuinely belong as references — domain entities with identity (Customer, Account) — strips the identity that consumers depend on."
       },
       "agent": {
-        "symptom": "[agent symptom not yet authored]",
-        "goal": "[agent goal not yet authored]",
-        "pressure": "[agent pressure not yet authored]",
-        "tradeoff": "[agent tradeoff not yet authored]",
-        "relief": "[agent relief not yet authored]",
-        "trap": "[agent trap not yet authored]"
+        "symptom": "A class with public mutable fields used by many consumers; the agent reasoning about any read must consider every other writer.",
+        "goal": "The object is immutable + equal-by-content; the agent reasons about value semantics without modeling write timing.",
+        "pressure": "The agent must trace every writer to model state at any read; concurrent reasoning is practically impossible.",
+        "tradeoff": "Comparison semantics shift from identity to equality; every call site that depended on === or identity caches needs the agent's review and update.",
+        "relief": "Concurrency hazards disappear; the type system can mark fields readonly; the agent reasons about the object as a stable value.",
+        "trap": "Switching domain entities (Customer, Account) to value semantics strips the identity the agent's consumers depended on — equality replaces 'this specific thing' with 'anything that looks like it'."
       }
     }
   },
@@ -1468,20 +1468,20 @@
     "safetyNet": "characterization test",
     "forces": {
       "human": {
-        "symptom": "[human symptom not yet authored]",
+        "symptom": "Duplicate copies of a logically-single entity scattered across the codebase — every order carries its own Customer copy that should be the shared customer.",
         "goal": "Duplicate copies of a logically-single entity collapse into one shared object that everyone references.",
-        "pressure": "[human pressure not yet authored]",
+        "pressure": "Updates to the entity must touch every copy; storage bloats; identity becomes ambiguous (which copy is the canonical one?).",
         "tradeoff": "Sharing introduces the question 'who owns this?' — make sure the lifetime and visibility of the shared reference are well-defined.",
         "relief": "Updates to the entity are visible everywhere; storage shrinks; identity becomes meaningful again.",
-        "trap": "[human trap not yet authored]"
+        "trap": "Sharing references without clear ownership — introduces lifetime and visibility ambiguities (who owns this? when does it get freed?) that the original value-copies hid."
       },
       "agent": {
-        "symptom": "[agent symptom not yet authored]",
-        "goal": "[agent goal not yet authored]",
-        "pressure": "[agent pressure not yet authored]",
-        "tradeoff": "[agent tradeoff not yet authored]",
-        "relief": "[agent relief not yet authored]",
-        "trap": "[agent trap not yet authored]"
+        "symptom": "Duplicate copies of a logically-single entity scattered across the codebase; the agent updating the entity must find and update every copy consistently.",
+        "goal": "The entity exists once; the agent reasons about one canonical object referenced everywhere.",
+        "pressure": "The agent must coordinate updates across every copy; identity becomes ambiguous and the agent can't tell which copy is canonical.",
+        "tradeoff": "Sharing references introduces lifetime and visibility ambiguities (who owns this? when does it get freed?) the agent must reason about; the original value-copies sidestepped this.",
+        "relief": "Updates land in one place; storage shrinks; the agent reasons about the entity as a single referent with meaningful identity.",
+        "trap": "Sharing references without explicit ownership creates lifetime ambiguities the agent must model — the cure introduces a different category of bug than the original duplication."
       }
     }
   },
@@ -1494,20 +1494,20 @@
     "safetyNet": "unit test",
     "forces": {
       "human": {
-        "symptom": "[human symptom not yet authored]",
+        "symptom": "A loop maintaining a boolean flag to decide when to stop — `let found = false; for (...) { if (!found && ...) { ...; found = true; } }`.",
         "goal": "Loops that maintain a boolean to decide when to stop replace it with a direct `break`, `return`, or `continue`.",
-        "pressure": "[human pressure not yet authored]",
+        "pressure": "The exit condition is delayed and obscured; reasoning about when the loop terminates requires tracking the flag's state through every iteration; bugs hide where the flag isn't set when expected.",
         "tradeoff": "If the loop body is large, the break can hide the early-exit semantics — extract a function around the loop's body to keep the exit obvious.",
         "relief": "The exit condition appears at the moment it's decided, not as a delayed effect of a flag check; the loop's intent becomes literal.",
-        "trap": "[human trap not yet authored]"
+        "trap": "Replacing a flag with a break in a large loop body — the exit point becomes hidden inside the body, and the loop's termination semantics become harder to read than the original flag."
       },
       "agent": {
-        "symptom": "[agent symptom not yet authored]",
-        "goal": "[agent goal not yet authored]",
-        "pressure": "[agent pressure not yet authored]",
-        "tradeoff": "[agent tradeoff not yet authored]",
-        "relief": "[agent relief not yet authored]",
-        "trap": "[agent trap not yet authored]"
+        "symptom": "A loop maintaining a boolean flag to decide when to stop; the agent reasoning about termination must track the flag's state through every iteration.",
+        "goal": "The exit happens at the moment it's decided via break/return/continue; the agent reads the loop's termination as a direct statement.",
+        "pressure": "The agent must mentally simulate the flag's lifecycle across iterations; bugs hide where the flag isn't set when expected.",
+        "tradeoff": "If the loop body is large, the break point becomes hidden inside the body and the agent must scan to find termination; extract a function around the body to keep the exit obvious.",
+        "relief": "The agent reads termination as a direct statement at the point of decision; the loop's intent becomes literal.",
+        "trap": "Replacing flags with breaks in large loop bodies buries the exit point — the agent must scan the body to find termination, which can be harder than tracking the flag."
       }
     }
   },

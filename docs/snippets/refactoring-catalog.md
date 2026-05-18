@@ -954,16 +954,16 @@ customer.plan.discountRate;
 
 ---
 name: extract-class
-description: Apply Extract Class when you see Data Clumps, Temporary Field, Large Class, Primitive Obsession. A cohesive sub-concept inside a class becomes its own class with its own name, fields, and methods.
+description: Apply Extract Class when you see Data Clumps, Temporary Field, Large Class, Primitive Obsession. Each class has one purpose; the agent loads a small focused file to reason about any single concept.
 ---
 
 # Apply: 39 — Extract Class
 
-**Target state:** A cohesive sub-concept inside a class becomes its own class with its own name, fields, and methods.
+**Target state:** Each class has one purpose; the agent loads a small focused file to reason about any single concept.
 
-**Why apply it:** Each class has one purpose; tests target the small unit; the parent class shrinks.
+**Why apply it:** Smaller focused units; the agent tests one concept at a time and reasons about each class as a coherent whole.
 
-**Tradeoff:** Premature class extraction adds ceremony — extract when 3+ fields and at least one operation cluster around a single concept that the parent class doesn't own.
+**Tradeoff:** Extracting too eagerly — 1-2 fields with no behavior — adds a class file the agent must load with no encapsulation gain.
 
 ```js
 // Avoid:
@@ -987,16 +987,16 @@ class Person { name; phone; }
 
 ---
 name: inline-class
-description: Apply Inline Class when you see Lazy Element, Speculative Generality. A class with too few responsibilities to deserve its own file folds into a class it collaborates with most.
+description: Apply Inline Class when you see Lazy Element, Speculative Generality. The class folds into its primary collaborator; the agent loads one file for what was two.
 ---
 
 # Apply: 55 — Inline Class
 
-**Target state:** A class with too few responsibilities to deserve its own file folds into a class it collaborates with most.
+**Target state:** The class folds into its primary collaborator; the agent loads one file for what was two.
 
-**Why apply it:** Fewer files, fewer constructors, shorter call paths; the absorbing class's coherence improves when it gains the methods it was already orchestrating.
+**Why apply it:** Fewer files; shorter call paths; the absorber's coherence improves when it owns the methods it was orchestrating.
 
-**Tradeoff:** If the absorbing class was already large, inlining piles more onto it — fold in only when the absorber stays under its complexity budget afterward.
+**Tradeoff:** If the absorber is already large, inlining pushes it past its complexity budget — the agent now loads a god-class to reason about what was previously separated.
 
 ```js
 // Avoid:
@@ -1021,16 +1021,16 @@ class Shipment {
 
 ---
 name: replace-primitive-with-object
-description: Apply Replace Primitive with Object when you see Primitive Obsession. Each domain concept has a small typed home — Money, PhoneNumber, OrderId — that knows its rules.
+description: Apply Replace Primitive with Object when you see Primitive Obsession. Each domain concept has its own typed wrapper; the agent's type checker catches wrong-primitive-in-wrong-slot before runtime.
 ---
 
 # Apply: 40 — Replace Primitive with Object
 
-**Target state:** Each domain concept has a small typed home — Money, PhoneNumber, OrderId — that knows its rules.
+**Target state:** Each domain concept has its own typed wrapper; the agent's type checker catches wrong-primitive-in-wrong-slot before runtime.
 
-**Why apply it:** Misuse becomes a type error; behavior accretes around the concept; refactoring is local to the wrapper.
+**Why apply it:** Wrong-primitive misuse becomes a type error the agent catches without runtime testing; behavior accretes around the concept where the agent expects to find it.
 
-**Tradeoff:** Wrapping every primitive is overkill — wrap when the concept needs validation, formatting, or domain-specific behavior beyond what the primitive offers.
+**Tradeoff:** Each wrapper is a class the agent must instantiate at every entry point; for primitives without domain rules the wrapper is overhead with no return.
 
 ```js
 // Avoid:
@@ -1049,16 +1049,16 @@ function priceFor(money) {
 
 ---
 name: change-reference-to-value
-description: Apply Change Reference to Value when you see Mutable Data. An object treated as a sharable record (with setters) becomes a value object — immutable, equal by content, replaced rather than mutated.
+description: Apply Change Reference to Value when you see Mutable Data. The object is immutable + equal-by-content; the agent reasons about value semantics without modeling write timing.
 ---
 
 # Apply: 56 — Change Reference to Value
 
-**Target state:** An object treated as a sharable record (with setters) becomes a value object — immutable, equal by content, replaced rather than mutated.
+**Target state:** The object is immutable + equal-by-content; the agent reasons about value semantics without modeling write timing.
 
-**Why apply it:** Concurrency hazards disappear; the type system can mark fields readonly; the object can travel safely across boundaries.
+**Why apply it:** Concurrency hazards disappear; the type system can mark fields readonly; the agent reasons about the object as a stable value.
 
-**Tradeoff:** Comparison semantics shift from identity to equality — every call site that depended on `===` or identity caches needs review.
+**Tradeoff:** Comparison semantics shift from identity to equality; every call site that depended on === or identity caches needs the agent's review and update.
 
 ```js
 // Avoid:
@@ -1080,16 +1080,16 @@ class Phone {
 
 ---
 name: change-value-to-reference
-description: Apply Change Value to Reference when you see Duplicated Code. Duplicate copies of a logically-single entity collapse into one shared object that everyone references.
+description: Apply Change Value to Reference when you see Duplicated Code. The entity exists once; the agent reasons about one canonical object referenced everywhere.
 ---
 
 # Apply: 57 — Change Value to Reference
 
-**Target state:** Duplicate copies of a logically-single entity collapse into one shared object that everyone references.
+**Target state:** The entity exists once; the agent reasons about one canonical object referenced everywhere.
 
-**Why apply it:** Updates to the entity are visible everywhere; storage shrinks; identity becomes meaningful again.
+**Why apply it:** Updates land in one place; storage shrinks; the agent reasons about the entity as a single referent with meaningful identity.
 
-**Tradeoff:** Sharing introduces the question 'who owns this?' — make sure the lifetime and visibility of the shared reference are well-defined.
+**Tradeoff:** Sharing references introduces lifetime and visibility ambiguities (who owns this? when does it get freed?) the agent must reason about; the original value-copies sidestepped this.
 
 ```js
 // Avoid:
@@ -1107,16 +1107,16 @@ orders.forEach(o => o.customer = acme);
 
 ---
 name: decompose-conditional
-description: Apply Decompose Conditional when you see Long Function, Comments. Conditions and their consequents read as named domain decisions; isInSummer(), discountFor(date), etc.
+description: Apply Decompose Conditional when you see Long Function, Comments. Conditions read as named domain decisions; the agent reasons about isSummer(date) instead of re-deriving the month range.
 ---
 
 # Apply: 21 — Decompose Conditional
 
-**Target state:** Conditions and their consequents read as named domain decisions: isInSummer(), discountFor(date), etc.
+**Target state:** Conditions read as named domain decisions; the agent reasons about isSummer(date) instead of re-deriving the month range.
 
-**Why apply it:** The branching logic reads top-to-bottom as a story; bugs concentrate in the named pieces.
+**Why apply it:** The agent reasons about named domain decisions; the branching logic reads top-to-bottom as a story.
 
-**Tradeoff:** Names that aren't crisper than the underlying condition add ceremony — only extract when the named function/variable says something the condition can't.
+**Tradeoff:** Extracted names that aren't crisper than the original condition add a layer of indirection — the agent now follows a name to find the same expression.
 
 ```js
 // Avoid:
@@ -1136,16 +1136,16 @@ charge = isSummer(date)
 
 ---
 name: consolidate-conditional-expression
-description: Apply Consolidate Conditional Expression when you see Duplicated Code. Multiple conditions leading to the same action collapse into one named predicate.
+description: Apply Consolidate Conditional Expression when you see Duplicated Code. The conditions collapse into one named predicate; the agent reasons about one rule with one action.
 ---
 
 # Apply: 22 — Consolidate Conditional Expression
 
-**Target state:** Multiple conditions leading to the same action collapse into one named predicate.
+**Target state:** The conditions collapse into one named predicate; the agent reasons about one rule with one action.
 
-**Why apply it:** The shared rationale becomes visible and namable; new conditions extend one place instead of N.
+**Why apply it:** The agent reasons about one named predicate with one consequent; new conditions extend in one place.
 
-**Tradeoff:** Combining conditions can hide their independent reasons — only consolidate when they truly express the same business rule.
+**Tradeoff:** If the conditions encode independent reasons (different rules that happen to produce the same outcome today), collapsing them hides distinctions the agent will need to re-split later.
 
 ```js
 // Avoid:
@@ -1161,16 +1161,16 @@ if (isIneligibleForBonus(employee)) return 0;
 
 ---
 name: replace-nested-conditional-with-guard-clauses
-description: Apply Replace Nested Conditional with Guard Clauses when you see Long Function, Comments. Edge cases bail out early at the top of the function; the main flow is unindented and tells the happy path linearly.
+description: Apply Replace Nested Conditional with Guard Clauses when you see Long Function, Comments. Edge cases bail out early; the main flow is unindented and reads linearly as the dominant story.
 ---
 
 # Apply: 23 — Replace Nested Conditional with Guard Clauses
 
-**Target state:** Edge cases bail out early at the top of the function; the main flow is unindented and tells the happy path linearly.
+**Target state:** Edge cases bail out early; the main flow is unindented and reads linearly as the dominant story.
 
-**Why apply it:** Indentation drops; the dominant case is obvious; new edge cases land at the top without disturbing the rest.
+**Why apply it:** The agent reads the happy path linearly with edge cases as exceptions; new edge cases land at the top without disturbing the main flow.
 
-**Tradeoff:** If multiple paths share work, premature returns can duplicate that work — extract first, then guard.
+**Tradeoff:** Early returns can duplicate work if multiple paths share follow-up logic; the agent inlining guards must verify the shared work is genuinely separable.
 
 ```js
 // Avoid:
@@ -1224,16 +1224,16 @@ event.handle(); // ClickEvent and KeyEvent each implement handle()
 
 ---
 name: introduce-special-case
-description: Apply Introduce Special Case when you see Repeated Switches, Comments. A repeating null-or-special check becomes a Null Object (or Special Case) that responds sensibly to the same interface.
+description: Apply Introduce Special Case when you see Repeated Switches, Comments. The special case responds to the same interface as the real case; the agent reasons without branching at every call site.
 ---
 
 # Apply: 25 — Introduce Special Case
 
-**Target state:** A repeating null-or-special check becomes a Null Object (or Special Case) that responds sensibly to the same interface.
+**Target state:** The special case responds to the same interface as the real case; the agent reasons without branching at every call site.
 
-**Why apply it:** Callers stop branching on identity; the special behavior lives in one place.
+**Why apply it:** The agent reasons polymorphically; the special behavior lives in one class and consumers don't branch.
 
-**Tradeoff:** Adds a tiny class for one case; only worthwhile when the special case appears in 2+ consumers.
+**Tradeoff:** Adding a Null Object class for a special case used in only one place creates ceremony around what was a one-line check; the agent now loads a class to handle one branch.
 
 ```js
 // Avoid:
@@ -1247,16 +1247,16 @@ const name = customer.name; // UnknownCustomer.name returns 'occupant'
 
 ---
 name: replace-control-flag-with-break
-description: Apply Replace Control Flag with Break when you see Loops, Long Function. Loops that maintain a boolean to decide when to stop replace it with a direct `break`, `return`, or `continue`.
+description: Apply Replace Control Flag with Break when you see Loops, Long Function. The exit happens at the moment it's decided via break/return/continue; the agent reads the loop's termination as a direct statement.
 ---
 
 # Apply: 58 — Replace Control Flag with Break
 
-**Target state:** Loops that maintain a boolean to decide when to stop replace it with a direct `break`, `return`, or `continue`.
+**Target state:** The exit happens at the moment it's decided via break/return/continue; the agent reads the loop's termination as a direct statement.
 
-**Why apply it:** The exit condition appears at the moment it's decided, not as a delayed effect of a flag check; the loop's intent becomes literal.
+**Why apply it:** The agent reads termination as a direct statement at the point of decision; the loop's intent becomes literal.
 
-**Tradeoff:** If the loop body is large, the break can hide the early-exit semantics — extract a function around the loop's body to keep the exit obvious.
+**Tradeoff:** If the loop body is large, the break point becomes hidden inside the body and the agent must scan to find termination; extract a function around the body to keep the exit obvious.
 
 ```js
 // Avoid:
