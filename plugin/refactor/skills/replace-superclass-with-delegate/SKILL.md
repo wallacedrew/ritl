@@ -1,15 +1,15 @@
 ---
 name: replace-superclass-with-delegate
-description: Apply Replace Superclass with Delegate when you see Refused Bequest, Insider Trading. Inheritance from a superclass that doesn't really fit (Liskov violations, awkward methods) becomes composition; the former subclass holds an instance and delegates explicitly.
+description: Apply Replace Superclass with Delegate when you see Refused Bequest, Insider Trading. Composition replaces inheritance; the agent reasons about explicit delegation with no Liskov ambiguity.
 ---
 
 # Apply: 66 — Replace Superclass with Delegate
 
-**Target state:** Inheritance from a superclass that doesn't really fit (Liskov violations, awkward methods) becomes composition: the former subclass holds an instance and delegates explicitly.
+**Target state:** Composition replaces inheritance; the agent reasons about explicit delegation with no Liskov ambiguity.
 
-**Why apply it:** The misleading is-a relationship disappears; the former subclass can change its delegate's class without affecting its callers.
+**Why apply it:** The misleading is-a relationship disappears; the agent's polymorphic reasoning becomes trustworthy because every reference type honors its declared contract.
 
-**Tradeoff:** Adds a forwarding method on the former subclass for every method the old superclass exposed — only worth it when the superclass relationship is misleading.
+**Tradeoff:** Composition adds a forwarding method on the former subclass for every parent method exposed; the agent loses syntactic polymorphism and pays ceremony for explicit delegation.
 
 ```js
 // Avoid:

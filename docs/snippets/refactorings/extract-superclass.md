@@ -1,15 +1,15 @@
 ---
 name: extract-superclass
-description: Apply Extract Superclass when you see Duplicated Code, Alternative Classes with Different Interfaces. Two classes with substantial shared structure get a common parent that owns the shared bits.
+description: Apply Extract Superclass when you see Duplicated Code, Alternative Classes with Different Interfaces. The shared structure lives in a common parent; the agent reasons about shared behavior in one place.
 ---
 
 # Apply: 36 — Extract Superclass
 
-**Target state:** Two classes with substantial shared structure get a common parent that owns the shared bits.
+**Target state:** The shared structure lives in a common parent; the agent reasons about shared behavior in one place.
 
-**Why apply it:** Bug fixes and new shared behavior land in one place; the relationship between the classes is documented in code.
+**Why apply it:** Shared behavior lives in one place; the agent's reasoning about the relationship is documented in code via the inheritance link.
 
-**Tradeoff:** Inheritance is inflexible — if the duplication is shallow, prefer Extract Class (composition) over Extract Superclass.
+**Tradeoff:** Inheritance is inflexible; for shallow duplication, the agent's downstream changes are constrained by the parent in ways composition (Extract Class) would have avoided.
 
 ```js
 // Avoid:

@@ -1,15 +1,15 @@
 ---
 name: replace-type-code-with-subclasses
-description: Apply Replace Type Code with Subclasses when you see Repeated Switches, Primitive Obsession. A 'kind' string field becomes a real subclass type; the type system enforces the legal set.
+description: Apply Replace Type Code with Subclasses when you see Repeated Switches, Primitive Obsession. Each kind is a subclass; the agent adds a new kind by adding one class, and the type system tells it what's still missing.
 ---
 
 # Apply: 35 — Replace Type Code with Subclasses
 
-**Target state:** A 'kind' string field becomes a real subclass type; the type system enforces the legal set.
+**Target state:** Each kind is a subclass; the agent adds a new kind by adding one class, and the type system tells it what's still missing.
 
-**Why apply it:** Compile-time checks that no kind is missed; per-kind behavior lives where it belongs.
+**Why apply it:** Adding a new kind is mechanical and type-system-enforced; the agent's plan-and-execute loop for new variants is bounded.
 
-**Tradeoff:** If only one or two switches exist on the type code, subclassing is over-design; combine with Replace Conditional with Polymorphism only when dispatch repeats.
+**Tradeoff:** If only one or two switches exist on the type code, the subclass hierarchy is over-design; the agent now navigates a class tree for what was a single switch.
 
 ```js
 // Avoid:

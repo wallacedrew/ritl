@@ -1606,16 +1606,16 @@ return amounts[i] / 100;
 
 ---
 name: pull-up-method
-description: Apply Pull Up Method when you see Duplicated Code, Alternative Classes with Different Interfaces. Methods that subclasses implement identically move to the shared superclass.
+description: Apply Pull Up Method when you see Duplicated Code, Alternative Classes with Different Interfaces. The method lives on the shared superclass; the agent reasons about one implementation that all subclasses inherit.
 ---
 
 # Apply: 33 — Pull Up Method
 
-**Target state:** Methods that subclasses implement identically move to the shared superclass.
+**Target state:** The method lives on the shared superclass; the agent reasons about one implementation that all subclasses inherit.
 
-**Why apply it:** One implementation, one place to fix; subclasses focus on what's actually different.
+**Why apply it:** One implementation; the agent reasons about one place for the shared behavior; subclasses focus on what's actually different.
 
-**Tradeoff:** If the methods only superficially resemble each other, pulling up creates a fake-shared abstraction — unify only when behavior is actually identical.
+**Tradeoff:** If the methods only superficially resemble each other (same name, different semantics), pulling up creates a fake-shared abstraction the agent must constantly disambiguate.
 
 ```js
 // Avoid:
@@ -1632,16 +1632,16 @@ class Engineer extends Employee {}
 
 ---
 name: push-down-method
-description: Apply Push Down Method when you see Refused Bequest, Large Class. Methods used by only one subclass live with that subclass, not on the shared superclass.
+description: Apply Push Down Method when you see Refused Bequest, Large Class. The method lives on the subclass that uses it; the agent's reasoning about the parent's surface is accurate to what most instances support.
 ---
 
 # Apply: 34 — Push Down Method
 
-**Target state:** Methods used by only one subclass live with that subclass, not on the shared superclass.
+**Target state:** The method lives on the subclass that uses it; the agent's reasoning about the parent's surface is accurate to what most instances support.
 
-**Why apply it:** The superclass surface shrinks; subclasses that don't need the method aren't burdened by it.
+**Why apply it:** The parent's surface shrinks; subclasses that don't need the method aren't burdened; the agent reasons about each subclass's contract accurately.
 
-**Tradeoff:** If the method is occasionally needed in the parent, pushing it down forces awkward type checks back at consumers — verify usage first.
+**Tradeoff:** If the parent occasionally consults the method for type checks or polymorphic dispatch, pushing it down forces awkward downcasts at every consumer the agent must verify.
 
 ```js
 // Avoid:
@@ -1659,16 +1659,16 @@ class Salesperson extends Employee {
 
 ---
 name: replace-type-code-with-subclasses
-description: Apply Replace Type Code with Subclasses when you see Repeated Switches, Primitive Obsession. A 'kind' string field becomes a real subclass type; the type system enforces the legal set.
+description: Apply Replace Type Code with Subclasses when you see Repeated Switches, Primitive Obsession. Each kind is a subclass; the agent adds a new kind by adding one class, and the type system tells it what's still missing.
 ---
 
 # Apply: 35 — Replace Type Code with Subclasses
 
-**Target state:** A 'kind' string field becomes a real subclass type; the type system enforces the legal set.
+**Target state:** Each kind is a subclass; the agent adds a new kind by adding one class, and the type system tells it what's still missing.
 
-**Why apply it:** Compile-time checks that no kind is missed; per-kind behavior lives where it belongs.
+**Why apply it:** Adding a new kind is mechanical and type-system-enforced; the agent's plan-and-execute loop for new variants is bounded.
 
-**Tradeoff:** If only one or two switches exist on the type code, subclassing is over-design; combine with Replace Conditional with Polymorphism only when dispatch repeats.
+**Tradeoff:** If only one or two switches exist on the type code, the subclass hierarchy is over-design; the agent now navigates a class tree for what was a single switch.
 
 ```js
 // Avoid:
@@ -1696,16 +1696,16 @@ class Manager extends Employee {
 
 ---
 name: extract-superclass
-description: Apply Extract Superclass when you see Duplicated Code, Alternative Classes with Different Interfaces. Two classes with substantial shared structure get a common parent that owns the shared bits.
+description: Apply Extract Superclass when you see Duplicated Code, Alternative Classes with Different Interfaces. The shared structure lives in a common parent; the agent reasons about shared behavior in one place.
 ---
 
 # Apply: 36 — Extract Superclass
 
-**Target state:** Two classes with substantial shared structure get a common parent that owns the shared bits.
+**Target state:** The shared structure lives in a common parent; the agent reasons about shared behavior in one place.
 
-**Why apply it:** Bug fixes and new shared behavior land in one place; the relationship between the classes is documented in code.
+**Why apply it:** Shared behavior lives in one place; the agent's reasoning about the relationship is documented in code via the inheritance link.
 
-**Tradeoff:** Inheritance is inflexible — if the duplication is shallow, prefer Extract Class (composition) over Extract Superclass.
+**Tradeoff:** Inheritance is inflexible; for shallow duplication, the agent's downstream changes are constrained by the parent in ways composition (Extract Class) would have avoided.
 
 ```js
 // Avoid:
@@ -1722,16 +1722,16 @@ class Department extends Party { budget; }
 
 ---
 name: collapse-hierarchy
-description: Apply Collapse Hierarchy when you see Lazy Element, Speculative Generality. A subclass that no longer differs meaningfully from its parent merges back in.
+description: Apply Collapse Hierarchy when you see Lazy Element, Speculative Generality. The subclass folds into the parent; the agent reads one class instead of a degenerate two-class hierarchy.
 ---
 
 # Apply: 37 — Collapse Hierarchy
 
-**Target state:** A subclass that no longer differs meaningfully from its parent merges back in.
+**Target state:** The subclass folds into the parent; the agent reads one class instead of a degenerate two-class hierarchy.
 
-**Why apply it:** Smaller hierarchy, less ceremony, fewer files to navigate.
+**Why apply it:** Smaller hierarchy; less ceremony; the agent loads one class instead of navigating a degenerate two-class chain.
 
-**Tradeoff:** Collapsing too eagerly destroys an extension point you'll later want — only collapse when the variant has been zero-sum for a sustained period.
+**Tradeoff:** If the subclass documents a future variation (extension point, planned divergence), collapsing destroys it; the agent that collapses without checking forecloses options.
 
 ```js
 // Avoid:
@@ -1746,16 +1746,16 @@ class Employee {}
 
 ---
 name: replace-subclass-with-delegate
-description: Apply Replace Subclass with Delegate when you see Refused Bequest, Insider Trading. Behavior that varied via inheritance now varies via a delegate object that implements the variant interface.
+description: Apply Replace Subclass with Delegate when you see Refused Bequest, Insider Trading. Variants live in delegate objects swappable at runtime; the agent reasons about composition with explicit delegation calls.
 ---
 
 # Apply: 38 — Replace Subclass with Delegate
 
-**Target state:** Behavior that varied via inheritance now varies via a delegate object that implements the variant interface.
+**Target state:** Variants live in delegate objects swappable at runtime; the agent reasons about composition with explicit delegation calls.
 
-**Why apply it:** Variants can be combined or swapped at runtime; Liskov violations vanish; the hierarchy tree flattens.
+**Why apply it:** Variants can be combined or swapped at runtime; Liskov violations vanish; the agent reasons about explicit delegation.
 
-**Tradeoff:** Composition is more verbose at construction sites — accept the verbosity in exchange for the flexibility.
+**Tradeoff:** Composition is more verbose at construction sites; the agent loses syntactic polymorphism and must verify behavior through explicit delegation calls.
 
 ```js
 // Avoid:
@@ -1775,16 +1775,16 @@ class Booking {
 
 ---
 name: pull-up-constructor-body
-description: Apply Pull Up Constructor Body when you see Duplicated Code. Initialization code repeated across subclass constructors moves into the parent class's constructor and is called via super.
+description: Apply Pull Up Constructor Body when you see Duplicated Code. The shared init lives in the parent's constructor and is called via super; the agent reasons about one initialization path.
 ---
 
 # Apply: 62 — Pull Up Constructor Body
 
-**Target state:** Initialization code repeated across subclass constructors moves into the parent class's constructor and is called via super.
+**Target state:** The shared init lives in the parent's constructor and is called via super; the agent reasons about one initialization path.
 
-**Why apply it:** One canonical home for parent-state init; new subclasses inherit the setup for free; bug fixes apply uniformly.
+**Why apply it:** One canonical init; new subclasses inherit for free; the agent reasons about parent-state setup in one place.
 
-**Tradeoff:** If only some subclasses share the init logic, pulling it up forces the others to opt out — verify the body is genuinely common.
+**Tradeoff:** If only some subclasses share the init logic, pulling it up forces the others to override or opt out; the agent verifying must check whether the shared init is genuinely common.
 
 ```js
 // Avoid:
@@ -1803,16 +1803,16 @@ class Engineer extends Employee {}
 
 ---
 name: pull-up-field
-description: Apply Pull Up Field when you see Duplicated Code. A field declared identically in two or more subclasses moves to the shared superclass.
+description: Apply Pull Up Field when you see Duplicated Code. The field lives on the shared parent; the agent reasons about one declaration and one ownership story.
 ---
 
 # Apply: 63 — Pull Up Field
 
-**Target state:** A field declared identically in two or more subclasses moves to the shared superclass.
+**Target state:** The field lives on the shared parent; the agent reasons about one declaration and one ownership story.
 
 **Why apply it:** One source of truth for the field's type and default; subclasses focus on what they actually specialize.
 
-**Tradeoff:** Pulling up a field that subclasses use differently (different default, different visibility) creates surprise — verify the field semantics are identical.
+**Tradeoff:** If subclasses use the field with different defaults, visibility, or semantic role, pulling up creates surprise behavior the agent must constantly disambiguate.
 
 ```js
 // Avoid:
@@ -1829,16 +1829,16 @@ class Engineer extends Employee {}
 
 ---
 name: push-down-field
-description: Apply Push Down Field when you see Refused Bequest, Large Class. A field used by only one subclass moves out of the parent and into that subclass.
+description: Apply Push Down Field when you see Refused Bequest, Large Class. The field lives on the subclass that uses it; the agent's reasoning about the parent matches what most instances actually carry.
 ---
 
 # Apply: 64 — Push Down Field
 
-**Target state:** A field used by only one subclass moves out of the parent and into that subclass.
+**Target state:** The field lives on the subclass that uses it; the agent's reasoning about the parent matches what most instances actually carry.
 
-**Why apply it:** Other subclasses no longer carry storage they ignore; the parent's surface shrinks; the field's meaning becomes local.
+**Why apply it:** Other subclasses no longer carry ignored storage; the parent's surface shrinks; the agent reasons about each subclass's shape accurately.
 
-**Tradeoff:** If the field is occasionally consulted in the parent for type checks, pushing it down forces awkward downcasts — verify usage first.
+**Tradeoff:** If the parent occasionally consults the field for type checks, pushing it down forces awkward downcasts the agent must add and verify at every consumer.
 
 ```js
 // Avoid:
@@ -1855,16 +1855,16 @@ class Salesperson extends Employee { quota; }
 
 ---
 name: remove-subclass
-description: Apply Remove Subclass when you see Lazy Element, Speculative Generality. A subclass whose only purpose was to encode a type code or add nothing collapses back into a field on the parent.
+description: Apply Remove Subclass when you see Lazy Element, Speculative Generality. The variant becomes a field on the parent; the agent reads variants as data instead of navigating a hierarchy.
 ---
 
 # Apply: 65 — Remove Subclass
 
-**Target state:** A subclass whose only purpose was to encode a type code or add nothing collapses back into a field on the parent.
+**Target state:** The variant becomes a field on the parent; the agent reads variants as data instead of navigating a hierarchy.
 
-**Why apply it:** Smaller hierarchy; new variants are field values instead of new files; the parent regains its variability point as data.
+**Why apply it:** Smaller hierarchy; new variants are field values not new files; the agent reasons about variability as data.
 
-**Tradeoff:** Removing a subclass referenced by name elsewhere (factories, registries) breaks those references — confirm no consumer is type-testing the subclass.
+**Tradeoff:** If the subclass is referenced by name elsewhere (factories, registries, type-tests), removing it silently breaks those references the agent must find and update.
 
 ```js
 // Avoid:
@@ -1882,16 +1882,16 @@ class Person {
 
 ---
 name: replace-superclass-with-delegate
-description: Apply Replace Superclass with Delegate when you see Refused Bequest, Insider Trading. Inheritance from a superclass that doesn't really fit (Liskov violations, awkward methods) becomes composition; the former subclass holds an instance and delegates explicitly.
+description: Apply Replace Superclass with Delegate when you see Refused Bequest, Insider Trading. Composition replaces inheritance; the agent reasons about explicit delegation with no Liskov ambiguity.
 ---
 
 # Apply: 66 — Replace Superclass with Delegate
 
-**Target state:** Inheritance from a superclass that doesn't really fit (Liskov violations, awkward methods) becomes composition: the former subclass holds an instance and delegates explicitly.
+**Target state:** Composition replaces inheritance; the agent reasons about explicit delegation with no Liskov ambiguity.
 
-**Why apply it:** The misleading is-a relationship disappears; the former subclass can change its delegate's class without affecting its callers.
+**Why apply it:** The misleading is-a relationship disappears; the agent's polymorphic reasoning becomes trustworthy because every reference type honors its declared contract.
 
-**Tradeoff:** Adds a forwarding method on the former subclass for every method the old superclass exposed — only worth it when the superclass relationship is misleading.
+**Tradeoff:** Composition adds a forwarding method on the former subclass for every parent method exposed; the agent loses syntactic polymorphism and pays ceremony for explicit delegation.
 
 ```js
 // Avoid:

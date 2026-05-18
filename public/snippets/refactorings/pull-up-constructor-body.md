@@ -1,15 +1,15 @@
 ---
 name: pull-up-constructor-body
-description: Apply Pull Up Constructor Body when you see Duplicated Code. Initialization code repeated across subclass constructors moves into the parent class's constructor and is called via super.
+description: Apply Pull Up Constructor Body when you see Duplicated Code. The shared init lives in the parent's constructor and is called via super; the agent reasons about one initialization path.
 ---
 
 # Apply: 62 — Pull Up Constructor Body
 
-**Target state:** Initialization code repeated across subclass constructors moves into the parent class's constructor and is called via super.
+**Target state:** The shared init lives in the parent's constructor and is called via super; the agent reasons about one initialization path.
 
-**Why apply it:** One canonical home for parent-state init; new subclasses inherit the setup for free; bug fixes apply uniformly.
+**Why apply it:** One canonical init; new subclasses inherit for free; the agent reasons about parent-state setup in one place.
 
-**Tradeoff:** If only some subclasses share the init logic, pulling it up forces the others to opt out — verify the body is genuinely common.
+**Tradeoff:** If only some subclasses share the init logic, pulling it up forces the others to override or opt out; the agent verifying must check whether the shared init is genuinely common.
 
 ```js
 // Avoid:

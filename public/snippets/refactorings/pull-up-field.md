@@ -1,15 +1,15 @@
 ---
 name: pull-up-field
-description: Apply Pull Up Field when you see Duplicated Code. A field declared identically in two or more subclasses moves to the shared superclass.
+description: Apply Pull Up Field when you see Duplicated Code. The field lives on the shared parent; the agent reasons about one declaration and one ownership story.
 ---
 
 # Apply: 63 — Pull Up Field
 
-**Target state:** A field declared identically in two or more subclasses moves to the shared superclass.
+**Target state:** The field lives on the shared parent; the agent reasons about one declaration and one ownership story.
 
 **Why apply it:** One source of truth for the field's type and default; subclasses focus on what they actually specialize.
 
-**Tradeoff:** Pulling up a field that subclasses use differently (different default, different visibility) creates surprise — verify the field semantics are identical.
+**Tradeoff:** If subclasses use the field with different defaults, visibility, or semantic role, pulling up creates surprise behavior the agent must constantly disambiguate.
 
 ```js
 // Avoid:

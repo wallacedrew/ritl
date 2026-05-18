@@ -1,15 +1,15 @@
 ---
 name: remove-subclass
-description: Apply Remove Subclass when you see Lazy Element, Speculative Generality. A subclass whose only purpose was to encode a type code or add nothing collapses back into a field on the parent.
+description: Apply Remove Subclass when you see Lazy Element, Speculative Generality. The variant becomes a field on the parent; the agent reads variants as data instead of navigating a hierarchy.
 ---
 
 # Apply: 65 — Remove Subclass
 
-**Target state:** A subclass whose only purpose was to encode a type code or add nothing collapses back into a field on the parent.
+**Target state:** The variant becomes a field on the parent; the agent reads variants as data instead of navigating a hierarchy.
 
-**Why apply it:** Smaller hierarchy; new variants are field values instead of new files; the parent regains its variability point as data.
+**Why apply it:** Smaller hierarchy; new variants are field values not new files; the agent reasons about variability as data.
 
-**Tradeoff:** Removing a subclass referenced by name elsewhere (factories, registries) breaks those references — confirm no consumer is type-testing the subclass.
+**Tradeoff:** If the subclass is referenced by name elsewhere (factories, registries, type-tests), removing it silently breaks those references the agent must find and update.
 
 ```js
 // Avoid:

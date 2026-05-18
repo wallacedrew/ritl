@@ -1,15 +1,15 @@
 ---
 name: push-down-field
-description: Apply Push Down Field when you see Refused Bequest, Large Class. A field used by only one subclass moves out of the parent and into that subclass.
+description: Apply Push Down Field when you see Refused Bequest, Large Class. The field lives on the subclass that uses it; the agent's reasoning about the parent matches what most instances actually carry.
 ---
 
 # Apply: 64 — Push Down Field
 
-**Target state:** A field used by only one subclass moves out of the parent and into that subclass.
+**Target state:** The field lives on the subclass that uses it; the agent's reasoning about the parent matches what most instances actually carry.
 
-**Why apply it:** Other subclasses no longer carry storage they ignore; the parent's surface shrinks; the field's meaning becomes local.
+**Why apply it:** Other subclasses no longer carry ignored storage; the parent's surface shrinks; the agent reasons about each subclass's shape accurately.
 
-**Tradeoff:** If the field is occasionally consulted in the parent for type checks, pushing it down forces awkward downcasts — verify usage first.
+**Tradeoff:** If the parent occasionally consults the field for type checks, pushing it down forces awkward downcasts the agent must add and verify at every consumer.
 
 ```js
 // Avoid:

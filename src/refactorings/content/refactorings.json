@@ -844,20 +844,20 @@
     "safetyNet": "types/compiler",
     "forces": {
       "human": {
-        "symptom": "[human symptom not yet authored]",
+        "symptom": "Two or more subclasses implement the same method identically — `Manager.name()` and `Engineer.name()` both return `this._name` with no variation.",
         "goal": "Methods that subclasses implement identically move to the shared superclass.",
-        "pressure": "[human pressure not yet authored]",
+        "pressure": "Bug fixes must land in every copy; the shared behavior isn't expressed in the hierarchy; new subclasses copy the same boilerplate.",
         "tradeoff": "If the methods only superficially resemble each other, pulling up creates a fake-shared abstraction — unify only when behavior is actually identical.",
         "relief": "One implementation, one place to fix; subclasses focus on what's actually different.",
-        "trap": "[human trap not yet authored]"
+        "trap": "Pulling up methods that only superficially resemble each other — the parent gets a method whose subclasses each interpret differently, creating a fake-shared abstraction."
       },
       "agent": {
-        "symptom": "[agent symptom not yet authored]",
-        "goal": "[agent goal not yet authored]",
-        "pressure": "[agent pressure not yet authored]",
-        "tradeoff": "[agent tradeoff not yet authored]",
-        "relief": "[agent relief not yet authored]",
-        "trap": "[agent trap not yet authored]"
+        "symptom": "Two or more subclasses implement the same method identically; the agent verifying behavior must check every subclass and confirm they actually agree.",
+        "goal": "The method lives on the shared superclass; the agent reasons about one implementation that all subclasses inherit.",
+        "pressure": "Bug fixes must land in every copy; the agent verifying consistency must update every subclass and risk drift.",
+        "tradeoff": "If the methods only superficially resemble each other (same name, different semantics), pulling up creates a fake-shared abstraction the agent must constantly disambiguate.",
+        "relief": "One implementation; the agent reasons about one place for the shared behavior; subclasses focus on what's actually different.",
+        "trap": "Pulling up superficially-similar methods creates fake-shared behavior the agent must constantly verify means the same thing across subclasses."
       }
     }
   },
@@ -870,20 +870,20 @@
     "safetyNet": "types/compiler",
     "forces": {
       "human": {
-        "symptom": "[human symptom not yet authored]",
+        "symptom": "A method on the parent class used by only one subclass — `Employee.quota()` used only by `Salesperson`.",
         "goal": "Methods used by only one subclass live with that subclass, not on the shared superclass.",
-        "pressure": "[human pressure not yet authored]",
+        "pressure": "Every other subclass carries surface it doesn't use; readers can't tell which methods are shared and which are subclass-specific; the parent's true interface is muddied.",
         "tradeoff": "If the method is occasionally needed in the parent, pushing it down forces awkward type checks back at consumers — verify usage first.",
         "relief": "The superclass surface shrinks; subclasses that don't need the method aren't burdened by it.",
-        "trap": "[human trap not yet authored]"
+        "trap": "Pushing down methods used occasionally in the parent for type checks or polymorphic calls — forces awkward downcasts back at the parent's consumers."
       },
       "agent": {
-        "symptom": "[agent symptom not yet authored]",
-        "goal": "[agent goal not yet authored]",
-        "pressure": "[agent pressure not yet authored]",
-        "tradeoff": "[agent tradeoff not yet authored]",
-        "relief": "[agent relief not yet authored]",
-        "trap": "[agent trap not yet authored]"
+        "symptom": "A method on the parent class used by only one subclass; the agent reading the parent's surface sees methods that don't apply to most instances.",
+        "goal": "The method lives on the subclass that uses it; the agent's reasoning about the parent's surface is accurate to what most instances support.",
+        "pressure": "The parent's interface is muddied with subclass-specific methods; the agent can't tell which methods apply to which subclass without inspecting usage.",
+        "tradeoff": "If the parent occasionally consults the method for type checks or polymorphic dispatch, pushing it down forces awkward downcasts at every consumer the agent must verify.",
+        "relief": "The parent's surface shrinks; subclasses that don't need the method aren't burdened; the agent reasons about each subclass's contract accurately.",
+        "trap": "Pushing down methods the parent occasionally needs for dispatch forces downcasts at every consumer the agent must add and verify."
       }
     }
   },
@@ -896,20 +896,20 @@
     "safetyNet": "characterization test",
     "forces": {
       "human": {
-        "symptom": "[human symptom not yet authored]",
+        "symptom": "A class with a `kind` or `type` field (string or enum) plus methods that switch on it — `Employee` carrying a `type` field used to dispatch `bonus()` to different formulas.",
         "goal": "A 'kind' string field becomes a real subclass type; the type system enforces the legal set.",
-        "pressure": "[human pressure not yet authored]",
+        "pressure": "Every method that varies by type must switch; the compiler can't enforce that all kinds are handled; new kinds require updating every switch.",
         "tradeoff": "If only one or two switches exist on the type code, subclassing is over-design; combine with Replace Conditional with Polymorphism only when dispatch repeats.",
         "relief": "Compile-time checks that no kind is missed; per-kind behavior lives where it belongs.",
-        "trap": "[human trap not yet authored]"
+        "trap": "Replacing the type code with subclasses when only one or two switches exist on it — over-design for a coordination point that's barely a smell."
       },
       "agent": {
-        "symptom": "[agent symptom not yet authored]",
-        "goal": "[agent goal not yet authored]",
-        "pressure": "[agent pressure not yet authored]",
-        "tradeoff": "[agent tradeoff not yet authored]",
-        "relief": "[agent relief not yet authored]",
-        "trap": "[agent trap not yet authored]"
+        "symptom": "A class with a kind field plus methods that switch on it; the agent adding a new kind must find every switch and update each consistently.",
+        "goal": "Each kind is a subclass; the agent adds a new kind by adding one class, and the type system tells it what's still missing.",
+        "pressure": "The agent must enumerate every switch on every addition; the type system can't enforce completeness so the agent verifies by grep.",
+        "tradeoff": "If only one or two switches exist on the type code, the subclass hierarchy is over-design; the agent now navigates a class tree for what was a single switch.",
+        "relief": "Adding a new kind is mechanical and type-system-enforced; the agent's plan-and-execute loop for new variants is bounded.",
+        "trap": "Subclassing for type codes used in only one or two switches creates a hierarchy the agent must navigate for a coordination cost that was already small."
       }
     }
   },
@@ -922,20 +922,20 @@
     "safetyNet": "unit test",
     "forces": {
       "human": {
-        "symptom": "[human symptom not yet authored]",
+        "symptom": "Two classes with substantial shared structure — `Employee` and `Department` both carrying `name`, `id`, and similar id-management methods.",
         "goal": "Two classes with substantial shared structure get a common parent that owns the shared bits.",
-        "pressure": "[human pressure not yet authored]",
+        "pressure": "Bug fixes must land in both; future shared behavior has no obvious home; the relationship between the classes is invisible to readers.",
         "tradeoff": "Inheritance is inflexible — if the duplication is shallow, prefer Extract Class (composition) over Extract Superclass.",
         "relief": "Bug fixes and new shared behavior land in one place; the relationship between the classes is documented in code.",
-        "trap": "[human trap not yet authored]"
+        "trap": "Extracting a superclass for shallow duplication — inheritance is inflexible, and the parent becomes a constraint on future divergence that composition (Extract Class) would have avoided."
       },
       "agent": {
-        "symptom": "[agent symptom not yet authored]",
-        "goal": "[agent goal not yet authored]",
-        "pressure": "[agent pressure not yet authored]",
-        "tradeoff": "[agent tradeoff not yet authored]",
-        "relief": "[agent relief not yet authored]",
-        "trap": "[agent trap not yet authored]"
+        "symptom": "Two classes with substantial shared structure (fields, methods); the agent verifying changes must update both consistently.",
+        "goal": "The shared structure lives in a common parent; the agent reasons about shared behavior in one place.",
+        "pressure": "Bug fixes must land in both classes; the agent's reasoning about shared invariants must verify they hold identically across both.",
+        "tradeoff": "Inheritance is inflexible; for shallow duplication, the agent's downstream changes are constrained by the parent in ways composition (Extract Class) would have avoided.",
+        "relief": "Shared behavior lives in one place; the agent's reasoning about the relationship is documented in code via the inheritance link.",
+        "trap": "Extracting superclasses for shallow duplication locks the agent into inheritance constraints when composition would have left both classes free to diverge."
       }
     }
   },
@@ -948,20 +948,20 @@
     "safetyNet": "types/compiler",
     "forces": {
       "human": {
-        "symptom": "[human symptom not yet authored]",
+        "symptom": "A subclass that no longer differs meaningfully from its parent — an empty subclass, or one that overrides nothing the parent didn't already do.",
         "goal": "A subclass that no longer differs meaningfully from its parent merges back in.",
-        "pressure": "[human pressure not yet authored]",
+        "pressure": "Readers navigate a hierarchy that adds no value; ceremony around construction and dispatch persists; future maintenance must touch both classes for any change.",
         "tradeoff": "Collapsing too eagerly destroys an extension point you'll later want — only collapse when the variant has been zero-sum for a sustained period.",
         "relief": "Smaller hierarchy, less ceremony, fewer files to navigate.",
-        "trap": "[human trap not yet authored]"
+        "trap": "Collapsing a hierarchy whose subclass is currently quiet but documents a real future variation — destroys an extension point you'll need to re-introduce later at higher cost."
       },
       "agent": {
-        "symptom": "[agent symptom not yet authored]",
-        "goal": "[agent goal not yet authored]",
-        "pressure": "[agent pressure not yet authored]",
-        "tradeoff": "[agent tradeoff not yet authored]",
-        "relief": "[agent relief not yet authored]",
-        "trap": "[agent trap not yet authored]"
+        "symptom": "A subclass that no longer differs meaningfully from its parent; the agent navigating the hierarchy traverses indirection for no behavioral variation.",
+        "goal": "The subclass folds into the parent; the agent reads one class instead of a degenerate two-class hierarchy.",
+        "pressure": "The agent's reasoning pays the hierarchy ceremony cost on every reference; future maintenance touches both classes for any change.",
+        "tradeoff": "If the subclass documents a future variation (extension point, planned divergence), collapsing destroys it; the agent that collapses without checking forecloses options.",
+        "relief": "Smaller hierarchy; less ceremony; the agent loads one class instead of navigating a degenerate two-class chain.",
+        "trap": "Collapsing subclasses that document planned future variation destroys extension points the agent will need to re-introduce later at higher cost."
       }
     }
   },
@@ -974,20 +974,20 @@
     "safetyNet": "characterization test",
     "forces": {
       "human": {
-        "symptom": "[human symptom not yet authored]",
+        "symptom": "A subclass that overrides several methods to implement variant behavior — `PremiumBooking extends Booking` overriding `charge()`, `discount()`, `notify()` with premium variants.",
         "goal": "Behavior that varied via inheritance now varies via a delegate object that implements the variant interface.",
-        "pressure": "[human pressure not yet authored]",
+        "pressure": "Behavior can't change at runtime; combining variants requires multiple inheritance; the inheritance relationship may violate Liskov in subtle ways.",
         "tradeoff": "Composition is more verbose at construction sites — accept the verbosity in exchange for the flexibility.",
         "relief": "Variants can be combined or swapped at runtime; Liskov violations vanish; the hierarchy tree flattens.",
-        "trap": "[human trap not yet authored]"
+        "trap": "Replacing every subclass with composition — including ones where the inheritance contract genuinely holds — pays construction-site verbosity for no real fit improvement."
       },
       "agent": {
-        "symptom": "[agent symptom not yet authored]",
-        "goal": "[agent goal not yet authored]",
-        "pressure": "[agent pressure not yet authored]",
-        "tradeoff": "[agent tradeoff not yet authored]",
-        "relief": "[agent relief not yet authored]",
-        "trap": "[agent trap not yet authored]"
+        "symptom": "A subclass that overrides several methods to implement variant behavior; the agent reasoning about polymorphic dispatch must enumerate variants across the hierarchy.",
+        "goal": "Variants live in delegate objects swappable at runtime; the agent reasons about composition with explicit delegation calls.",
+        "pressure": "Behavior can't change at runtime; combining variants requires multiple inheritance the agent must work around; Liskov violations hide in override behavior.",
+        "tradeoff": "Composition is more verbose at construction sites; the agent loses syntactic polymorphism and must verify behavior through explicit delegation calls.",
+        "relief": "Variants can be combined or swapped at runtime; Liskov violations vanish; the agent reasons about explicit delegation.",
+        "trap": "Replacing every subclass — including ones where Liskov genuinely holds — pays construction-site verbosity without buying flexibility the agent will actually use."
       }
     }
   },
@@ -1598,20 +1598,20 @@
     "safetyNet": "types/compiler",
     "forces": {
       "human": {
-        "symptom": "[human symptom not yet authored]",
+        "symptom": "Multiple subclass constructors initialize the same parent fields with the same logic — every `extends Employee` constructor sets `this.name` and `this.salary` identically.",
         "goal": "Initialization code repeated across subclass constructors moves into the parent class's constructor and is called via super.",
-        "pressure": "[human pressure not yet authored]",
+        "pressure": "Bug fixes in init logic must land in every subclass constructor; new subclasses must remember the pattern; drift between constructors hides bugs.",
         "tradeoff": "If only some subclasses share the init logic, pulling it up forces the others to opt out — verify the body is genuinely common.",
         "relief": "One canonical home for parent-state init; new subclasses inherit the setup for free; bug fixes apply uniformly.",
-        "trap": "[human trap not yet authored]"
+        "trap": "Pulling up init logic that only some subclasses share — forces the others to opt out (or override) creating a worse coupling than the original duplication."
       },
       "agent": {
-        "symptom": "[agent symptom not yet authored]",
-        "goal": "[agent goal not yet authored]",
-        "pressure": "[agent pressure not yet authored]",
-        "tradeoff": "[agent tradeoff not yet authored]",
-        "relief": "[agent relief not yet authored]",
-        "trap": "[agent trap not yet authored]"
+        "symptom": "Multiple subclass constructors initialize the same parent fields with the same logic; the agent verifying constructors must check every subclass for consistency.",
+        "goal": "The shared init lives in the parent's constructor and is called via super; the agent reasons about one initialization path.",
+        "pressure": "Bug fixes in init logic must land in every subclass; the agent must update each consistently or risk silent drift.",
+        "tradeoff": "If only some subclasses share the init logic, pulling it up forces the others to override or opt out; the agent verifying must check whether the shared init is genuinely common.",
+        "relief": "One canonical init; new subclasses inherit for free; the agent reasons about parent-state setup in one place.",
+        "trap": "Pulling up init logic only some subclasses need forces the others to override with awkward opt-outs the agent must reason about."
       }
     }
   },
@@ -1624,20 +1624,20 @@
     "safetyNet": "types/compiler",
     "forces": {
       "human": {
-        "symptom": "[human symptom not yet authored]",
+        "symptom": "A field declared identically in two or more subclasses — every subclass has `_name` with the same type, default, and visibility.",
         "goal": "A field declared identically in two or more subclasses moves to the shared superclass.",
-        "pressure": "[human pressure not yet authored]",
+        "pressure": "The shared field's type and default are duplicated; refactoring its shape means touching every subclass; the field's true ownership is muddy.",
         "tradeoff": "Pulling up a field that subclasses use differently (different default, different visibility) creates surprise — verify the field semantics are identical.",
         "relief": "One source of truth for the field's type and default; subclasses focus on what they actually specialize.",
-        "trap": "[human trap not yet authored]"
+        "trap": "Pulling up a field that subclasses use differently — different defaults, different visibility, different semantic role — creates surprises where the shared declaration masks divergent uses."
       },
       "agent": {
-        "symptom": "[agent symptom not yet authored]",
-        "goal": "[agent goal not yet authored]",
-        "pressure": "[agent pressure not yet authored]",
-        "tradeoff": "[agent tradeoff not yet authored]",
-        "relief": "[agent relief not yet authored]",
-        "trap": "[agent trap not yet authored]"
+        "symptom": "A field declared identically across multiple subclasses; the agent verifying changes to the field's shape must update every subclass consistently.",
+        "goal": "The field lives on the shared parent; the agent reasons about one declaration and one ownership story.",
+        "pressure": "Refactoring the field's type or default requires the agent to touch every subclass; consistency drift hides bugs.",
+        "tradeoff": "If subclasses use the field with different defaults, visibility, or semantic role, pulling up creates surprise behavior the agent must constantly disambiguate.",
+        "relief": "One source of truth for the field's type and default; subclasses focus on what they actually specialize.",
+        "trap": "Pulling up fields with divergent semantic roles creates a shared declaration that masks subclass-specific behavior the agent must constantly re-verify."
       }
     }
   },
@@ -1650,20 +1650,20 @@
     "safetyNet": "types/compiler",
     "forces": {
       "human": {
-        "symptom": "[human symptom not yet authored]",
+        "symptom": "A field on the parent class used by only one subclass — `Employee.quota` used only by `Salesperson`, ignored by everyone else.",
         "goal": "A field used by only one subclass moves out of the parent and into that subclass.",
-        "pressure": "[human pressure not yet authored]",
+        "pressure": "Every instance carries storage it doesn't use; readers can't tell from the parent's shape which fields apply; serialization carries dead weight.",
         "tradeoff": "If the field is occasionally consulted in the parent for type checks, pushing it down forces awkward downcasts — verify usage first.",
         "relief": "Other subclasses no longer carry storage they ignore; the parent's surface shrinks; the field's meaning becomes local.",
-        "trap": "[human trap not yet authored]"
+        "trap": "Pushing down fields the parent occasionally consults for type checks or polymorphic dispatch — forces awkward downcasts at the parent's consumers."
       },
       "agent": {
-        "symptom": "[agent symptom not yet authored]",
-        "goal": "[agent goal not yet authored]",
-        "pressure": "[agent pressure not yet authored]",
-        "tradeoff": "[agent tradeoff not yet authored]",
-        "relief": "[agent relief not yet authored]",
-        "trap": "[agent trap not yet authored]"
+        "symptom": "A field on the parent class used by only one subclass; the agent reading the parent's shape sees storage that doesn't apply to most instances.",
+        "goal": "The field lives on the subclass that uses it; the agent's reasoning about the parent matches what most instances actually carry.",
+        "pressure": "The parent's storage carries dead weight; serialization includes ignored fields; the agent's reasoning about the parent's shape is muddied.",
+        "tradeoff": "If the parent occasionally consults the field for type checks, pushing it down forces awkward downcasts the agent must add and verify at every consumer.",
+        "relief": "Other subclasses no longer carry ignored storage; the parent's surface shrinks; the agent reasons about each subclass's shape accurately.",
+        "trap": "Pushing down fields the parent occasionally consults for dispatch forces downcasts the agent must add at every consumer."
       }
     }
   },
@@ -1676,20 +1676,20 @@
     "safetyNet": "types/compiler",
     "forces": {
       "human": {
-        "symptom": "[human symptom not yet authored]",
+        "symptom": "Empty subclasses that exist only to encode a type code — `class Female extends Person {}` and `class Male extends Person {}` with no overridden behavior.",
         "goal": "A subclass whose only purpose was to encode a type code or add nothing collapses back into a field on the parent.",
-        "pressure": "[human pressure not yet authored]",
+        "pressure": "Every new variant is a new file; the hierarchy adds ceremony without behavior; consumers may type-test the subclass instead of treating it as data.",
         "tradeoff": "Removing a subclass referenced by name elsewhere (factories, registries) breaks those references — confirm no consumer is type-testing the subclass.",
         "relief": "Smaller hierarchy; new variants are field values instead of new files; the parent regains its variability point as data.",
-        "trap": "[human trap not yet authored]"
+        "trap": "Removing subclasses referenced by name elsewhere — factories, registries, type-tests in legacy code — breaks those references silently."
       },
       "agent": {
-        "symptom": "[agent symptom not yet authored]",
-        "goal": "[agent goal not yet authored]",
-        "pressure": "[agent pressure not yet authored]",
-        "tradeoff": "[agent tradeoff not yet authored]",
-        "relief": "[agent relief not yet authored]",
-        "trap": "[agent trap not yet authored]"
+        "symptom": "Empty subclasses that encode a type code without behavior; the agent navigating the hierarchy traverses indirection for what could be a field.",
+        "goal": "The variant becomes a field on the parent; the agent reads variants as data instead of navigating a hierarchy.",
+        "pressure": "Every new variant is a new file the agent must create; the hierarchy ceremony costs reasoning without behavior payoff.",
+        "tradeoff": "If the subclass is referenced by name elsewhere (factories, registries, type-tests), removing it silently breaks those references the agent must find and update.",
+        "relief": "Smaller hierarchy; new variants are field values not new files; the agent reasons about variability as data.",
+        "trap": "Removing subclasses referenced by factories, registries, or type-tests breaks those references — the agent must find every such consumer before deletion."
       }
     }
   },
@@ -1702,20 +1702,20 @@
     "safetyNet": "characterization test",
     "forces": {
       "human": {
-        "symptom": "[human symptom not yet authored]",
+        "symptom": "A subclass that inherits from a parent that doesn't quite fit — overriding methods to no-ops, throwing 'unsupported', or using only some of the parent's surface (refused-bequest pattern).",
         "goal": "Inheritance from a superclass that doesn't really fit (Liskov violations, awkward methods) becomes composition: the former subclass holds an instance and delegates explicitly.",
-        "pressure": "[human pressure not yet authored]",
+        "pressure": "Liskov violations: consumers can't trust subclass instances; polymorphism becomes unsafe; the inheritance relationship misleads readers about what the subclass actually is.",
         "tradeoff": "Adds a forwarding method on the former subclass for every method the old superclass exposed — only worth it when the superclass relationship is misleading.",
         "relief": "The misleading is-a relationship disappears; the former subclass can change its delegate's class without affecting its callers.",
-        "trap": "[human trap not yet authored]"
+        "trap": "Replacing every inheritance with composition — including ones where the Liskov contract genuinely holds — pays forwarding-method ceremony for no real fit improvement."
       },
       "agent": {
-        "symptom": "[agent symptom not yet authored]",
-        "goal": "[agent goal not yet authored]",
-        "pressure": "[agent pressure not yet authored]",
-        "tradeoff": "[agent tradeoff not yet authored]",
-        "relief": "[agent relief not yet authored]",
-        "trap": "[agent trap not yet authored]"
+        "symptom": "A subclass that overrides parent methods to no-ops or 'unsupported'; the agent reasoning about polymorphic calls on parent-typed references cannot trust the contract.",
+        "goal": "Composition replaces inheritance; the agent reasons about explicit delegation with no Liskov ambiguity.",
+        "pressure": "Liskov violations break the agent's polymorphic reasoning; the agent must defensively check at every call site whether the subclass honors the parent's contract.",
+        "tradeoff": "Composition adds a forwarding method on the former subclass for every parent method exposed; the agent loses syntactic polymorphism and pays ceremony for explicit delegation.",
+        "relief": "The misleading is-a relationship disappears; the agent's polymorphic reasoning becomes trustworthy because every reference type honors its declared contract.",
+        "trap": "Replacing every inheritance — including ones where Liskov genuinely holds — pays forwarding ceremony at every method without buying any contract safety the agent actually needed."
       }
     }
   }
