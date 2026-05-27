@@ -9,7 +9,7 @@
   "plugins": [
     {
       "name": "refactor",
-      "description": "107 SKILL.md skills — 1 workflow orchestrator + 66 refactorings + 24 smells + 16 Kerievsky patterns. Apply Fowler refactorings when their preconditions appear; refuse known code smells; apply Kerievsky composite refactorings whose destination is a pattern. Sources: https://refactoring.com/catalog/ and Refactoring to Patterns (Kerievsky 2004).",
+      "description": "108 SKILL.md skills — 1 workflow orchestrator + 66 refactorings + 24 smells + 17 Kerievsky patterns. Apply Fowler refactorings when their preconditions appear; refuse known code smells; apply Kerievsky composite refactorings whose destination is a pattern. Sources: https://refactoring.com/catalog/ and Refactoring to Patterns (Kerievsky 2004).",
       "author": {
         "name": "Wallace Drew"
       },

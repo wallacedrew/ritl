@@ -601,6 +601,46 @@
   },
   {
     "catalog": "patterns",
+    "name": "Move Embellishment To Decorator",
+    "nemeses": [
+      {
+        "catalog": "smells",
+        "name": "Long Parameter List"
+      },
+      {
+        "catalog": "refactorings",
+        "name": "Extract Class"
+      },
+      {
+        "catalog": "refactorings",
+        "name": "Replace Subclass with Delegate"
+      }
+    ],
+    "before": "// One class accumulates optional embellishments via flags + inline conditionals.\nclass HttpClient {\n  constructor(options = {}) {\n    this.baseUrl = options.baseUrl;\n    this.timeout = options.timeout;\n    this.retries = options.retries;\n    this.logger = options.logger;\n    this.authToken = options.authToken;\n  }\n  async get(path) {\n    if (this.logger) this.logger.log(`GET ${path}`);\n    let attempt = 0;\n    while (true) {\n      try {\n        const headers = {};\n        if (this.authToken) headers.Authorization = `Bearer ${this.authToken}`;\n        const response = await fetch(this.baseUrl + path, {\n          headers,\n          signal: this.timeout ? AbortSignal.timeout(this.timeout) : undefined,\n        });\n        return await response.json();\n      } catch (e) {\n        if (attempt >= (this.retries ?? 0)) throw e;\n        attempt++;\n      }\n    }\n  }\n}",
+    "after": "// Each embellishment is a decorator wrapping the core client.\nclass HttpClient {\n  constructor(baseUrl) {\n    this.baseUrl = baseUrl;\n  }\n  async get(path) {\n    const response = await fetch(this.baseUrl + path);\n    return await response.json();\n  }\n}\nclass LoggingClient {\n  constructor(inner, logger) { this.inner = inner; this.logger = logger; }\n  async get(path) {\n    this.logger.log(`GET ${path}`);\n    return this.inner.get(path);\n  }\n}\nclass RetryingClient {\n  constructor(inner, retries) { this.inner = inner; this.retries = retries; }\n  async get(path) {\n    for (let attempt = 0; ; attempt++) {\n      try { return await this.inner.get(path); }\n      catch (e) { if (attempt >= this.retries) throw e; }\n    }\n  }\n}\nclass AuthClient {\n  constructor(inner, authToken) { this.inner = inner; this.authToken = authToken; }\n  async get(path) {\n    // adds Authorization header; simplified for illustration\n    return this.inner.get(path);\n  }\n}\n\nconst client = new RetryingClient(\n  new AuthClient(\n    new LoggingClient(new HttpClient('https://api.example.com'), logger),\n    authToken,\n  ),\n  3,\n);",
+    "safetyNet": "unit test",
+    "exampleSource": "Illustrative example written for this site, faithful to Kerievsky's pattern shape in Refactoring to Patterns (Addison-Wesley, 2004), chapter 7. Per ADR-0004, the bookend contrasts the flag-laden construction site with the explicit decorator chain — the intermediate moves (Extract Class on each embellishment, in turn) live in the linked Fowler refactorings.",
+    "forces": {
+      "human": {
+        "symptom": "A class accumulates optional behaviours through constructor flags and inline conditionals — `if (this.logger)`, `if (this.authToken)`, `if (this.retries)`. Adding a new optional behaviour means another flag and another conditional; combinations of flags multiply test cases; the class grows in both surface and complexity with every feature.",
+        "goal": "Each optional behaviour is a Decorator class that wraps the core component. Clients compose features by chaining decorators; what was a flag becomes a wrapping construction. The core class shrinks to its essential responsibility.",
+        "pressure": "Embellishment flags create a combinatorial explosion of behaviour configurations. Testing the cross-product is impractical; subtle interactions between flags (does logging fire before or after retry?) get buried in the conditional ordering and are hard to surface in code review.",
+        "tradeoff": "Decorator construction sites are visually noisy — `new R(new A(new L(new H())))` — and stack traces sit on the outermost decorator's call frame. Compatibility requires every decorator to honour the wrapped interface exactly; small interface changes ripple through the chain.",
+        "relief": "Each decorator is one cohesive feature; the core component stops growing. Cross-feature behaviour is determined by composition order at the construction site, which is visible and explicit. Adding a behaviour is one new decorator file, not one more flag plus one more conditional.",
+        "trap": "A deep decorator chain becomes a forest where debugging requires reading every wrapper's `get` method to know what the call actually does. The pattern's clarity gain diminishes past three or four wrappers; at that point a builder or a configuration object that names the intended capability set is often clearer."
+      },
+      "agent": {
+        "symptom": "A core class peppered with optional-behaviour conditionals the agent must trace on every method-edit to verify which features are active in a given configuration. Flag combinations are not statically enumerable; the agent must hold the option-space in working memory across every read.",
+        "goal": "One file per behaviour the agent reads in isolation; the core class is short and verifiable on its own. Composition order is statically observable at the construction site; the agent can reason about wrapper effects sequentially.",
+        "pressure": "The combinatorial flag-space defeats static reasoning — the agent cannot enumerate which combinations have been tested or which are reachable. Per-feature behaviour change requires editing the core class, which the agent then has to re-verify against all flag combinations.",
+        "tradeoff": "Decorator chains spread the call-path across multiple files; the agent must traverse the chain to know what a single method call does. Wrapping-order is not statically declared anywhere; the agent must read the construction site to recover the intent.",
+        "relief": "Diff surface for adding or removing a feature is one decorator file or one chain edit at the construction site. Per-feature tests are isolated; static analysis of the core class is unburdened by optional-behaviour conditionals.",
+        "trap": "Five-deep decorator chains require the agent to load five definitions before reading the call. Stack traces obscure where in the chain a failure occurred; the agent's debugging cost goes up with depth. A composition-style API that names the intended capability set can be more legible than the raw chain."
+      }
+    }
+  },
+  {
+    "catalog": "patterns",
     "name": "Replace Conditional Logic with Strategy",
     "nemeses": [
       {
