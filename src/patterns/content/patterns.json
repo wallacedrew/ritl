@@ -441,6 +441,46 @@
   },
   {
     "catalog": "patterns",
+    "name": "Limit Instantiation With Singleton",
+    "nemeses": [
+      {
+        "catalog": "smells",
+        "name": "Mutable Data"
+      },
+      {
+        "catalog": "refactorings",
+        "name": "Encapsulate Variable"
+      },
+      {
+        "catalog": "refactorings",
+        "name": "Replace Constructor with Factory Function"
+      }
+    ],
+    "before": "// Anyone can construct a MetricsRegistry; each instance has its own state.\n// Counts reported to one registry are invisible to another.\nclass MetricsRegistry {\n  constructor() {\n    this.counters = new Map();\n  }\n  increment(name) {\n    this.counters.set(name, (this.counters.get(name) ?? 0) + 1);\n  }\n  snapshot() {\n    return Object.fromEntries(this.counters);\n  }\n}\n\nconst registryA = new MetricsRegistry();\nregistryA.increment('orders.created');\nconst registryB = new MetricsRegistry();\nregistryB.snapshot(); // {} — does not see registryA's increment.",
+    "after": "// One instance for the whole process; getInstance() is the only way to obtain it.\nclass MetricsRegistry {\n  static #instance = null;\n  static getInstance() {\n    if (!MetricsRegistry.#instance) {\n      MetricsRegistry.#instance = new MetricsRegistry(MetricsRegistry.#construction);\n    }\n    return MetricsRegistry.#instance;\n  }\n  static #construction = Symbol('private construction key');\n  constructor(key) {\n    if (key !== MetricsRegistry.#construction) {\n      throw new Error('MetricsRegistry is a singleton; use getInstance()');\n    }\n    this.counters = new Map();\n  }\n  increment(name) {\n    this.counters.set(name, (this.counters.get(name) ?? 0) + 1);\n  }\n  snapshot() {\n    return Object.fromEntries(this.counters);\n  }\n}\n\nMetricsRegistry.getInstance().increment('orders.created');\nMetricsRegistry.getInstance().snapshot(); // { 'orders.created': 1 }",
+    "safetyNet": "unit test",
+    "exampleSource": "Illustrative example written for this site, faithful to Kerievsky's pattern shape in Refactoring to Patterns (Addison-Wesley, 2004), chapter 5. The book is careful that Singleton is for cases where instance uniqueness is part of the contract — this metrics-registry example fits that frame: every contributor must report into one place or the snapshot lies.",
+    "forces": {
+      "human": {
+        "symptom": "A class with shared mutable state is instantiated multiple times across the codebase. Each instance accumulates its own state; consumers of the state see partial views because they hold different instances; the conceptual 'one thing' is split into accidental siblings.",
+        "goal": "Construction is funnelled through a single static accessor that returns the same instance every time. The class's contract enforces uniqueness; the conceptual 'one thing' has one runtime identity.",
+        "pressure": "Multiple instances of what should be one cause silent state-fragmentation bugs — metrics that don't add up, caches that don't share, registries that disagree. The symptom (a snapshot showing partial data) is far from the cause (instantiation discipline).",
+        "tradeoff": "Singletons couple consumers to a global accessor; they leak state across tests unless explicitly reset; they hide dependencies from constructor signatures. A Singleton applied to a class that doesn't need uniqueness is the Inline Singleton candidate — friction without payoff.",
+        "relief": "One conceptual thing has one runtime identity; consumers stop accidentally fragmenting state; reasoning about 'is this the same registry?' becomes trivial. Construction-time invariants run once.",
+        "trap": "Singletons applied for convenience rather than for uniqueness contract become global-state vectors that resist testing and refactoring. The pattern is right when uniqueness is part of the class's contract; wrong when it's a shortcut for skipping dependency injection."
+      },
+      "agent": {
+        "symptom": "Multiple instances of a class that should be unique appear at construction sites the agent must trace to confirm state coherence. State-fragmentation bugs are invisible to local reasoning — each instance looks correct, but their sum is wrong.",
+        "goal": "One static accessor the agent verifies once; all references resolve to the same identity. The agent can statically reason about 'same instance' rather than tracking which constructor produced which instance.",
+        "pressure": "Multiple-instance fragmentation cannot be statically diagnosed — the agent needs runtime introspection or holistic test coverage to detect when two callers hold different instances of what should be one. Verification cost is high; bugs are subtle.",
+        "tradeoff": "Singletons defeat the agent's static dependency analysis: constructor signatures no longer reveal what a class uses. Test isolation requires the agent to inject a reset hook or restructure to allow per-test instances; tests can become order-sensitive without obvious indicators.",
+        "relief": "Identity is statically guaranteed; the agent can verify that all callers refer to the same conceptual instance without runtime introspection. Cross-cutting invariants (one cache, one registry) become enforceable at construction.",
+        "trap": "Singletons hide dependencies from the agent's static view; the agent must grep for static accessors to enumerate consumers. Test-order flakiness from leaked state is invisible until it manifests; the agent cannot statically detect Singletons that should have been per-instance."
+      }
+    }
+  },
+  {
+    "catalog": "patterns",
     "name": "Replace Conditional Logic with Strategy",
     "nemeses": [
       {
