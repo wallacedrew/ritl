@@ -798,5 +798,45 @@
         "trap": "Subscription wiring scattered across the composition root requires the agent to grep for `subscribe(` calls to enumerate the consumer set. Stale subscriptions (uncleaned references) cause hard-to-debug memory and behaviour leaks the agent cannot detect statically."
       }
     }
+  },
+  {
+    "catalog": "patterns",
+    "name": "Replace Implicit Language With Interpreter",
+    "nemeses": [
+      {
+        "catalog": "smells",
+        "name": "Primitive Obsession"
+      },
+      {
+        "catalog": "refactorings",
+        "name": "Replace Primitive with Object"
+      },
+      {
+        "catalog": "refactorings",
+        "name": "Substitute Algorithm"
+      }
+    ],
+    "before": "// A string-based DSL carries the filter; parsing and dispatch are coupled in one method.\nclass TaskFilter {\n  matches(task, expression) {\n    // expression like 'tag=urgent AND priority>3'\n    const clauses = expression.split(' AND ');\n    return clauses.every((clause) => {\n      const equalsMatch = clause.match(/^(\\w+)=(\\S+)$/);\n      if (equalsMatch) return task[equalsMatch[1]] === equalsMatch[2];\n      const greaterMatch = clause.match(/^(\\w+)>(\\S+)$/);\n      if (greaterMatch) return task[greaterMatch[1]] > Number(greaterMatch[2]);\n      throw new Error(`unparseable clause: ${clause}`);\n    });\n  }\n}",
+    "after": "// Domain objects compose into an expression tree; each node knows how to evaluate itself.\nclass Equals {\n  constructor(field, value) { this.field = field; this.value = value; }\n  matches(task) { return task[this.field] === this.value; }\n}\nclass GreaterThan {\n  constructor(field, value) { this.field = field; this.value = value; }\n  matches(task) { return task[this.field] > this.value; }\n}\nclass And {\n  constructor(left, right) { this.left = left; this.right = right; }\n  matches(task) { return this.left.matches(task) && this.right.matches(task); }\n}\nclass Or {\n  constructor(left, right) { this.left = left; this.right = right; }\n  matches(task) { return this.left.matches(task) || this.right.matches(task); }\n}\n\nconst filter = new And(new Equals('tag', 'urgent'), new GreaterThan('priority', 3));\ntasks.filter((task) => filter.matches(task));",
+    "safetyNet": "unit test",
+    "exampleSource": "Illustrative example written for this site, faithful to Kerievsky's pattern shape in Refactoring to Patterns (Addison-Wesley, 2004), chapter 11. Per ADR-0004, the bookend contrasts the implicit string DSL with the explicit AST — the intermediate grammar-extraction steps live in the linked Fowler refactorings. The book uses a query-language example; this JavaScript version uses task-filtering predicates.",
+    "forces": {
+      "human": {
+        "symptom": "Domain expressions are encoded as strings — `'tag=urgent AND priority>3'`, `'$.user.profile.name'` — that the system parses on every use. The grammar lives in comments and parser code; valid expressions are runtime concerns; type checking is impossible; combinators (AND/OR/NOT) bolt on with growing string-manipulation complexity.",
+        "goal": "Each grammatical element is a domain object: `Equals`, `GreaterThan`, `And`, `Or`. Expressions are built by composition; evaluation is a polymorphic `matches(context)` call. The grammar is the type system; composition replaces parsing.",
+        "pressure": "Implicit DSLs are Primitive Obsession at scale — strings carry domain semantics the type system can't enforce. Parser bugs ship as 'this should match but doesn't'; new operators require parser edits; tests must cover both parsing and evaluation; the two concerns tangle.",
+        "tradeoff": "Interpreter introduces a class per grammar node. For two or three operators with a stable grammar, the inline string-and-conditional form is often cheaper than the class hierarchy. The composed form is more verbose at the construction site than the string form.",
+        "relief": "The grammar is statically typed and locally readable. Adding an operator is one new class; combinators are composable; tests target one node at a time. The expression's structure is visible in source rather than encoded in a string.",
+        "trap": "An Interpreter applied to a grammar that's actually trivial (two operators, stable, low surface) is ceremony — readers must navigate a class hierarchy to understand what would have been three lines of string-matching. The pattern earns its keep when the grammar grows and composition matters."
+      },
+      "agent": {
+        "symptom": "String-DSL parsing and dispatch entangled in one method body the agent must trace per call. The grammar is implicit in regex patterns and conditionals; the agent cannot statically enumerate valid expressions or verify that all paths handle malformed input.",
+        "goal": "Each grammar node is one class the agent verifies independently. The composed expression tree is a statically-typed data structure the agent reads structurally; per-node tests pin per-node behaviour.",
+        "pressure": "Implicit DSLs defeat static analysis at the string boundary — the agent's verification cost spans both parser and evaluator. Adding a syntactic form requires the agent to coordinate parser, evaluator, and tests; misalignments between the three are silent and ship to runtime.",
+        "tradeoff": "Interpreter spreads a single conceptual query across multiple class files; the agent traverses the tree to know what an expression does. Static call-graph analysis loses precision on polymorphic `matches` calls — the agent must enumerate concrete node types.",
+        "relief": "Diff surface for a new operator is one class. The grammar's surface is the type hierarchy — the agent can enumerate operators by inspecting the class declarations. Parser and evaluator concerns separate cleanly; tests target evaluation only.",
+        "trap": "A grammar with many nodes representing fine-grained syntactic variations forces the agent to load a large hierarchy to reason about any expression. Per-node specialization (NumericEquals vs. StringEquals vs. DateEquals) can multiply file count without proportional reasoning gain."
+      }
+    }
   }
 ]
