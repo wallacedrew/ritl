@@ -201,6 +201,46 @@
   },
   {
     "catalog": "patterns",
+    "name": "Extract Composite",
+    "nemeses": [
+      {
+        "catalog": "smells",
+        "name": "Duplicated Code"
+      },
+      {
+        "catalog": "refactorings",
+        "name": "Extract Superclass"
+      },
+      {
+        "catalog": "refactorings",
+        "name": "Pull Up Method"
+      }
+    ],
+    "before": "// Two sibling classes each carry the same line-item collection logic.\nclass Order {\n  constructor(customer) {\n    this.customer = customer;\n    this.lineItems = [];\n  }\n  addLineItem(item) { this.lineItems.push(item); }\n  removeLineItem(item) {\n    const index = this.lineItems.indexOf(item);\n    if (index >= 0) this.lineItems.splice(index, 1);\n  }\n  total() { return this.lineItems.reduce((sum, i) => sum + i.amount, 0); }\n  ship() { /* Order-specific */ }\n}\nclass Invoice {\n  constructor(customer, dueDate) {\n    this.customer = customer;\n    this.dueDate = dueDate;\n    this.lineItems = [];\n  }\n  addLineItem(item) { this.lineItems.push(item); }\n  removeLineItem(item) {\n    const index = this.lineItems.indexOf(item);\n    if (index >= 0) this.lineItems.splice(index, 1);\n  }\n  total() { return this.lineItems.reduce((sum, i) => sum + i.amount, 0); }\n  markPaid() { /* Invoice-specific */ }\n}",
+    "after": "// Collection management lives once in a Composite superclass.\nclass LineItemContainer {\n  constructor(customer) {\n    this.customer = customer;\n    this.lineItems = [];\n  }\n  addLineItem(item) { this.lineItems.push(item); }\n  removeLineItem(item) {\n    const index = this.lineItems.indexOf(item);\n    if (index >= 0) this.lineItems.splice(index, 1);\n  }\n  total() { return this.lineItems.reduce((sum, i) => sum + i.amount, 0); }\n}\nclass Order extends LineItemContainer {\n  ship() { /* Order-specific */ }\n}\nclass Invoice extends LineItemContainer {\n  constructor(customer, dueDate) {\n    super(customer);\n    this.dueDate = dueDate;\n  }\n  markPaid() { /* Invoice-specific */ }\n}",
+    "safetyNet": "unit test",
+    "exampleSource": "Illustrative example written for this site, adapted from Kerievsky's pattern description in Refactoring to Patterns (Addison-Wesley, 2004), chapter 6. The book's Java example pulled tax-calculation collection logic up to a Composite superclass; this JavaScript version uses line-item collections, same pattern shape.",
+    "forces": {
+      "human": {
+        "symptom": "Two or more sibling classes each carry identical collection-management code — add, remove, iterate, total. The duplicated methods change in lockstep; bug fixes happen N times; readers see the same algorithm in N files and can never be quite sure the copies stay consistent.",
+        "goal": "A Composite superclass owns the collection and its management methods; each sibling extends the Composite and declares only its distinctive concerns. Collection-related bug fixes land once and apply everywhere.",
+        "pressure": "Duplicated collection logic is the classic Shotgun Surgery case — a single bug in the iteration semantics requires N edits. Subtle drift between copies (one sibling normalizes input, another doesn't) silently produces inconsistent behaviour.",
+        "tradeoff": "Inheritance couples the siblings; subsequent variation between them must either fit the superclass interface or break it. Extracting too aggressively (e.g., when only the data shape is shared but the semantics differ) produces a brittle base class that constrains every subclass.",
+        "relief": "Collection management lives in one file; siblings shrink to declare only their distinct surface. Adding a new container type (Quote, Receipt) becomes a one-line subclass declaration.",
+        "trap": "A Composite superclass that accumulates every behaviour any sibling needs becomes a god-base — siblings inherit methods they don't use, leak superclass concerns into their own logic, and resist further refactoring. Composition (has-a a LineItemContainer) is often the better answer."
+      },
+      "agent": {
+        "symptom": "N copies of identical collection-management methods the agent must verify match on every edit. A bug fix in one copy must be ported to all others; the agent has no static guarantee the copies stayed consistent.",
+        "goal": "One Composite superclass the agent reads once and trusts thereafter. Sibling classes are short enough to load entirely in context; the agent verifies only the distinctive surface.",
+        "pressure": "Duplicated collection logic across N siblings × M methods = N×M cells the agent must hold to verify consistency. The agent's edit budget on a single collection-method change is N times what it would be with the Composite in place.",
+        "tradeoff": "Inheritance hides behaviour in the superclass that callers may not know to look for; the agent must traverse the class hierarchy to know what a sibling can do. Method resolution order issues complicate static reasoning when subclasses override partial behaviours.",
+        "relief": "Diff surface for a collection-logic change collapses to one file. Sibling class files become short and locally readable; tests can target Composite behaviour without per-sibling duplication.",
+        "trap": "A bloated Composite forces the agent to load a large superclass before reading any sibling. If sibling behaviours diverge later, the agent must constantly cross-check superclass methods against per-sibling overrides — context cost migrates from duplication to inheritance traversal."
+      }
+    }
+  },
+  {
+    "catalog": "patterns",
     "name": "Replace Conditional Logic with Strategy",
     "nemeses": [
       {
