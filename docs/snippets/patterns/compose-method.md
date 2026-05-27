@@ -3,7 +3,7 @@ name: compose-method
 description: Apply Compose Method when you see Long Function, Extract Function, Replace Temp with Query. The method reads as a sequence of named operations the agent can verify against without re-deriving the algorithm.
 ---
 
-# Apply: 01 — Compose Method
+# Apply: 02 — Compose Method
 
 **Symptom:** A method whose body the agent must trace line-by-line to understand the algorithm; the high-level shape is obscured by interleaved details. Verifying behavior preservation requires re-reading the entire span on every edit.
 

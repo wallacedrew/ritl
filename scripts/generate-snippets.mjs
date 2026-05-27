@@ -331,7 +331,7 @@ function renderCatalogFile() {
 
   const header = `# Refactoring catalog
 
-Centralized view of the 91 catalog skills. Each section below is the
+Centralized view of the 92 catalog skills. Each section below is the
 full SKILL.md content of the matching per-entity download — the
 content is identical at the section level. Use this single paste when
 you want the whole vocabulary loaded; use the per-entity downloads
@@ -452,7 +452,7 @@ for (const dest of ["docs/snippets", "public/snippets"]) {
 const PLUGIN_NAME = "refactor";
 const MARKETPLACE_NAME = "ritl";
 const PLUGIN_DESCRIPTION =
-  "92 SKILL.md skills — 1 workflow orchestrator + 66 refactorings + 24 smells + 1 Kerievsky pattern (Compose Method). Apply Fowler refactorings when their preconditions appear; refuse known code smells; apply Kerievsky composite refactorings whose destination is a pattern. Sources: https://refactoring.com/catalog/ and Refactoring to Patterns (Kerievsky 2004).";
+  "93 SKILL.md skills — 1 workflow orchestrator + 66 refactorings + 24 smells + 2 Kerievsky patterns. Apply Fowler refactorings when their preconditions appear; refuse known code smells; apply Kerievsky composite refactorings whose destination is a pattern. Sources: https://refactoring.com/catalog/ and Refactoring to Patterns (Kerievsky 2004).";
 
 const pluginRoot = resolve(root, `plugin/${PLUGIN_NAME}`);
 const pluginSkillsRoot = resolve(pluginRoot, "skills");

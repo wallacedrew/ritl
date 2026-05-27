@@ -1,6 +1,6 @@
 {
   "name": "refactor",
-  "description": "92 SKILL.md skills — 1 workflow orchestrator + 66 refactorings + 24 smells + 1 Kerievsky pattern (Compose Method). Apply Fowler refactorings when their preconditions appear; refuse known code smells; apply Kerievsky composite refactorings whose destination is a pattern. Sources: https://refactoring.com/catalog/ and Refactoring to Patterns (Kerievsky 2004).",
+  "description": "93 SKILL.md skills — 1 workflow orchestrator + 66 refactorings + 24 smells + 2 Kerievsky patterns. Apply Fowler refactorings when their preconditions appear; refuse known code smells; apply Kerievsky composite refactorings whose destination is a pattern. Sources: https://refactoring.com/catalog/ and Refactoring to Patterns (Kerievsky 2004).",
   "author": {
     "name": "Wallace Drew"
   },

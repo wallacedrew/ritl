@@ -3,9 +3,18 @@
     "catalog": "patterns",
     "name": "Compose Method",
     "nemeses": [
-      { "catalog": "smells", "name": "Long Function" },
-      { "catalog": "refactorings", "name": "Extract Function" },
-      { "catalog": "refactorings", "name": "Replace Temp with Query" }
+      {
+        "catalog": "smells",
+        "name": "Long Function"
+      },
+      {
+        "catalog": "refactorings",
+        "name": "Extract Function"
+      },
+      {
+        "catalog": "refactorings",
+        "name": "Replace Temp with Query"
+      }
     ],
     "before": "function add(item, quantity) {\n  if (this.readOnly) throw new Error('list is read-only');\n  const existing = this.items.find(line => line.product.id === item.id);\n  if (existing) {\n    existing.quantity += quantity;\n  } else {\n    this.items.push({ product: item, quantity });\n    this.items.sort((a, b) => a.product.id - b.product.id);\n  }\n  this.recalculateTotal();\n}",
     "after": "function add(item, quantity) {\n  assertWritable(this);\n  const existing = findLineFor(this.items, item);\n  if (existing) {\n    increaseQuantity(existing, quantity);\n  } else {\n    insertNewLine(this.items, item, quantity);\n  }\n  this.recalculateTotal();\n}",
@@ -27,6 +36,46 @@
         "tradeoff": "Each helper inflates context-window cost by one definition the next reasoning step must load. Over-decomposing fragments a single procedure across many files.",
         "relief": "The composed method captures the algorithm in named steps; helpers are independently verifiable; refactoring orchestration is a localized change. Smaller diff surface per commit.",
         "trap": "A deeply-nested hierarchy of helpers where the agent must chase multiple definitions to understand a single original method — context cost multiplies and cross-helper invariants vanish from view."
+      }
+    }
+  },
+  {
+    "catalog": "patterns",
+    "name": "Replace Conditional Logic with Strategy",
+    "nemeses": [
+      {
+        "catalog": "smells",
+        "name": "Repeated Switches"
+      },
+      {
+        "catalog": "refactorings",
+        "name": "Replace Conditional with Polymorphism"
+      },
+      {
+        "catalog": "refactorings",
+        "name": "Decompose Conditional"
+      }
+    ],
+    "before": "class Loan {\n  capital() {\n    if (this.expiry === null && this.maturity !== null) {\n      // term loan\n      return this.commitment * this.duration() * this.riskFactor();\n    }\n    if (this.expiry !== null && this.maturity === null) {\n      if (this.unusedPercentage !== 1.0) {\n        // revolver\n        return this.commitment * this.unusedPercentage * this.duration() * this.riskFactor();\n      }\n      // advised line\n      return this.outstandingRiskAmount() * this.duration()\n        + this.unusedRiskAmount() * this.duration() * this.unusedPercentage;\n    }\n    return 0;\n  }\n}",
+    "after": "class Loan {\n  constructor(strategy) {\n    this.capitalStrategy = strategy;\n  }\n  capital() {\n    return this.capitalStrategy.capital(this);\n  }\n}\n\nclass TermLoanStrategy {\n  capital(loan) {\n    return loan.commitment * loan.duration() * loan.riskFactor();\n  }\n}\n\nclass RevolverStrategy {\n  capital(loan) {\n    return loan.commitment * loan.unusedPercentage * loan.duration() * loan.riskFactor();\n  }\n}\n\nclass AdvisedLineStrategy {\n  capital(loan) {\n    return loan.outstandingRiskAmount() * loan.duration()\n      + loan.unusedRiskAmount() * loan.duration() * loan.unusedPercentage;\n  }\n}",
+    "safetyNet": "unit test",
+    "exampleSource": "Adapted from Joshua Kerievsky's loan-calculator example in Refactoring to Patterns (Addison-Wesley, 2004). The Java original is translated to JavaScript and the three loan kinds are preserved as TermLoan, Revolver, and AdvisedLine strategies — same shape, different language.",
+    "forces": {
+      "human": {
+        "symptom": "A method whose body is a switch or chain of `if` branches dispatching on a type code. Adding a new variant means finding every dispatcher in the codebase and editing each one; the conditional grows wider every time a variant lands.",
+        "goal": "Each variant lives in its own Strategy class implementing a shared interface. Dispatch happens through a single virtual call — the conditional vanishes from the call site.",
+        "pressure": "Type-code variants drive Shotgun Surgery: one new variant touches every dispatcher in scope. Cross-branch invariants are easy to miss because no single place owns the per-variant logic.",
+        "tradeoff": "Strategy introduces a class hierarchy and a runtime indirection. For two stable variants that will never grow, a plain conditional is often clearer and cheaper than the ceremony.",
+        "relief": "Adding a new variant is a new class — the dispatching code never changes. Each variant's behavior is locally readable and locally testable; the Liskov contract is the only cross-variant thing to mind.",
+        "trap": "Premature Strategy where the variants are stable, few, and unlikely to grow — the class hierarchy adds ceremony that earns no flexibility. One-method strategies whose only purpose is to satisfy the pattern make the system harder to read, not easier."
+      },
+      "agent": {
+        "symptom": "A method whose body the agent must trace through a chain of branches to determine what runs. Each branch hides domain logic; verifying behavior requires loading every branch in scope on every edit.",
+        "goal": "Each variant lives in its own class; the agent can verify one strategy's behavior without loading the others. The dispatch site is a one-line call that needs no per-variant reasoning.",
+        "pressure": "Every edit to one branch re-loads the entire conditional. Cross-branch invariants compound context cost; reasoning about which branch fires when requires holding the type-code rules in working memory across the full method body.",
+        "tradeoff": "Strategy fragments related logic across files, increasing context-load cost when reasoning about the system end-to-end. Vtable dispatch obscures static call-graph analysis — the agent has to enumerate strategy classes by hand.",
+        "relief": "Each strategy is independently verifiable. Adding a variant is one new file, not a multi-file change. The dispatching site stays trivial regardless of variant count; per-variant tests pin exactly the behavior they own.",
+        "trap": "A maze of one-method strategy classes that exist only to satisfy the pattern — the agent loads N files to understand what a single conditional once expressed in one. Context cost multiplies without proportional reasoning gain."
       }
     }
   }
