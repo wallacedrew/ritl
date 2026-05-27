@@ -2,11 +2,11 @@ import { describe, expect, it } from "vitest";
 import { screen } from "@testing-library/react";
 
 import { renderWithTheme } from "../../tests-small-unit/_helpers/renderWithTheme";
-import HomePage from "@/home/HomePage";
+import FowlerLandingPage from "@/refactoring/FowlerLandingPage";
 
-describe("user reads the reference view at the home page", () => {
+describe("user reads the Fowler landing at /refactoring", () => {
   it("shows catalog stats — 24 smells, 66 refactorings", () => {
-    renderWithTheme(<HomePage />);
+    renderWithTheme(<FowlerLandingPage />);
 
     expect(screen.getByText("24")).toBeInTheDocument();
     expect(screen.getByText("66")).toBeInTheDocument();
@@ -15,7 +15,7 @@ describe("user reads the reference view at the home page", () => {
   });
 
   it("shows refactorings grouped by Fowler category, each chip links to the refactoring detail", () => {
-    renderWithTheme(<HomePage />);
+    renderWithTheme(<FowlerLandingPage />);
 
     expect(screen.getByRole("heading", { name: /Composing Methods/i })).toBeInTheDocument();
     expect(screen.getByRole("heading", { name: /Inheritance/i })).toBeInTheDocument();
@@ -28,5 +28,15 @@ describe("user reads the reference view at the home page", () => {
       "href",
       "/refactoring/refactorings/extract-function",
     );
+  });
+
+  it("offers browse buttons that link into the refactorings and smells lists", () => {
+    renderWithTheme(<FowlerLandingPage />);
+
+    const browseRefactorings = screen.getByRole("link", { name: /browse all refactorings/i });
+    expect(browseRefactorings).toHaveAttribute("href", "/refactoring/refactorings");
+
+    const browseSmells = screen.getByRole("link", { name: /browse all smells/i });
+    expect(browseSmells).toHaveAttribute("href", "/refactoring/smells");
   });
 });

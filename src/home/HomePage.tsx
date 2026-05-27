@@ -1,39 +1,29 @@
 import Container from "@mui/material/Container";
-import Divider from "@mui/material/Divider";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import { visuallyHidden } from "@mui/utils";
 
-import { getRefactoringsByCategory } from "@/refactorings/lib/getRefactoringsByCategory";
-import ReferenceView from "@/refactorings/components/ReferenceView";
-import { loadSmells } from "@/smells/lib/loadSmells";
+import { SUB_SITES } from "@/shared/lib/subSites";
 
-import CatalogStats from "./components/CatalogStats";
+import SubSiteCard from "./components/SubSiteCard";
 
 export default function HomePage() {
-  const groups = getRefactoringsByCategory();
-  const smellCount = loadSmells().length;
-  const refactoringCount = groups.reduce((sum, g) => sum + g.items.length, 0);
-  const categoryCount = groups.length;
-
   return (
     <Container maxWidth="lg" sx={{ py: 4 }}>
       <Stack spacing={4}>
         <Stack spacing={1}>
           <Typography component="h1" sx={visuallyHidden}>
-            Reference
+            Refactoring in the Loop
           </Typography>
           <Typography variant="body1" color="text.secondary">
-            Fowler refactorings organized by chapter.
+            Pick a catalog to explore.
           </Typography>
         </Stack>
-        <CatalogStats
-          smellCount={smellCount}
-          refactoringCount={refactoringCount}
-          categoryCount={categoryCount}
-        />
-        <Divider />
-        <ReferenceView groups={groups} />
+        <Stack spacing={2}>
+          {SUB_SITES.map((subSite) => (
+            <SubSiteCard key={subSite.slug} subSite={subSite} />
+          ))}
+        </Stack>
       </Stack>
     </Container>
   );

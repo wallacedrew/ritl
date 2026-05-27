@@ -17,18 +17,18 @@ interface NavLink {
 }
 
 const NAV_LINKS: readonly NavLink[] = [
-  { view: "refactorings", label: "Refactorings", href: "/" },
+  { view: "reference", label: "Reference", href: "/refactoring" },
+  { view: "refactorings", label: "Refactorings", href: "/refactoring/refactorings" },
   { view: "smells", label: "Smells", href: "/refactoring/smells" },
-  { view: "reference", label: "Reference", href: "/reference" },
   { view: "plugin", label: "Plugin", href: "/plugin", hideOnMobile: true },
 ];
 
 function deriveActiveView(pathname: string): CatalogView {
   if (pathname.startsWith("/refactoring/smells")) return "smells";
-  if (pathname.startsWith("/reference")) return "reference";
+  if (pathname.startsWith("/refactoring/refactorings")) return "refactorings";
   if (pathname.startsWith("/plugin")) return "plugin";
-  // "/", "/refactoring", and "/refactoring/refactorings/*" all map to the refactorings tab today.
-  return "refactorings";
+  // "/refactoring" (Fowler landing) maps to the reference tab.
+  return "reference";
 }
 
 export default function CatalogToolbar() {

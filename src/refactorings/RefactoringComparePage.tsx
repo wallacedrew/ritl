@@ -16,7 +16,7 @@ export default async function RefactoringComparePage({ params }: RefactoringComp
     <CatalogCompareDetail
       entry={refactoring}
       number={number}
-      backLinkHref="/"
+      backLinkHref="/refactoring"
       backLinkLabel="Refactorings"
       beforeLabel="Before the refactoring"
       afterLabel="After the refactoring"

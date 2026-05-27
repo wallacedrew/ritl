@@ -20,9 +20,9 @@ describe("user lands on an unknown URL", () => {
     const browseSmells = screen.getByRole("link", { name: /Browse smells/i });
     const browseReference = screen.getByRole("link", { name: /Reference/i });
 
-    expect(browseRefactorings).toHaveAttribute("href", "/");
+    expect(browseRefactorings).toHaveAttribute("href", "/refactoring/refactorings");
     expect(browseSmells).toHaveAttribute("href", "/refactoring/smells");
-    expect(browseReference).toHaveAttribute("href", "/reference");
+    expect(browseReference).toHaveAttribute("href", "/refactoring");
   });
 
   it("suggests three starter catalog entries with working detail links", () => {

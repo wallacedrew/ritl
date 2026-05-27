@@ -26,13 +26,13 @@ describe("site header spans every catalog view", () => {
     expect(nav).toBeInTheDocument();
 
     const refactoringsLink = screen.getByRole("link", { name: /^Refactorings$/ });
-    expect(refactoringsLink).toHaveAttribute("href", "/");
+    expect(refactoringsLink).toHaveAttribute("href", "/refactoring/refactorings");
 
     const smellsLink = screen.getByRole("link", { name: /^Smells$/ });
     expect(smellsLink).toHaveAttribute("href", "/refactoring/smells");
 
     const referenceLink = screen.getByRole("link", { name: /^Reference$/ });
-    expect(referenceLink).toHaveAttribute("href", "/reference");
+    expect(referenceLink).toHaveAttribute("href", "/refactoring");
   });
 
   it("fires nav_clicked with the link name when the user clicks a catalog nav link", async () => {
