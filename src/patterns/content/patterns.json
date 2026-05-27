@@ -758,5 +758,45 @@
         "trap": "A wall of nearly-identical static creation methods that differ only in defaults can become harder to scan than one constructor with documented defaults. The pattern's clarity gain depends on each method representing a genuinely distinct intention."
       }
     }
+  },
+  {
+    "catalog": "patterns",
+    "name": "Replace Hard-Coded Notifications With Observer",
+    "nemeses": [
+      {
+        "catalog": "smells",
+        "name": "Insider Trading"
+      },
+      {
+        "catalog": "refactorings",
+        "name": "Extract Class"
+      },
+      {
+        "catalog": "refactorings",
+        "name": "Move Function"
+      }
+    ],
+    "before": "// Cart knows which collaborators to notify and how.\nclass Cart {\n  constructor(inventory, analytics, shipping) {\n    this.items = [];\n    this.inventory = inventory;\n    this.analytics = analytics;\n    this.shipping = shipping;\n  }\n  addItem(item, quantity) {\n    this.items.push({ item, quantity });\n    this.inventory.reserve(item, quantity);\n    this.analytics.recordAdd(item, quantity);\n    this.shipping.updateEstimate(this.items);\n  }\n}",
+    "after": "// Cart publishes events; listeners subscribe at the composition root.\nclass Cart {\n  constructor() {\n    this.items = [];\n    this.listeners = [];\n  }\n  subscribe(listener) {\n    this.listeners.push(listener);\n  }\n  addItem(item, quantity) {\n    this.items.push({ item, quantity });\n    this.notify({ type: 'item-added', item, quantity, cart: this });\n  }\n  notify(event) {\n    this.listeners.forEach((listener) => listener.handle(event));\n  }\n}\n\nclass InventoryListener {\n  constructor(inventory) { this.inventory = inventory; }\n  handle(event) {\n    if (event.type === 'item-added') this.inventory.reserve(event.item, event.quantity);\n  }\n}\nclass AnalyticsListener {\n  constructor(analytics) { this.analytics = analytics; }\n  handle(event) {\n    if (event.type === 'item-added') this.analytics.recordAdd(event.item, event.quantity);\n  }\n}\nclass ShippingListener {\n  constructor(shipping) { this.shipping = shipping; }\n  handle(event) {\n    if (event.type === 'item-added') this.shipping.updateEstimate(event.cart.items);\n  }\n}\n\nconst cart = new Cart();\ncart.subscribe(new InventoryListener(inventory));\ncart.subscribe(new AnalyticsListener(analytics));\ncart.subscribe(new ShippingListener(shipping));",
+    "safetyNet": "unit test",
+    "exampleSource": "Illustrative example written for this site, faithful to Kerievsky's pattern shape in Refactoring to Patterns (Addison-Wesley, 2004), chapter 10. The book uses a Stock class with hard-coded calls to InvestmentTracker and PortfolioView; this JavaScript version uses a Cart with three listeners — same pattern, e-commerce host.",
+    "forces": {
+      "human": {
+        "symptom": "A class hardcodes calls to specific collaborators whenever something happens — `this.inventory.reserve(...)`, `this.analytics.recordAdd(...)`. Adding a new interested party means editing the publisher; the publisher's responsibilities expand with every new consumer; tests must mock every downstream collaborator.",
+        "goal": "The publisher emits events; listeners subscribe at the composition root and receive notifications without the publisher knowing they exist. Adding a consumer is a new listener + one subscription line, with no publisher edit.",
+        "pressure": "Hard-coded notifications are Insider Trading — the publisher knows too much about who cares about what, and tests can't isolate the publisher from its consumers. Each new consumer couples the publisher to more of the domain it shouldn't have to know.",
+        "tradeoff": "Observer scatters the system's reactive logic across loosely-coupled listeners; the agent or developer must read the subscription site to know what runs when an event fires. Event ordering becomes implicit; debugging requires recovering subscription order. Memory leaks via uncleaned subscriptions are a real failure mode.",
+        "relief": "The publisher's responsibilities shrink to 'do my thing, announce that I did it'; consumers attach without modifying the publisher. New consumers don't risk breaking existing ones; tests for the publisher mock no consumers, tests for consumers exercise event handling in isolation.",
+        "trap": "An Observer system without explicit event types or ordering guarantees turns into a debugging nightmare — the agent must trace 'who listens to what, in what order' across the whole subscription graph. The pattern earns its keep when subscribers are stable, semantic event types are documented, and ordering doesn't matter."
+      },
+      "agent": {
+        "symptom": "Publisher methods the agent must trace through to know what side effects occur. Adding a new consumer requires editing the publisher; per-edit context cost grows with consumer count; tests for the publisher load every consumer's mock.",
+        "goal": "The publisher is short and consumer-agnostic; the agent reads it once and trusts it. Each consumer is one file with one event-handling concern; the agent verifies each consumer in isolation.",
+        "pressure": "Hard-coded notifications couple the publisher to the full consumer surface. The agent's per-publisher-edit verification cost scales with consumer count; static analysis cannot enforce that the publisher's events fully describe its state changes.",
+        "tradeoff": "Observer's dynamic dispatch defeats static call-graph analysis at the event boundary. The agent cannot statically determine which listeners fire on which events without reading the subscription wiring; ordering assumptions are invisible in the code.",
+        "relief": "Diff surface for adding a consumer is one new file. Publisher tests don't load consumer mocks; consumer tests don't load the publisher. Static analysis of the publisher's surface is unburdened by downstream collaborators.",
+        "trap": "Subscription wiring scattered across the composition root requires the agent to grep for `subscribe(` calls to enumerate the consumer set. Stale subscriptions (uncleaned references) cause hard-to-debug memory and behaviour leaks the agent cannot detect statically."
+      }
+    }
   }
 ]
