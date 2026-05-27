@@ -561,6 +561,46 @@
   },
   {
     "catalog": "patterns",
+    "name": "Move Creation Knowledge To Factory",
+    "nemeses": [
+      {
+        "catalog": "smells",
+        "name": "Long Function"
+      },
+      {
+        "catalog": "refactorings",
+        "name": "Extract Class"
+      },
+      {
+        "catalog": "refactorings",
+        "name": "Move Function"
+      }
+    ],
+    "before": "// The caller knows the entire assembly recipe.\nfunction placeOrder(customerId, line1, city, postal, items, jurisdiction) {\n  const customer = new Customer(customerId);\n  const address = new Address(line1, city, postal);\n  customer.setShippingAddress(address);\n  customer.setBillingAddress(address);\n  const order = new Order(customer);\n  for (const item of items) {\n    const lineItem = new LineItem(item.product, item.quantity);\n    lineItem.applyDiscount(customer.discountRate);\n    order.addLineItem(lineItem);\n  }\n  order.calculateTotal();\n  order.applyTax(jurisdiction);\n  return order;\n}",
+    "after": "// The factory owns the recipe; the caller asks for a finished order.\nclass OrderFactory {\n  constructor(taxJurisdiction) {\n    this.taxJurisdiction = taxJurisdiction;\n  }\n  createOrder(customerId, line1, city, postal, items) {\n    const customer = this.buildCustomer(customerId, line1, city, postal);\n    const order = new Order(customer);\n    items.forEach((item) => order.addLineItem(this.buildLineItem(item, customer)));\n    order.calculateTotal();\n    order.applyTax(this.taxJurisdiction);\n    return order;\n  }\n  buildCustomer(customerId, line1, city, postal) {\n    const customer = new Customer(customerId);\n    const address = new Address(line1, city, postal);\n    customer.setShippingAddress(address);\n    customer.setBillingAddress(address);\n    return customer;\n  }\n  buildLineItem(item, customer) {\n    const lineItem = new LineItem(item.product, item.quantity);\n    lineItem.applyDiscount(customer.discountRate);\n    return lineItem;\n  }\n}\n\n// Client:\nconst factory = new OrderFactory(jurisdiction);\nconst order = factory.createOrder(customerId, line1, city, postal, items);",
+    "safetyNet": "unit test",
+    "exampleSource": "Illustrative example written for this site, faithful to Kerievsky's pattern shape in Refactoring to Patterns (Addison-Wesley, 2004), chapter 6. The book pulls complex assembly out of client code into a dedicated factory; this JavaScript version uses an order-with-line-items + customer-with-addresses assembly, distinct from Encapsulate Classes With Factory whose focus is subclass hiding.",
+    "forces": {
+      "human": {
+        "symptom": "Client code carries the recipe for constructing a complex object — instantiating sub-collaborators, configuring them, wiring them together, applying defaults. Every caller that needs the object repeats the recipe; recipe drift between callers produces subtly different objects.",
+        "goal": "A Factory class owns the assembly recipe. Callers ask for the finished object by intent (`createOrder(...)`); the recipe lives in one place, evolves in one place, and is tested in one place.",
+        "pressure": "Duplicated assembly is Shotgun Surgery for every recipe change — a new required field, a defaults update, a wiring change must land everywhere the object is built. Recipe knowledge leaking into clients couples them to the object's internals.",
+        "tradeoff": "A Factory becomes the single point of coupling to the object's construction shape; signature changes there ripple to every caller. Over-aggressive factory extraction can hide which dependencies the constructed object actually has; debugging requires reading the factory to understand the resulting object.",
+        "relief": "The recipe is named, tested, and editable in one file. Callers stop knowing what defaults apply, which fields are required, or how sub-collaborators wire. Object construction becomes a domain operation rather than a wiring chore.",
+        "trap": "A Factory whose `create` method is itself a long parameter list that mirrors the constructor's just adds an indirection layer. The pattern pays when the recipe involves real assembly decisions (sub-collaborators, defaults, configuration) — not when the factory is a shallow constructor pass-through."
+      },
+      "agent": {
+        "symptom": "Construction recipes duplicated across N caller sites the agent must verify match on every recipe change. Each call site assembles the object with its own subset of defaults; the agent cannot statically guarantee the assemblies stay consistent.",
+        "goal": "One factory file the agent reads as the construction contract; callers are short delegations the agent treats opaquely. Per-edit budget for a recipe change collapses to one file.",
+        "pressure": "Recipe duplication × N callers × M recipe steps inflates the agent's context cost on every assembly-related edit. Subtle inconsistencies between caller-side recipes are invisible until they manifest as bugs; static reasoning cannot enforce 'every caller applies the discount'.",
+        "tradeoff": "A factory hides construction details from the call site; the agent must read the factory to know what the returned object actually carries. Static type information at the call site narrows to the return type, with construction-level invariants pushed inside the factory.",
+        "relief": "Diff surface for a recipe change is one file. Tests cover the factory's contract once; per-call-site behaviour reduces to verifying the intent, not the assembly. Recipe drift across callers becomes statically impossible.",
+        "trap": "A factory whose recipe is itself a long sequence of conditional steps can become as opaque as the duplicated callers were — the agent must trace the factory body line-by-line to know what came out. The pattern's gain materializes when the factory's recipe is itself decomposed into named build steps."
+      }
+    }
+  },
+  {
+    "catalog": "patterns",
     "name": "Replace Conditional Logic with Strategy",
     "nemeses": [
       {
