@@ -281,6 +281,46 @@
   },
   {
     "catalog": "patterns",
+    "name": "Form Template Method",
+    "nemeses": [
+      {
+        "catalog": "smells",
+        "name": "Duplicated Code"
+      },
+      {
+        "catalog": "refactorings",
+        "name": "Pull Up Method"
+      },
+      {
+        "catalog": "refactorings",
+        "name": "Extract Function"
+      }
+    ],
+    "before": "// Two reports follow the same outline but each open-codes the whole algorithm.\nclass HtmlReport {\n  generate(data) {\n    let output = '<html><body>';\n    output += `<h1>${data.title}</h1>`;\n    output += '<table>';\n    for (const row of data.rows) {\n      output += `<tr><td>${row.name}</td><td>${row.value}</td></tr>`;\n    }\n    output += '</table>';\n    output += '</body></html>';\n    return output;\n  }\n}\nclass TextReport {\n  generate(data) {\n    let output = '';\n    output += data.title.toUpperCase() + '\\n';\n    output += '='.repeat(data.title.length) + '\\n';\n    for (const row of data.rows) {\n      output += row.name + ': ' + row.value + '\\n';\n    }\n    return output;\n  }\n}",
+    "after": "// The algorithm lives once in Report; subclasses supply the per-format primitives.\nclass Report {\n  generate(data) {\n    let output = this.openSection();\n    output += this.formatTitle(data.title);\n    output += this.openRows();\n    for (const row of data.rows) {\n      output += this.formatRow(row);\n    }\n    output += this.closeRows();\n    output += this.closeSection();\n    return output;\n  }\n}\nclass HtmlReport extends Report {\n  openSection() { return '<html><body>'; }\n  closeSection() { return '</body></html>'; }\n  formatTitle(t) { return `<h1>${t}</h1>`; }\n  openRows() { return '<table>'; }\n  closeRows() { return '</table>'; }\n  formatRow(row) { return `<tr><td>${row.name}</td><td>${row.value}</td></tr>`; }\n}\nclass TextReport extends Report {\n  openSection() { return ''; }\n  closeSection() { return ''; }\n  formatTitle(t) { return t.toUpperCase() + '\\n' + '='.repeat(t.length) + '\\n'; }\n  openRows() { return ''; }\n  closeRows() { return ''; }\n  formatRow(row) { return row.name + ': ' + row.value + '\\n'; }\n}",
+    "safetyNet": "unit test",
+    "exampleSource": "Illustrative example written for this site, faithful to Kerievsky's pattern shape in Refactoring to Patterns (Addison-Wesley, 2004), chapter 8. The book uses tax-calculator subclasses with a shared compute outline; this JavaScript version uses report generators with a shared layout outline — same shape, same Template Method payoff.",
+    "forces": {
+      "human": {
+        "symptom": "Two or more classes follow the same algorithm outline — same order of steps, same control flow — but each open-codes the whole sequence inline. The structural similarity is invisible: every change to the algorithm risks landing in one class but not the others.",
+        "goal": "The algorithm lives once in a superclass Template Method that calls named primitive operations. Subclasses implement only the primitives; algorithmic edits land in one place and apply uniformly.",
+        "pressure": "When the outline is duplicated across classes, reordering steps, adding a new step, or fixing a control-flow bug requires N synchronized edits. Reviewers must scan all N implementations to confirm the algorithm stayed consistent; subtle drift between siblings is the dominant defect.",
+        "tradeoff": "Template Method couples subclasses to the superclass's algorithm shape; subclasses cannot reorder steps or skip them without breaking the contract. Primitives proliferate as the algorithm grows, and each must be implemented in every subclass — adding a new step is a Shotgun Surgery move down the hierarchy.",
+        "relief": "Algorithmic invariants live in one place; subclasses focus on what's distinctive about them. Adding a new format is a new subclass implementing the primitives; the algorithm's correctness is verified once and inherited.",
+        "trap": "Template Method calcifies the algorithm shape early. When one subclass needs a fundamentally different ordering, the superclass's template no longer fits, and the subclass either fights the framework with hooks/flags or escapes via composition. Strategy is often the better answer when the algorithm itself varies."
+      },
+      "agent": {
+        "symptom": "N near-identical algorithm bodies the agent must verify match step-for-step on every edit. A control-flow bug fixed in one body must be ported to N-1 others, with no static guarantee the ports stayed faithful.",
+        "goal": "One template body the agent reads to know the algorithm; primitives are short, locally readable, individually verifiable. The agent's edit budget for an algorithmic change scales with template length, not with subclass count.",
+        "pressure": "Algorithmic duplication across N subclasses × M steps = N×M cells the agent must hold in context to verify consistency. The agent cannot statically detect when one copy drifts from the others; the drift only surfaces when a subclass-specific test fails — assuming there is one.",
+        "tradeoff": "Template Method splits behaviour across the superclass (algorithm) and subclasses (primitives); the agent must traverse the hierarchy to know what a single call produces. Method resolution order issues complicate static reasoning when intermediate subclasses partially override primitives.",
+        "relief": "Algorithmic diffs collapse to one method body. Per-subclass tests verify only the primitives; the algorithm is exercised by superclass tests once. Diff surface for adding a step is one new abstract primitive + N implementations — visible and bounded.",
+        "trap": "A long Template Method with many fine-grained primitives forces the agent to read across many small methods to reconstruct what the algorithm does in any given subclass. Context cost migrates from inline duplication to hierarchy traversal; per-step debugging requires loading the relevant primitive override before the template makes sense."
+      }
+    }
+  },
+  {
+    "catalog": "patterns",
     "name": "Replace Conditional Logic with Strategy",
     "nemeses": [
       {
