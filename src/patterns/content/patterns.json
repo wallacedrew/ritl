@@ -998,5 +998,45 @@
         "trap": "Value objects relying on reference equality across serialization boundaries (HTTP, persistence, message queues) require careful canonicalization; getting it wrong produces runtime equality bugs the agent cannot detect statically. The pattern is straightforward in pure-runtime code; thornier across persistence boundaries."
       }
     }
+  },
+  {
+    "catalog": "patterns",
+    "name": "Unify Interfaces With Adapter",
+    "nemeses": [
+      {
+        "catalog": "smells",
+        "name": "Alternative Classes with Different Interfaces"
+      },
+      {
+        "catalog": "refactorings",
+        "name": "Change Function Declaration"
+      },
+      {
+        "catalog": "refactorings",
+        "name": "Move Function"
+      }
+    ],
+    "before": "// Two classes do similar work through different shapes; callers branch on which they have.\nclass Logger {\n  log(level, message) { /* writes to internal log */ }\n}\nclass ThirdPartyReporter {\n  report(severityName, text, context) { /* delivers to vendor */ }\n}\n\nfunction emitDiagnostic(emitter, level, message) {\n  if (emitter instanceof Logger) {\n    emitter.log(level, message);\n  } else if (emitter instanceof ThirdPartyReporter) {\n    emitter.report(level.toUpperCase(), message, {});\n  } else {\n    throw new Error('unknown emitter');\n  }\n}",
+    "after": "// One adapter gives the vendor class the internal interface; callers stop branching.\nclass Logger {\n  log(level, message) { /* writes to internal log */ }\n}\nclass ThirdPartyReporter {\n  report(severityName, text, context) { /* delivers to vendor */ }\n}\n\nclass ReporterAsLogger {\n  constructor(reporter) {\n    this.reporter = reporter;\n  }\n  log(level, message) {\n    this.reporter.report(level.toUpperCase(), message, {});\n  }\n}\n\nfunction emitDiagnostic(logger, level, message) {\n  logger.log(level, message);\n}\n\n// At the composition root:\nconst adaptedReporter = new ReporterAsLogger(new ThirdPartyReporter());\nemitDiagnostic(adaptedReporter, 'error', 'something failed');",
+    "safetyNet": "unit test",
+    "exampleSource": "Illustrative example written for this site, faithful to Kerievsky's pattern shape in Refactoring to Patterns (Addison-Wesley, 2004), chapter 6. Distinct from Extract Adapter (#5): that pattern pulls per-variant code from one host class into adapters; this pattern wraps an existing class so it conforms to a different existing interface.",
+    "forces": {
+      "human": {
+        "symptom": "Two existing classes do similar work but expose different method names, parameter shapes, or argument orders. Client code that wants to treat them uniformly branches on which one it has; each branch contains its own translation logic; new branches appear as new client sites do their own variant of the same translation.",
+        "goal": "An Adapter wraps the off-shape class and exposes the canonical interface. Clients receive whichever conformant instance the composition root produces; no client code knows about the underlying difference.",
+        "pressure": "Alternative-interface branches at every consumer duplicate the translation rules. Subtle translation bugs (wrong case, missing context argument, swapped order) ship as misrouted diagnostic data; tests for the translation live inside each consumer's tests rather than once where they belong.",
+        "tradeoff": "Each adapter is one new class; for two-variant systems with stable interfaces, the adapter may add more friction than the inline conversion did. Wrapping a third-party class in an adapter ties the adapter to that vendor's surface — vendor changes ripple through the adapter; consumers stay insulated.",
+        "relief": "Consumers operate against one interface; translation lives in one file; new consumers stop knowing the vendor's shape. Vendor swaps become an adapter change, not a consumer-population edit.",
+        "trap": "Adapters that grow large translation logic (multi-step shaping, async/sync bridging, error-model translation) become a hidden host for non-trivial behaviour. When the adapter starts containing business rules, what was Adapter has drifted into Anti-Corruption Layer; rename and refactor accordingly."
+      },
+      "agent": {
+        "symptom": "`instanceof` branches at every consumer site the agent must verify match consistently. Per-consumer translation logic is duplicated; the agent's per-edit cost on a translation-rule change is proportional to consumer count.",
+        "goal": "One adapter file the agent verifies once; consumers are uniform calls against a single interface. Translation rules are centralized; consumer-side code is generic over the adapted type.",
+        "pressure": "Per-consumer translation defeats static typing — the consumer's interface contract is implicit in the branches rather than declared. Adding a third variant means another branch at every consumer site (Shotgun Surgery scales with consumer × variant count).",
+        "tradeoff": "Adapter spreads the boundary across one extra class; the agent must trace from consumer through adapter to vendor to understand a single call's full path. Vendor-API changes ripple to the adapter — usually the right place — but the agent must remember to re-verify the adapter when the vendor updates.",
+        "relief": "Static type-checking of the canonical interface enforces consumer-side uniformity. Diff surface for a new vendor variant is one new adapter file; consumers don't move. Tests for the adapter are isolated from consumer logic.",
+        "trap": "An adapter that smuggles non-trivial logic (validation, error remapping, retries) hides behaviour the agent might expect to see at the consumer or at the vendor — neither location is now authoritative. When the adapter is doing more than shape-conversion, its name should reflect that (Gateway, Anti-Corruption Layer)."
+      }
+    }
   }
 ]
