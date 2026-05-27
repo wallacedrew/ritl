@@ -5,7 +5,7 @@ import type { SafetyNet } from "@/refactorings/lib/SafetyNet";
 export type CatalogKind = "smells" | "refactorings";
 export type Lens = "human" | "agent";
 
-const LEGAL_CATALOGS: readonly CatalogKind[] = ["smells", "refactorings"];
+export const LEGAL_CATALOGS: readonly CatalogKind[] = ["smells", "refactorings"];
 
 export type CatalogEntryProps = {
   catalog: CatalogKind;

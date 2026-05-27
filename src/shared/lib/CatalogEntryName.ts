@@ -1,4 +1,5 @@
-import { Slug, type CatalogKind } from "./Slug";
+import type { CatalogKind } from "./CatalogEntry";
+import { Slug } from "./Slug";
 
 export class CatalogEntryName {
   private constructor(

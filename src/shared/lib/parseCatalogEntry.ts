@@ -1,10 +1,8 @@
 import { SafetyNet } from "@/refactorings/lib/SafetyNet";
 
-import { CatalogEntry, type CatalogKind } from "./CatalogEntry";
+import { CatalogEntry, LEGAL_CATALOGS, type CatalogKind } from "./CatalogEntry";
 import { CatalogEntryName } from "./CatalogEntryName";
 import { Forces, type ForcesRecord } from "./Forces";
-
-const LEGAL_CATALOGS: readonly CatalogKind[] = ["smells", "refactorings"];
 
 function readStringField(record: Record<string, unknown>, field: string): string {
   const value = record[field];

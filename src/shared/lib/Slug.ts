@@ -1,6 +1,6 @@
-const SLUG_FORMAT = /^[a-z0-9]+(-[a-z0-9]+)*$/;
+import type { CatalogKind } from "./CatalogEntry";
 
-export type CatalogKind = "refactorings" | "smells";
+const SLUG_FORMAT = /^[a-z0-9]+(-[a-z0-9]+)*$/;
 
 export class Slug {
   private constructor(private readonly value: string) {}
