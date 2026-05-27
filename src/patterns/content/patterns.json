@@ -321,6 +321,46 @@
   },
   {
     "catalog": "patterns",
+    "name": "Inline Singleton",
+    "nemeses": [
+      {
+        "catalog": "smells",
+        "name": "Global Data"
+      },
+      {
+        "catalog": "refactorings",
+        "name": "Inline Function"
+      },
+      {
+        "catalog": "refactorings",
+        "name": "Remove Dead Code"
+      }
+    ],
+    "before": "// Singleton machinery for what is effectively a regular collaborator.\nclass Logger {\n  static instance = null;\n  static getInstance() {\n    if (!Logger.instance) {\n      Logger.instance = new Logger();\n    }\n    return Logger.instance;\n  }\n  constructor() {\n    this.entries = [];\n  }\n  log(message) {\n    this.entries.push({ time: Date.now(), message });\n  }\n}\n\n// Client code reaches into the global accessor.\nfunction processOrder(order) {\n  Logger.getInstance().log(`Processing order ${order.id}`);\n  // ...\n}",
+    "after": "// Regular class; callers receive a logger through their constructor.\nclass Logger {\n  constructor() {\n    this.entries = [];\n  }\n  log(message) {\n    this.entries.push({ time: Date.now(), message });\n  }\n}\n\nclass OrderProcessor {\n  constructor(logger) {\n    this.logger = logger;\n  }\n  processOrder(order) {\n    this.logger.log(`Processing order ${order.id}`);\n    // ...\n  }\n}",
+    "safetyNet": "unit test",
+    "exampleSource": "Illustrative example written for this site, adapted from Kerievsky's pattern description in Refactoring to Patterns (Addison-Wesley, 2004), chapter 5. The book demonstrates inlining a configuration Singleton; this JavaScript version inlines a Logger Singleton in favour of constructor injection — same payoff: testability and explicit dependencies.",
+    "forces": {
+      "human": {
+        "symptom": "A class is wrapped in Singleton machinery (`getInstance`, private constructor, static cache) but the singleton-ness is not load-bearing. Callers reach into the global accessor; tests can't isolate the class because the singleton instance leaks across test cases; dependencies are invisible from constructor signatures.",
+        "goal": "The class is a regular collaborator that callers receive through their constructors (or another explicit hand-off). Tests construct fresh instances per case; dependencies are visible at the type level; global state shrinks.",
+        "pressure": "Singletons hide dependencies and leak state across tests. The static cache survives between test cases, producing flaky failures that depend on test ordering. New callers couple to the global accessor instead of declaring what they need.",
+        "tradeoff": "Inlining a Singleton pushes dependency wiring outward — every caller now needs to know how to obtain the collaborator. Without a composition root, the wiring can scatter; reasonable Singletons (true cross-cutting infrastructure like a thread-safe metrics registry) may legitimately want the global access pattern.",
+        "relief": "Tests construct the class with stub collaborators; production wiring lives at the composition root; the dependency graph reads from constructor signatures. The static-cache class of flakiness disappears.",
+        "trap": "Inlining a Singleton without setting up a composition root leaves every caller responsible for constructing or finding the collaborator. The result can be worse than the Singleton — dozens of `new Logger()` instances each with their own state, accidentally fragmenting what was conceptually one log."
+      },
+      "agent": {
+        "symptom": "Singleton accessors (`Class.getInstance()`) hide the agent's view of which classes depend on the collaborator. The agent must grep the codebase for every static-accessor call to know the real dependency graph; test setup requires resetting global state between cases.",
+        "goal": "Constructor signatures encode the dependency graph the agent can read statically. Per-test construction makes setup/teardown explicit; the agent verifies one wiring at the composition root rather than chasing static accessors.",
+        "pressure": "Static accessors defeat static call-graph analysis at the dependency level; the agent cannot infer from a class's interface what it actually uses. Test-order flakiness from shared static state is invisible to local reasoning and only surfaces under CI.",
+        "tradeoff": "Inlining pushes wiring code outward; the agent must reason about a composition root or DI container to verify production behaviour. Without one, the inlining may produce duplicated wiring across callers that the agent now has to verify match.",
+        "relief": "Constructor parameters are statically visible dependencies the agent can verify without grepping. Per-test isolation makes test failures attributable to the test itself rather than to a stale global state.",
+        "trap": "Inlining without a composition root forces the agent to scatter `new Logger()` calls across the codebase, each implicitly creating independent state. The agent then has to verify intent (one logger or many?) at every call site, which is harder than reading one global accessor."
+      }
+    }
+  },
+  {
+    "catalog": "patterns",
     "name": "Replace Conditional Logic with Strategy",
     "nemeses": [
       {
