@@ -918,5 +918,45 @@
         "trap": "A Composite applied to a distinction that is actually load-bearing context (e.g., when callers need to know cardinality to render differently) ends up restoring the `if (isMulti)` branches at the call site, just with `.isMultivalued()` instead of `Array.isArray`. The pattern pays when callers genuinely don't care which shape they have."
       }
     }
+  },
+  {
+    "catalog": "patterns",
+    "name": "Replace State-Altering Conditionals with State",
+    "nemeses": [
+      {
+        "catalog": "smells",
+        "name": "Repeated Switches"
+      },
+      {
+        "catalog": "refactorings",
+        "name": "Replace Conditional with Polymorphism"
+      },
+      {
+        "catalog": "refactorings",
+        "name": "Extract Class"
+      }
+    ],
+    "before": "// Every operation branches on the same state string; transitions are scattered.\nclass Document {\n  constructor() {\n    this.state = 'draft';\n    this.content = '';\n  }\n  edit(newContent) {\n    if (this.state === 'draft') {\n      this.content = newContent;\n    } else if (this.state === 'in-review') {\n      throw new Error('cannot edit while in review');\n    } else if (this.state === 'published') {\n      throw new Error('cannot edit a published document');\n    }\n  }\n  submit() {\n    if (this.state === 'draft') {\n      this.state = 'in-review';\n    } else if (this.state === 'in-review') {\n      throw new Error('already in review');\n    } else {\n      throw new Error('cannot submit from ' + this.state);\n    }\n  }\n  publish() {\n    if (this.state === 'in-review') {\n      this.state = 'published';\n    } else {\n      throw new Error('cannot publish from ' + this.state);\n    }\n  }\n}",
+    "after": "// Each state is a class; the document delegates and transitions polymorphically.\nclass DraftState {\n  edit(doc, newContent) { doc.content = newContent; }\n  submit(doc) { doc.state = new InReviewState(); }\n  publish(doc) { throw new Error('cannot publish from draft'); }\n}\nclass InReviewState {\n  edit() { throw new Error('cannot edit while in review'); }\n  submit() { throw new Error('already in review'); }\n  publish(doc) { doc.state = new PublishedState(); }\n}\nclass PublishedState {\n  edit() { throw new Error('cannot edit a published document'); }\n  submit() { throw new Error('cannot resubmit'); }\n  publish() { throw new Error('already published'); }\n}\n\nclass Document {\n  constructor() {\n    this.state = new DraftState();\n    this.content = '';\n  }\n  edit(newContent) { this.state.edit(this, newContent); }\n  submit() { this.state.submit(this); }\n  publish() { this.state.publish(this); }\n}",
+    "safetyNet": "unit test",
+    "exampleSource": "Illustrative example written for this site, faithful to Kerievsky's pattern shape in Refactoring to Patterns (Addison-Wesley, 2004), chapter 7. Per ADR-0004, the bookend contrasts the state-string dispatcher with polymorphic state transition — the intermediate Extract Class + Move Function steps live in the linked Fowler refactorings. The book uses a media-player state-machine; this JavaScript version uses a document publishing flow.",
+    "forces": {
+      "human": {
+        "symptom": "The class carries a state field and every operation branches on it. Transitions are scattered across operations; legal state combinations are documented only in the conditional bodies; adding a state requires editing every operation; cross-operation invariants (e.g., 'only draft is editable') live as duplicated comparisons.",
+        "goal": "Each state is a class implementing the operation surface; the host delegates and transitions are state-to-state assignments. Adding a state is one new class; per-operation behaviour is locally visible inside each state.",
+        "pressure": "State-string-driven conditionals are Shotgun Surgery on the state field — a new state edits every operation; a renamed state edits every comparison. Bugs in one branch (forgot to throw, used wrong state name) ship as silent corruption of the state machine.",
+        "tradeoff": "State pattern multiplies class count; the state machine's structure spreads across files. The transition graph is implicit (encoded in which state assigns to which other state); reading it requires traversing classes. Per-state objects allocate on every transition (in stateful instance form) unless flyweight-shared.",
+        "relief": "Each state's allowed operations are locally visible; illegal operations throw from the state itself, not from a per-method comparison. The transition graph is enforced by the state classes' assignments; new states ship without touching existing ones.",
+        "trap": "Many trivial states with mostly-throwing operations become a class hierarchy where the actual state machine is hard to scan. The pattern earns its keep when each state has meaningful behaviour; for state machines that are mostly 'this operation is illegal here', a state-driven dispatch table may stay clearer."
+      },
+      "agent": {
+        "symptom": "Per-operation state branches the agent must verify cover every state × operation combination consistently. The state machine's transition graph is invisible from any single method body; the agent has to read all operations to reconstruct legal transitions.",
+        "goal": "Per-state class the agent reads as the full operation surface for that state. The transition graph is recoverable by inspecting state-assignment statements; per-state tests pin per-state behaviour.",
+        "pressure": "N states × M operations = N×M cells the agent must verify match the expected transition graph. Cross-state invariants (every state implements every operation; transitions only go forward) cannot be statically enforced from the conditional form.",
+        "tradeoff": "State pattern spreads the machine across N files; the agent traverses them to reconstruct the full transition graph. State assignments inside operations are imperative side effects that complicate static reasoning about which state comes next.",
+        "relief": "Static analysis verifies every state implements every operation; diff surface for adding a state is one new file. Per-state behaviour is locally readable; transition assignments are the only places the agent must trace to recover the graph.",
+        "trap": "A state machine with many states that mostly throw makes the agent load N files to discover that operation X is only legal in state Y. A state-transition table (data, not code) may be more economical for the agent to scan than N state classes."
+      }
+    }
   }
 ]
