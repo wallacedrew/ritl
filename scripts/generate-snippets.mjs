@@ -236,7 +236,7 @@ function formatPatternBody(p, index) {
   const num = String(index + 1).padStart(2, "0");
   const forces = agentLensForces(p);
   const triggers = p.nemeses.map((n) => `${n.name} (${n.catalog})`).join(", ");
-  return [
+  const lines = [
     `# Apply: ${num} — ${p.name}`,
     "",
     `**Symptom:** ${forces.symptom}`,
@@ -251,6 +251,11 @@ function formatPatternBody(p, index) {
     p.after,
     "```",
     "",
+  ];
+  if (p.exampleSource) {
+    lines.push(`_Example source: ${p.exampleSource}_`, "");
+  }
+  lines.push(
     `**Pressure:** ${forces.pressure}`,
     "",
     `**Tradeoff:** ${forces.tradeoff}`,
@@ -261,7 +266,8 @@ function formatPatternBody(p, index) {
     "",
     `**Triggered by:** ${triggers}`,
     "",
-  ].join("\n");
+  );
+  return lines.join("\n");
 }
 
 function formatPatternSkill(p, index) {

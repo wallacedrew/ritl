@@ -36,6 +36,8 @@ function add(item, quantity) {
 }
 ```
 
+_Example source: Illustrative example written for this site, not a quotation from the book. The pattern itself is Joshua Kerievsky's, from Refactoring to Patterns (Addison-Wesley, 2004)._
+
 **Pressure:** Every edit re-loads the full method body to confirm behavior preservation. Chained orchestration changes compound context cost; reasoning about cross-step invariants gets harder as the method grows.
 
 **Tradeoff:** Each helper inflates context-window cost by one definition the next reasoning step must load. Over-decomposing fragments a single procedure across many files.

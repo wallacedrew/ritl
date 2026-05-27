@@ -5,6 +5,7 @@ import Stack from "@mui/material/Stack";
 import BeforeAfterCodeBlocks from "@/shared/components/BeforeAfterCodeBlocks";
 import CatalogBackLink from "@/shared/components/CatalogBackLink";
 import CatalogEntryHeader from "@/shared/components/CatalogEntryHeader";
+import CatalogExampleSource from "@/shared/components/CatalogExampleSource";
 import CatalogPrevNext from "@/shared/components/CatalogPrevNext";
 import CatalogPrevNextStrip from "@/shared/components/CatalogPrevNextStrip";
 import CatalogSection from "@/shared/components/CatalogSection";
@@ -52,6 +53,7 @@ export default function CatalogCompareDetail({
           beforeCode={entry.before}
           afterCode={entry.after}
         />
+        {entry.exampleSource && <CatalogExampleSource note={entry.exampleSource} />}
         <CatalogSectionCompare label="Pressure" human={human.pressure} agent={agent.pressure} />
         <CatalogSectionCompare label="Tradeoff" human={human.tradeoff} agent={agent.tradeoff} />
         <CatalogSectionCompare label="Relief" human={human.relief} agent={agent.relief} />

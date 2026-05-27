@@ -5,6 +5,7 @@ import Stack from "@mui/material/Stack";
 import BeforeAfterCodeBlocks from "@/shared/components/BeforeAfterCodeBlocks";
 import CatalogBackLink from "@/shared/components/CatalogBackLink";
 import CatalogEntryHeader from "@/shared/components/CatalogEntryHeader";
+import CatalogExampleSource from "@/shared/components/CatalogExampleSource";
 import CatalogPrevNext from "@/shared/components/CatalogPrevNext";
 import CatalogPrevNextStrip from "@/shared/components/CatalogPrevNextStrip";
 import CatalogSection from "@/shared/components/CatalogSection";
@@ -52,6 +53,7 @@ export default function CatalogDetail({
           beforeCode={entry.before}
           afterCode={entry.after}
         />
+        {entry.exampleSource && <CatalogExampleSource note={entry.exampleSource} />}
         <CatalogSection label="Pressure" body={forces.pressure} />
         <CatalogSection label="Tradeoff" body={forces.tradeoff} />
         <CatalogSection label="Relief" body={forces.relief} />

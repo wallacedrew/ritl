@@ -123,6 +123,17 @@ function readOptionalSafetyNet(record: Record<string, unknown>): SafetyNet | und
   return SafetyNet.from(raw);
 }
 
+function readOptionalExampleSource(record: Record<string, unknown>): string | undefined {
+  const raw = record.exampleSource;
+  if (raw === undefined) {
+    return undefined;
+  }
+  if (typeof raw !== "string") {
+    throw new Error('parseCatalogEntry: field "exampleSource" must be a string when present');
+  }
+  return raw;
+}
+
 export function parseCatalogEntry(raw: unknown): CatalogEntry {
   if (raw === null || typeof raw !== "object" || Array.isArray(raw)) {
     throw new Error("parseCatalogEntry: expected an object");
@@ -139,6 +150,7 @@ export function parseCatalogEntry(raw: unknown): CatalogEntry {
     after: readStringField(record, "after"),
     forces: readForces(record),
     safetyNet: readOptionalSafetyNet(record),
+    exampleSource: readOptionalExampleSource(record),
   });
 }
 

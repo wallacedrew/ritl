@@ -10,6 +10,7 @@
     "before": "function add(item, quantity) {\n  if (this.readOnly) throw new Error('list is read-only');\n  const existing = this.items.find(line => line.product.id === item.id);\n  if (existing) {\n    existing.quantity += quantity;\n  } else {\n    this.items.push({ product: item, quantity });\n    this.items.sort((a, b) => a.product.id - b.product.id);\n  }\n  this.recalculateTotal();\n}",
     "after": "function add(item, quantity) {\n  assertWritable(this);\n  const existing = findLineFor(this.items, item);\n  if (existing) {\n    increaseQuantity(existing, quantity);\n  } else {\n    insertNewLine(this.items, item, quantity);\n  }\n  this.recalculateTotal();\n}",
     "safetyNet": "unit test",
+    "exampleSource": "Illustrative example written for this site, not a quotation from the book. The pattern itself is Joshua Kerievsky's, from Refactoring to Patterns (Addison-Wesley, 2004).",
     "forces": {
       "human": {
         "symptom": "A method that switches between abstraction levels mid-body — control statements, low-level mutations, validation, and high-level orchestration interleaved. Readers have to mentally separate the algorithm from the bookkeeping every time they open the file.",

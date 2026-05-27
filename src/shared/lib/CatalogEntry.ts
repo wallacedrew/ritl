@@ -15,6 +15,7 @@ export type CatalogEntryProps = {
   after: string;
   forces: { human: Forces; agent: Forces };
   safetyNet?: SafetyNet;
+  exampleSource?: string;
 };
 
 export class CatalogEntry {
@@ -26,6 +27,7 @@ export class CatalogEntry {
     readonly after: string,
     readonly forces: { human: Forces; agent: Forces },
     readonly safetyNet?: SafetyNet,
+    readonly exampleSource?: string,
   ) {
     if (!LEGAL_CATALOGS.includes(catalog)) {
       throw new Error(`CatalogEntry: unknown catalog "${catalog}"`);
@@ -47,6 +49,7 @@ export class CatalogEntry {
       props.after,
       props.forces,
       props.safetyNet,
+      props.exampleSource,
     );
   }
 

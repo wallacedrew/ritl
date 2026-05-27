@@ -22,6 +22,11 @@ export default function KerievskyLandingPage() {
           <Typography variant="body1" color="text.secondary">
             Kerievsky&rsquo;s composite refactorings whose destination is a design pattern.
           </Typography>
+          <Typography variant="body2" color="text.secondary">
+            Source: Joshua Kerievsky, <em>Refactoring to Patterns</em> (Addison-Wesley, 2004). Code
+            examples on this sub-site are illustrative adaptations written for the site, not direct
+            quotations from the book.
+          </Typography>
         </Stack>
         <Divider />
         <Stack spacing={2}>

@@ -169,4 +169,25 @@ describe("parseCatalogEntry", () => {
       /unknown safety net/i,
     );
   });
+
+  it("parses an optional exampleSource attribution when present", () => {
+    const entry = parseCatalogEntry({
+      ...validRefactoring,
+      exampleSource: "Adapted from Fowler, p.106",
+    });
+
+    expect(entry.exampleSource).toBe("Adapted from Fowler, p.106");
+  });
+
+  it("leaves exampleSource undefined when the field is absent", () => {
+    const entry = parseCatalogEntry(validRefactoring);
+
+    expect(entry.exampleSource).toBeUndefined();
+  });
+
+  it("rejects exampleSource when it is not a string", () => {
+    expect(() => parseCatalogEntry({ ...validRefactoring, exampleSource: 42 })).toThrow(
+      /exampleSource.*string/i,
+    );
+  });
 });
