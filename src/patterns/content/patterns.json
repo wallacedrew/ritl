@@ -161,6 +161,46 @@
   },
   {
     "catalog": "patterns",
+    "name": "Extract Adapter",
+    "nemeses": [
+      {
+        "catalog": "smells",
+        "name": "Divergent Change"
+      },
+      {
+        "catalog": "refactorings",
+        "name": "Extract Class"
+      },
+      {
+        "catalog": "refactorings",
+        "name": "Replace Conditional with Polymorphism"
+      }
+    ],
+    "before": "// One class branches on library version internally.\nclass ChartGenerator {\n  draw(data, libraryVersion) {\n    if (libraryVersion === 1) {\n      const ctx = OldChartLib.createContext();\n      ctx.setData(data.map(d => ({ x: d.label, y: d.value })));\n      ctx.setTitle(this.title);\n      ctx.render();\n      return ctx;\n    }\n    if (libraryVersion === 2) {\n      const renderer = new NewChartLib.Renderer({ data, title: this.title });\n      renderer.render();\n      return renderer;\n    }\n    throw new Error(`unsupported version ${libraryVersion}`);\n  }\n}",
+    "after": "// One adapter per version; ChartGenerator no longer knows the library.\nclass ChartGenerator {\n  constructor(chartAdapter) {\n    this.chartAdapter = chartAdapter;\n  }\n  draw(data) {\n    return this.chartAdapter.draw(data, this.title);\n  }\n}\n\nclass V1ChartAdapter {\n  draw(data, title) {\n    const ctx = OldChartLib.createContext();\n    ctx.setData(data.map(d => ({ x: d.label, y: d.value })));\n    ctx.setTitle(title);\n    ctx.render();\n    return ctx;\n  }\n}\n\nclass V2ChartAdapter {\n  draw(data, title) {\n    const renderer = new NewChartLib.Renderer({ data, title });\n    renderer.render();\n    return renderer;\n  }\n}",
+    "safetyNet": "unit test",
+    "exampleSource": "Adapted from Joshua Kerievsky's third-party-library-version example in Refactoring to Patterns (Addison-Wesley, 2004), chapter 6. The Java original wrapped two versions of a charting library; this JavaScript translation keeps the same shape — a host class delegating to a per-version adapter.",
+    "forces": {
+      "human": {
+        "symptom": "A class handles multiple variants of an external concern — different library versions, vendor APIs, transport protocols — branching internally with `if (version === 1)` or `if (vendor === 'X')`. Adding or upgrading a variant touches the host class even though the variant logic is fundamentally external.",
+        "goal": "Each variant lives in its own Adapter class wrapping the external API. The host class holds a reference to one adapter and delegates; switching variants is a constructor argument, not an internal branch.",
+        "pressure": "Mixing variant-specific code with host logic produces Divergent Change — the class changes for unrelated reasons (host behaviour evolves; library upgrades). Test setup must mock the external library, which couples host tests to the library's surface area.",
+        "tradeoff": "Each adapter is one more file; the host class gives up direct knowledge of the external API and must define a clean wrapping interface. Mapping a host concept to an adapter API forces design choices that don't pay until the second adapter exists.",
+        "relief": "Adapters can be swapped per environment, tested in isolation against the real external API, and replaced when the external library is replaced. The host class stops paying the variant-knowledge tax on every read.",
+        "trap": "Extracting an adapter for a single, stable external system buys nothing — the wrapper is just one more layer the reader hops through. The pattern pays when there are multiple variants or when the external API is unstable enough that wrapping it earns testability."
+      },
+      "agent": {
+        "symptom": "Host class methods the agent must scan twice — once for the host logic, once for each variant branch — to determine what executes in a given environment. Library-version edits ripple to host class methods even when host behaviour is unchanged.",
+        "goal": "One adapter file per variant; the agent verifies each adapter independently against the external API. The host class becomes a thin delegator the agent reads once and trusts thereafter.",
+        "pressure": "Mixed variant + host code consumes context budget on every host-class edit. The agent must hold all variant branches in working memory to verify that a host change doesn't break a variant code path; cross-variant invariants are easy to miss.",
+        "tradeoff": "Adapter extraction multiplies file count and may obscure the agent's static call-graph view of how data flows from host through to external API. Mocking adapters in host tests requires duplicating the adapter interface in the test setup.",
+        "relief": "Host class tests stop loading external-library mocks; adapter tests load only the one external surface they wrap. Diff surface for a library upgrade is one adapter file; the agent's context cost on host edits drops linearly with variant count.",
+        "trap": "An adapter for a single, stable variant is dead weight — one extra file the agent must learn before reading the host. The pattern pays only when adapter count > 1 or when adapter-level test isolation buys verifiability the host couldn't achieve alone."
+      }
+    }
+  },
+  {
+    "catalog": "patterns",
     "name": "Replace Conditional Logic with Strategy",
     "nemeses": [
       {
