@@ -81,6 +81,46 @@
   },
   {
     "catalog": "patterns",
+    "name": "Encapsulate Classes With Factory",
+    "nemeses": [
+      {
+        "catalog": "smells",
+        "name": "Shotgun Surgery"
+      },
+      {
+        "catalog": "refactorings",
+        "name": "Replace Constructor with Factory Function"
+      },
+      {
+        "catalog": "refactorings",
+        "name": "Hide Delegate"
+      }
+    ],
+    "before": "// Concrete subclasses exported and constructed by clients everywhere.\nexport class Loan {\n  capital() { throw new Error('abstract'); }\n}\nexport class TermLoan extends Loan {\n  constructor(commitment, maturity) { super(); this.commitment = commitment; this.maturity = maturity; }\n  capital() { return this.commitment * this.duration() * 0.05; }\n}\nexport class Revolver extends Loan {\n  constructor(commitment, expiry) { super(); this.commitment = commitment; this.expiry = expiry; }\n  capital() { return this.commitment * 0.7 * this.duration() * 0.05; }\n}\nexport class AdvisedLine extends Loan {\n  constructor(commitment, expiry) { super(); this.commitment = commitment; this.expiry = expiry; }\n  capital() { return this.outstanding() * this.duration() + this.unused() * this.duration() * 0.5; }\n}\n\n// Client code (in many files):\nconst loan1 = new TermLoan(100000, '2027-01-01');\nconst loan2 = new Revolver(50000, '2026-06-30');\nconst loan3 = new AdvisedLine(75000, '2026-06-30');",
+    "after": "// Only Loan is exported. Concrete subclasses stay module-local.\nexport class Loan {\n  static newTermLoan(commitment, maturity) {\n    return new TermLoan(commitment, maturity);\n  }\n  static newRevolver(commitment, expiry) {\n    return new Revolver(commitment, expiry);\n  }\n  static newAdvisedLine(commitment, expiry) {\n    return new AdvisedLine(commitment, expiry);\n  }\n  capital() { throw new Error('abstract'); }\n}\nclass TermLoan extends Loan { /* ... */ }\nclass Revolver extends Loan { /* ... */ }\nclass AdvisedLine extends Loan { /* ... */ }\n\n// Client code:\nconst loan1 = Loan.newTermLoan(100000, '2027-01-01');\nconst loan2 = Loan.newRevolver(50000, '2026-06-30');\nconst loan3 = Loan.newAdvisedLine(75000, '2026-06-30');",
+    "safetyNet": "unit test",
+    "exampleSource": "Adapted from Joshua Kerievsky's Loan-hierarchy example in Refactoring to Patterns (Addison-Wesley, 2004), chapter 6. The Java original used package-private constructors and a public factory; this JavaScript translation relies on module-local class declarations to achieve the same hiding of concrete subclasses from clients.",
+    "forces": {
+      "human": {
+        "symptom": "Client code directly instantiates concrete subclasses with `new TermLoan(...)`, `new Revolver(...)`. Every client knows the full taxonomy; the decision of which subclass to construct duplicates across the codebase, and adding a subclass requires touching every place that makes that decision.",
+        "goal": "A single factory (a method on the shared superclass or a dedicated factory class) owns the knowledge of which subclasses exist. Clients call `Loan.newTermLoan(...)` and never see the concrete classes; the hierarchy can be reshaped freely as long as the factory's contract holds.",
+        "pressure": "The subclass taxonomy leaks into every call site. Renaming, splitting, or merging concrete classes is Shotgun Surgery on the entire client population; knowledge of which concrete class fits a given role duplicates across files that should not have to care.",
+        "tradeoff": "Factory methods proliferate as the hierarchy grows; readers must consult the factory to know what concrete behaviour the returned object will have. The hierarchy becomes an indirection layer between intent and instance, and over-zealous hiding makes debugging harder when the wrong concrete class comes back.",
+        "relief": "Clients depend on the abstract type and the factory's named methods; concrete classes can be reshaped without client awareness. New subclasses ship by adding one factory method, not by editing the call-site population.",
+        "trap": "A factory that exposes exactly one named method per subclass is just constructor syntax with extra steps. The encapsulation pays only when the concrete subclasses can be merged, split, or substituted independently of the call-site contract — otherwise the indirection adds friction without flexibility."
+      },
+      "agent": {
+        "symptom": "Concrete subclass type names appear at every construction site the agent must scan. Renaming or restructuring a subclass requires the agent to enumerate every `new SubclassName(...)` call in scope and update each one; static type-name coupling is brittle across files.",
+        "goal": "One factory module the agent verifies once; all construction sites read as named factory calls the agent can treat opaquely. Restructuring the hierarchy is a one-file diff verified locally.",
+        "pressure": "Every client-side `new SubclassName(...)` couples the call site to the concrete identity. The agent must hold the subclass taxonomy in working context across many files just to verify construction sites are consistent with the hierarchy's current shape.",
+        "tradeoff": "Factory methods are an extra indirection the agent must hop through to know what kind of object a call returns. Static call-graph analysis loses precision; the agent may need to read the factory body to determine which concrete type comes back from a given factory call.",
+        "relief": "The factory is the single source of truth for the taxonomy. Adding a subclass touches one file; the agent verifies one new factory method instead of N construction sites. Hierarchy reshaping is locally observable.",
+        "trap": "A factory with one method per subclass and no other logic just renames `new` to `factory.new`. Context cost rises by one definition layer without proportional reasoning gain; the encapsulation pays only when the factory can hide non-trivial creation choices."
+      }
+    }
+  },
+  {
+    "catalog": "patterns",
     "name": "Replace Conditional Logic with Strategy",
     "nemeses": [
       {

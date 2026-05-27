@@ -452,7 +452,7 @@ for (const dest of ["docs/snippets", "public/snippets"]) {
 const PLUGIN_NAME = "refactor";
 const MARKETPLACE_NAME = "ritl";
 const PLUGIN_DESCRIPTION =
-  "94 SKILL.md skills — 1 workflow orchestrator + 66 refactorings + 24 smells + 3 Kerievsky patterns. Apply Fowler refactorings when their preconditions appear; refuse known code smells; apply Kerievsky composite refactorings whose destination is a pattern. Sources: https://refactoring.com/catalog/ and Refactoring to Patterns (Kerievsky 2004).";
+  "95 SKILL.md skills — 1 workflow orchestrator + 66 refactorings + 24 smells + 4 Kerievsky patterns. Apply Fowler refactorings when their preconditions appear; refuse known code smells; apply Kerievsky composite refactorings whose destination is a pattern. Sources: https://refactoring.com/catalog/ and Refactoring to Patterns (Kerievsky 2004).";
 
 const pluginRoot = resolve(root, `plugin/${PLUGIN_NAME}`);
 const pluginSkillsRoot = resolve(pluginRoot, "skills");

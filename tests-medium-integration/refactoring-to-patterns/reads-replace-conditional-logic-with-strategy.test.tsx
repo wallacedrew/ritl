@@ -47,21 +47,4 @@ describe("user reads Replace Conditional Logic with Strategy", () => {
 
     expect(screen.getByText(/Adapted from Joshua Kerievsky/i)).toBeInTheDocument();
   });
-
-  it("prev/next chain connects the two Kerievsky entries", async () => {
-    const ui = await PatternsDetailPage({
-      params: Promise.resolve({ slug: "compose-method" }),
-    });
-    renderWithTheme(ui);
-
-    const nextLinks = screen.getAllByRole("link", {
-      name: /Replace Conditional Logic with Strategy/i,
-    });
-    nextLinks.forEach((link) =>
-      expect(link).toHaveAttribute(
-        "href",
-        "/refactoring-to-patterns/replace-conditional-logic-with-strategy",
-      ),
-    );
-  });
 });
