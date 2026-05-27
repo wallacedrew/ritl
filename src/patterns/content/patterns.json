@@ -121,6 +121,46 @@
   },
   {
     "catalog": "patterns",
+    "name": "Encapsulate Composite With Builder",
+    "nemeses": [
+      {
+        "catalog": "smells",
+        "name": "Long Function"
+      },
+      {
+        "catalog": "refactorings",
+        "name": "Hide Delegate"
+      },
+      {
+        "catalog": "refactorings",
+        "name": "Extract Class"
+      }
+    ],
+    "before": "// Client constructs the XML tree by wiring TagNodes manually.\nconst order = new TagNode('Order');\nconst customer = new TagNode('Customer');\ncustomer.setAttribute('id', 'C-901');\norder.addChild(customer);\nconst items = new TagNode('Items');\nconst item1 = new TagNode('Item');\nitem1.setAttribute('sku', '123');\nitem1.setAttribute('qty', '2');\nitems.addChild(item1);\nconst item2 = new TagNode('Item');\nitem2.setAttribute('sku', '456');\nitem2.setAttribute('qty', '1');\nitems.addChild(item2);\norder.addChild(items);\nconst xml = order.toXML();",
+    "after": "// Client reads as an outline of the tree it builds.\nconst xml = new XMLBuilder('Order')\n  .addChild('Customer').addAttribute('id', 'C-901').end()\n  .addChild('Items')\n    .addChild('Item').addAttribute('sku', '123').addAttribute('qty', '2').end()\n    .addChild('Item').addAttribute('sku', '456').addAttribute('qty', '1').end()\n  .end()\n  .toXML();",
+    "safetyNet": "unit test",
+    "exampleSource": "Adapted from Joshua Kerievsky's XML-builder example in Refactoring to Patterns (Addison-Wesley, 2004), chapter 6. The Java original used a TagNode composite + XMLBuilder fluent API; this JavaScript translation keeps the same shape — TagNode for the composite, a chained builder for the construction grammar.",
+    "forces": {
+      "human": {
+        "symptom": "Construction sites for tree-shaped objects sprawl across dozens of intermediate variables and `addChild` calls. The tree's shape is buried under wiring code; readers have to mentally rebuild it on every visit, and the construction site no longer resembles the structure it produces.",
+        "goal": "A fluent builder whose API mirrors the tree's shape. Client code reads as an outline of the structure it builds — one statement per node, indentation matching depth, so the construction site is the tree.",
+        "pressure": "Composite construction code accretes inline at every call site. Renaming a node type ripples to all sites; the tree's invariants (required children, allowed attribute combinations) live scattered across construction sites instead of being enforced once in the builder.",
+        "tradeoff": "Fluent builders are tightly coupled to the composite's shape; changes to the composite ripple into the builder API. Method chains are hard to step through in a debugger — stack traces sit on the chain's closing `.end()` call rather than the failing node, slowing diagnosis.",
+        "relief": "One builder owns the construction grammar; client code becomes a literal of the structure. Adding a node type is one new builder method; constraints (required attributes, allowed children) move into the builder where the type system can enforce them.",
+        "trap": "A builder DSL designed around one client's tree shape that the next client cannot use. Builders that don't enforce tree invariants are just thin facades over the composite — readability gain without correctness gain — and tend to drift into godlike `*Manager` classes."
+      },
+      "agent": {
+        "symptom": "A construction site the agent must trace line-by-line across many intermediate variable assignments to reconstruct the tree's shape. Behavioural preservation on tree-shape edits requires loading the full construction span and following cross-variable references to verify which child lives under which parent.",
+        "goal": "A construction site that reads as a tree literal the agent can parse structurally in one pass. Edits to one subtree don't require loading the rest; the chain's indentation tells the agent which method calls operate on which node.",
+        "pressure": "Tree wiring across N intermediate variables × M tree nodes consumes context budget proportional to the tree's size. Renaming a variable risks breaking the wiring; the data flow is brittle in a way static analysis cannot fully catch.",
+        "tradeoff": "A fluent chain is one large expression the agent must keep coherent — losing track of `.end()` placement silently produces a different tree shape. Long chains evade static analysis of intermediate states, and partial failures inside the chain are hard to attribute.",
+        "relief": "The builder's method chain reads structurally; nested calls visually mirror nested nodes. Verifying a tree edit is a localized diff inside the chain rather than a cross-variable trace; the build is a single expression with one rooted result.",
+        "trap": "A builder that returns `this` everywhere becomes one massive expression; the agent's reasoning about partial-state failures degrades because there are no intermediate names to anchor on. Debugging requires re-reading the entire chain to localize where the failure happened."
+      }
+    }
+  },
+  {
+    "catalog": "patterns",
     "name": "Replace Conditional Logic with Strategy",
     "nemeses": [
       {
