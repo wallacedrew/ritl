@@ -15,14 +15,14 @@ describe("CatalogEntryName", () => {
   it("renders refactoring URLs under the refactorings kind", () => {
     const name = CatalogEntryName.refactoring("Extract Function");
 
-    expect(name.toCatalogHref()).toBe("/refactorings/extract-function");
+    expect(name.toCatalogHref()).toBe("/refactoring/refactorings/extract-function");
     expect(name.toSnippetHref()).toBe("/snippets/refactorings/extract-function.md");
   });
 
   it("renders smell URLs under the smells kind", () => {
     const name = CatalogEntryName.smell("Mysterious Name");
 
-    expect(name.toCatalogHref()).toBe("/smells/mysterious-name");
+    expect(name.toCatalogHref()).toBe("/refactoring/smells/mysterious-name");
     expect(name.toSnippetHref()).toBe("/snippets/smells/mysterious-name.md");
   });
 

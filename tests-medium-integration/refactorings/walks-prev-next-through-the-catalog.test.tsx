@@ -20,7 +20,7 @@ describe("user walks the refactorings catalog with prev/next links", () => {
     const nextLinks = screen.getAllByRole("link", { name: /next/i });
     expect(nextLinks.length).toBeGreaterThan(0);
     nextLinks.forEach((link) =>
-      expect(link).toHaveAttribute("href", "/refactorings/inline-function"),
+      expect(link).toHaveAttribute("href", "/refactoring/refactorings/inline-function"),
     );
   });
 
@@ -34,10 +34,10 @@ describe("user walks the refactorings catalog with prev/next links", () => {
     const prevLinks = screen.getAllByRole("link", { name: /previous/i });
     const nextLinks = screen.getAllByRole("link", { name: /next/i });
     prevLinks.forEach((link) =>
-      expect(link).toHaveAttribute("href", "/refactorings/inline-variable"),
+      expect(link).toHaveAttribute("href", "/refactoring/refactorings/inline-variable"),
     );
     nextLinks.forEach((link) =>
-      expect(link).toHaveAttribute("href", "/refactorings/encapsulate-variable"),
+      expect(link).toHaveAttribute("href", "/refactoring/refactorings/encapsulate-variable"),
     );
   });
 

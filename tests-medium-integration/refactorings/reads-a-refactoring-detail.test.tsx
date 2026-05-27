@@ -15,10 +15,10 @@ describe("user reads a refactoring detail with smell cross-links", () => {
     expect(screen.getByRole("heading", { name: "Extract Function", level: 1 })).toBeInTheDocument();
 
     const longFunctionLink = screen.getByRole("link", { name: "Long Function" });
-    expect(longFunctionLink).toHaveAttribute("href", "/smells/long-function");
+    expect(longFunctionLink).toHaveAttribute("href", "/refactoring/smells/long-function");
 
     const duplicatedCodeLink = screen.getByRole("link", { name: "Duplicated Code" });
-    expect(duplicatedCodeLink).toHaveAttribute("href", "/smells/duplicated-code");
+    expect(duplicatedCodeLink).toHaveAttribute("href", "/refactoring/smells/duplicated-code");
 
     expect(screen.getByText(/maze of one-line functions/i)).toBeInTheDocument();
     expect(screen.getByText(/single named domain step/i)).toBeInTheDocument();
@@ -29,9 +29,15 @@ describe("user reads a refactoring detail with smell cross-links", () => {
     expect(screen.getByRole("button", { name: /preview Markdown/i })).toBeInTheDocument();
 
     const viewAsAgentLink = screen.getByRole("link", { name: "Agent" });
-    expect(viewAsAgentLink).toHaveAttribute("href", "/refactorings/extract-function/agent");
+    expect(viewAsAgentLink).toHaveAttribute(
+      "href",
+      "/refactoring/refactorings/extract-function/agent",
+    );
 
     const viewAsCompareLink = screen.getByRole("link", { name: "Compare" });
-    expect(viewAsCompareLink).toHaveAttribute("href", "/refactorings/extract-function/compare");
+    expect(viewAsCompareLink).toHaveAttribute(
+      "href",
+      "/refactoring/refactorings/extract-function/compare",
+    );
   });
 });

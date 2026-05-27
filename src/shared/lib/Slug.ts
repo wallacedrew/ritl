@@ -1,4 +1,5 @@
 import type { CatalogKind } from "./CatalogEntry";
+import { subSiteForCatalog } from "./subSites";
 
 const SLUG_FORMAT = /^[a-z0-9]+(-[a-z0-9]+)*$/;
 
@@ -25,7 +26,7 @@ export class Slug {
   }
 
   toCatalogHref(kind: CatalogKind): string {
-    return `/${kind}/${this.value}`;
+    return subSiteForCatalog(kind).hrefForEntry(kind, this.value);
   }
 
   toSnippetHref(kind: CatalogKind): string {

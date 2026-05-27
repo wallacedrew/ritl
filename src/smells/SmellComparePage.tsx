@@ -16,7 +16,7 @@ export default async function SmellComparePage({ params }: SmellComparePageProps
     <CatalogCompareDetail
       entry={smell}
       number={number}
-      backLinkHref="/smells"
+      backLinkHref="/refactoring/smells"
       backLinkLabel="Smells"
       beforeLabel="Smellier version"
       afterLabel="Fresher version"

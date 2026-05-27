@@ -19,7 +19,9 @@ describe("user walks the smells catalog with prev/next links", () => {
     expect(screen.queryAllByRole("link", { name: /^previous/i })).toHaveLength(0);
     const nextLinks = screen.getAllByRole("link", { name: /next/i });
     expect(nextLinks.length).toBeGreaterThan(0);
-    nextLinks.forEach((link) => expect(link).toHaveAttribute("href", "/smells/duplicated-code"));
+    nextLinks.forEach((link) =>
+      expect(link).toHaveAttribute("href", "/refactoring/smells/duplicated-code"),
+    );
   });
 
   it("on a middle smell, shows both Prev and Next pointing to neighbors", async () => {
@@ -31,9 +33,11 @@ describe("user walks the smells catalog with prev/next links", () => {
 
     const prevLinks = screen.getAllByRole("link", { name: /previous/i });
     const nextLinks = screen.getAllByRole("link", { name: /next/i });
-    prevLinks.forEach((link) => expect(link).toHaveAttribute("href", "/smells/duplicated-code"));
+    prevLinks.forEach((link) =>
+      expect(link).toHaveAttribute("href", "/refactoring/smells/duplicated-code"),
+    );
     nextLinks.forEach((link) =>
-      expect(link).toHaveAttribute("href", "/smells/long-parameter-list"),
+      expect(link).toHaveAttribute("href", "/refactoring/smells/long-parameter-list"),
     );
   });
 

@@ -13,6 +13,6 @@ describe("user navigates back from a smell detail", () => {
     renderWithTheme(ui);
 
     const backLink = screen.getByRole("link", { name: /smells/i });
-    expect(backLink).toHaveAttribute("href", "/smells");
+    expect(backLink).toHaveAttribute("href", "/refactoring/smells");
   });
 });

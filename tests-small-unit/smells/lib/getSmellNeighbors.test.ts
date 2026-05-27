@@ -15,9 +15,9 @@ describe("getSmellNeighbors", () => {
     const { prev, next } = getSmellNeighbors(3);
 
     expect(prev?.number).toBe(2);
-    expect(prev?.href).toBe("/smells/duplicated-code");
+    expect(prev?.href).toBe("/refactoring/smells/duplicated-code");
     expect(next?.number).toBe(4);
-    expect(next?.href).toBe("/smells/long-parameter-list");
+    expect(next?.href).toBe("/refactoring/smells/long-parameter-list");
   });
 
   it("returns no next neighbor for the last smell", () => {

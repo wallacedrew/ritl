@@ -82,11 +82,13 @@ describe("Slug.toCatalogHref", () => {
   const slug = Slug.from("Extract Function");
 
   it("builds a refactorings catalog href", () => {
-    expect(slug.toCatalogHref("refactorings")).toBe("/refactorings/extract-function");
+    expect(slug.toCatalogHref("refactorings")).toBe("/refactoring/refactorings/extract-function");
   });
 
   it("builds a smells catalog href", () => {
-    expect(Slug.from("Mysterious Name").toCatalogHref("smells")).toBe("/smells/mysterious-name");
+    expect(Slug.from("Mysterious Name").toCatalogHref("smells")).toBe(
+      "/refactoring/smells/mysterious-name",
+    );
   });
 });
 

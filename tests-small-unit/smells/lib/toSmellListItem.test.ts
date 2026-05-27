@@ -33,7 +33,7 @@ describe("toSmellListItem", () => {
   it("derives a slug-based href to the smell's detail page", () => {
     const item = toSmellListItem(baseSmell, 1);
 
-    expect(item.href).toBe("/smells/mysterious-name");
+    expect(item.href).toBe("/refactoring/smells/mysterious-name");
   });
 
   it("projects name + nemeses and human-lens symptom into the generic chips + caption shape", () => {

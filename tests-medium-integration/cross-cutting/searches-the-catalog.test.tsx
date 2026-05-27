@@ -15,24 +15,24 @@ vi.mock("next/navigation", () => ({
 }));
 
 const items: CatalogItem[] = [
-  { kind: "smell", number: 3, name: "Long Function", href: "/smells/long-function" },
+  { kind: "smell", number: 3, name: "Long Function", href: "/refactoring/smells/long-function" },
   {
     kind: "refactoring",
     number: 1,
     name: "Extract Function",
-    href: "/refactorings/extract-function",
+    href: "/refactoring/refactorings/extract-function",
   },
   {
     kind: "refactoring",
     number: 12,
     name: "Extract Class",
-    href: "/refactorings/extract-class",
+    href: "/refactoring/refactorings/extract-class",
   },
 ];
 
 describe("user searches the catalog", () => {
   it("shows the current page's smell or refactoring as the selected value", () => {
-    pathnameMock.mockReturnValue("/smells/long-function");
+    pathnameMock.mockReturnValue("/refactoring/smells/long-function");
 
     renderWithTheme(<CatalogSearch items={items} />);
 
@@ -66,7 +66,7 @@ describe("user searches the catalog", () => {
 
     await user.click(screen.getByRole("option", { name: /Extract Function/ }));
 
-    expect(pushMock).toHaveBeenCalledWith("/refactorings/extract-function");
+    expect(pushMock).toHaveBeenCalledWith("/refactoring/refactorings/extract-function");
   });
 
   it("fires search_selected with the picked entry's kind and slug", async () => {

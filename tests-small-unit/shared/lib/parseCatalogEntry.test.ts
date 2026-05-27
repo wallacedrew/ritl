@@ -43,8 +43,8 @@ describe("parseCatalogEntry", () => {
     expect(entry.catalog).toBe("smells");
     expect(entry.name.toString()).toBe("Long Function");
     expect(entry.nemeses.map((n) => n.toCatalogHref())).toEqual([
-      "/refactorings/extract-function",
-      "/refactorings/replace-temp-with-query",
+      "/refactoring/refactorings/extract-function",
+      "/refactoring/refactorings/replace-temp-with-query",
     ]);
     expect(entry.forces.human.symptom).toBe("S");
     expect(entry.forces.agent.trap).toBe("X");
@@ -57,8 +57,8 @@ describe("parseCatalogEntry", () => {
     expect(entry.catalog).toBe("refactorings");
     expect(entry.name.toString()).toBe("Extract Function");
     expect(entry.nemeses.map((n) => n.toCatalogHref())).toEqual([
-      "/smells/long-function",
-      "/smells/duplicated-code",
+      "/refactoring/smells/long-function",
+      "/refactoring/smells/duplicated-code",
     ]);
     expect(entry.safetyNet?.toString()).toBe("unit test");
   });

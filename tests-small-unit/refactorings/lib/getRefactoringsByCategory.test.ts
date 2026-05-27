@@ -33,7 +33,7 @@ describe("getRefactoringsByCategory", () => {
 
     const composing = groups.find((g) => g.category === "Composing Methods");
     const extractFunction = composing?.items.find((i) => i.name === "Extract Function");
-    expect(extractFunction?.href).toBe("/refactorings/extract-function");
+    expect(extractFunction?.href).toBe("/refactoring/refactorings/extract-function");
     expect(extractFunction?.chips).toContain("Long Function");
     expect(extractFunction?.number).toBe(1);
   });

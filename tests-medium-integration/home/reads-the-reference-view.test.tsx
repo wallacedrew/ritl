@@ -24,6 +24,9 @@ describe("user reads the reference view at the home page", () => {
     ).toBeInTheDocument();
 
     const extractFunctionLinks = screen.getAllByRole("link", { name: "Extract Function" });
-    expect(extractFunctionLinks[0]).toHaveAttribute("href", "/refactorings/extract-function");
+    expect(extractFunctionLinks[0]).toHaveAttribute(
+      "href",
+      "/refactoring/refactorings/extract-function",
+    );
   });
 });

@@ -15,7 +15,7 @@ export default function SmellDetail({ smell, number, lens }: SmellDetailProps) {
       entry={smell}
       number={number}
       lens={lens}
-      backLinkHref="/smells"
+      backLinkHref="/refactoring/smells"
       backLinkLabel="Smells"
       beforeLabel="Smellier version"
       afterLabel="Fresher version"

@@ -36,11 +36,11 @@ describe("loadCatalogItems", () => {
     const items = loadCatalogItems();
 
     const longFunction = items.find((i) => i.name === "Long Function" && i.kind === "smell");
-    expect(longFunction?.href).toBe("/smells/long-function");
+    expect(longFunction?.href).toBe("/refactoring/smells/long-function");
 
     const extractFunction = items.find(
       (i) => i.name === "Extract Function" && i.kind === "refactoring",
     );
-    expect(extractFunction?.href).toBe("/refactorings/extract-function");
+    expect(extractFunction?.href).toBe("/refactoring/refactorings/extract-function");
   });
 });

@@ -70,7 +70,7 @@ export default function NotFound() {
           <Button component={NextLink} href="/" variant="contained">
             Browse refactorings
           </Button>
-          <Button component={NextLink} href="/smells" variant="outlined">
+          <Button component={NextLink} href="/refactoring/smells" variant="outlined">
             Browse smells
           </Button>
           <Button component={NextLink} href="/reference" variant="outlined">

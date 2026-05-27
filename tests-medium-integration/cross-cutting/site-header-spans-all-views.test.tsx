@@ -29,7 +29,7 @@ describe("site header spans every catalog view", () => {
     expect(refactoringsLink).toHaveAttribute("href", "/");
 
     const smellsLink = screen.getByRole("link", { name: /^Smells$/ });
-    expect(smellsLink).toHaveAttribute("href", "/smells");
+    expect(smellsLink).toHaveAttribute("href", "/refactoring/smells");
 
     const referenceLink = screen.getByRole("link", { name: /^Reference$/ });
     expect(referenceLink).toHaveAttribute("href", "/reference");

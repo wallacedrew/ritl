@@ -62,15 +62,15 @@ describe("CatalogEntry", () => {
   });
 
   it("href derives from the catalog entry name", () => {
-    expect(makeEntry().href()).toBe("/smells/long-function");
+    expect(makeEntry().href()).toBe("/refactoring/smells/long-function");
   });
 
   it("agentHref appends /agent to the href", () => {
-    expect(makeEntry().agentHref()).toBe("/smells/long-function/agent");
+    expect(makeEntry().agentHref()).toBe("/refactoring/smells/long-function/agent");
   });
 
   it("compareHref appends /compare to the href", () => {
-    expect(makeEntry().compareHref()).toBe("/smells/long-function/compare");
+    expect(makeEntry().compareHref()).toBe("/refactoring/smells/long-function/compare");
   });
 
   it("optional safetyNet is undefined when not provided", () => {

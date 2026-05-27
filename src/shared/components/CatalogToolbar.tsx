@@ -18,16 +18,16 @@ interface NavLink {
 
 const NAV_LINKS: readonly NavLink[] = [
   { view: "refactorings", label: "Refactorings", href: "/" },
-  { view: "smells", label: "Smells", href: "/smells" },
+  { view: "smells", label: "Smells", href: "/refactoring/smells" },
   { view: "reference", label: "Reference", href: "/reference" },
   { view: "plugin", label: "Plugin", href: "/plugin", hideOnMobile: true },
 ];
 
 function deriveActiveView(pathname: string): CatalogView {
-  if (pathname.startsWith("/smells")) return "smells";
+  if (pathname.startsWith("/refactoring/smells")) return "smells";
   if (pathname.startsWith("/reference")) return "reference";
   if (pathname.startsWith("/plugin")) return "plugin";
-  // "/" and "/refactorings/*" both show the refactorings list.
+  // "/", "/refactoring", and "/refactoring/refactorings/*" all map to the refactorings tab today.
   return "refactorings";
 }
 
