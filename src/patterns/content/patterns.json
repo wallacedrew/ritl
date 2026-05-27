@@ -1038,5 +1038,45 @@
         "trap": "An adapter that smuggles non-trivial logic (validation, error remapping, retries) hides behaviour the agent might expect to see at the consumer or at the vendor — neither location is now authoritative. When the adapter is doing more than shape-conversion, its name should reflect that (Gateway, Anti-Corruption Layer)."
       }
     }
+  },
+  {
+    "catalog": "patterns",
+    "name": "Unify Interfaces",
+    "nemeses": [
+      {
+        "catalog": "smells",
+        "name": "Alternative Classes with Different Interfaces"
+      },
+      {
+        "catalog": "refactorings",
+        "name": "Change Function Declaration"
+      },
+      {
+        "catalog": "refactorings",
+        "name": "Pull Up Method"
+      }
+    ],
+    "before": "// Two repositories do the same work with accidentally divergent names.\nclass UserRepository {\n  findOne(id) { /* ... */ }\n  insert(user) { /* ... */ }\n  updateById(id, fields) { /* ... */ }\n  remove(id) { /* ... */ }\n}\n\nclass OrderRepository {\n  getById(id) { /* ... */ }\n  create(order) { /* ... */ }\n  update(id, fields) { /* ... */ }\n  delete(id) { /* ... */ }\n}\n\nfunction loadEntity(repo, id) {\n  if (repo instanceof UserRepository) return repo.findOne(id);\n  return repo.getById(id);\n}",
+    "after": "// One method name per operation; both repositories conform.\nclass UserRepository {\n  findById(id) { /* ... */ }\n  create(user) { /* ... */ }\n  update(id, fields) { /* ... */ }\n  delete(id) { /* ... */ }\n}\n\nclass OrderRepository {\n  findById(id) { /* ... */ }\n  create(order) { /* ... */ }\n  update(id, fields) { /* ... */ }\n  delete(id) { /* ... */ }\n}\n\nfunction loadEntity(repo, id) {\n  return repo.findById(id);\n}",
+    "safetyNet": "unit test",
+    "exampleSource": "Illustrative example written for this site, faithful to Kerievsky's pattern shape in Refactoring to Patterns (Addison-Wesley, 2004), chapter 6. Distinct from Unify Interfaces With Adapter (#26): that pattern is for when you cannot edit one of the classes (typically a vendor); Unify Interfaces is for when both classes are yours and the divergence is accidental.",
+    "forces": {
+      "human": {
+        "symptom": "Two or more classes in your own codebase do similar work but use different method names, parameter shapes, or return types for the same operation. The divergence is accidental — they were written at different times by different people — not intrinsic to what they do. Callers can't treat them uniformly; tests for each one duplicate setup; cross-class refactoring requires synchronized edits.",
+        "goal": "All variants share one method-name vocabulary for the same operations. Callers operate against either interchangeably; tests can share helpers; future variants land with the same vocabulary.",
+        "pressure": "Accidental interface divergence is a tax on every consumer that handles both. The divergence often grew from copy-paste with renames; each rename created another inconsistency to navigate. Reviewers and agents must remember which class uses which name.",
+        "tradeoff": "Renaming methods is a wide ripple — every call site moves. For classes with public APIs or vendor consumers, the breaking-change cost may exceed the consistency gain. Sometimes a single adapter call site is cheaper than a rename across N consumers.",
+        "relief": "One vocabulary, one call shape, one set of tests' helpers. Future variants land with the established names; new consumers don't have to learn which-name-here-and-which-name-there.",
+        "trap": "Forcing two genuinely-different operations onto the same name to satisfy the pattern produces silent behavioural drift — the names match but the semantics differ. Unify Interfaces is for accidental divergence; if the operations actually behave differently, they should keep different names."
+      },
+      "agent": {
+        "symptom": "Accidental name divergence across N classes the agent must remember when reading or editing code. Search results for one operation miss the variants under different names; refactoring tools can't unify the rename without manual mapping.",
+        "goal": "One canonical name per operation across the codebase; the agent's static reasoning about 'where is X called?' returns a complete answer. Per-class behaviour is verified once against the canonical interface.",
+        "pressure": "Inconsistent naming forces the agent to enumerate aliases on every cross-class change. The cost compounds — `find usages` returns partial results; semantic edits miss aliased variants; the agent's confidence in completeness drops.",
+        "tradeoff": "Renames break external consumers who depend on the old names; the agent must verify the rename's blast radius before applying it. For library code with documented APIs, the rename cost may exceed the consistency gain.",
+        "relief": "Static analysis returns complete results; the agent's verification budget on cross-class edits drops to the unified surface. Diff surface for future variants is well-defined: implement the canonical names.",
+        "trap": "Unifying names across two classes whose operations only superficially match silently misleads future readers. The agent reads `findById` on both and assumes equivalent behaviour; when one has implicit side effects the other doesn't, the trap is hard to detect statically. Verify behaviour matches before unifying names."
+      }
+    }
   }
 ]
