@@ -641,6 +641,46 @@
   },
   {
     "catalog": "patterns",
+    "name": "Replace Conditional Dispatcher With Command",
+    "nemeses": [
+      {
+        "catalog": "smells",
+        "name": "Repeated Switches"
+      },
+      {
+        "catalog": "refactorings",
+        "name": "Replace Function with Command"
+      },
+      {
+        "catalog": "refactorings",
+        "name": "Replace Conditional with Polymorphism"
+      }
+    ],
+    "before": "// One processor with a long dispatch conditional plus all handler bodies.\nclass CommandProcessor {\n  execute(command, payload) {\n    if (command === 'create-user') return this.createUser(payload);\n    if (command === 'delete-user') return this.deleteUser(payload);\n    if (command === 'reset-password') return this.resetPassword(payload);\n    if (command === 'update-profile') return this.updateProfile(payload);\n    throw new Error(`unknown command ${command}`);\n  }\n  createUser(payload) { /* ... */ }\n  deleteUser(payload) { /* ... */ }\n  resetPassword(payload) { /* ... */ }\n  updateProfile(payload) { /* ... */ }\n}",
+    "after": "// Each handler is a Command object; the registry replaces the conditional.\nclass CreateUserCommand {\n  execute(payload) { /* ... */ }\n}\nclass DeleteUserCommand {\n  execute(payload) { /* ... */ }\n}\nclass ResetPasswordCommand {\n  execute(payload) { /* ... */ }\n}\nclass UpdateProfileCommand {\n  execute(payload) { /* ... */ }\n}\n\nclass CommandProcessor {\n  constructor() {\n    this.commands = new Map([\n      ['create-user', new CreateUserCommand()],\n      ['delete-user', new DeleteUserCommand()],\n      ['reset-password', new ResetPasswordCommand()],\n      ['update-profile', new UpdateProfileCommand()],\n    ]);\n  }\n  execute(command, payload) {\n    const handler = this.commands.get(command);\n    if (!handler) throw new Error(`unknown command ${command}`);\n    return handler.execute(payload);\n  }\n}",
+    "safetyNet": "unit test",
+    "exampleSource": "Illustrative example written for this site, faithful to Kerievsky's pattern shape in Refactoring to Patterns (Addison-Wesley, 2004), chapter 7. Distinct from Replace Conditional Logic With Strategy: Strategy varies *how* one algorithm computes its result; Command varies *which action* is invoked. The book uses an HTTP-style request dispatcher; this JavaScript version keeps that shape.",
+    "forces": {
+      "human": {
+        "symptom": "A dispatcher method matches a request type or command name against a chain of `if`/`else` branches, each calling a handler method on the same class. The dispatcher grows wider with every new command; the class grows in proportion; the dispatch table and the handlers live tangled in one file.",
+        "goal": "Each handler is a Command object with an `execute(payload)` method. The dispatcher holds a registry mapping command name to Command instance; dispatch is a one-line lookup-and-invoke. New commands ship by registering a new Command — the dispatcher never changes.",
+        "pressure": "Conditional dispatchers are Shotgun-Surgery magnets — every new command edits the dispatcher and adds a method to the host class. Cross-command invariants (e.g., logging or auth checks) duplicate at every branch; subtle inconsistencies between handlers ship to runtime.",
+        "tradeoff": "Command introduces a class per handler; what was one file becomes many. Logical cohesion (handlers that share helpers or share state) must be deliberately re-established via composition. Command queues and undo stacks become natural — useful when needed, ceremony when not.",
+        "relief": "Each handler is one cohesive class; the dispatcher is a few lines of generic code. Adding a command is one new file plus one registry entry; tests for a command target one class; cross-cutting concerns (logging, validation) can decorate the dispatcher rather than duplicating per branch.",
+        "trap": "A Command class per trivial action becomes ceremony tax — `class FooCommand { execute(x) { return foo(x); } }`. The pattern earns its keep when commands carry state (captured arguments, undo info), when there are many of them, or when cross-cutting concerns benefit from the uniform interface."
+      },
+      "agent": {
+        "symptom": "A dispatcher conditional + N inline handler methods the agent must scan together to know what runs for a given command. Adding a command requires the agent to edit two places (dispatcher + host class); the diff surface scales linearly with handler complexity.",
+        "goal": "One file per command the agent reads in isolation; the dispatcher is short and command-set-agnostic. Per-command diff surface collapses to one Command class + one registry entry.",
+        "pressure": "Cross-command invariants (e.g., 'every command logs') cannot be statically enforced when handlers are loose methods on the dispatcher. The agent must hold the full handler set in context to verify any cross-command concern; refactoring one handler risks unintended impact on neighbouring branches that share helpers.",
+        "tradeoff": "Command spreads handler logic across N files; the agent must traverse the registry to know which class handles a given command name. Stringy registry keys defeat static type analysis — typo-driven bugs slip past the type system.",
+        "relief": "Diff surface for a new command is one file. Static analysis can verify every Command implements `execute`; the dispatcher's behaviour is statically uniform. Cross-cutting concerns can live as a wrapping decorator on the registry rather than duplicated per handler.",
+        "trap": "Many trivial Commands (`class XCommand { execute() { return X(); } }`) raise context cost without buying anything — the agent loads one definition per command name to verify what it does. The pattern's gain materializes when commands carry meaningful state or when cross-cutting concerns reuse the uniform interface."
+      }
+    }
+  },
+  {
+    "catalog": "patterns",
     "name": "Replace Conditional Logic with Strategy",
     "nemeses": [
       {
