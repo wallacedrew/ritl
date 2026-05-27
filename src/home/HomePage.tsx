@@ -21,7 +21,7 @@ export default function HomePage() {
         </Stack>
         <Stack spacing={2}>
           {SUB_SITES.map((subSite) => (
-            <SubSiteCard key={subSite.slug} subSite={subSite} />
+            <SubSiteCard key={subSite.slug} title={subSite.title} href={subSite.href()} />
           ))}
         </Stack>
       </Stack>

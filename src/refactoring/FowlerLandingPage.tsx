@@ -1,16 +1,16 @@
-import Button from "@mui/material/Button";
 import Container from "@mui/material/Container";
 import Divider from "@mui/material/Divider";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import { visuallyHidden } from "@mui/utils";
-import NextLink from "next/link";
 
 import CatalogStats from "@/home/components/CatalogStats";
 import ReferenceView from "@/refactorings/components/ReferenceView";
 import { getRefactoringsByCategory } from "@/refactorings/lib/getRefactoringsByCategory";
 import { FOWLER } from "@/shared/lib/subSites";
 import { loadSmells } from "@/smells/lib/loadSmells";
+
+import BrowseButtons from "./components/BrowseButtons";
 
 export default function FowlerLandingPage() {
   const groups = getRefactoringsByCategory();
@@ -34,18 +34,10 @@ export default function FowlerLandingPage() {
           refactoringCount={refactoringCount}
           categoryCount={categoryCount}
         />
-        <Stack direction="row" spacing={1.5} sx={{ flexWrap: "wrap", gap: 1 }}>
-          <Button
-            component={NextLink}
-            href={FOWLER.hrefForCatalog("refactorings")}
-            variant="outlined"
-          >
-            Browse all refactorings
-          </Button>
-          <Button component={NextLink} href={FOWLER.hrefForCatalog("smells")} variant="outlined">
-            Browse all smells
-          </Button>
-        </Stack>
+        <BrowseButtons
+          refactoringsHref={FOWLER.hrefForCatalog("refactorings")}
+          smellsHref={FOWLER.hrefForCatalog("smells")}
+        />
         <Divider />
         <ReferenceView groups={groups} />
       </Stack>
