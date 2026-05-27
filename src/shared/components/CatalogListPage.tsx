@@ -10,10 +10,11 @@ import type { CatalogListItem } from "@/shared/lib/CatalogListItem";
 interface CatalogListPageProps {
   title: string;
   description: string;
+  note?: string;
   items: readonly CatalogListItem[];
 }
 
-export default function CatalogListPage({ title, description, items }: CatalogListPageProps) {
+export default function CatalogListPage({ title, description, note, items }: CatalogListPageProps) {
   return (
     <Container maxWidth="lg" sx={{ py: 4 }}>
       <Stack spacing={4}>
@@ -24,6 +25,11 @@ export default function CatalogListPage({ title, description, items }: CatalogLi
           <Typography variant="body1" color="text.secondary">
             {description}
           </Typography>
+          {note && (
+            <Typography variant="body2" color="text.secondary">
+              {note}
+            </Typography>
+          )}
         </Stack>
         <Box
           sx={{
