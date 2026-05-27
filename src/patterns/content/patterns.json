@@ -361,6 +361,46 @@
   },
   {
     "catalog": "patterns",
+    "name": "Introduce Null Object",
+    "nemeses": [
+      {
+        "catalog": "smells",
+        "name": "Repeated Switches"
+      },
+      {
+        "catalog": "refactorings",
+        "name": "Introduce Special Case"
+      },
+      {
+        "catalog": "refactorings",
+        "name": "Replace Conditional with Polymorphism"
+      }
+    ],
+    "before": "// Every consumer of Customer.discount and Customer.loyaltyProgram must check for null first.\nclass Order {\n  constructor(customer) {\n    this.customer = customer;\n  }\n  finalPrice() {\n    let price = this.subtotal();\n    if (this.customer.discount !== null) {\n      price = this.customer.discount.applyTo(price);\n    }\n    if (this.customer.loyaltyProgram !== null) {\n      price -= this.customer.loyaltyProgram.pointsValue();\n    }\n    return price;\n  }\n  subtotal() { /* ... */ }\n}",
+    "after": "// Null Objects implement the same interface with safe defaults; callers stop branching.\nclass NoDiscount {\n  applyTo(price) {\n    return price;\n  }\n}\nclass NoLoyaltyProgram {\n  pointsValue() {\n    return 0;\n  }\n}\n\nclass Order {\n  constructor(customer) {\n    // customer.discount and customer.loyaltyProgram are never null;\n    // they are NoDiscount/NoLoyaltyProgram when absent.\n    this.customer = customer;\n  }\n  finalPrice() {\n    let price = this.subtotal();\n    price = this.customer.discount.applyTo(price);\n    price -= this.customer.loyaltyProgram.pointsValue();\n    return price;\n  }\n  subtotal() { /* ... */ }\n}",
+    "safetyNet": "unit test",
+    "exampleSource": "Illustrative example written for this site, faithful to Kerievsky's pattern shape in Refactoring to Patterns (Addison-Wesley, 2004), chapter 9. The book uses a Customer hierarchy with a NullCustomer; this JavaScript version uses NoDiscount and NoLoyaltyProgram — same pattern, scaled to two collaborators to show how callers stop branching.",
+    "forces": {
+      "human": {
+        "symptom": "Code is littered with `if (x !== null) x.do()` checks around the same collaborator. Each new caller adds another check; missing one ships a NullPointerException to production; the absence-handling logic duplicates across callers.",
+        "goal": "A Null Object implementing the same interface stands in for the missing collaborator. Callers invoke methods unconditionally; the Null Object returns sensible defaults (return the input unchanged, return zero, do nothing).",
+        "pressure": "Null checks duplicate at every call site; the rules for what 'absent' means duplicate too. Adding a new caller is one more place to remember the check; forgetting one is a runtime bug.",
+        "tradeoff": "Null Objects hide absence; downstream code may mistake the silent no-op for a real operation, especially when the Null Object's behaviour drifts from the originally-intended default. Debugging 'why did nothing happen?' requires recognizing you're holding a Null Object.",
+        "relief": "Call sites simplify to plain method calls; absence-handling lives in one place (the Null Object); the rules for what 'no discount' or 'no loyalty program' means are visible and testable as a single class.",
+        "trap": "A Null Object with subtly-wrong defaults silently corrupts results without throwing. The pattern pays when 'absent' has a well-defined neutral semantics; for collaborators where absence should actually halt the operation, Null Object hides the error you wanted to see."
+      },
+      "agent": {
+        "symptom": "Null-check branches the agent must trace at every collaborator-using call site. The agent cannot statically verify all check sites stay consistent; new callers risk omitting the check and shipping NullPointerExceptions.",
+        "goal": "One Null Object class the agent verifies once; all call sites unconditionally invoke the collaborator interface. The agent's edit budget on a collaborator-using method drops because there's no per-call branch to reason about.",
+        "pressure": "N call sites × M methods × the null check = the agent's per-edit verification cost. Static analysis catches some missing checks but not all (especially after refactors that change which fields can be null).",
+        "tradeoff": "A Null Object collapses two distinct runtime states (absent / present) into one type at the call site. The agent loses the ability to statically distinguish a real collaborator from its null stand-in; debugging requires reading the constructor / factory to know which is which.",
+        "relief": "Branch count at call sites drops to zero; the agent reads the Null Object's body once to know what 'absent' does, and trusts the type system thereafter. Adding a new caller is one method call, not one method-call-plus-branch.",
+        "trap": "A Null Object that quietly returns the wrong neutral element (zero where one was needed, identity where blocking was needed) produces silent failures the agent cannot detect from static reading. The pattern requires careful semantic alignment between 'absent' and the chosen default."
+      }
+    }
+  },
+  {
+    "catalog": "patterns",
     "name": "Replace Conditional Logic with Strategy",
     "nemeses": [
       {
