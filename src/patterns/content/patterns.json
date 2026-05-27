@@ -878,5 +878,45 @@
         "trap": "If the on-disk form remains the flat record set, the agent has to verify the in-memory tree stays consistent with it across edits. The pattern's gain materializes when the tree owns the canonical form; when it's a transient view over a relational store, the implicit form may stay authoritative."
       }
     }
+  },
+  {
+    "catalog": "patterns",
+    "name": "Replace One/Many Distinctions With Composite",
+    "nemeses": [
+      {
+        "catalog": "smells",
+        "name": "Repeated Switches"
+      },
+      {
+        "catalog": "refactorings",
+        "name": "Replace Conditional with Polymorphism"
+      },
+      {
+        "catalog": "refactorings",
+        "name": "Extract Class"
+      }
+    ],
+    "before": "// Every operation branches on whether the value is one or many.\nclass Form {\n  setValue(name, valueOrValues) {\n    if (Array.isArray(valueOrValues)) {\n      this.fields[name] = valueOrValues.map((v) => sanitize(v));\n    } else {\n      this.fields[name] = sanitize(valueOrValues);\n    }\n  }\n  getDisplay(name) {\n    const value = this.fields[name];\n    if (Array.isArray(value)) {\n      return value.join(', ');\n    }\n    return value;\n  }\n  isMultivalued(name) {\n    return Array.isArray(this.fields[name]);\n  }\n}",
+    "after": "// Both single and many implement the same Field interface; callers stop branching.\nclass Field {\n  asString() { throw new Error('abstract'); }\n  isMultivalued() { return false; }\n}\nclass SingleField extends Field {\n  constructor(raw) {\n    super();\n    this.value = sanitize(raw);\n  }\n  asString() { return this.value; }\n}\nclass MultiField extends Field {\n  constructor(items) {\n    super();\n    this.children = items.map((item) => new SingleField(item));\n  }\n  asString() { return this.children.map((child) => child.asString()).join(', '); }\n  isMultivalued() { return true; }\n}\n\nclass Form {\n  setValue(name, field) {\n    this.fields[name] = field; // already a SingleField or MultiField\n  }\n  getDisplay(name) {\n    return this.fields[name].asString();\n  }\n  isMultivalued(name) {\n    return this.fields[name].isMultivalued();\n  }\n}",
+    "safetyNet": "unit test",
+    "exampleSource": "Illustrative example written for this site, faithful to Kerievsky's pattern shape in Refactoring to Patterns (Addison-Wesley, 2004), chapter 9. The book uses a graphics-system Shape/Group example; this JavaScript version uses form Field/MultiField — the same Composite shape applied to a one-or-many distinction.",
+    "forces": {
+      "human": {
+        "symptom": "Every operation that touches a value first checks 'is this one or many?' via `Array.isArray`, type checks, or flag fields. The branches duplicate across operations; adding a new operation means another pair of branches; the abstraction 'a field has values' fragments into 'a field has a value OR has values'.",
+        "goal": "Single and many implement the same interface (Composite). Callers send the same message — `.asString()`, `.isMultivalued()` — and the polymorphic receiver responds correctly. The one-vs-many decision lives once, in the construction of the appropriate type.",
+        "pressure": "One-vs-many branches multiply with operation count. Subtle inconsistencies between operations (`getDisplay` handles arrays, but `getCount` forgets to) ship as silent bugs. The 'is it an array?' check pollutes every call site that touches the value.",
+        "tradeoff": "Composite requires constructing the right subtype at the boundary where the value enters the system; serialization round-trips may need explicit one-vs-many encoding. For two operations on a stable one-vs-many distinction, the inline branches may be cheaper than the type hierarchy.",
+        "relief": "Operations read as polymorphic calls; the one-vs-many decision is made once and forgotten. Adding an operation is one method on Field with one implementation per subtype; the agent and reader never re-derive 'is it one or many?'",
+        "trap": "A Composite hierarchy applied to a value that is *truly* always one or always many adds an indirection without buying anything. The pattern earns its keep when the same call site handles both cases — when the call site itself doesn't care, the polymorphism is the point."
+      },
+      "agent": {
+        "symptom": "Per-operation `Array.isArray` branches the agent must verify match across N operations. The agent cannot statically guarantee that every operation handles both shapes consistently; subtle inconsistencies surface only when a one-only operation receives a many value.",
+        "goal": "Polymorphic dispatch on the value's type; the agent verifies each subtype's implementation in isolation. Per-operation analysis no longer requires holding 'what shape is this value?' in working memory.",
+        "pressure": "One-vs-many branch checks duplicate across every consumer; the agent's per-edit verification cost scales with operation count. Static type information is shallow when JavaScript allows both shapes to flow through the same variable.",
+        "tradeoff": "Composite spreads behaviour across a type hierarchy; the agent must traverse subtypes to know what a method does for a given value. Subtype construction at boundaries is itself a place the agent must verify the one-vs-many decision lands correctly.",
+        "relief": "Diff surface for a new operation is one method per subtype. Static analysis verifies subtype coverage; per-subtype tests exercise their implementations independently. The shape decision moves out of operation bodies and into the construction boundary.",
+        "trap": "A Composite applied to a distinction that is actually load-bearing context (e.g., when callers need to know cardinality to render differently) ends up restoring the `if (isMulti)` branches at the call site, just with `.isMultivalued()` instead of `Array.isArray`. The pattern pays when callers genuinely don't care which shape they have."
+      }
+    }
   }
 ]
