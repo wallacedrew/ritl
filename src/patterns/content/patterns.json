@@ -1,6 +1,46 @@
 [
   {
     "catalog": "patterns",
+    "name": "Chain Constructors",
+    "nemeses": [
+      {
+        "catalog": "smells",
+        "name": "Duplicated Code"
+      },
+      {
+        "catalog": "refactorings",
+        "name": "Extract Function"
+      },
+      {
+        "catalog": "refactorings",
+        "name": "Combine Functions into Class"
+      }
+    ],
+    "before": "class Loan {\n  static newTermLoan(commitment, customer, maturity) {\n    const loan = new Loan();\n    if (commitment < 0) throw new Error('commitment must be non-negative');\n    loan.commitment = commitment;\n    loan.customer = customer;\n    loan.maturity = maturity;\n    loan.expiry = null;\n    loan.unusedPercentage = 0.0;\n    return loan;\n  }\n  static newRevolver(commitment, customer, expiry) {\n    const loan = new Loan();\n    if (commitment < 0) throw new Error('commitment must be non-negative');\n    loan.commitment = commitment;\n    loan.customer = customer;\n    loan.maturity = null;\n    loan.expiry = expiry;\n    loan.unusedPercentage = 1.0;\n    return loan;\n  }\n  static newAdvisedLine(commitment, customer, expiry) {\n    const loan = new Loan();\n    if (commitment < 0) throw new Error('commitment must be non-negative');\n    loan.commitment = commitment;\n    loan.customer = customer;\n    loan.maturity = null;\n    loan.expiry = expiry;\n    loan.unusedPercentage = 0.5;\n    return loan;\n  }\n}",
+    "after": "class Loan {\n  constructor(commitment, customer, expiry, maturity, unusedPercentage) {\n    if (commitment < 0) throw new Error('commitment must be non-negative');\n    this.commitment = commitment;\n    this.customer = customer;\n    this.expiry = expiry;\n    this.maturity = maturity;\n    this.unusedPercentage = unusedPercentage;\n  }\n  static newTermLoan(commitment, customer, maturity) {\n    return new Loan(commitment, customer, null, maturity, 0.0);\n  }\n  static newRevolver(commitment, customer, expiry) {\n    return new Loan(commitment, customer, expiry, null, 1.0);\n  }\n  static newAdvisedLine(commitment, customer, expiry) {\n    return new Loan(commitment, customer, expiry, null, 0.5);\n  }\n}",
+    "safetyNet": "unit test",
+    "exampleSource": "Adapted from Joshua Kerievsky's Loan-class example in Refactoring to Patterns (Addison-Wesley, 2004), chapter 6. The Java original used overloaded constructors; this JavaScript translation uses static creation methods delegating to one canonical constructor — same shape, same single-point-of-initialization payoff.",
+    "forces": {
+      "human": {
+        "symptom": "Multiple ways to construct an object — overloaded constructors, factory methods, copy helpers — each repeat the same field assignments, defaults, and validation. Adding a new field forces edits in every construction path, and a field added in one path but missed in another silently produces partly-initialized objects.",
+        "goal": "A single canonical constructor owns all field assignment and validation. Every other construction path is a one-line delegation that supplies the variant-specific arguments. Adding a new field is a one-place change.",
+        "pressure": "Constructor duplication is Shotgun Surgery in the worst place — the field set of a class. Each new variant adds a parallel copy of the initialization rules; subtle divergence between paths is easy to miss in review and easy to ship to production unnoticed.",
+        "tradeoff": "Chaining couples every construction path to the canonical constructor's parameter list, and that list grows as variants accumulate. Call sites pass null or default sentinels for parameters that don't apply to their variant, eroding intention-revealing names at the call site.",
+        "relief": "One place to read what 'constructing a Loan' means; new fields land in one constructor; each variant reads as the parameters it cares about. Validation runs once per construction, not once per path.",
+        "trap": "The canonical constructor degenerates into a long-parameter-list monster as variants accumulate. Readers no longer know which parameters matter for which variant, and the centralization stops paying — at that point Replace Constructors With Creation Methods or a parameter object becomes the next move."
+      },
+      "agent": {
+        "symptom": "Multiple construction paths the agent must scan in parallel to confirm field initialization is consistent. Behavioral preservation on every field-related edit requires verifying every path, multiplying context cost by path count.",
+        "goal": "One construction path the agent reads to know what a fully-initialized object looks like; all other paths are one-line delegations the agent can skip past during reasoning. Field-set drift is impossible by construction.",
+        "pressure": "N construction paths × M fields = N×M cells the agent must verify match on every field-related edit. Field additions cascade across all paths; per-path duplication consumes context budget that could be spent on the calling code.",
+        "tradeoff": "A long canonical parameter list is itself a context-load tax — the agent must remember positional argument order on every reading of a delegating factory. Wrong-position bugs become subtler than missing-field bugs.",
+        "relief": "Each delegating factory is one line; the agent reads the canonical constructor once and treats all variants as parameterized calls. Diff surface for adding a new field is one place; tests for the canonical constructor cover all variants transitively.",
+        "trap": "The canonical constructor balloons into a many-parameter signature where the agent loses track of which combinations are legal. Context cost moves from per-path duplication to per-parameter combination explosion; a parameter object or named-argument shape becomes overdue."
+      }
+    }
+  },
+  {
+    "catalog": "patterns",
     "name": "Compose Method",
     "nemeses": [
       {

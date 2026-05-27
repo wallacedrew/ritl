@@ -3122,11 +3122,141 @@ chargeWithTax(customer, total);
 ## Patterns (Kerievsky — Refactoring to Patterns)
 
 ---
+name: chain-constructors
+description: Apply Chain Constructors when you see Duplicated Code, Extract Function, Combine Functions into Class. One construction path the agent reads to know what a fully-initialized object looks like; all other paths are one-line delegations the agent can skip past during reasoning.
+---
+
+# Apply: 01 — Chain Constructors
+
+**Symptom:** Multiple construction paths the agent must scan in parallel to confirm field initialization is consistent. Behavioral preservation on every field-related edit requires verifying every path, multiplying context cost by path count.
+
+**Goal:** One construction path the agent reads to know what a fully-initialized object looks like; all other paths are one-line delegations the agent can skip past during reasoning. Field-set drift is impossible by construction.
+
+```js
+// Before:
+class Loan {
+  static newTermLoan(commitment, customer, maturity) {
+    const loan = new Loan();
+    if (commitment < 0) throw new Error('commitment must be non-negative');
+    loan.commitment = commitment;
+    loan.customer = customer;
+    loan.maturity = maturity;
+    loan.expiry = null;
+    loan.unusedPercentage = 0.0;
+    return loan;
+  }
+  static newRevolver(commitment, customer, expiry) {
+    const loan = new Loan();
+    if (commitment < 0) throw new Error('commitment must be non-negative');
+    loan.commitment = commitment;
+    loan.customer = customer;
+    loan.maturity = null;
+    loan.expiry = expiry;
+    loan.unusedPercentage = 1.0;
+    return loan;
+  }
+  static newAdvisedLine(commitment, customer, expiry) {
+    const loan = new Loan();
+    if (commitment < 0) throw new Error('commitment must be non-negative');
+    loan.commitment = commitment;
+    loan.customer = customer;
+    loan.maturity = null;
+    loan.expiry = expiry;
+    loan.unusedPercentage = 0.5;
+    return loan;
+  }
+}
+
+// After:
+class Loan {
+  constructor(commitment, customer, expiry, maturity, unusedPercentage) {
+    if (commitment < 0) throw new Error('commitment must be non-negative');
+    this.commitment = commitment;
+    this.customer = customer;
+    this.expiry = expiry;
+    this.maturity = maturity;
+    this.unusedPercentage = unusedPercentage;
+  }
+  static newTermLoan(commitment, customer, maturity) {
+    return new Loan(commitment, customer, null, maturity, 0.0);
+  }
+  static newRevolver(commitment, customer, expiry) {
+    return new Loan(commitment, customer, expiry, null, 1.0);
+  }
+  static newAdvisedLine(commitment, customer, expiry) {
+    return new Loan(commitment, customer, expiry, null, 0.5);
+  }
+}
+```
+
+_Example source: Adapted from Joshua Kerievsky's Loan-class example in Refactoring to Patterns (Addison-Wesley, 2004), chapter 6. The Java original used overloaded constructors; this JavaScript translation uses static creation methods delegating to one canonical constructor — same shape, same single-point-of-initialization payoff._
+
+**Pressure:** N construction paths × M fields = N×M cells the agent must verify match on every field-related edit. Field additions cascade across all paths; per-path duplication consumes context budget that could be spent on the calling code.
+
+**Tradeoff:** A long canonical parameter list is itself a context-load tax — the agent must remember positional argument order on every reading of a delegating factory. Wrong-position bugs become subtler than missing-field bugs.
+
+**Relief:** Each delegating factory is one line; the agent reads the canonical constructor once and treats all variants as parameterized calls. Diff surface for adding a new field is one place; tests for the canonical constructor cover all variants transitively.
+
+**Trap:** The canonical constructor balloons into a many-parameter signature where the agent loses track of which combinations are legal. Context cost moves from per-path duplication to per-parameter combination explosion; a parameter object or named-argument shape becomes overdue.
+
+**Triggered by:** Duplicated Code (smells), Extract Function (refactorings), Combine Functions into Class (refactorings)
+
+---
+name: compose-method
+description: Apply Compose Method when you see Long Function, Extract Function, Replace Temp with Query. The method reads as a sequence of named operations the agent can verify against without re-deriving the algorithm.
+---
+
+# Apply: 02 — Compose Method
+
+**Symptom:** A method whose body the agent must trace line-by-line to understand the algorithm; the high-level shape is obscured by interleaved details. Verifying behavior preservation requires re-reading the entire span on every edit.
+
+**Goal:** The method reads as a sequence of named operations the agent can verify against without re-deriving the algorithm. Each helper is small enough to reason about in a single step.
+
+```js
+// Before:
+function add(item, quantity) {
+  if (this.readOnly) throw new Error('list is read-only');
+  const existing = this.items.find(line => line.product.id === item.id);
+  if (existing) {
+    existing.quantity += quantity;
+  } else {
+    this.items.push({ product: item, quantity });
+    this.items.sort((a, b) => a.product.id - b.product.id);
+  }
+  this.recalculateTotal();
+}
+
+// After:
+function add(item, quantity) {
+  assertWritable(this);
+  const existing = findLineFor(this.items, item);
+  if (existing) {
+    increaseQuantity(existing, quantity);
+  } else {
+    insertNewLine(this.items, item, quantity);
+  }
+  this.recalculateTotal();
+}
+```
+
+_Example source: Illustrative example written for this site, not a quotation from the book. The pattern itself is Joshua Kerievsky's, from Refactoring to Patterns (Addison-Wesley, 2004)._
+
+**Pressure:** Every edit re-loads the full method body to confirm behavior preservation. Chained orchestration changes compound context cost; reasoning about cross-step invariants gets harder as the method grows.
+
+**Tradeoff:** Each helper inflates context-window cost by one definition the next reasoning step must load. Over-decomposing fragments a single procedure across many files.
+
+**Relief:** The composed method captures the algorithm in named steps; helpers are independently verifiable; refactoring orchestration is a localized change. Smaller diff surface per commit.
+
+**Trap:** A deeply-nested hierarchy of helpers where the agent must chase multiple definitions to understand a single original method — context cost multiplies and cross-helper invariants vanish from view.
+
+**Triggered by:** Long Function (smells), Extract Function (refactorings), Replace Temp with Query (refactorings)
+
+---
 name: replace-conditional-logic-with-strategy
 description: Apply Replace Conditional Logic with Strategy when you see Repeated Switches, Replace Conditional with Polymorphism, Decompose Conditional. Each variant lives in its own class; the agent can verify one strategy's behavior without loading the others.
 ---
 
-# Apply: 01 — Replace Conditional Logic with Strategy
+# Apply: 03 — Replace Conditional Logic with Strategy
 
 **Symptom:** A method whose body the agent must trace through a chain of branches to determine what runs. Each branch hides domain logic; verifying behavior requires loading every branch in scope on every edit.
 
@@ -3194,53 +3324,3 @@ _Example source: Adapted from Joshua Kerievsky's loan-calculator example in Refa
 **Trap:** A maze of one-method strategy classes that exist only to satisfy the pattern — the agent loads N files to understand what a single conditional once expressed in one. Context cost multiplies without proportional reasoning gain.
 
 **Triggered by:** Repeated Switches (smells), Replace Conditional with Polymorphism (refactorings), Decompose Conditional (refactorings)
-
----
-name: compose-method
-description: Apply Compose Method when you see Long Function, Extract Function, Replace Temp with Query. The method reads as a sequence of named operations the agent can verify against without re-deriving the algorithm.
----
-
-# Apply: 02 — Compose Method
-
-**Symptom:** A method whose body the agent must trace line-by-line to understand the algorithm; the high-level shape is obscured by interleaved details. Verifying behavior preservation requires re-reading the entire span on every edit.
-
-**Goal:** The method reads as a sequence of named operations the agent can verify against without re-deriving the algorithm. Each helper is small enough to reason about in a single step.
-
-```js
-// Before:
-function add(item, quantity) {
-  if (this.readOnly) throw new Error('list is read-only');
-  const existing = this.items.find(line => line.product.id === item.id);
-  if (existing) {
-    existing.quantity += quantity;
-  } else {
-    this.items.push({ product: item, quantity });
-    this.items.sort((a, b) => a.product.id - b.product.id);
-  }
-  this.recalculateTotal();
-}
-
-// After:
-function add(item, quantity) {
-  assertWritable(this);
-  const existing = findLineFor(this.items, item);
-  if (existing) {
-    increaseQuantity(existing, quantity);
-  } else {
-    insertNewLine(this.items, item, quantity);
-  }
-  this.recalculateTotal();
-}
-```
-
-_Example source: Illustrative example written for this site, not a quotation from the book. The pattern itself is Joshua Kerievsky's, from Refactoring to Patterns (Addison-Wesley, 2004)._
-
-**Pressure:** Every edit re-loads the full method body to confirm behavior preservation. Chained orchestration changes compound context cost; reasoning about cross-step invariants gets harder as the method grows.
-
-**Tradeoff:** Each helper inflates context-window cost by one definition the next reasoning step must load. Over-decomposing fragments a single procedure across many files.
-
-**Relief:** The composed method captures the algorithm in named steps; helpers are independently verifiable; refactoring orchestration is a localized change. Smaller diff surface per commit.
-
-**Trap:** A deeply-nested hierarchy of helpers where the agent must chase multiple definitions to understand a single original method — context cost multiplies and cross-helper invariants vanish from view.
-
-**Triggered by:** Long Function (smells), Extract Function (refactorings), Replace Temp with Query (refactorings)
