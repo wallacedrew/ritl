@@ -19,6 +19,10 @@ export class CatalogEntryName {
     return new CatalogEntryName(value, "smells");
   }
 
+  static pattern(value: string): CatalogEntryName {
+    return new CatalogEntryName(value, "patterns");
+  }
+
   toString(): string {
     return this.value;
   }

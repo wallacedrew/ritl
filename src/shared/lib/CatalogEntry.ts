@@ -2,10 +2,10 @@ import type { CatalogEntryName } from "./CatalogEntryName";
 import type { Forces } from "./Forces";
 import type { SafetyNet } from "@/refactorings/lib/SafetyNet";
 
-export type CatalogKind = "smells" | "refactorings";
+export type CatalogKind = "smells" | "refactorings" | "patterns";
 export type Lens = "human" | "agent";
 
-export const LEGAL_CATALOGS: readonly CatalogKind[] = ["smells", "refactorings"];
+export const LEGAL_CATALOGS: readonly CatalogKind[] = ["smells", "refactorings", "patterns"];
 
 export type CatalogEntryProps = {
   catalog: CatalogKind;

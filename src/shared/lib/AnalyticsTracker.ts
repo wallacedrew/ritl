@@ -5,9 +5,12 @@ export type AnalyticsEvent =
   | { event: "snippet_downloaded"; properties: { snippet: string } }
   | {
       event: "nav_clicked";
-      properties: { tab: "refactorings" | "smells" | "reference" | "plugin" };
+      properties: { tab: "refactorings" | "smells" | "reference" | "patterns" | "plugin" };
     }
-  | { event: "search_selected"; properties: { kind: "smell" | "refactoring"; slug: string } };
+  | {
+      event: "search_selected";
+      properties: { kind: "smell" | "refactoring" | "pattern"; slug: string };
+    };
 
 export type AnalyticsEventName = AnalyticsEvent["event"];
 

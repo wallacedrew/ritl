@@ -71,9 +71,58 @@ describe("parseCatalogEntry", () => {
   });
 
   it("rejects an unknown catalog discriminator", () => {
-    expect(() => parseCatalogEntry({ ...validSmell, catalog: "patterns" })).toThrow(
+    expect(() => parseCatalogEntry({ ...validSmell, catalog: "rituals" })).toThrow(
       /catalog.*one of/i,
     );
+  });
+
+  it("parses a pattern with object-shape nemeses targeting refactorings or smells", () => {
+    const validPattern = {
+      catalog: "patterns",
+      name: "Compose Method",
+      nemeses: [
+        { catalog: "refactorings", name: "Extract Function" },
+        { catalog: "smells", name: "Long Function" },
+      ],
+      before: "long method",
+      after: "small named steps",
+      forces: { human: validForcesRecord, agent: validForcesRecord },
+    };
+
+    const entry = parseCatalogEntry(validPattern);
+
+    expect(entry.catalog).toBe("patterns");
+    expect(entry.name.toString()).toBe("Compose Method");
+    expect(entry.nemeses.map((n) => n.toCatalogHref())).toEqual([
+      "/refactoring/refactorings/extract-function",
+      "/refactoring/smells/long-function",
+    ]);
+  });
+
+  it("rejects a pattern nemesis that is a bare string instead of {catalog, name}", () => {
+    expect(() =>
+      parseCatalogEntry({
+        catalog: "patterns",
+        name: "Compose Method",
+        nemeses: ["Extract Function"],
+        before: "x",
+        after: "y",
+        forces: { human: validForcesRecord, agent: validForcesRecord },
+      }),
+    ).toThrow(/pattern nemeses must be objects/i);
+  });
+
+  it("rejects a pattern nemesis whose catalog field is not refactorings or smells", () => {
+    expect(() =>
+      parseCatalogEntry({
+        catalog: "patterns",
+        name: "Compose Method",
+        nemeses: [{ catalog: "patterns", name: "Strategy" }],
+        before: "x",
+        after: "y",
+        forces: { human: validForcesRecord, agent: validForcesRecord },
+      }),
+    ).toThrow(/pattern nemesis "catalog".*refactorings.*smells/i);
   });
 
   it("rejects when nemeses is missing or not an array", () => {

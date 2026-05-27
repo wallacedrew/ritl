@@ -12,6 +12,17 @@ describe("CatalogEntryName", () => {
     expect(() => CatalogEntryName.smell("")).toThrow(/cannot be empty/);
   });
 
+  it("rejects an empty pattern name at construction", () => {
+    expect(() => CatalogEntryName.pattern("")).toThrow(/cannot be empty/);
+  });
+
+  it("treats a pattern name distinct from a refactoring name with the same value", () => {
+    const asRefactoring = CatalogEntryName.refactoring("Compose Method");
+    const asPattern = CatalogEntryName.pattern("Compose Method");
+
+    expect(asRefactoring.equals(asPattern)).toBe(false);
+  });
+
   it("renders refactoring URLs under the refactorings kind", () => {
     const name = CatalogEntryName.refactoring("Extract Function");
 

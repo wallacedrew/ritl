@@ -17,6 +17,17 @@ function slugFromHref(href: string): string {
   return last && last.length > 0 ? last : "";
 }
 
+function dotColorFor(kind: CatalogItem["kind"]): string {
+  switch (kind) {
+    case "smell":
+      return "warning.main";
+    case "refactoring":
+      return "primary.main";
+    case "pattern":
+      return "secondary.main";
+  }
+}
+
 interface CatalogSearchProps {
   items: CatalogItem[];
 }
@@ -60,7 +71,7 @@ export default function CatalogSearch({ items }: CatalogSearchProps) {
                   width: 8,
                   height: 8,
                   borderRadius: "50%",
-                  bgcolor: option.kind === "smell" ? "warning.main" : "primary.main",
+                  bgcolor: dotColorFor(option.kind),
                   flexShrink: 0,
                 }}
               />

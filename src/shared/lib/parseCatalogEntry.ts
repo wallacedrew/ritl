@@ -30,15 +30,46 @@ function readNemeses(
   if (!Array.isArray(raw)) {
     throw new Error('parseCatalogEntry: field "nemeses" must be an array');
   }
-  const oppositeCatalog: CatalogKind = ownCatalog === "smells" ? "refactorings" : "smells";
-  return raw.map((candidate) => {
-    if (typeof candidate !== "string") {
-      throw new Error('parseCatalogEntry: every entry in "nemeses" must be a string');
-    }
-    return oppositeCatalog === "refactorings"
-      ? CatalogEntryName.refactoring(candidate)
-      : CatalogEntryName.smell(candidate);
-  });
+  if (ownCatalog === "patterns") {
+    return raw.map(parsePatternNemesis);
+  }
+  return raw.map((candidate) => parseFowlerNemesis(candidate, ownCatalog));
+}
+
+function parseFowlerNemesis(
+  candidate: unknown,
+  ownCatalog: "refactorings" | "smells",
+): CatalogEntryName {
+  if (typeof candidate !== "string") {
+    throw new Error('parseCatalogEntry: every entry in "nemeses" must be a string');
+  }
+  const oppositeCatalog: "refactorings" | "smells" =
+    ownCatalog === "smells" ? "refactorings" : "smells";
+  return oppositeCatalog === "refactorings"
+    ? CatalogEntryName.refactoring(candidate)
+    : CatalogEntryName.smell(candidate);
+}
+
+function parsePatternNemesis(candidate: unknown): CatalogEntryName {
+  if (candidate === null || typeof candidate !== "object" || Array.isArray(candidate)) {
+    throw new Error(
+      'parseCatalogEntry: pattern nemeses must be objects { catalog: "refactorings" | "smells", name: string }',
+    );
+  }
+  const record = candidate as Record<string, unknown>;
+  const target = record.catalog;
+  const name = record.name;
+  if (target !== "refactorings" && target !== "smells") {
+    throw new Error(
+      `parseCatalogEntry: pattern nemesis "catalog" must be "refactorings" or "smells", got ${JSON.stringify(target)}`,
+    );
+  }
+  if (typeof name !== "string") {
+    throw new Error('parseCatalogEntry: pattern nemesis "name" must be a string');
+  }
+  return target === "refactorings"
+    ? CatalogEntryName.refactoring(name)
+    : CatalogEntryName.smell(name);
 }
 
 function readForcesRecord(record: Record<string, unknown>, lens: "human" | "agent"): ForcesRecord {
@@ -98,10 +129,7 @@ export function parseCatalogEntry(raw: unknown): CatalogEntry {
   }
   const record = raw as Record<string, unknown>;
   const catalog = readCatalog(record);
-  const name =
-    catalog === "smells"
-      ? CatalogEntryName.smell(readStringField(record, "name"))
-      : CatalogEntryName.refactoring(readStringField(record, "name"));
+  const name = readCatalogEntryName(record, catalog);
 
   return CatalogEntry.from({
     catalog,
@@ -112,4 +140,19 @@ export function parseCatalogEntry(raw: unknown): CatalogEntry {
     forces: readForces(record),
     safetyNet: readOptionalSafetyNet(record),
   });
+}
+
+function readCatalogEntryName(
+  record: Record<string, unknown>,
+  catalog: CatalogKind,
+): CatalogEntryName {
+  const rawName = readStringField(record, "name");
+  switch (catalog) {
+    case "smells":
+      return CatalogEntryName.smell(rawName);
+    case "refactorings":
+      return CatalogEntryName.refactoring(rawName);
+    case "patterns":
+      return CatalogEntryName.pattern(rawName);
+  }
 }
