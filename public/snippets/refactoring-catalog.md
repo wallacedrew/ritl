@@ -3530,11 +3530,64 @@ _Example source: Illustrative example written for this site, adapted from Keriev
 **Triggered by:** Duplicated Code (smells), Extract Superclass (refactorings), Pull Up Method (refactorings)
 
 ---
+name: extract-parameter
+description: Apply Extract Parameter when you see Duplicated Code, Parameterize Function, Extract Function. One method the agent reads once; callers supply the varying value at the call site.
+---
+
+# Apply: 07 — Extract Parameter
+
+**Symptom:** N near-duplicate method definitions the agent must verify match on every edit. The single difference between them is mechanical; the rest is copy-pasted. The agent must re-read all N to verify a change in one was correctly propagated.
+
+**Goal:** One method the agent reads once; callers supply the varying value at the call site. Verification of behaviour reduces from N×assertion to 1×assertion + parameter coverage tests.
+
+```js
+// Before:
+// Three near-identical methods, differing only by which book field they search.
+class BookSearch {
+  constructor(repo) {
+    this.repo = repo;
+  }
+  searchByAuthor(query) {
+    return this.repo.where(book => book.author.toLowerCase().includes(query.toLowerCase()));
+  }
+  searchByTitle(query) {
+    return this.repo.where(book => book.title.toLowerCase().includes(query.toLowerCase()));
+  }
+  searchByPublisher(query) {
+    return this.repo.where(book => book.publisher.toLowerCase().includes(query.toLowerCase()));
+  }
+}
+
+// After:
+// One method; the varying field is a parameter.
+class BookSearch {
+  constructor(repo) {
+    this.repo = repo;
+  }
+  searchBy(field, query) {
+    return this.repo.where(book => book[field].toLowerCase().includes(query.toLowerCase()));
+  }
+}
+```
+
+_Example source: Illustrative example written for this site, adapted from Kerievsky's pattern description in Refactoring to Patterns (Addison-Wesley, 2004), chapter 6. The book frames Extract Parameter as the structural move that prepares a method for Form Template Method by isolating what varies between near-duplicate methods._
+
+**Pressure:** Per-method duplication multiplies the agent's edit cost on every shared-logic change. The agent's static reasoning cannot guarantee that N copies of a closure stayed identical without re-inspecting each.
+
+**Tradeoff:** A parameterized method obscures static call-graph analysis — the agent cannot tell from the call site alone which behaviour fires. Stringy parameters (`'author'`) defeat static type-checking; misspellings ship to runtime.
+
+**Relief:** Diff surface for shared logic collapses to one method body. Per-parameter behaviour is covered by table-driven tests the agent can read and reason about in one block; new variants are one new test row.
+
+**Trap:** Replacing N methods with a method that takes a stringy parameter pushes the type information out of the type system and into runtime. The agent must verify caller intent by tracing the literal across files, which costs more context than reading N distinct method names.
+
+**Triggered by:** Duplicated Code (smells), Parameterize Function (refactorings), Extract Function (refactorings)
+
+---
 name: replace-conditional-logic-with-strategy
 description: Apply Replace Conditional Logic with Strategy when you see Repeated Switches, Replace Conditional with Polymorphism, Decompose Conditional. Each variant lives in its own class; the agent can verify one strategy's behavior without loading the others.
 ---
 
-# Apply: 07 — Replace Conditional Logic with Strategy
+# Apply: 08 — Replace Conditional Logic with Strategy
 
 **Symptom:** A method whose body the agent must trace through a chain of branches to determine what runs. Each branch hides domain logic; verifying behavior requires loading every branch in scope on every edit.
 

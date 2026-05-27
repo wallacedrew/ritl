@@ -241,6 +241,46 @@
   },
   {
     "catalog": "patterns",
+    "name": "Extract Parameter",
+    "nemeses": [
+      {
+        "catalog": "smells",
+        "name": "Duplicated Code"
+      },
+      {
+        "catalog": "refactorings",
+        "name": "Parameterize Function"
+      },
+      {
+        "catalog": "refactorings",
+        "name": "Extract Function"
+      }
+    ],
+    "before": "// Three near-identical methods, differing only by which book field they search.\nclass BookSearch {\n  constructor(repo) {\n    this.repo = repo;\n  }\n  searchByAuthor(query) {\n    return this.repo.where(book => book.author.toLowerCase().includes(query.toLowerCase()));\n  }\n  searchByTitle(query) {\n    return this.repo.where(book => book.title.toLowerCase().includes(query.toLowerCase()));\n  }\n  searchByPublisher(query) {\n    return this.repo.where(book => book.publisher.toLowerCase().includes(query.toLowerCase()));\n  }\n}",
+    "after": "// One method; the varying field is a parameter.\nclass BookSearch {\n  constructor(repo) {\n    this.repo = repo;\n  }\n  searchBy(field, query) {\n    return this.repo.where(book => book[field].toLowerCase().includes(query.toLowerCase()));\n  }\n}",
+    "safetyNet": "unit test",
+    "exampleSource": "Illustrative example written for this site, adapted from Kerievsky's pattern description in Refactoring to Patterns (Addison-Wesley, 2004), chapter 6. The book frames Extract Parameter as the structural move that prepares a method for Form Template Method by isolating what varies between near-duplicate methods.",
+    "forces": {
+      "human": {
+        "symptom": "A class carries several near-identical methods that differ only by a single literal — a field name, a constant, a threshold. The duplication is mechanical; the methods change in lockstep; the class grows linearly with the number of variants you support.",
+        "goal": "One parameterized method replaces the N variants. What varies between them becomes an explicit argument; what stays the same lives in one place.",
+        "pressure": "Each duplicated method must be maintained, tested, and documented separately. A bug in the iteration semantics requires N edits; adding a new variant means another near-copy, not new logic. Reviewers must scan all N methods to confirm they stayed consistent.",
+        "tradeoff": "Parameterized methods can become call-site noise — the caller now passes a string or constant whose meaning isn't clear from the call site (`searchBy('author', q)` reads worse than `searchByAuthor(q)`). For two or three variants with stable, semantically distinct names, separate methods may be more intention-revealing.",
+        "relief": "Bug fixes land once; new variants are zero new code at the class level; tests cover the parameterized method once and trust the parameter to do its job. The class's surface contracts to the actual behaviours it offers.",
+        "trap": "A parameter that is really a type code — `searchBy(field, q)` where `field` must be one of three strings — replaces compile-time clarity with runtime stringy-ness. Past a small number of values, this is a signal to reach for Replace Type Code With Class or Strategy."
+      },
+      "agent": {
+        "symptom": "N near-duplicate method definitions the agent must verify match on every edit. The single difference between them is mechanical; the rest is copy-pasted. The agent must re-read all N to verify a change in one was correctly propagated.",
+        "goal": "One method the agent reads once; callers supply the varying value at the call site. Verification of behaviour reduces from N×assertion to 1×assertion + parameter coverage tests.",
+        "pressure": "Per-method duplication multiplies the agent's edit cost on every shared-logic change. The agent's static reasoning cannot guarantee that N copies of a closure stayed identical without re-inspecting each.",
+        "tradeoff": "A parameterized method obscures static call-graph analysis — the agent cannot tell from the call site alone which behaviour fires. Stringy parameters (`'author'`) defeat static type-checking; misspellings ship to runtime.",
+        "relief": "Diff surface for shared logic collapses to one method body. Per-parameter behaviour is covered by table-driven tests the agent can read and reason about in one block; new variants are one new test row.",
+        "trap": "Replacing N methods with a method that takes a stringy parameter pushes the type information out of the type system and into runtime. The agent must verify caller intent by tracing the literal across files, which costs more context than reading N distinct method names."
+      }
+    }
+  },
+  {
+    "catalog": "patterns",
     "name": "Replace Conditional Logic with Strategy",
     "nemeses": [
       {
