@@ -838,5 +838,45 @@
         "trap": "A grammar with many nodes representing fine-grained syntactic variations forces the agent to load a large hierarchy to reason about any expression. Per-node specialization (NumericEquals vs. StringEquals vs. DateEquals) can multiply file count without proportional reasoning gain."
       }
     }
+  },
+  {
+    "catalog": "patterns",
+    "name": "Replace Implicit Tree With Composite",
+    "nemeses": [
+      {
+        "catalog": "smells",
+        "name": "Primitive Obsession"
+      },
+      {
+        "catalog": "refactorings",
+        "name": "Replace Primitive with Object"
+      },
+      {
+        "catalog": "refactorings",
+        "name": "Encapsulate Record"
+      }
+    ],
+    "before": "// Tree shape encoded as flat records joined by parentId pointers.\nconst items = [\n  { id: 1, label: 'File', parentId: null },\n  { id: 2, label: 'Edit', parentId: null },\n  { id: 3, label: 'New', parentId: 1 },\n  { id: 4, label: 'Open', parentId: 1 },\n  { id: 5, label: 'Recent', parentId: 4 },\n  { id: 6, label: 'Cut', parentId: 2 },\n];\n\nfunction render(items) {\n  const roots = items.filter((i) => i.parentId === null);\n  return roots.map((root) => renderItem(root, items)).join('\\n');\n}\nfunction renderItem(item, items, depth = 0) {\n  const children = items.filter((i) => i.parentId === item.id);\n  let line = '  '.repeat(depth) + item.label;\n  for (const child of children) {\n    line += '\\n' + renderItem(child, items, depth + 1);\n  }\n  return line;\n}",
+    "after": "// Explicit composite: each node holds its children directly.\nclass MenuItem {\n  constructor(label) {\n    this.label = label;\n    this.children = [];\n  }\n  add(child) {\n    this.children.push(child);\n    return this;\n  }\n  render(depth = 0) {\n    return (\n      '  '.repeat(depth) +\n      this.label +\n      this.children.map((child) => '\\n' + child.render(depth + 1)).join('')\n    );\n  }\n}\n\nconst file = new MenuItem('File')\n  .add(new MenuItem('New'))\n  .add(new MenuItem('Open').add(new MenuItem('Recent')));\nconst edit = new MenuItem('Edit').add(new MenuItem('Cut'));\nconst menus = [file, edit];\n\nmenus.map((menu) => menu.render()).join('\\n');",
+    "safetyNet": "unit test",
+    "exampleSource": "Illustrative example written for this site, faithful to Kerievsky's pattern shape in Refactoring to Patterns (Addison-Wesley, 2004), chapter 9. The book uses an XML-ish document tree encoded implicitly; this JavaScript version uses a menu hierarchy encoded as flat parentId-joined records — same shape, accessible domain.",
+    "forces": {
+      "human": {
+        "symptom": "Tree-shaped data is encoded as flat records with parentId pointers, prefix strings (`'products/category/electronics'`), or nested arrays without typed nodes. Every traversal re-derives the tree shape by filtering or string-parsing; bugs surface as 'this node should be a child of X but isn't'.",
+        "goal": "Each node is an object with explicit children. Traversals are method calls on the node; tree-shape invariants (cycles, orphans) are impossible by construction; the data structure expresses what it is.",
+        "pressure": "Implicit trees defeat type safety — the tree's shape is an emergent property of pointer wiring. Operations that should be O(node) become O(N) filters; relational join logic leaks into every traversal; bugs in one filter ship as silent data inconsistencies.",
+        "tradeoff": "Concrete tree objects must be constructed (often by reading the flat data once); persistence requires explicit serialization back to whatever store the implicit form lived in. Memory cost grows with tree size; the flat form may have been load-on-demand.",
+        "relief": "Traversals shrink to recursive method calls; tree invariants are enforceable at construction; type-checked access replaces filtered-list-of-records. Adding behaviour (e.g., 'render', 'count', 'find') is a method on the node, not a new traversal function.",
+        "trap": "Eager construction of large trees from large flat datasets explodes memory. The pattern pays when the tree is the working unit; for trees that exist primarily as serialized state in a database, lazy-loaded record-based traversal may stay cheaper despite the awkwardness."
+      },
+      "agent": {
+        "symptom": "Tree traversals expressed as filters over flat records the agent must trace per call to verify tree-shape invariants. Cycles, orphans, and disconnected subtrees are runtime concerns; the agent cannot statically verify a 'tree' is acyclic from the flat form.",
+        "goal": "A concrete Composite the agent reads as a typed recursive structure. Static analysis can verify that traversal methods cover all node types; tree-shape invariants live in the constructor.",
+        "pressure": "Filtering-based traversals consume context budget proportional to record count, not tree depth. The agent cannot statically distinguish a malformed flat representation (cycles, missing parents) from a valid one without simulating the parent-pointer resolution.",
+        "tradeoff": "Composite construction is itself a translation step the agent must verify against the flat form. Persistence boundaries require the agent to keep two representations in mind — the in-memory tree and the on-disk flat form. Serialization round-trips are a new bug surface.",
+        "relief": "Traversal code shrinks to one-line recursive calls; static analysis verifies node-type coverage; per-method tests target tree behaviour without record-soup setup. Diff surface for tree operations is the Composite class itself.",
+        "trap": "If the on-disk form remains the flat record set, the agent has to verify the in-memory tree stays consistent with it across edits. The pattern's gain materializes when the tree owns the canonical form; when it's a transient view over a relational store, the implicit form may stay authoritative."
+      }
+    }
   }
 ]
