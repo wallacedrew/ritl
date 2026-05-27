@@ -718,5 +718,45 @@
         "trap": "A maze of one-method strategy classes that exist only to satisfy the pattern — the agent loads N files to understand what a single conditional once expressed in one. Context cost multiplies without proportional reasoning gain."
       }
     }
+  },
+  {
+    "catalog": "patterns",
+    "name": "Replace Constructors With Creation Methods",
+    "nemeses": [
+      {
+        "catalog": "smells",
+        "name": "Mysterious Name"
+      },
+      {
+        "catalog": "refactorings",
+        "name": "Replace Constructor with Factory Function"
+      },
+      {
+        "catalog": "refactorings",
+        "name": "Change Function Declaration"
+      }
+    ],
+    "before": "// One constructor handling three different intentions through argument-shape sniffing.\nclass Money {\n  constructor(amountOrOther, currency) {\n    if (amountOrOther instanceof Money) {\n      this.amount = amountOrOther.amount;\n      this.currency = amountOrOther.currency;\n    } else if (typeof currency === 'string') {\n      this.amount = amountOrOther;\n      this.currency = currency;\n    } else {\n      this.amount = amountOrOther;\n      this.currency = 'USD';\n    }\n  }\n}\n\nconst m1 = new Money(100);            // dollars (default)\nconst m2 = new Money(100, 'EUR');     // euros\nconst m3 = new Money(m1);             // copy",
+    "after": "// One canonical constructor; named creation methods carry the intent.\nclass Money {\n  constructor(amount, currency) {\n    this.amount = amount;\n    this.currency = currency;\n  }\n  static dollars(amount) {\n    return new Money(amount, 'USD');\n  }\n  static of(amount, currency) {\n    return new Money(amount, currency);\n  }\n  static copyOf(other) {\n    return new Money(other.amount, other.currency);\n  }\n}\n\nconst m1 = Money.dollars(100);\nconst m2 = Money.of(100, 'EUR');\nconst m3 = Money.copyOf(m1);",
+    "safetyNet": "unit test",
+    "exampleSource": "Illustrative example written for this site, faithful to Kerievsky's pattern shape in Refactoring to Patterns (Addison-Wesley, 2004), chapter 6. The book uses a Loan class with overloaded Java constructors; this JavaScript version uses a Money class whose single constructor performed argument-shape sniffing to support three intentions — replaced with named static creation methods.",
+    "forces": {
+      "human": {
+        "symptom": "A class's constructor accepts several argument shapes — different counts, different types — and branches internally to figure out which intention the caller had. Reading a `new Money(x, y)` call site gives no hint of which path runs; argument-shape sniffing is brittle, easy to misuse, and resists static analysis.",
+        "goal": "One canonical constructor accepts the full, unambiguous parameter set; named static creation methods (`Money.dollars`, `Money.copyOf`, `Money.zero`) express the intent at the call site. Every construction site reads as a verb in the domain.",
+        "pressure": "Argument-sniffing constructors are a parameter-list smell with conditional-dispatch on top. They invite caller mistakes — passing arguments in the wrong order or with the wrong type silently produces a different object. The intent at the call site is hidden in the receiver, not the verb.",
+        "tradeoff": "Static creation methods multiply with the kinds of intention you support; the class gains a long prefix-namespace of factory entry points. For domain types with only one natural construction, a plain constructor is clearer than ceremony — creation methods earn their keep when intentions diverge.",
+        "relief": "Call sites read as domain verbs (`Money.dollars(100)`, `Money.copyOf(m1)`). The canonical constructor enforces invariants once; creation methods compose them with intent-revealing names. New intentions land as new named methods rather than as new branches inside one constructor.",
+        "trap": "Creation methods that are just `static of(a, c) { return new Money(a, c); }` add a layer without buying clarity. The pattern pays when each creation method captures a distinct intention or applies a non-trivial default; when not, exposing the constructor is simpler."
+      },
+      "agent": {
+        "symptom": "Constructor-overloading-via-sniffing where the agent must reason about argument shapes to know what the constructor does for a given call. Static type information is partial at best; the agent has to read the constructor body to verify which branch fires per call site.",
+        "goal": "Each static creation method has a clear, statically-typed signature. The agent verifies the canonical constructor's invariants once; per-creation-method behaviour is one named entry point with one return type.",
+        "pressure": "Argument-sniffing constructors defeat the agent's ability to statically classify call sites by intent. Per-call-site verification requires reading the receiver's constructor body and reproducing the sniffing logic; cross-call invariants are nearly impossible to enforce statically.",
+        "tradeoff": "Multiple creation methods expand the class's static API surface; the agent must learn them all to know which to call for a given intent. For agents working from a SKILL or doc rather than full source, the proliferation is a real cost.",
+        "relief": "Static analysis identifies creation-method usage by name; intent at the call site is statically visible. Diff surface for adding an intent is one new method; the canonical constructor stays narrow.",
+        "trap": "A wall of nearly-identical static creation methods that differ only in defaults can become harder to scan than one constructor with documented defaults. The pattern's clarity gain depends on each method representing a genuinely distinct intention."
+      }
+    }
   }
 ]
