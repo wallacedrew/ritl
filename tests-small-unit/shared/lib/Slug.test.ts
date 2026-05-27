@@ -90,6 +90,12 @@ describe("Slug.toCatalogHref", () => {
       "/refactoring/smells/mysterious-name",
     );
   });
+
+  it("builds a patterns catalog href under the single-catalog Kerievsky sub-site", () => {
+    expect(Slug.from("Compose Method").toCatalogHref("patterns")).toBe(
+      "/refactoring-to-patterns/compose-method",
+    );
+  });
 });
 
 describe("Slug.toSnippetHref", () => {

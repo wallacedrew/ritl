@@ -1,0 +1,32 @@
+[
+  {
+    "catalog": "patterns",
+    "name": "Compose Method",
+    "nemeses": [
+      { "catalog": "smells", "name": "Long Function" },
+      { "catalog": "refactorings", "name": "Extract Function" },
+      { "catalog": "refactorings", "name": "Replace Temp with Query" }
+    ],
+    "before": "function add(item, quantity) {\n  if (this.readOnly) throw new Error('list is read-only');\n  const existing = this.items.find(line => line.product.id === item.id);\n  if (existing) {\n    existing.quantity += quantity;\n  } else {\n    this.items.push({ product: item, quantity });\n    this.items.sort((a, b) => a.product.id - b.product.id);\n  }\n  this.recalculateTotal();\n}",
+    "after": "function add(item, quantity) {\n  assertWritable(this);\n  const existing = findLineFor(this.items, item);\n  if (existing) {\n    increaseQuantity(existing, quantity);\n  } else {\n    insertNewLine(this.items, item, quantity);\n  }\n  this.recalculateTotal();\n}",
+    "safetyNet": "unit test",
+    "forces": {
+      "human": {
+        "symptom": "A method that switches between abstraction levels mid-body — control statements, low-level mutations, validation, and high-level orchestration interleaved. Readers have to mentally separate the algorithm from the bookkeeping every time they open the file.",
+        "goal": "The top of the method reads as a numbered outline of intention-revealing steps at one level of detail; each step's how-it-works lives in a named helper.",
+        "pressure": "Every reader pays the outline-extraction cost on every visit. Small edits to one step force you to hold all the others in working memory; the method becomes a churn magnet that touches unrelated changes in the same diff.",
+        "tradeoff": "Helper methods can scatter logic that was once readable as a single span; over-decomposition produces a maze of tiny methods where the actual computation is buried three levels deep.",
+        "relief": "The method body becomes the algorithm in domain language; details live in helpers whose names tell the reader what they do. Editing one concern stays local to the matching helper.",
+        "trap": "Compose every method this way and you end up with a forest of one-liners where the workflow can no longer be read linearly — the named steps become a directory listing instead of a procedure."
+      },
+      "agent": {
+        "symptom": "A method whose body the agent must trace line-by-line to understand the algorithm; the high-level shape is obscured by interleaved details. Verifying behavior preservation requires re-reading the entire span on every edit.",
+        "goal": "The method reads as a sequence of named operations the agent can verify against without re-deriving the algorithm. Each helper is small enough to reason about in a single step.",
+        "pressure": "Every edit re-loads the full method body to confirm behavior preservation. Chained orchestration changes compound context cost; reasoning about cross-step invariants gets harder as the method grows.",
+        "tradeoff": "Each helper inflates context-window cost by one definition the next reasoning step must load. Over-decomposing fragments a single procedure across many files.",
+        "relief": "The composed method captures the algorithm in named steps; helpers are independently verifiable; refactoring orchestration is a localized change. Smaller diff surface per commit.",
+        "trap": "A deeply-nested hierarchy of helpers where the agent must chase multiple definitions to understand a single original method — context cost multiplies and cross-helper invariants vanish from view."
+      }
+    }
+  }
+]

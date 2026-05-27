@@ -7,7 +7,13 @@ export const FOWLER: SubSite = SubSite.from({
   catalogs: ["refactorings", "smells"],
 });
 
-export const SUB_SITES: readonly SubSite[] = [FOWLER];
+export const KERIEVSKY: SubSite = SubSite.from({
+  slug: "refactoring-to-patterns",
+  title: "Refactoring to Patterns",
+  catalogs: ["patterns"],
+});
+
+export const SUB_SITES: readonly SubSite[] = [FOWLER, KERIEVSKY];
 
 export function subSiteForCatalog(catalog: CatalogKind): SubSite {
   const owner = SUB_SITES.find((subSite) => subSite.containsCatalog(catalog));

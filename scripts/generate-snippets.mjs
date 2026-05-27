@@ -23,6 +23,9 @@ const refactorings = JSON.parse(
   readFileSync(resolve(root, "src/refactorings/content/refactorings.json"), "utf-8"),
 );
 const smells = JSON.parse(readFileSync(resolve(root, "src/smells/content/smells.json"), "utf-8"));
+const patterns = JSON.parse(
+  readFileSync(resolve(root, "src/patterns/content/patterns.json"), "utf-8"),
+);
 
 // Mirrors src/refactorings/lib/categories.ts. Duplicated here so the
 // generator can run as a plain Node script without TS tooling; keep in
@@ -222,6 +225,52 @@ function formatRefactoringBody(r) {
   ].join("\n");
 }
 
+function routingDescriptionForPattern(p) {
+  const forces = agentLensForces(p);
+  const triggers = p.nemeses.map((n) => n.name).join(", ");
+  const goal = neutralizeColonSpace(firstSentence(forces.goal));
+  return `Apply ${p.name} when you see ${triggers}. ${goal}`;
+}
+
+function formatPatternBody(p, index) {
+  const num = String(index + 1).padStart(2, "0");
+  const forces = agentLensForces(p);
+  const triggers = p.nemeses.map((n) => `${n.name} (${n.catalog})`).join(", ");
+  return [
+    `# Apply: ${num} — ${p.name}`,
+    "",
+    `**Symptom:** ${forces.symptom}`,
+    "",
+    `**Goal:** ${forces.goal}`,
+    "",
+    "```js",
+    "// Before:",
+    p.before,
+    "",
+    "// After:",
+    p.after,
+    "```",
+    "",
+    `**Pressure:** ${forces.pressure}`,
+    "",
+    `**Tradeoff:** ${forces.tradeoff}`,
+    "",
+    `**Relief:** ${forces.relief}`,
+    "",
+    `**Trap:** ${forces.trap}`,
+    "",
+    `**Triggered by:** ${triggers}`,
+    "",
+  ].join("\n");
+}
+
+function formatPatternSkill(p, index) {
+  const slug = slugify(p.name);
+  const description = routingDescriptionForPattern(p);
+  assertSafeBareYamlScalar(description, p.name);
+  return frontmatter(slug, description) + formatPatternBody(p, index);
+}
+
 function formatSmellBody(s, index) {
   const num = String(index + 1).padStart(2, "0");
   const forces = agentLensForces(s);
@@ -276,7 +325,7 @@ function renderCatalogFile() {
 
   const header = `# Refactoring catalog
 
-Centralized view of the 90 catalog skills. Each section below is the
+Centralized view of the 91 catalog skills. Each section below is the
 full SKILL.md content of the matching per-entity download — the
 content is identical at the section level. Use this single paste when
 you want the whole vocabulary loaded; use the per-entity downloads
@@ -302,6 +351,14 @@ when you want auto-invocable skills under \`~/.claude/skills/<slug>/SKILL.md\`.
   parts.push("");
   smells.forEach((smell, index) => {
     parts.push(formatSmellSkill(smell, index));
+  });
+
+  parts.push("---");
+  parts.push("");
+  parts.push("## Patterns (Kerievsky — Refactoring to Patterns)");
+  parts.push("");
+  patterns.forEach((pattern, index) => {
+    parts.push(formatPatternSkill(pattern, index));
   });
 
   return parts.join("\n");
@@ -366,6 +423,14 @@ for (const dest of ["docs/snippets", "public/snippets"]) {
   smells.forEach((s, i) => {
     writeFileSync(resolve(root, `${dest}/smells/${slugify(s.name)}.md`), formatSmellSkill(s, i));
   });
+
+  mkdirSync(resolve(root, `${dest}/patterns`), { recursive: true });
+  patterns.forEach((p, i) => {
+    writeFileSync(
+      resolve(root, `${dest}/patterns/${slugify(p.name)}.md`),
+      formatPatternSkill(p, i),
+    );
+  });
 }
 
 // --- Plugin distribution ----------------------------------------------------
@@ -381,7 +446,7 @@ for (const dest of ["docs/snippets", "public/snippets"]) {
 const PLUGIN_NAME = "refactor";
 const MARKETPLACE_NAME = "ritl";
 const PLUGIN_DESCRIPTION =
-  "91 SKILL.md skills — 1 workflow orchestrator + 66 refactorings + 24 smells. Apply Fowler refactorings when their preconditions appear; refuse known code smells. Source: https://refactoring.com/catalog/";
+  "92 SKILL.md skills — 1 workflow orchestrator + 66 refactorings + 24 smells + 1 Kerievsky pattern (Compose Method). Apply Fowler refactorings when their preconditions appear; refuse known code smells; apply Kerievsky composite refactorings whose destination is a pattern. Sources: https://refactoring.com/catalog/ and Refactoring to Patterns (Kerievsky 2004).";
 
 const pluginRoot = resolve(root, `plugin/${PLUGIN_NAME}`);
 const pluginSkillsRoot = resolve(pluginRoot, "skills");
@@ -393,6 +458,7 @@ const marketplaceDir = resolve(root, ".claude-plugin");
 const expectedCatalogSlugs = new Set([
   ...refactorings.map((r) => slugify(r.name)),
   ...smells.map((s) => slugify(s.name)),
+  ...patterns.map((p) => slugify(p.name)),
 ]);
 if (existsSync(pluginSkillsRoot)) {
   for (const entry of readdirSync(pluginSkillsRoot)) {
@@ -450,12 +516,21 @@ smells.forEach((s, i) => {
   mkdirSync(dir, { recursive: true });
   writeFileSync(resolve(dir, "SKILL.md"), formatSmellSkill(s, i));
 });
+patterns.forEach((p, i) => {
+  const slug = slugify(p.name);
+  const dir = resolve(pluginSkillsRoot, slug);
+  mkdirSync(dir, { recursive: true });
+  writeFileSync(resolve(dir, "SKILL.md"), formatPatternSkill(p, i));
+});
 
 console.log("Generated skill-shaped snippets in docs/snippets/ and public/snippets/");
 console.log(`  ${refactorings.length} refactoring SKILL.md files`);
 console.log(`  ${smells.length} smell SKILL.md files`);
+console.log(`  ${patterns.length} pattern SKILL.md files`);
 console.log("  1 consolidated refactoring-catalog.md");
 console.log("  1 refactoring-discipline.md (AGENTS.md rules snippet)");
 console.log(`Generated plugin '${PLUGIN_NAME}' at plugin/${PLUGIN_NAME}/`);
 console.log(`  marketplace.json at .claude-plugin/marketplace.json`);
-console.log(`  ${refactorings.length + smells.length} skill folders under skills/`);
+console.log(
+  `  ${refactorings.length + smells.length + patterns.length} skill folders under skills/`,
+);

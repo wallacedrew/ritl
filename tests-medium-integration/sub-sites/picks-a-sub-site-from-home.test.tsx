@@ -10,8 +10,15 @@ describe("user picks a sub-site from the home page picker", () => {
   it("home page offers a Refactoring (Fowler) card linking to /refactoring", () => {
     renderWithTheme(<HomePage />);
 
-    const fowlerCardLink = screen.getByRole("link", { name: /Refactoring/i });
+    const fowlerCardLink = screen.getByRole("link", { name: "Refactoring" });
     expect(fowlerCardLink).toHaveAttribute("href", "/refactoring");
+  });
+
+  it("home page also offers a Refactoring to Patterns (Kerievsky) card linking to /refactoring-to-patterns", () => {
+    renderWithTheme(<HomePage />);
+
+    const kerievskyCardLink = screen.getByRole("link", { name: "Refactoring to Patterns" });
+    expect(kerievskyCardLink).toHaveAttribute("href", "/refactoring-to-patterns");
   });
 
   it("Fowler landing shows chapter groupings and links into catalog list pages", () => {

@@ -1,3 +1,4 @@
+import { loadPatterns } from "@/patterns/lib/loadPatterns";
 import { loadRefactorings } from "@/refactorings/lib/loadRefactorings";
 import { loadSmells } from "@/smells/lib/loadSmells";
 
@@ -18,5 +19,12 @@ export function loadCatalogItems(): CatalogItem[] {
     href: refactoring.name.toCatalogHref(),
   }));
 
-  return [...refactorings, ...smells];
+  const patterns: CatalogItem[] = loadPatterns().map((pattern, index) => ({
+    kind: "pattern",
+    number: index + 1,
+    name: pattern.name.toString(),
+    href: pattern.name.toCatalogHref(),
+  }));
+
+  return [...refactorings, ...smells, ...patterns];
 }
