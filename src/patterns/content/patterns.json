@@ -401,6 +401,46 @@
   },
   {
     "catalog": "patterns",
+    "name": "Introduce Polymorphic Creation With Factory Method",
+    "nemeses": [
+      {
+        "catalog": "smells",
+        "name": "Repeated Switches"
+      },
+      {
+        "catalog": "refactorings",
+        "name": "Replace Conditional with Polymorphism"
+      },
+      {
+        "catalog": "refactorings",
+        "name": "Replace Constructor with Factory Function"
+      }
+    ],
+    "before": "// Branching on a type code to decide which collaborator to construct.\nclass DocumentReader {\n  constructor(format) {\n    this.format = format;\n  }\n  read(text) {\n    let parser;\n    if (this.format === 'xml') {\n      parser = new XmlParser();\n    } else if (this.format === 'json') {\n      parser = new JsonParser();\n    } else if (this.format === 'csv') {\n      parser = new CsvParser();\n    } else {\n      throw new Error(`unsupported format ${this.format}`);\n    }\n    return parser.parse(text);\n  }\n}",
+    "after": "// Each subclass owns its createParser primitive; the base class is conditional-free.\nclass DocumentReader {\n  read(text) {\n    return this.createParser().parse(text);\n  }\n  createParser() {\n    throw new Error('abstract: subclasses must implement createParser');\n  }\n}\nclass XmlReader extends DocumentReader {\n  createParser() {\n    return new XmlParser();\n  }\n}\nclass JsonReader extends DocumentReader {\n  createParser() {\n    return new JsonParser();\n  }\n}\nclass CsvReader extends DocumentReader {\n  createParser() {\n    return new CsvParser();\n  }\n}",
+    "safetyNet": "unit test",
+    "exampleSource": "Illustrative example written for this site, adapted from Kerievsky's pattern description in Refactoring to Patterns (Addison-Wesley, 2004), chapter 6. The book frames this as the polymorphic alternative to type-code-driven construction; this JavaScript version uses document readers and parsers, same Factory Method shape.",
+    "forces": {
+      "human": {
+        "symptom": "A method conditionally constructs a collaborator based on a type code carried by the caller. The conditional grows wider with every new variant; each variant's construction details leak into the shared method body; the method changes for two unrelated reasons (algorithm and variant-set).",
+        "goal": "The base class declares an abstract Factory Method and uses the result polymorphically. Each subclass owns the creation knowledge for its variant; the base class's algorithm is conditional-free and stable.",
+        "pressure": "Type-code-driven construction is Shotgun Surgery waiting to happen — a new variant requires editing every conditional that branches on the type. The variant-set becomes a cross-cutting concern duplicated everywhere a related decision is made.",
+        "tradeoff": "Factory Method requires a class hierarchy; what was one class becomes a base plus subclasses. For variant sets that are stable and small (two or three formats that have never changed), a conditional may be cheaper than the inheritance ceremony.",
+        "relief": "The base class's algorithm is finalized; new variants land as new subclasses with no edits to the base. Per-variant creation is locally readable and locally testable; the algorithm's correctness is verified once.",
+        "trap": "A Factory Method whose only job is `return new X()` per subclass is constructor syntax with extra steps. The pattern pays when creation involves real choices — caching, parameter shaping, conditional sub-collaborators — not when it is a one-line `new`."
+      },
+      "agent": {
+        "symptom": "A conditional construction block the agent must scan to know which collaborator gets built for a given type code. Adding a variant requires the agent to enumerate every such construction site in scope and add a branch — Shotgun Surgery in static reasoning.",
+        "goal": "Each subclass's Factory Method is locally verifiable; the base algorithm has no construction-conditional for the agent to load. The agent's per-edit budget on a variant addition is one new subclass, not N edits to construction sites.",
+        "pressure": "Construction conditionals couple the base class to the full variant taxonomy; the agent must hold every variant in working memory to verify any edit to the base. Cross-variant invariants (e.g., that every parser implements `.parse`) are not statically enforceable when construction goes through type-code strings.",
+        "tradeoff": "Factory Method spreads creation across the inheritance hierarchy; the agent must traverse subclasses to know which concrete type a base-class call produces. Static call-graph analysis loses precision on the return type of `createParser()`.",
+        "relief": "Diff surface for a new variant is one subclass file. The base algorithm reads as polymorphic call-and-use; agent reasoning about the algorithm stays independent of the variant count.",
+        "trap": "A hierarchy with one trivial Factory Method per subclass forces the agent to load the inheritance chain to know what a single base-class call returns. The pattern's context-cost gain materializes only when each Factory Method does non-trivial work — otherwise the indirection adds cost without proportional clarity."
+      }
+    }
+  },
+  {
+    "catalog": "patterns",
     "name": "Replace Conditional Logic with Strategy",
     "nemeses": [
       {
