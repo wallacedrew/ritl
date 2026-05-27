@@ -481,6 +481,46 @@
   },
   {
     "catalog": "patterns",
+    "name": "Move Accumulation To Collecting Parameter",
+    "nemeses": [
+      {
+        "catalog": "smells",
+        "name": "Duplicated Code"
+      },
+      {
+        "catalog": "refactorings",
+        "name": "Parameterize Function"
+      },
+      {
+        "catalog": "refactorings",
+        "name": "Substitute Algorithm"
+      }
+    ],
+    "before": "// Each node builds a fragment and the parent concatenates.\n// The accumulate-then-merge step is duplicated through the recursion.\nclass Section {\n  constructor(title) {\n    this.title = title;\n    this.children = [];\n  }\n  toLines() {\n    let lines = [this.title];\n    for (const child of this.children) {\n      lines = lines.concat(child.toLines().map((line) => '  ' + line));\n    }\n    return lines;\n  }\n}\n\nconst output = root.toLines();",
+    "after": "// One collecting parameter; each node writes directly into it.\nclass Section {\n  constructor(title) {\n    this.title = title;\n    this.children = [];\n  }\n  printTo(lines, indent = '') {\n    lines.push(indent + this.title);\n    for (const child of this.children) {\n      child.printTo(lines, indent + '  ');\n    }\n  }\n}\n\nconst output = [];\nroot.printTo(output);",
+    "safetyNet": "unit test",
+    "exampleSource": "Illustrative example written for this site, faithful to Kerievsky's pattern shape in Refactoring to Patterns (Addison-Wesley, 2004), chapter 8. The book uses a recursive tag-printing example with a StringBuffer collecting parameter; this JavaScript version uses a Section composite collecting lines into an array — same pattern, idiomatic JS host.",
+    "forces": {
+      "human": {
+        "symptom": "A recursive or iterative traversal produces a result by building intermediate values at each level and merging them. The merge logic duplicates through the recursion; large traversals allocate and copy many short-lived intermediate collections; the algorithm's shape is obscured by the accumulate-and-merge bookkeeping.",
+        "goal": "One mutable accumulator (the collecting parameter) is threaded through the traversal. Each step appends to it directly; the caller reads the finished accumulator. Bookkeeping shrinks; the algorithm's intent reads cleanly.",
+        "pressure": "Per-step intermediate collections create allocation churn and memory pressure on deep recursions. Merge code duplicates per node; subtle inconsistencies between merges (one method preserves order, another doesn't) silently produce wrong results.",
+        "tradeoff": "Mutable accumulators violate Separate Query from Modifier — methods that look like queries now mutate their arguments. The mutability must be tightly scoped; leaking the accumulator outside the traversal creates aliasing risks. Functional reasoning costs go up.",
+        "relief": "One pass, one allocation, one read at the end. The recursive shape reads as 'do my part, recurse for children'; the algorithm's structure becomes visible because the bookkeeping moves out of the body.",
+        "trap": "A collecting parameter that escapes the traversal becomes a shared mutable hand-off that downstream code must reason about. The pattern pays inside a bounded recursion; outside, it leaks the kind of state that Functional Core / Imperative Shell is meant to keep at the edge."
+      },
+      "agent": {
+        "symptom": "Recursive methods the agent must trace at every level to verify the accumulate-and-merge sequence preserves order and content. Each level allocates and copies; the agent's reasoning about the final result requires composing N merge operations mentally.",
+        "goal": "One collecting parameter the agent reads as a single mutable accumulator; recursion bodies become small and locally verifiable. Final-result verification is one read of the accumulator, not a recursive trace.",
+        "pressure": "Per-step intermediate allocations multiply both runtime cost and reasoning cost — the agent must verify each level's merge logic is consistent with the others. Memory churn on deep recursions is invisible until profiling surfaces it.",
+        "tradeoff": "Mutable accumulators defeat the agent's static reasoning about purity. Method signatures change semantics — what looked like a query now mutates a parameter; static-analysis tools that classify methods as pure must be retaught. Tests must verify the accumulator's final state, not the method's return value.",
+        "relief": "Recursion bodies shrink; verification of correctness localizes to one append-per-level; static reasoning about the algorithm's shape becomes straightforward. The traversal is observable through one accumulator snapshot.",
+        "trap": "An accumulator that escapes the traversal is a shared mutable reference the agent must trace through subsequent code to verify safety. The pattern's verifiability gain inside the traversal is partially undone by the safety analysis required outside it."
+      }
+    }
+  },
+  {
+    "catalog": "patterns",
     "name": "Replace Conditional Logic with Strategy",
     "nemeses": [
       {

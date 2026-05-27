@@ -3,7 +3,7 @@ name: replace-conditional-logic-with-strategy
 description: Apply Replace Conditional Logic with Strategy when you see Repeated Switches, Replace Conditional with Polymorphism, Decompose Conditional. Each variant lives in its own class; the agent can verify one strategy's behavior without loading the others.
 ---
 
-# Apply: 13 — Replace Conditional Logic with Strategy
+# Apply: 14 — Replace Conditional Logic with Strategy
 
 **Symptom:** A method whose body the agent must trace through a chain of branches to determine what runs. Each branch hides domain logic; verifying behavior requires loading every branch in scope on every edit.
 
