@@ -958,5 +958,45 @@
         "trap": "A state machine with many states that mostly throw makes the agent load N files to discover that operation X is only legal in state Y. A state-transition table (data, not code) may be more economical for the agent to scan than N state classes."
       }
     }
+  },
+  {
+    "catalog": "patterns",
+    "name": "Replace Type Code With Class",
+    "nemeses": [
+      {
+        "catalog": "smells",
+        "name": "Primitive Obsession"
+      },
+      {
+        "catalog": "refactorings",
+        "name": "Replace Primitive with Object"
+      },
+      {
+        "catalog": "refactorings",
+        "name": "Replace Type Code with Subclasses"
+      }
+    ],
+    "before": "// Status is an integer; every consumer comparisons it against magic literals.\nclass Order {\n  constructor() {\n    this.status = 0; // 0=pending, 1=paid, 2=shipped, 3=delivered, 4=cancelled\n  }\n  describe() {\n    if (this.status === 0) return 'Pending';\n    if (this.status === 1) return 'Paid';\n    if (this.status === 2) return 'Shipped';\n    if (this.status === 3) return 'Delivered';\n    if (this.status === 4) return 'Cancelled';\n    return 'Unknown';\n  }\n  canCancel() {\n    return this.status === 0 || this.status === 1;\n  }\n}",
+    "after": "// Status is a typed value object; comparisons and behaviour live on the class.\nclass OrderStatus {\n  static PENDING = new OrderStatus('Pending', true);\n  static PAID = new OrderStatus('Paid', true);\n  static SHIPPED = new OrderStatus('Shipped', false);\n  static DELIVERED = new OrderStatus('Delivered', false);\n  static CANCELLED = new OrderStatus('Cancelled', false);\n  constructor(label, cancellable) {\n    this.label = label;\n    this.cancellable = cancellable;\n  }\n  describe() { return this.label; }\n  canCancel() { return this.cancellable; }\n}\n\nclass Order {\n  constructor() {\n    this.status = OrderStatus.PENDING;\n  }\n  describe() { return this.status.describe(); }\n  canCancel() { return this.status.canCancel(); }\n}",
+    "safetyNet": "unit test",
+    "exampleSource": "Illustrative example written for this site, faithful to Kerievsky's pattern shape in Refactoring to Patterns (Addison-Wesley, 2004), chapter 9. Distinct from Fowler's Replace Type Code With Subclasses (which makes the type code drive a hierarchy): this pattern is the lower-ceremony first move — turn the primitive into a value object that can carry methods and validation; subclasses come later if behaviour diverges enough to warrant them.",
+    "forces": {
+      "human": {
+        "symptom": "An integer or string field encodes a domain concept; every consumer of the field knows the magic values and branches on them. New status values land as new magic literals; comparisons duplicate across the codebase; the type system treats `status === 2` and `status === 'shipped'` as equally valid.",
+        "goal": "The type code becomes a value object class with named instances. Comparisons become method calls (`status.canCancel()`); new statuses land as new instances + tests; the type system distinguishes order statuses from arbitrary integers.",
+        "pressure": "Magic-literal type codes are Primitive Obsession at scale. Bugs ship as 'I used 2 when I meant 3' or 'I compared status to 'shipped' when the convention is 'SHIPPED'. The compiler/runtime cannot help; tests and code review carry the full enforcement burden.",
+        "tradeoff": "A value object class is one more domain class to learn; serializing/deserializing requires explicit translation between the primitive and the value object form. For status fields that flow through many database round-trips, the translation boundary is real work.",
+        "relief": "Comparisons become typed method calls; new statuses are one named instance with one row of test coverage; consumers don't need to know the underlying primitive at all. Adding behaviour to a status (e.g., 'is terminal?') is one method on the class.",
+        "trap": "If the value object simply wraps the primitive without offering methods (no `describe`, no `canCancel`, no `isTerminal`), it adds a layer without buying anything. The pattern earns its keep when the type code carries behaviour worth promoting — not when it's just a name for the primitive."
+      },
+      "agent": {
+        "symptom": "Magic-literal comparisons across N consumers the agent must verify match a documented (or undocumented) set of valid values. The type system cannot enforce membership; typos and stale literals ship silently to runtime.",
+        "goal": "Static type-checking enforces that comparisons are only against the named instances. The agent verifies consumers by class membership; per-status behaviour is locally readable as methods on the class.",
+        "pressure": "Magic literals defeat static analysis at every comparison site. The agent's verification cost on a new status × M consumers scales with consumer count; cross-consumer consistency requires holistic test coverage that may not exist.",
+        "tradeoff": "Value-object instances are reference-equality-checked in JavaScript; serialization round-trips require explicit handling. The agent must verify that deserialization produces the same canonical instances, not new equivalents, or `===` comparisons silently fail.",
+        "relief": "Diff surface for adding a status is one new instance + tests. Static type-checking (in TypeScript / JSDoc) verifies consumers handle all statuses; per-method behaviour is locally readable.",
+        "trap": "Value objects relying on reference equality across serialization boundaries (HTTP, persistence, message queues) require careful canonicalization; getting it wrong produces runtime equality bugs the agent cannot detect statically. The pattern is straightforward in pure-runtime code; thornier across persistence boundaries."
+      }
+    }
   }
 ]
