@@ -25,17 +25,19 @@ export default function SiteFooter() {
           }}
         >
           <Typography variant="caption" color="text.secondary">
-            Built on{" "}
+            Built on Martin Fowler&apos;s{" "}
             <Link
               href="https://refactoring.com/catalog/"
               target="_blank"
               rel="noopener noreferrer"
               color="inherit"
               underline="hover"
-              sx={{ textDecorationStyle: "dotted", fontWeight: 600 }}
+              sx={{ textDecorationStyle: "dotted", fontWeight: 600, fontStyle: "italic" }}
             >
-              Martin Fowler&apos;s refactoring catalog
+              Refactoring
             </Link>
+            , Joshua Kerievsky&apos;s <em>Refactoring to Patterns</em>, and the Gang of Four&apos;s{" "}
+            <em>Design Patterns</em>.
           </Typography>
           <Typography variant="caption" color="text.secondary">
             <Link
