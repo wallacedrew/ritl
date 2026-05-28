@@ -2,10 +2,11 @@
 
 import MenuIcon from "@mui/icons-material/Menu";
 import Box from "@mui/material/Box";
+import FormControl from "@mui/material/FormControl";
+import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import Select, { type SelectChangeEvent } from "@mui/material/Select";
 import Stack from "@mui/material/Stack";
-import Typography from "@mui/material/Typography";
 import NextLink from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 
@@ -111,43 +112,37 @@ export default function CatalogToolbar() {
         })}
       </Stack>
 
-      {/* Mobile: section picker. Visually distinct from the search input
-          above — labeled, smaller text, menu icon prefix — so readers
-          can tell at a glance that this changes the section they're
-          browsing, not what they're searching for. */}
-      <Stack spacing={0.5} sx={{ display: { xs: "flex", md: "none" }, alignItems: "stretch" }}>
-        <Typography
-          variant="overline"
-          color="text.secondary"
-          sx={{ lineHeight: 1.2, letterSpacing: "0.08em" }}
-        >
-          Section
-        </Typography>
-        <Select
-          fullWidth
-          size="small"
-          value={active}
-          onChange={handleSelectChange}
-          inputProps={{ "aria-label": "catalog section" }}
-          renderValue={(value) => {
-            const label = NAV_LINKS.find((link) => link.view === value)?.label ?? "";
-            return (
-              <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
-                <MenuIcon fontSize="small" sx={{ color: "text.secondary" }} />
-                <Box component="span" sx={{ fontSize: "0.875rem" }}>
-                  {label}
-                </Box>
-              </Stack>
-            );
-          }}
-        >
-          {NAV_LINKS.map((link) => (
-            <MenuItem key={link.view} value={link.view}>
-              {link.label}
-            </MenuItem>
-          ))}
-        </Select>
-      </Stack>
+      {/* Mobile: section picker with a floating "Section" label that sits
+          on the Select's border — gives the affordance without a separate
+          label above. */}
+      <Box sx={{ display: { xs: "block", md: "none" } }}>
+        <FormControl fullWidth size="small">
+          <InputLabel id="catalog-section-label">Section</InputLabel>
+          <Select
+            labelId="catalog-section-label"
+            label="Section"
+            value={active}
+            onChange={handleSelectChange}
+            renderValue={(value) => {
+              const label = NAV_LINKS.find((link) => link.view === value)?.label ?? "";
+              return (
+                <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
+                  <MenuIcon fontSize="small" sx={{ color: "text.secondary" }} />
+                  <Box component="span" sx={{ fontSize: "0.875rem" }}>
+                    {label}
+                  </Box>
+                </Stack>
+              );
+            }}
+          >
+            {NAV_LINKS.map((link) => (
+              <MenuItem key={link.view} value={link.view}>
+                {link.label}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+      </Box>
     </Box>
   );
 }
