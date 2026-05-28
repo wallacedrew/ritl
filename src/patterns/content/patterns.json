@@ -1545,5 +1545,45 @@
         "trap": "Premature flyweighting at low N adds indirection the agent pays for at every read with no memory payoff. Watch for 'Flyweight with one or two instances per kind' as a sign the pattern was speculative — the cost is paid forever, the benefit is hypothetical."
       }
     }
+  },
+  {
+    "catalog": "patterns",
+    "book": "gof",
+    "name": "Proxy",
+    "nemeses": [
+      {
+        "catalog": "smells",
+        "name": "Insider Trading"
+      },
+      {
+        "catalog": "refactorings",
+        "name": "Encapsulate Variable"
+      },
+      {
+        "catalog": "refactorings",
+        "name": "Replace Subclass with Delegate"
+      }
+    ],
+    "before": "class Image {\n  constructor(url) {\n    this.url = url;\n    this.pixels = downloadAndDecode(url);\n  }\n  draw(ctx, x, y) {\n    ctx.putImageData(this.pixels, x, y);\n  }\n}\n// Building a gallery thumbnail row:\nconst images = thumbnailUrls.map((url) => new Image(url));\n// 100 thumbnails × 50MB decoded pixels = 5GB up front,\n// even if the user only ever scrolls past 10 of them.",
+    "after": "class Image {\n  constructor(url) {\n    this.url = url;\n    this.pixels = downloadAndDecode(url);\n  }\n  draw(ctx, x, y) {\n    ctx.putImageData(this.pixels, x, y);\n  }\n}\nclass ImageProxy {\n  constructor(url) {\n    this.url = url;\n    this.real = null;\n  }\n  draw(ctx, x, y) {\n    if (this.real === null) {\n      this.real = new Image(this.url);\n    }\n    this.real.draw(ctx, x, y);\n  }\n}\nconst images = thumbnailUrls.map((url) => new ImageProxy(url));\n// ~24 bytes per proxy. Only the images that draw() is called on materialize.",
+    "exampleSource": "Illustrative example written for this site in the spirit of Design Patterns (Gamma, Helm, Johnson, Vlissides, Addison-Wesley, 1994), chapter 4. The book's running example is a document with embedded images that load on demand; this JavaScript adaptation uses a thumbnail gallery because the lazy-loading payoff is concrete and the same-interface contract between Image and ImageProxy reads in code.",
+    "forces": {
+      "human": {
+        "symptom": "An expensive-to-construct object (network call, large decode, distant resource) is created eagerly because clients need a handle to it, even when access may never happen. Or: every client must remember to check authorization, cache freshness, or initialization state before using a resource — the checks are scattered, easy to skip, frequently inconsistent.",
+        "goal": "A Proxy that conforms to the real subject's interface and decides — based on the proxy's responsibility (lazy load, access control, caching, remote dispatch) — when and whether to forward to the real object. Clients call the same interface in either case; the policy lives in one place.",
+        "pressure": "Eager construction of expensive resources is a load-time tax paid for every potential use, even when most uses never happen. Per-client policy checks (auth, freshness, init-state) are Insider Trading on the resource's lifecycle — every caller is coupled to the resource's loading semantics.",
+        "tradeoff": "Two classes (Subject + Proxy) where one would have sufficed in some scenarios. Debugging requires the agent or human to determine which one their code is talking to; stack traces span both. The same-interface promise also blocks the proxy from exposing useful proxy-specific operations (preload, status, refresh) without leaking through the interface or adding a separate API.",
+        "relief": "Clients never decide when to load, when to check permissions, or when to invalidate — they just call the interface. The Subject stays focused on its core behaviour; the Proxy owns the access policy. Replacing the policy (eager preload, instant cache, remote dispatch) is a one-file edit at the Proxy.",
+        "trap": "Proxies that diverge silently from their Subject — different error modes, different return-type semantics, different concurrency semantics — break the same-interface contract clients depend on. The pattern's promise is interchangeability; violating it produces bugs at exactly the call sites the pattern was supposed to protect."
+      },
+      "agent": {
+        "symptom": "Scattered per-client policy checks (auth, init, cache) the agent must verify uniformly on every change. Eager construction of expensive resources the agent must trace through the constructor at every reading to understand load semantics.",
+        "goal": "One Proxy class the agent reads to know the policy. Clients are uniform calls to the interface; the agent's verification budget on access policy collapses to one file. Load and access semantics are statically derivable from the Proxy's implementation.",
+        "pressure": "Per-client policy is N×M cells (N clients × M policy aspects); each cell is a potential miss the agent verifies independently. Eager construction hides load cost in constructor side effects, which the agent cannot localize from a single-file read.",
+        "tradeoff": "The agent must trace through Subject + Proxy to understand any operation's full behaviour; stack traces span both layers; runtime errors require the agent to disambiguate 'did the Proxy or the Subject raise this?' Same-interface contracts depend on subtle behavioural conformance the type system does not enforce.",
+        "relief": "Policy edits scope to the Proxy; client code unchanged; cross-client uniformity is structurally guaranteed. The agent's reasoning about access semantics is one-file-bounded; tests for the Proxy cover policy exhaustively without per-client repetition.",
+        "trap": "Subject and Proxy diverging on subtle semantics (concurrency, error types, side-effect timing) produces type-compatible bugs the agent struggles to localize. The agent reading client code trusts the interface contract; the runtime experience contradicts that trust intermittently, exactly the bug shape that survives review and ships."
+      }
+    }
   }
 ]
