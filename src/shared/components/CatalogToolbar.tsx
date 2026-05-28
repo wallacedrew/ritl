@@ -1,13 +1,9 @@
 "use client";
 
-import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
-import ViewStreamIcon from "@mui/icons-material/ViewStream";
 import Box from "@mui/material/Box";
-import MenuItem from "@mui/material/MenuItem";
-import Select, { type SelectChangeEvent } from "@mui/material/Select";
 import Stack from "@mui/material/Stack";
 import NextLink from "next/link";
-import { usePathname, useRouter } from "next/navigation";
+import { usePathname } from "next/navigation";
 
 import { useAnalytics } from "@/shared/hooks/useAnalytics";
 
@@ -44,13 +40,8 @@ function deriveActiveView(pathname: string): CatalogView {
   return "reference";
 }
 
-function navLinkByView(view: CatalogView): NavLink | undefined {
-  return NAV_LINKS.find((link) => link.view === view);
-}
-
 export default function CatalogToolbar() {
   const pathname = usePathname();
-  const router = useRouter();
   const active = deriveActiveView(pathname);
   const analytics = useAnalytics();
 
@@ -58,23 +49,34 @@ export default function CatalogToolbar() {
     analytics.track({ event: "nav_clicked", properties: { tab: view } });
   }
 
-  function handleSelectChange(event: SelectChangeEvent<CatalogView>) {
-    const view = event.target.value as CatalogView;
-    const target = navLinkByView(view);
-    if (target) {
-      handleNavClick(view);
-      router.push(target.href);
-    }
-  }
-
   return (
     <Box
       component="nav"
       aria-label="catalog navigation"
-      sx={{ borderBottom: 1, borderColor: "divider" }}
+      sx={{
+        borderBottom: 1,
+        borderColor: "divider",
+        // Horizontal scroll on narrow viewports; tabs keep their intrinsic
+        // width and a hairline-thin scrollbar.
+        overflowX: "auto",
+        WebkitOverflowScrolling: "touch",
+        scrollbarWidth: "thin",
+        "&::-webkit-scrollbar": { height: 4 },
+        "&::-webkit-scrollbar-thumb": {
+          backgroundColor: "rgba(0,0,0,0.15)",
+          borderRadius: 2,
+        },
+      }}
     >
-      {/* Desktop: horizontal tab strip */}
-      <Stack direction="row" sx={{ width: "100%", display: { xs: "none", md: "flex" } }}>
+      <Stack
+        direction="row"
+        spacing={3}
+        sx={{
+          minWidth: "100%",
+          width: { xs: "max-content", md: "100%" },
+          alignItems: "stretch",
+        }}
+      >
         {NAV_LINKS.map((link) => {
           const isActive = link.view === active;
           return (
@@ -84,66 +86,27 @@ export default function CatalogToolbar() {
               href={link.href}
               onClick={() => handleNavClick(link.view)}
               aria-current={isActive ? "page" : undefined}
-              sx={(theme) => ({
-                flex: 1,
-                textAlign: "center",
+              sx={{
                 py: 1.5,
-                color: isActive ? "primary.main" : "text.secondary",
-                fontSize: theme.typography.button.fontSize,
-                fontWeight: isActive ? 700 : 500,
-                textTransform: "uppercase",
-                letterSpacing: "0.08em",
+                color: isActive ? "text.primary" : "text.secondary",
+                fontSize: "0.9375rem",
+                fontWeight: isActive ? 600 : 500,
                 textDecoration: "none",
+                whiteSpace: "nowrap",
                 borderBottom: 2,
                 borderColor: isActive ? "primary.main" : "transparent",
                 marginBottom: "-1px",
-                transition: theme.transitions.create(["color", "border-color"], {
-                  duration: theme.transitions.duration.shortest,
-                }),
+                transition: "color 150ms, border-color 150ms",
                 "&:hover": {
-                  color: isActive ? "primary.main" : "text.primary",
+                  color: isActive ? "text.primary" : "text.primary",
                 },
-              })}
+              }}
             >
               {link.label}
             </Box>
           );
         })}
       </Stack>
-
-      {/* Mobile: the Select always renders "Section" as its label so the
-          control reads as a menu button rather than a current-state
-          indicator. Icon + text styling mirrors the search field above
-          (same icon size, same gap, same secondary-text color). */}
-      <Box sx={{ display: { xs: "block", md: "none" } }}>
-        <Select
-          fullWidth
-          size="small"
-          value={active}
-          onChange={handleSelectChange}
-          IconComponent={KeyboardArrowDownIcon}
-          inputProps={{ "aria-label": "catalog section" }}
-          sx={{
-            borderRadius: 2,
-            "& .MuiSelect-select": { paddingLeft: "9px" },
-            "& .MuiSelect-icon": { color: "text.secondary" },
-          }}
-          renderValue={() => (
-            <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
-              <ViewStreamIcon fontSize="small" sx={{ color: "text.secondary" }} />
-              <Box component="span" sx={{ fontSize: "0.875rem", color: "text.primary" }}>
-                Sections
-              </Box>
-            </Stack>
-          )}
-        >
-          {NAV_LINKS.map((link) => (
-            <MenuItem key={link.view} value={link.view}>
-              {link.label}
-            </MenuItem>
-          ))}
-        </Select>
-      </Box>
     </Box>
   );
 }
