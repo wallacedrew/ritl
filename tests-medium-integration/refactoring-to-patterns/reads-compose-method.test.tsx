@@ -27,6 +27,7 @@ describe("user reads Compose Method via the Kerievsky sub-site", () => {
   it("Compose Method detail renders at /refactoring-to-patterns/compose-method with cross-sub-site nemesis links into Fowler", async () => {
     const ui = await PatternsDetailPage({
       params: Promise.resolve({ slug: "compose-method" }),
+      book: "kerievsky",
     });
     renderWithTheme(ui);
 

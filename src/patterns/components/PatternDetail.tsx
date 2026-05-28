@@ -1,5 +1,5 @@
 import CatalogDetail from "@/shared/components/CatalogDetail";
-import type { CatalogEntry, Lens } from "@/shared/lib/CatalogEntry";
+import type { CatalogEntry, Lens, PatternBook } from "@/shared/lib/CatalogEntry";
 
 import { getPatternNeighbors } from "../lib/getPatternNeighbors";
 
@@ -7,9 +7,10 @@ interface PatternDetailProps {
   pattern: CatalogEntry;
   number: number;
   lens: Lens;
+  book: PatternBook;
 }
 
-export default function PatternDetail({ pattern, number, lens }: PatternDetailProps) {
+export default function PatternDetail({ pattern, number, lens, book }: PatternDetailProps) {
   return (
     <CatalogDetail
       entry={pattern}
@@ -19,7 +20,7 @@ export default function PatternDetail({ pattern, number, lens }: PatternDetailPr
       backLinkLabel="Patterns"
       beforeLabel="Before the pattern"
       afterLabel="After the pattern"
-      neighbors={getPatternNeighbors(number)}
+      neighbors={getPatternNeighbors(number, book)}
     />
   );
 }

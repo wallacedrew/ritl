@@ -24,6 +24,7 @@ describe("user reads Replace Conditional Logic with Strategy", () => {
   it("detail page renders the loan-calculator before/after with cross-sub-site nemesis links", async () => {
     const ui = await PatternsDetailPage({
       params: Promise.resolve({ slug: "replace-conditional-logic-with-strategy" }),
+      book: "kerievsky",
     });
     renderWithTheme(ui);
 
