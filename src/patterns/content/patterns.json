@@ -1825,5 +1825,45 @@
         "trap": "Clients that read memento.snapshot directly defeat the encapsulation and create new Insider Trading on the editor's representation. The agent reading client code trusts the Memento contract; the runtime coupling contradicts that trust silently. Lint or document the opacity invariant or it will erode commit-by-commit."
       }
     }
+  },
+  {
+    "catalog": "patterns",
+    "book": "gof",
+    "name": "Observer",
+    "nemeses": [
+      {
+        "catalog": "smells",
+        "name": "Shotgun Surgery"
+      },
+      {
+        "catalog": "smells",
+        "name": "Divergent Change"
+      },
+      {
+        "catalog": "refactorings",
+        "name": "Hide Delegate"
+      }
+    ],
+    "before": "class TemperatureSensor {\n  constructor(currentDisplay, chartDisplay, alertSystem) {\n    this.currentDisplay = currentDisplay;\n    this.chartDisplay = chartDisplay;\n    this.alertSystem = alertSystem;\n    this.temperature = 0;\n  }\n  setTemperature(t) {\n    this.temperature = t;\n    this.currentDisplay.update(t);\n    this.chartDisplay.recordSample(t);\n    if (t > 80) this.alertSystem.fire('high temperature');\n  }\n}\n// Adding a mobile-push consumer or a CSV-logger consumer requires editing\n// the sensor's constructor and setTemperature in lockstep. Subject changes\n// for unrelated reasons; one consumer's bug forces a sensor redeploy.",
+    "after": "class TemperatureSensor {\n  constructor() {\n    this.observers = [];\n    this.temperature = 0;\n  }\n  subscribe(observer) {\n    this.observers.push(observer);\n    return () => {\n      this.observers = this.observers.filter((o) => o !== observer);\n    };\n  }\n  setTemperature(t) {\n    this.temperature = t;\n    for (const observer of this.observers) {\n      observer.notify(t);\n    }\n  }\n}\nconst sensor = new TemperatureSensor();\nsensor.subscribe({ notify: (t) => currentDisplay.update(t) });\nsensor.subscribe({ notify: (t) => chartDisplay.recordSample(t) });\nsensor.subscribe({ notify: (t) => { if (t > 80) alertSystem.fire('high temperature'); }});",
+    "exampleSource": "Illustrative example written for this site in the spirit of Design Patterns (Gamma, Helm, Johnson, Vlissides, Addison-Wesley, 1994), chapter 5. The book's running example is a spreadsheet's chart updating when cell data changes; this JavaScript adaptation uses a temperature sensor + multiple displays because the subscribe/notify shape and the consumer-count growth are easier to picture.",
+    "forces": {
+      "human": {
+        "symptom": "A subject (model, sensor, store) calls each of its consumers by name when its state changes. Adding a new consumer means editing the subject's constructor (to receive the consumer) and its mutator (to call it). The subject changes for unrelated reasons each time a new consumer ships.",
+        "goal": "The subject exposes subscribe(observer) and an internal observer list. State-change methods iterate the list and notify each observer through a uniform notify() interface. Adding a consumer is a subscribe call; the subject stays unedited.",
+        "pressure": "Per-consumer wiring inside the subject is Shotgun Surgery on every consumer addition and Divergent Change on the subject. The subject's git history accumulates 'add X consumer' entries that have nothing to do with the subject's actual responsibilities (sensing, storing, computing).",
+        "tradeoff": "Notification order is implicit in subscription order; observers that depend on each other for correct state (e.g., one updates a cache that another reads) become order-sensitive in a way the subject's API does not document. Memory leaks from forgotten unsubscribes are the classic Observer footgun.",
+        "relief": "Subject's responsibilities are pure subject-things (state + notification dispatch); consumers register from wherever; new consumers ship without subject edits; testing the subject covers notification dispatch once, consumers test independently.",
+        "trap": "Observers that mutate the subject during notify() (re-entrant state changes), or whose notify methods throw, produce subtle bugs in observer ordering and re-entrancy. The pattern's promise breaks down without explicit re-entrancy and error-handling discipline; document the rules or watch them get violated quietly."
+      },
+      "agent": {
+        "symptom": "Per-consumer references inside the subject are N×M cells (N subjects × M consumers each) the agent verifies on every consumer-set change. Adding a consumer forces the agent to edit subject + caller in lockstep; the subject's diff history conflates unrelated concerns.",
+        "goal": "One subscribe/notify protocol the agent reads once per subject. Consumer registration is one expression at the call site; subject edits do not scale with consumer count. Static analysis of 'who subscribes to this subject' is grep-able and complete.",
+        "pressure": "Hard-coded subject→consumer wiring forces the agent to verify each consumer's contract on every subject edit. The diff blast radius for a new consumer is unpredictable; the verification budget grows linearly with consumer count.",
+        "tradeoff": "Notify dispatch order and re-entrancy semantics are runtime-only properties the agent cannot statically derive. Observers that depend on dispatch order produce flaky test failures; the agent investigating one must trace runtime subscription order, which is invisible in the source.",
+        "relief": "Subject edits scope to one file; consumer additions are zero-edit on the subject; static analysis of subscriber set is complete by grep. Tests for the subject cover notification dispatch exhaustively without per-consumer setup.",
+        "trap": "Re-entrancy bugs (observer A's notify() triggers a state change that re-fires notify() on A) and silent unsubscribe leaks are runtime-only failure modes. The agent reading subscribe/notify trusts the contract; runtime ordering and memory bugs survive review and surface as flaky behaviour in production."
+      }
+    }
   }
 ]
