@@ -1665,5 +1665,45 @@
         "trap": "Commands that mutate receiver state outside their own captured fields produce undo bugs the agent cannot localize from the Command's source alone. The agent reading TypeCommand.undo() trusts the captured text length; if execute() actually invoked side effects (autocomplete, save-on-keypress) the undo is silently incomplete. Capture every effect the execute touches, or the pattern's reversibility promise is a lie."
       }
     }
+  },
+  {
+    "catalog": "patterns",
+    "book": "gof",
+    "name": "Interpreter",
+    "nemeses": [
+      {
+        "catalog": "smells",
+        "name": "Primitive Obsession"
+      },
+      {
+        "catalog": "smells",
+        "name": "Repeated Switches"
+      },
+      {
+        "catalog": "refactorings",
+        "name": "Replace Conditional with Polymorphism"
+      }
+    ],
+    "before": "function evaluateRule(ruleString, context) {\n  if (ruleString.includes(' AND ')) {\n    const [left, right] = ruleString.split(' AND ');\n    return evaluateRule(left, context) && evaluateRule(right, context);\n  }\n  if (ruleString.includes(' OR ')) {\n    const [left, right] = ruleString.split(' OR ');\n    return evaluateRule(left, context) || evaluateRule(right, context);\n  }\n  if (ruleString.startsWith('NOT ')) {\n    return !evaluateRule(ruleString.slice(4), context);\n  }\n  return Boolean(context[ruleString]);\n}\nconst pass = evaluateRule('verified AND NOT banned', user);\n// Strings as DSL, ad-hoc parser, operator precedence implicit in eval order,\n// no caching, no static analysis, every consumer re-implements its own dialect.",
+    "after": "class Variable {\n  constructor(name) {\n    this.name = name;\n  }\n  interpret(env) {\n    return Boolean(env[this.name]);\n  }\n}\nclass And {\n  constructor(left, right) {\n    this.left = left;\n    this.right = right;\n  }\n  interpret(env) {\n    return this.left.interpret(env) && this.right.interpret(env);\n  }\n}\nclass Or {\n  constructor(left, right) {\n    this.left = left;\n    this.right = right;\n  }\n  interpret(env) {\n    return this.left.interpret(env) || this.right.interpret(env);\n  }\n}\nclass Not {\n  constructor(operand) {\n    this.operand = operand;\n  }\n  interpret(env) {\n    return !this.operand.interpret(env);\n  }\n}\nconst rule = new And(new Variable('verified'), new Not(new Variable('banned')));\nconst pass = rule.interpret(user);",
+    "exampleSource": "Illustrative example written for this site in the spirit of Design Patterns (Gamma, Helm, Johnson, Vlissides, Addison-Wesley, 1994), chapter 5. The book's running example is a regular-expression matcher; this JavaScript adaptation uses a tiny boolean rule language (AND, OR, NOT, variables) because the AST is small enough to read in one screen and the structural-vs-string-DSL contrast is sharp.",
+    "forces": {
+      "human": {
+        "symptom": "A small but stable mini-language is embedded as strings in code, parsed and evaluated by ad-hoc functions that grow operator-by-operator. Operator precedence is implicit in eval order; new operators require editing the parser AND the evaluator; static analysis of rules is impossible because they're untyped strings.",
+        "goal": "Each grammar rule becomes a class with an interpret(context) method. The AST is the program; building it is explicit (constructors), evaluating it is recursive descent through interpret(). New operators are new classes; the parser (if needed) and the evaluator stay structurally separate.",
+        "pressure": "String-DSL rules are Primitive Obsession at the worst level — the type system sees a string; the runtime expects a domain language. Every consumer either re-implements the parser or imports it; bugs in the embedded parser silently corrupt evaluation across every consumer in lockstep.",
+        "tradeoff": "Building the AST in client code is verbose: new And(new Variable('a'), new Or(...)) is harder to read than 'a AND (b OR c)'. The pattern shines when you control rule construction (rules come from a config file or builder); it strains when human-readable input is required and you need a parser anyway.",
+        "relief": "Operator semantics live in one class per operator; new operators are isolated changes; AST is statically typed and traversable. Static analysis (which variables does this rule depend on?) becomes a single recursive walk of the AST.",
+        "trap": "Grammars that grow beyond a handful of operators outgrow the pattern fast — every new operator adds a class, every binary operator with precedence needs explicit AST shape, and traversal logic accumulates. At that point reach for a real parser generator or a proper AST-walker library; don't keep adding interpret() methods to a sprawling class hierarchy."
+      },
+      "agent": {
+        "symptom": "Ad-hoc string parsing the agent must read sequentially to understand evaluation semantics. Operator precedence is implicit; bugs in the parser cascade silently across every rule. Static analysis of 'what variables does this rule depend on' requires re-implementing the parser in the analysis tool.",
+        "goal": "One class per grammar rule, each with interpret(env). The agent reads the AST shape directly from the construction expression; static traversal returns complete answers; per-rule edits scope to one class file.",
+        "pressure": "String DSLs are opaque to the type system. The agent reasoning about rule correctness must trace through the parser's logic at every consumer; partial verification produces misleading confidence. New operators add cascading edits the agent must verify across every parsing path.",
+        "tradeoff": "AST construction in code is verbose and harder to read than the string DSL. The agent's reading cost on the construction site is higher; tracing a runtime error in an AND.interpret requires walking the recursive call chain through the tree, which can be deep.",
+        "relief": "Per-rule edits are one-file; static traversal of 'rules using variable X' is a complete enumeration; type system enforces interpret-method existence on every rule class. The agent's verification budget on grammar changes is bounded and structurally provable.",
+        "trap": "Grammars growing past ~10 operators turn into class proliferation the agent navigates as a graph rather than a hierarchy. Visitor or AST-walker tooling becomes mandatory at that scale; without it, every traversal-style analysis requires editing every rule class — the cross-cutting problem the pattern was supposed to avoid."
+      }
+    }
   }
 ]

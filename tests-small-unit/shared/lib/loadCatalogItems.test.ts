@@ -3,13 +3,13 @@ import { describe, expect, it } from "vitest";
 import { loadCatalogItems } from "@/shared/lib/loadCatalogItems";
 
 describe("loadCatalogItems", () => {
-  it("combines 24 smells, 66 refactorings, and 41 patterns into a single 131-item catalog", () => {
+  it("combines 24 smells, 66 refactorings, and 42 patterns into a single 132-item catalog", () => {
     const items = loadCatalogItems();
 
-    expect(items).toHaveLength(131);
+    expect(items).toHaveLength(132);
     expect(items.filter((i) => i.kind === "smell")).toHaveLength(24);
     expect(items.filter((i) => i.kind === "refactoring")).toHaveLength(66);
-    expect(items.filter((i) => i.kind === "pattern")).toHaveLength(41);
+    expect(items.filter((i) => i.kind === "pattern")).toHaveLength(42);
   });
 
   it("lists refactorings, then smells, then patterns", () => {
@@ -20,7 +20,7 @@ describe("loadCatalogItems", () => {
     expect(items[66]?.kind).toBe("smell");
     expect(items[89]?.kind).toBe("smell");
     expect(items[90]?.kind).toBe("pattern");
-    expect(items[130]?.kind).toBe("pattern");
+    expect(items[131]?.kind).toBe("pattern");
   });
 
   it("assigns each entity its 1-based position as the catalog number", () => {
