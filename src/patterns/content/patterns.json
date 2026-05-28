@@ -1985,5 +1985,45 @@
         "trap": "Hook proliferation — base class with 10 hooks each subclass overrides — turns the parallel hierarchy into the same N×M cell-verification problem the pattern was supposed to solve, only spread across more files. Watch for 'template method with > 4 hooks' as a sign the abstraction is over-reaching."
       }
     }
+  },
+  {
+    "catalog": "patterns",
+    "book": "gof",
+    "name": "Visitor",
+    "nemeses": [
+      {
+        "catalog": "smells",
+        "name": "Divergent Change"
+      },
+      {
+        "catalog": "smells",
+        "name": "Shotgun Surgery"
+      },
+      {
+        "catalog": "refactorings",
+        "name": "Move Function"
+      }
+    ],
+    "before": "class FileNode {\n  constructor(name, bytes) {\n    this.name = name;\n    this.bytes = bytes;\n  }\n  totalSize() { return this.bytes; }\n  countFiles() { return 1; }\n  findLargest() { return this; }\n}\nclass DirectoryNode {\n  constructor(name, children) {\n    this.name = name;\n    this.children = children;\n  }\n  totalSize() {\n    return this.children.reduce((s, c) => s + c.totalSize(), 0);\n  }\n  countFiles() {\n    return this.children.reduce((s, c) => s + c.countFiles(), 0);\n  }\n  findLargest() {\n    let largest = null;\n    for (const child of this.children) {\n      const x = child.findLargest();\n      if (!largest || x.bytes > largest.bytes) largest = x;\n    }\n    return largest;\n  }\n}\n// Adding 'searchByName' = edits in every node class. Each new operation\n// touches the node hierarchy; node classes change for unrelated reasons.",
+    "after": "class FileNode {\n  constructor(name, bytes) {\n    this.name = name;\n    this.bytes = bytes;\n  }\n  accept(visitor) { return visitor.visitFile(this); }\n}\nclass DirectoryNode {\n  constructor(name, children) {\n    this.name = name;\n    this.children = children;\n  }\n  accept(visitor) { return visitor.visitDirectory(this); }\n}\nclass TotalSizeVisitor {\n  visitFile(file) { return file.bytes; }\n  visitDirectory(dir) {\n    return dir.children.reduce((s, c) => s + c.accept(this), 0);\n  }\n}\nclass CountFilesVisitor {\n  visitFile() { return 1; }\n  visitDirectory(dir) {\n    return dir.children.reduce((s, c) => s + c.accept(this), 0);\n  }\n}\nclass FindLargestVisitor {\n  visitFile(file) { return file; }\n  visitDirectory(dir) {\n    let largest = null;\n    for (const child of dir.children) {\n      const candidate = child.accept(this);\n      if (!largest || candidate.bytes > largest.bytes) largest = candidate;\n    }\n    return largest;\n  }\n}\nconst size  = root.accept(new TotalSizeVisitor());\nconst count = root.accept(new CountFilesVisitor());",
+    "exampleSource": "Illustrative example written for this site in the spirit of Design Patterns (Gamma, Helm, Johnson, Vlissides, Addison-Wesley, 1994), chapter 5. The book uses a compiler AST with type-checking and code-generation visitors; this JavaScript adaptation reuses the filesystem-tree shape from the Composite entry so the reader can see the same data structure with operations factored out into visitors.",
+    "forces": {
+      "human": {
+        "symptom": "An object hierarchy needs new operations added regularly, and each new operation touches every node class. The node hierarchy is stable (file, directory, symlink) but the operation set is open-ended (size, count, search, audit, export). Every new operation is Shotgun Surgery on the node hierarchy.",
+        "goal": "Each operation is a Visitor class with one visit method per node type. Node classes implement accept(visitor) and delegate dispatch via double dispatch (node.accept calls visitor.visitX(node)). New operations are new Visitor classes; node classes never change.",
+        "pressure": "Operations as node-class methods make every new operation Divergent Change on the nodes (which change for reasons unrelated to their data shape) AND Shotgun Surgery (edits ripple through every node type). The node classes become god classes accumulating every operation the system has ever wanted to perform on them.",
+        "tradeoff": "The Visitor pattern inverts the dependency: adding a new node type now becomes Shotgun Surgery on every existing visitor — the tradeoff that prevents Visitor from being a universal answer. Choose Visitor when operations vary often and node types rarely; flip back when the opposite holds.",
+        "relief": "Per-operation reasoning is one-visitor-file; per-node reasoning is one-node-file (small, focused on data + accept). Tests for each visitor cover one operation against every node type; tests for the node hierarchy cover its accept dispatch generically.",
+        "trap": "Visitors that need state across the traversal (running totals, accumulated paths, traversal-time stack) reintroduce coupling between visit methods. Without careful state management, the visitor becomes a stateful god object the agent or human must reason about across visit calls — exactly what the pattern's per-visit-method shape was supposed to prevent."
+      },
+      "agent": {
+        "symptom": "Operations scattered across every node class as methods the agent must verify uniformly on every operation-shape change. Adding 'searchByName' touches every node type; missing one is a type-compatible silent bug.",
+        "goal": "Per-operation visitors the agent reads as one file; per-node node classes the agent reads as small data + accept-dispatch. Static analysis enumerates operations by listing Visitor subclasses; static analysis enumerates node types by listing nodes; the two axes are independent.",
+        "pressure": "Operations-as-methods is N nodes × M operations cells the agent verifies on every operation addition. Adding M+1 forces editing N nodes; one missed node ships as a runtime error the test suite may not catch on the less-exercised variant.",
+        "tradeoff": "Visitor inversion means adding a node is N visitors × 1 method cells the agent edits. The pattern only wins when M (operations) grows faster than N (node types); when both grow, the pattern reorders the problem rather than solving it.",
+        "relief": "Per-operation edits scope to one visitor file; per-node-traversal verification is structural in accept dispatch; visitor tests cover an entire operation against every node type compositionally without enumerating combinations by hand.",
+        "trap": "Visitors with hidden state across visit calls produce traversal-order-dependent bugs the agent cannot localize from any one visit method. Stack traces span accept + visit boundaries; the agent must reason about the interleaving of accept and visit calls on every traversal-related bug."
+      }
+    }
   }
 ]
