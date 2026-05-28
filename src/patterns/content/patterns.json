@@ -1865,5 +1865,45 @@
         "trap": "Re-entrancy bugs (observer A's notify() triggers a state change that re-fires notify() on A) and silent unsubscribe leaks are runtime-only failure modes. The agent reading subscribe/notify trusts the contract; runtime ordering and memory bugs survive review and surface as flaky behaviour in production."
       }
     }
+  },
+  {
+    "catalog": "patterns",
+    "book": "gof",
+    "name": "State",
+    "nemeses": [
+      {
+        "catalog": "smells",
+        "name": "Repeated Switches"
+      },
+      {
+        "catalog": "smells",
+        "name": "Primitive Obsession"
+      },
+      {
+        "catalog": "refactorings",
+        "name": "Replace Conditional with Polymorphism"
+      }
+    ],
+    "before": "class Order {\n  constructor() {\n    this.status = 'pending';\n    this.items = [];\n  }\n  confirm() {\n    if (this.status !== 'pending') throw new Error('can only confirm pending');\n    this.status = 'confirmed';\n  }\n  ship() {\n    if (this.status !== 'confirmed') throw new Error('can only ship confirmed');\n    this.status = 'shipped';\n  }\n  deliver() {\n    if (this.status !== 'shipped') throw new Error('can only deliver shipped');\n    this.status = 'delivered';\n  }\n  cancel() {\n    if (this.status === 'delivered') throw new Error('cannot cancel delivered');\n    if (this.status === 'shipped') refundAfterReturn();\n    this.status = 'cancelled';\n  }\n}\n// Every method switches on this.status. Adding 'On Hold' touches every method.",
+    "after": "class PendingState {\n  confirm(order) { order.setState(new ConfirmedState()); }\n  ship() { throw new Error('cannot ship pending order'); }\n  deliver() { throw new Error('cannot deliver pending order'); }\n  cancel(order) { order.setState(new CancelledState()); }\n}\nclass ConfirmedState {\n  confirm() { throw new Error('already confirmed'); }\n  ship(order) { order.setState(new ShippedState()); }\n  deliver() { throw new Error('cannot deliver before ship'); }\n  cancel(order) { order.setState(new CancelledState()); }\n}\nclass ShippedState {\n  confirm() { throw new Error('already shipped'); }\n  ship() { throw new Error('already shipped'); }\n  deliver(order) { order.setState(new DeliveredState()); }\n  cancel(order) { refundAfterReturn(); order.setState(new CancelledState()); }\n}\nclass DeliveredState {\n  confirm() { throw new Error('already delivered'); }\n  ship() { throw new Error('already delivered'); }\n  deliver() { throw new Error('already delivered'); }\n  cancel() { throw new Error('cannot cancel delivered'); }\n}\nclass Order {\n  constructor() {\n    this.state = new PendingState();\n    this.items = [];\n  }\n  setState(s) { this.state = s; }\n  confirm() { this.state.confirm(this); }\n  ship() { this.state.ship(this); }\n  deliver() { this.state.deliver(this); }\n  cancel() { this.state.cancel(this); }\n}",
+    "exampleSource": "Illustrative example written for this site in the spirit of Design Patterns (Gamma, Helm, Johnson, Vlissides, Addison-Wesley, 1994), chapter 5. The book's running example is a TCP connection's state machine; this JavaScript adaptation uses an e-commerce order lifecycle because the state set is small enough to read in code and the per-transition rules are concrete.",
+    "forces": {
+      "human": {
+        "symptom": "An object's behaviour depends on its current state, and every method switches on that state to decide what to do. Adding a new state means editing every method in lockstep; one missed method silently makes the new state behave like an existing one in a context the test suite did not exercise.",
+        "goal": "Each state is a class implementing the operation interface; the host object delegates every operation to its current state object. Transitions happen by replacing the state object. Adding a new state is a new file; the host stays unchanged.",
+        "pressure": "State-as-string with Repeated Switches in every method is the textbook smell pointing to State pattern. Every state-altering condition lives in N methods; adding one state is an N-method edit; the host class accumulates state-management logic that overshadows its actual responsibility.",
+        "tradeoff": "Each state lives in its own file; the class count grows with state count; the agent or human reading 'what does cancel mean in this domain' must navigate four files instead of one method. Transitions also require careful construction-cycle reasoning — new states must not capture stale references to the host.",
+        "relief": "Each state class is small, single-purpose, exhaustive in its operation set. Adding a state is one file + one initial-transition fix; the host's method definitions read as one-line delegations; tests for each state cover the operation set in isolation.",
+        "trap": "States that share significant behaviour across transitions (every state's cancel logs an audit event) reintroduce duplication across state files. Hoisting shared behaviour to a State superclass or composing in a common policy is essential; otherwise the pattern shifts the duplication problem from one file to many."
+      },
+      "agent": {
+        "symptom": "Per-method switches on state are O(states × methods) cells the agent verifies for every state-related edit. Adding a state requires editing every method symmetrically; missed methods produce type-compatible bugs (string status fallback to a default) the test suite may not exercise on the new state.",
+        "goal": "One class per state, each owning its operation set exhaustively. The agent reads one state file to understand its full behaviour; static analysis returns complete answers about 'what does X mean in state Y'; type system enforces operation-set completeness on every state class.",
+        "pressure": "State-as-primitive is invisible to the type system as a set; the agent cannot prove from static read that every method handles every state. Adding a state requires editing every method; verification is N×M cells the agent must trace one at a time.",
+        "tradeoff": "N state classes is N files the agent navigates to understand the system. Stack traces show 'ShippedState.cancel' but resolving 'what is cancel here' requires reading the State class hierarchy. The cost is paid on every state-related investigation.",
+        "relief": "Per-state edits scope to one file; per-method edits scope to N small additions across state files (mechanical); the type system catches missing operations at compile time. Diff surface for a new state is one new file + a few initial-transition fixes.",
+        "trap": "Shared behaviour across states (every cancel logs an audit event) repeated across state files re-creates Duplicated Code at the new layer. The agent reading the State class hierarchy must verify the shared logic per state; without a common policy or superclass, the agent loses confidence in cross-state consistency on every edit."
+      }
+    }
   }
 ]
