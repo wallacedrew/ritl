@@ -1145,5 +1145,45 @@
         "trap": "Factory interface bloat — over many edits the agent loses sight of which products are still in use. Dead factory methods accumulate because no client demands them but the interface contract still requires them; cleanup requires touching every concrete factory together, exactly the cross-cutting edit the pattern was supposed to eliminate."
       }
     }
+  },
+  {
+    "catalog": "patterns",
+    "book": "gof",
+    "name": "Builder",
+    "nemeses": [
+      {
+        "catalog": "smells",
+        "name": "Long Parameter List"
+      },
+      {
+        "catalog": "smells",
+        "name": "Primitive Obsession"
+      },
+      {
+        "catalog": "refactorings",
+        "name": "Introduce Parameter Object"
+      }
+    ],
+    "before": "const request = new HttpRequest(\n  'GET',\n  '/api/users/42',\n  { 'Accept': 'application/json', 'Authorization': 'Bearer xyz' },\n  null,\n  30000,\n  3,\n  true\n);",
+    "after": "const request = new HttpRequestBuilder('GET', '/api/users/42')\n  .accept('application/json')\n  .bearer('xyz')\n  .timeoutMs(30000)\n  .retries(3)\n  .followRedirects(true)\n  .build();\n\nclass HttpRequestBuilder {\n  constructor(method, url) {\n    this.spec = { method, url, headers: {}, body: null, timeoutMs: 0, retries: 0, followRedirects: false };\n  }\n  accept(mediaType) { this.spec.headers['Accept'] = mediaType; return this; }\n  bearer(token) { this.spec.headers['Authorization'] = `Bearer ${token}`; return this; }\n  body(value) { this.spec.body = value; return this; }\n  timeoutMs(ms) { this.spec.timeoutMs = ms; return this; }\n  retries(count) { this.spec.retries = count; return this; }\n  followRedirects(flag) { this.spec.followRedirects = flag; return this; }\n  build() { return new HttpRequest(this.spec); }\n}",
+    "exampleSource": "Illustrative example written for this site in the spirit of Design Patterns (Gamma, Helm, Johnson, Vlissides, Addison-Wesley, 1994), chapter 3. The book's running example is a maze builder; this JavaScript adaptation uses HTTP request construction to show the same step-by-step assembly with named, optional inputs and a single terminating build() that produces the immutable product.",
+    "forces": {
+      "human": {
+        "symptom": "A constructor takes many positional arguments, several of which are optional and most of which are easy to swap by accident. Call sites pass null or 0 as placeholders for arguments that don't apply, and reviewers cannot tell from the call site which argument means what.",
+        "goal": "A step-by-step construction surface where each step is named after what it sets, optional inputs are explicit, and the moment of 'now build it' is a separate, terminal call. The product is immutable once built; partial construction states never leak.",
+        "pressure": "Adding a new optional input to the constructor breaks every existing call site and forces all of them to add a placeholder for the new slot. Default values drift between languages, frameworks, and developer assumptions; the constructor signature stops describing what a valid request looks like.",
+        "tradeoff": "The builder is a second object the reader must navigate to understand what a fully-constructed product contains. Fluent chains hide the build step's complexity behind method-chaining syntax that some teammates find unidiomatic; debugging a misconfigured builder requires stepping through every chained call.",
+        "relief": "Call sites read as a sequence of named decisions; new optional inputs are additive without breaking existing callers; the immutable product is constructed once and never mutated thereafter. Code review reads top-to-bottom in domain terms, not positional argument terms.",
+        "trap": "Builders that allow .build() to be called from any state — including states where required inputs were skipped — defeat the immutability win and replace one bug class (positional confusion) with another (silently-incomplete construction). A builder without 'build() validates the full spec' is a fluent setter chain, not the pattern."
+      },
+      "agent": {
+        "symptom": "The agent reads a multi-parameter constructor call and must consult the constructor signature (often elsewhere in the codebase) to know which positional slot means what. Editing the call site requires keeping the positional alignment manually correct on every parameter change.",
+        "goal": "Self-describing construction the agent can read top-to-bottom without cross-file lookup. Each chained method names what it sets; the build() terminator marks the point where the product is verified. Static analysis can enumerate what the spec contains by listing the builder's chainable methods.",
+        "pressure": "Positional argument lists are the worst-case input shape for context budget — the agent must hold the parameter order in working memory while reading every call. Mis-aligned arguments produce type-compatible bugs the compiler does not catch, exactly the bug class that demands the most verification effort.",
+        "tradeoff": "The builder's chainable method set is a second surface the agent must understand alongside the product itself. Tests for the builder cover construction paths, not the product's behaviour; the agent must distinguish 'did I build the right spec?' from 'did the spec behave correctly?' when investigating regressions.",
+        "relief": "Call-site edits become append-or-remove single-line operations on the chain. The build() step is a structural commit the agent can rely on as the moment of validation; partial-construction bugs surface as builder-test failures, not runtime mysteries scattered across consumers of the product.",
+        "trap": "Inconsistent builder discipline — some builders enforce required-input checks at build(), others tolerate missing inputs and produce half-built products with default sentinels — forces the agent to verify enforcement on every new builder it encounters. The pattern stops being a structural promise and becomes a per-class convention to look up."
+      }
+    }
   }
 ]
