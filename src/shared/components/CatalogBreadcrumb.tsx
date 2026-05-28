@@ -2,6 +2,7 @@
 
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import FolderIcon from "@mui/icons-material/Folder";
+import Box from "@mui/material/Box";
 import Breadcrumbs from "@mui/material/Breadcrumbs";
 import Link from "@mui/material/Link";
 import Typography from "@mui/material/Typography";
@@ -22,7 +23,15 @@ export default function CatalogBreadcrumb({
     <Breadcrumbs
       aria-label="breadcrumb"
       separator={<ChevronRightIcon fontSize="small" />}
-      sx={{ "& .MuiBreadcrumbs-separator": { mx: 0.5 } }}
+      sx={{
+        "& .MuiBreadcrumbs-ol": { alignItems: "center" },
+        "& .MuiBreadcrumbs-li": { display: "inline-flex", alignItems: "center" },
+        "& .MuiBreadcrumbs-separator": {
+          mx: 0.5,
+          display: "inline-flex",
+          alignItems: "center",
+        },
+      }}
     >
       <Link
         component={NextLink}
@@ -30,12 +39,18 @@ export default function CatalogBreadcrumb({
         underline="hover"
         color="text.secondary"
         variant="body2"
-        sx={{ display: "inline-flex", alignItems: "center", gap: 0.5 }}
+        sx={{ display: "inline-flex", alignItems: "center", gap: 0.5, lineHeight: 1 }}
       >
         <FolderIcon fontSize="small" />
-        {parentLabel}
+        <Box component="span" sx={{ lineHeight: 1 }}>
+          {parentLabel}
+        </Box>
       </Link>
-      <Typography variant="body2" color="text.primary" sx={{ fontWeight: 500 }}>
+      <Typography
+        variant="body2"
+        color="text.primary"
+        sx={{ fontWeight: 500, lineHeight: 1, display: "inline-flex", alignItems: "center" }}
+      >
         {currentLabel}
       </Typography>
     </Breadcrumbs>
