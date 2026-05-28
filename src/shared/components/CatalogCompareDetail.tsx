@@ -37,7 +37,7 @@ export default function CatalogCompareDetail({
 
   return (
     <Container maxWidth="lg" sx={{ py: 4 }}>
-      <Stack spacing={3}>
+      <Stack spacing={4}>
         <CatalogBreadcrumb
           parentHref={backLinkHref}
           parentLabel={backLinkLabel}

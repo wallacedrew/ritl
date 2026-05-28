@@ -95,7 +95,7 @@ export default function CatalogEntryHeader({
   const next = neighbors?.next ?? null;
 
   return (
-    <Stack spacing={1.5}>
+    <Stack spacing={3}>
       <Stack direction="row" spacing={2} sx={{ alignItems: "flex-start" }}>
         <Typography
           component="h1"

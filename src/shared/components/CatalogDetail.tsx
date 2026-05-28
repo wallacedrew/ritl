@@ -43,7 +43,7 @@ export default function CatalogDetail({
 
   return (
     <Container maxWidth="lg" sx={{ py: 4 }}>
-      <Stack spacing={3}>
+      <Stack spacing={4}>
         <CatalogBreadcrumb
           parentHref={backLinkHref}
           parentLabel={backLinkLabel}
