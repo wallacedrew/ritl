@@ -1745,5 +1745,45 @@
         "trap": "Iterators with hidden mutability (re-entrant push during iteration, snapshot-vs-live semantics) produce bugs the agent cannot localize from the iterator protocol alone. The agent reading `for (const x of coll)` trusts the consumer side; runtime ordering bugs live in the iterator's interaction with the underlying mutation. Document or freeze; do not leave ambiguous."
       }
     }
+  },
+  {
+    "catalog": "patterns",
+    "book": "gof",
+    "name": "Mediator",
+    "nemeses": [
+      {
+        "catalog": "smells",
+        "name": "Insider Trading"
+      },
+      {
+        "catalog": "smells",
+        "name": "Shotgun Surgery"
+      },
+      {
+        "catalog": "refactorings",
+        "name": "Move Function"
+      }
+    ],
+    "before": "class CountryField {\n  constructor(stateField, postalField) {\n    this.stateField = stateField;\n    this.postalField = postalField;\n  }\n  onChange(value) {\n    this.stateField.setOptions(statesFor(value));\n    this.postalField.setPattern(postalPatternFor(value));\n  }\n}\nclass StateField {\n  constructor(cityField) {\n    this.cityField = cityField;\n  }\n  onChange(value) {\n    this.cityField.setOptions(citiesFor(value));\n  }\n}\n// Each widget knows multiple others; O(N²) potential edges;\n// testing one widget requires mocking each collaborator;\n// adding a 'phone' field that depends on country touches every constructor.",
+    "after": "class FormMediator {\n  constructor() {\n    this.country = new CountryField(this);\n    this.state = new StateField(this);\n    this.city = new CityField(this);\n    this.postal = new PostalField(this);\n  }\n  fieldChanged(field, value) {\n    if (field === this.country) {\n      this.state.setOptions(statesFor(value));\n      this.postal.setPattern(postalPatternFor(value));\n    } else if (field === this.state) {\n      this.city.setOptions(citiesFor(value));\n    }\n  }\n}\nclass CountryField {\n  constructor(mediator) {\n    this.mediator = mediator;\n  }\n  onChange(value) {\n    this.mediator.fieldChanged(this, value);\n  }\n}\nclass StateField {\n  constructor(mediator) {\n    this.mediator = mediator;\n  }\n  onChange(value) {\n    this.mediator.fieldChanged(this, value);\n  }\n}",
+    "exampleSource": "Illustrative example written for this site in the spirit of Design Patterns (Gamma, Helm, Johnson, Vlissides, Addison-Wesley, 1994), chapter 5. The book's running example is a font-selection dialog with widgets that constrain each other; this JavaScript adaptation uses an address-form dialog because the cascading dependency (Country → State → City; Country → Postal) is recognizable and the N×N → 2N coupling collapse reads concretely.",
+    "forces": {
+      "human": {
+        "symptom": "A set of N collaborators each hold direct references to several others, creating a tangled web of inter-object dependencies. Adding one new collaborator means editing existing collaborators' constructors and onChange/onUpdate methods; testing any one in isolation requires stubbing all of its collaborators.",
+        "goal": "Each collaborator knows one Mediator; the Mediator owns the coordination logic. Inter-collaborator relationships live in one place; collaborators are unit-testable with a stub mediator; new relationships are mediator-internal edits.",
+        "pressure": "Mutual references between widgets / services / aggregates is Insider Trading at its worst — every collaborator depends on every other collaborator's interface. Adding a new collaborator forces Shotgun Surgery across the existing ones; one missed update silently breaks a relationship the test suite may not exercise.",
+        "tradeoff": "The Mediator becomes a focal point of complexity: all relationship logic lives in one class, which can grow into a god object. The Mediator's onChange method becomes a big switch on which collaborator fired the event; the structural ugliness moves rather than disappearing.",
+        "relief": "Collaborator constructors take one Mediator argument; testing a collaborator stubs one collaborator (the Mediator); adding a new field is a new file + a new switch arm in the Mediator. Relationships are auditable in one place; refactoring one collaborator does not ripple across others.",
+        "trap": "Mediators that grow beyond a single coordination concern become Service objects in disguise. When the Mediator has > 5 collaborator types or > 10 relationship rules, split it: distinct Mediator per coordination concern. Otherwise the Mediator itself becomes the Long Function the pattern was supposed to prevent."
+      },
+      "agent": {
+        "symptom": "N collaborators × M relationship rules = N×M cells the agent verifies on every relationship change. Cross-collaborator constructor coupling means refactoring one widget's interface ripples to every collaborator; the agent's edit-blast-radius reasoning is fragile.",
+        "goal": "One Mediator the agent reads to understand all relationships. Per-collaborator edits scope to one file; the Mediator's relationship logic is one switch the agent verifies against the rule set. Static enumeration of 'who collaborates with whom' returns a complete answer.",
+        "pressure": "Mutual collaborator references are O(N²) edges the agent must trace for any relationship-related edit. Adding a new collaborator forces the agent to update every existing collaborator's reference set; missed updates produce silent inconsistencies the type system catches partially at best.",
+        "tradeoff": "The Mediator becomes a single hotspot file the agent reads on every relationship-related task. Its size and complexity grow with collaborator count; a sufficiently large Mediator is itself a Long Function the agent must hold in working memory.",
+        "relief": "Per-collaborator reasoning is one-file; per-relationship reasoning is one-file (the Mediator); cross-collaborator verification budget drops from N×M to N + M. Static analysis of relationship rules is complete and localized.",
+        "trap": "Mediators that grow into general-purpose coordinators (FormMediator + ValidationMediator + ErrorMediator + SubmitMediator merged into one mega-class) reintroduce the cross-cutting problem at a different shape. The agent now navigates one giant Mediator file rather than N collaborators; the verification cost is the same total, concentrated rather than distributed."
+      }
+    }
   }
 ]
