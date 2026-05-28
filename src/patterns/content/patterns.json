@@ -1465,5 +1465,45 @@
         "trap": "Decorators whose semantics depend on wrapping order (RetryDecorator(LoggingDecorator(X)) vs LoggingDecorator(RetryDecorator(X))) force the agent to verify order-correctness on every construction site. The construction expression becomes part of the spec; PR review must catch wrong-order regressions the type system cannot."
       }
     }
+  },
+  {
+    "catalog": "patterns",
+    "book": "gof",
+    "name": "Facade",
+    "nemeses": [
+      {
+        "catalog": "smells",
+        "name": "Message Chains"
+      },
+      {
+        "catalog": "smells",
+        "name": "Insider Trading"
+      },
+      {
+        "catalog": "refactorings",
+        "name": "Hide Delegate"
+      }
+    ],
+    "before": "function checkout(cart, customer) {\n  if (!inventory.reserve(cart.items)) {\n    throw new Error('out of stock');\n  }\n  const charge = payment.charge(cart.total, customer.cardToken);\n  if (!charge.success) {\n    inventory.release(cart.items);\n    throw new Error('payment failed');\n  }\n  const shipment = shipping.createShipment(cart.items, customer.address);\n  notifications.sendOrderConfirmation(customer.email, shipment.trackingNumber);\n  audit.recordPurchase(customer.id, cart.total);\n  return { orderId: shipment.trackingNumber, total: cart.total };\n}\n// Every consumer that calls checkout knows about 5 subsystems\n// and the right ordering. Forgetting inventory.release on payment-fail\n// silently leaks reserved inventory.",
+    "after": "class CheckoutFacade {\n  constructor(inventory, payment, shipping, notifications, audit) {\n    this.inventory = inventory;\n    this.payment = payment;\n    this.shipping = shipping;\n    this.notifications = notifications;\n    this.audit = audit;\n  }\n  submitOrder(cart, customer) {\n    if (!this.inventory.reserve(cart.items)) {\n      throw new Error('out of stock');\n    }\n    const charge = this.payment.charge(cart.total, customer.cardToken);\n    if (!charge.success) {\n      this.inventory.release(cart.items);\n      throw new Error('payment failed');\n    }\n    const shipment = this.shipping.createShipment(cart.items, customer.address);\n    this.notifications.sendOrderConfirmation(customer.email, shipment.trackingNumber);\n    this.audit.recordPurchase(customer.id, cart.total);\n    return { orderId: shipment.trackingNumber, total: cart.total };\n  }\n}\n// Client: checkout.submitOrder(cart, customer)",
+    "exampleSource": "Illustrative example written for this site in the spirit of Design Patterns (Gamma, Helm, Johnson, Vlissides, Addison-Wesley, 1994), chapter 4. The book's running example is a compiler with parser/lexer/codegen subsystems; this JavaScript adaptation uses an e-commerce checkout because the multi-subsystem choreography (inventory + payment + shipping + notifications + audit) makes the encapsulation payoff more visible.",
+    "forces": {
+      "human": {
+        "symptom": "Several subsystems must be orchestrated together to accomplish a single user-visible task, and every consumer that wants the task has to reimplement the orchestration: call A, check result, call B, on B's failure undo A, call C, then D, then E. The orchestration is a recipe everyone reinvents, often subtly wrong.",
+        "goal": "One named entry point that owns the choreography. Consumers call submitOrder(cart, customer) and never see the five subsystems behind it. The recipe lives in one place; mistakes (forgetting to release inventory on payment failure) are fixed once.",
+        "pressure": "Per-consumer orchestration is the worst form of Insider Trading — every consumer knows about every subsystem's interface, error modes, and ordering constraints. Adding a new subsystem (e.g., fraud check) requires hunting every consumer; changing one subsystem's interface ripples to every consumer in lockstep.",
+        "tradeoff": "Facade hides the subsystems but also hides which subsystems exist. Debugging a runtime error inside CheckoutFacade.submitOrder requires reading through five subsystem calls; consumers can't easily intervene mid-flow (e.g., apply a discount between inventory.reserve and payment.charge). The Facade is opaque by design, and opacity has a cost.",
+        "relief": "One method per user task; the orchestration lives in one tested file. New subsystems land as facade-internal additions; consumers stay unchanged. The recipe stops being tribal knowledge.",
+        "trap": "Facades that grow into general-purpose services (CheckoutFacade.submitOrder, CheckoutFacade.refund, CheckoutFacade.modify, CheckoutFacade.audit) lose the single-task focus and become god objects. Stop and split when a facade has more than one or two user tasks; if every team adds 'one more method' it becomes the Service that everyone fears."
+      },
+      "agent": {
+        "symptom": "Multi-subsystem orchestration scattered across consumers means the agent must reason about subsystem ordering, error handling, and failure recovery at every call site. Verifying 'do all consumers correctly release inventory on payment-fail' requires enumerating every consumer; static analysis cannot prove uniformity.",
+        "goal": "One Facade method the agent reads end-to-end to understand the full choreography. Per-consumer reasoning collapses to 'this consumer calls submitOrder(cart, customer)' — the agent does not re-verify orchestration at each consumer site.",
+        "pressure": "Per-consumer orchestration is N consumers × M subsystems × K error-modes = N×M×K cells the agent verifies on every change. Insider Trading is the worst input shape for the agent's verification budget: every consumer must be checked for correctness against every subsystem's contract.",
+        "tradeoff": "Facade opacity means runtime errors from inside the facade surface to the consumer as 'submitOrder failed' with no structural breadcrumb. The agent investigating a regression must trace into the facade implementation; stack traces span the facade + subsystem boundary, and the consumer's mental model is one level removed from the actual failure.",
+        "relief": "Edits scoped to the Facade; consumer code unchanged when subsystems are added or refactored; one set of tests covers orchestration and error recovery exhaustively. The agent's cross-consumer verification budget drops to zero on subsystem changes.",
+        "trap": "When the Facade grows to N user tasks (submitOrder + refund + modify + audit + ...), it becomes a god object the agent must read fully before any edit. The pattern's clarity wins were proportional to focused scope; god-facade scope reintroduces the verification problem at a higher level."
+      }
+    }
   }
 ]
