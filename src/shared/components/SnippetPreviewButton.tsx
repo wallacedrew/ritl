@@ -47,6 +47,12 @@ export default function SnippetPreviewButton({ href, label, hint }: SnippetPrevi
         sx={{
           alignSelf: "flex-start",
           textTransform: "none",
+          color: "common.black",
+          borderColor: "common.black",
+          "&:hover": {
+            borderColor: "common.black",
+            bgcolor: "rgba(0, 0, 0, 0.04)",
+          },
         }}
       >
         {label}

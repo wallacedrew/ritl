@@ -58,13 +58,13 @@ export default function CatalogDetail({
           inboundPatterns={inboundPatterns}
           neighbors={neighbors}
         />
+        <SnippetPreviewButton href={entry.name.toSnippetHref()} label="Preview markdown" />
         <LensSwitcher
           humanHref={entry.href()}
           compareHref={entry.compareHref()}
           agentHref={entry.agentHref()}
           currentView={lens}
         />
-        <SnippetPreviewButton href={entry.name.toSnippetHref()} label="Preview markdown" />
         <Divider />
         {entry.safetyNet && <CatalogSection label="Safety net" body={entry.safetyNet.toString()} />}
         <CatalogSection label="Symptom" body={forces.symptom} />

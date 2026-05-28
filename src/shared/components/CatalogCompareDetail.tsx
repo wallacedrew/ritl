@@ -49,13 +49,13 @@ export default function CatalogCompareDetail({
           relatedNames={entry.nemeses}
           neighbors={neighbors}
         />
+        <SnippetPreviewButton href={entry.name.toSnippetHref()} label="Preview markdown" />
         <LensSwitcher
           humanHref={entry.href()}
           compareHref={entry.compareHref()}
           agentHref={entry.agentHref()}
           currentView="compare"
         />
-        <SnippetPreviewButton href={entry.name.toSnippetHref()} label="Preview markdown" />
         <Divider />
         {entry.safetyNet && <CatalogSection label="Safety net" body={entry.safetyNet.toString()} />}
         <CatalogSectionCompare label="Symptom" human={human.symptom} agent={agent.symptom} />
