@@ -5853,3 +5853,99 @@ _Example source: Illustrative example written for this site in the spirit of Des
 **Trap:** Subject and Proxy diverging on subtle semantics (concurrency, error types, side-effect timing) produces type-compatible bugs the agent struggles to localize. The agent reading client code trusts the interface contract; the runtime experience contradicts that trust intermittently, exactly the bug shape that survives review and ships.
 
 **Triggered by:** Insider Trading (smells), Encapsulate Variable (refactorings), Replace Subclass with Delegate (refactorings)
+
+---
+name: chain-of-responsibility
+description: Apply Chain of Responsibility when you see Long Function, Divergent Change, Replace Conditional with Polymorphism. N small handler classes the agent reads one at a time.
+---
+
+# Apply: 40 — Chain of Responsibility
+
+**Symptom:** A single-function dispatcher with multiple concerns the agent must verify against on every concern-related edit. Edits to one concern's logic touch the same source span as every other concern; merge conflicts and unintended side effects are routine.
+
+**Goal:** N small handler classes the agent reads one at a time. Edits to a concern scope to one file; chain ordering is one expression at the construction site; the agent's verification budget on a concern-specific change drops from full-function-scan to one-file-scan.
+
+```js
+// Before:
+function handleRequest(req, res) {
+  if (!req.headers.authorization) {
+    res.status = 401;
+    res.body = 'unauthorized';
+    return;
+  }
+  if (rateLimiter.exceeded(req.ip)) {
+    res.status = 429;
+    res.body = 'too many requests';
+    return;
+  }
+  logger.info(`${req.method} ${req.path}`);
+  if (req.path === '/api/users') {
+    res.status = 200;
+    res.body = listUsers();
+    return;
+  }
+  res.status = 404;
+}
+// One function changes for auth reasons, rate-limit reasons, logging reasons,
+// routing reasons — every concern is a Divergent Change pressure on the same body.
+
+// After:
+class Handler {
+  constructor(next) {
+    this.next = next;
+  }
+  handle(req, res) {
+    if (this.next) this.next.handle(req, res);
+  }
+}
+class AuthHandler extends Handler {
+  handle(req, res) {
+    if (!req.headers.authorization) {
+      res.status = 401;
+      res.body = 'unauthorized';
+      return;
+    }
+    super.handle(req, res);
+  }
+}
+class RateLimitHandler extends Handler {
+  handle(req, res) {
+    if (rateLimiter.exceeded(req.ip)) {
+      res.status = 429;
+      res.body = 'too many requests';
+      return;
+    }
+    super.handle(req, res);
+  }
+}
+class LoggingHandler extends Handler {
+  handle(req, res) {
+    logger.info(`${req.method} ${req.path}`);
+    super.handle(req, res);
+  }
+}
+class RoutingHandler extends Handler {
+  handle(req, res) {
+    if (req.path === '/api/users') {
+      res.status = 200;
+      res.body = listUsers();
+      return;
+    }
+    res.status = 404;
+  }
+}
+const chain = new AuthHandler(new RateLimitHandler(new LoggingHandler(new RoutingHandler(null))));
+chain.handle(req, res);
+```
+
+_Example source: Illustrative example written for this site in the spirit of Design Patterns (Gamma, Helm, Johnson, Vlissides, Addison-Wesley, 1994), chapter 5. The book's running example is a context-sensitive help system where help requests bubble up a widget tree; this JavaScript adaptation uses HTTP middleware because the chain-of-handlers shape is recognizable to most modern readers._
+
+**Pressure:** A long sequential handler function is O(concerns) read cost per edit and O(concerns²) verification cost for concern interactions. The agent's working memory is consumed by the full concern set rather than the change's actual scope.
+
+**Tradeoff:** Chain composition is implicit in the construction expression's nesting order. The agent investigating a runtime issue must trace through N handlers; stack traces span N frames; concern interactions (handler-A short-circuits before handler-B logs the failure) require explicit chain-aware reasoning the type system cannot enforce.
+
+**Relief:** Per-concern edits scope to one handler class; tests for each handler are unit-sized; chain composition tests cover ordering exhaustively at one construction site. Diff surface for adding a concern is a new file + a one-line edit to the chain.
+
+**Trap:** Handlers that peek at chain neighbors or skip ahead by mutating the request reintroduce cross-handler coupling. The agent reading one handler can no longer reason about its behaviour in isolation; chain-aware verification becomes mandatory on every handler edit, defeating the per-handler isolation the pattern promised.
+
+**Triggered by:** Long Function (smells), Divergent Change (smells), Replace Conditional with Polymorphism (refactorings)
