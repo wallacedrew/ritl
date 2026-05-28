@@ -1185,5 +1185,45 @@
         "trap": "Inconsistent builder discipline — some builders enforce required-input checks at build(), others tolerate missing inputs and produce half-built products with default sentinels — forces the agent to verify enforcement on every new builder it encounters. The pattern stops being a structural promise and becomes a per-class convention to look up."
       }
     }
+  },
+  {
+    "catalog": "patterns",
+    "book": "gof",
+    "name": "Factory Method",
+    "nemeses": [
+      {
+        "catalog": "smells",
+        "name": "Repeated Switches"
+      },
+      {
+        "catalog": "refactorings",
+        "name": "Replace Conditional with Polymorphism"
+      },
+      {
+        "catalog": "refactorings",
+        "name": "Replace Type Code with Subclasses"
+      }
+    ],
+    "before": "class Document {\n  open(format) {\n    let page;\n    if (format === 'pdf') {\n      page = new PdfPage();\n    } else if (format === 'html') {\n      page = new HtmlPage();\n    } else if (format === 'markdown') {\n      page = new MarkdownPage();\n    } else {\n      throw new Error(`unknown format: ${format}`);\n    }\n    this.pages = [page];\n  }\n}",
+    "after": "class Document {\n  open() {\n    const page = this.createPage();\n    this.pages = [page];\n  }\n  createPage() {\n    throw new Error('createPage must be implemented by subclass');\n  }\n}\nclass PdfDocument extends Document {\n  createPage() { return new PdfPage(); }\n}\nclass HtmlDocument extends Document {\n  createPage() { return new HtmlPage(); }\n}\nclass MarkdownDocument extends Document {\n  createPage() { return new MarkdownPage(); }\n}",
+    "exampleSource": "Illustrative example written for this site in the spirit of Design Patterns (Gamma, Helm, Johnson, Vlissides, Addison-Wesley, 1994), chapter 3. The book's running example is a Document framework with Pages; this JavaScript adaptation keeps the canonical Creator (Document) + Product (Page) hierarchy and shows the factory-method hook deferring product instantiation to subclasses.",
+    "forces": {
+      "human": {
+        "symptom": "A class's constructor (or initialization method) switches on a type code to choose which concrete subtype to instantiate. The switch grows a new branch every time a new variant ships; the class accumulates knowledge of every product that exists.",
+        "goal": "The base class owns the workflow and exposes one virtual hook — the factory method — that subclasses override to choose the product. The creator never names a concrete product; new variants subclass the creator instead of editing it.",
+        "pressure": "Adding a new product requires editing the creator's switch in addition to writing the new product class. Open-Closed is broken at the creator: existing code must change to accommodate each new product. Tests for the creator multiply by variant count.",
+        "tradeoff": "Subclassing the creator for every product makes a parallel hierarchy that doubles the class count and forces the codebase to live with type-tag selection at the creator-subclass level instead of at the product-construction level. Some teams find the indirection more confusing than the switch it replaced.",
+        "relief": "The creator's workflow reads as 'do A, ask the hook for the product, do B with it.' Adding a new product is a new subclass — no existing code changes. Each subclass is small, independently testable, and obvious in intent: 'I am the X variant of Document.'",
+        "trap": "The factory method hook degenerates into a Template Method with multiple hooks the subclass must override in lockstep. When subclasses must override two or more methods to be coherent — createPage, validatePage, indexPage — the parallel hierarchy stops paying; reach for composition or Strategy instead."
+      },
+      "agent": {
+        "symptom": "Type-code dispatch in a constructor or initializer means the agent must hold the full enumeration of variants in working memory while reading or editing the class. New variants land as edits to the switch; missed variants ship as runtime errors the agent had no structural reason to catch.",
+        "goal": "Structural completeness via the type system: every subclass of the creator must implement the factory method, so missing-variant bugs surface as construction-time errors the agent can see during static reading. The creator's workflow becomes a stable surface the agent never re-reads as products multiply.",
+        "pressure": "The agent's verification budget on creator edits scales linearly with the number of variants in the switch. Every variant must be checked for consistent treatment; partial updates produce type-compatible silent bugs the test suite may not exercise. Context cost climbs faster than feature value.",
+        "tradeoff": "A parallel hierarchy doubles the file count the agent must navigate to understand the system. 'Which Document am I dealing with?' becomes an additional step in every reasoning trace, and refactoring across the hierarchy requires editing N files in lockstep — exactly the cross-cutting pattern the agent struggles with most.",
+        "relief": "Per-variant edits scope to one subclass; the creator's workflow is read-once. Tests for the creator cover all variants transitively; tests for each variant cover one method. Diff surface for a new variant is a single new file the agent generates by mirroring an existing sibling.",
+        "trap": "Subclasses that override more than the factory method (extra hooks, extra state, extra invariants) reintroduce the cross-cutting verification problem in a different shape — now the agent must verify N subclasses each implement M hooks consistently. The parallel hierarchy becomes the same N×M cell-check problem the switch had, only spread across more files."
+      }
+    }
   }
 ]
