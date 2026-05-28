@@ -2,8 +2,6 @@
 
 import MenuIcon from "@mui/icons-material/Menu";
 import Box from "@mui/material/Box";
-import FormControl from "@mui/material/FormControl";
-import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import Select, { type SelectChangeEvent } from "@mui/material/Select";
 import Stack from "@mui/material/Stack";
@@ -112,36 +110,32 @@ export default function CatalogToolbar() {
         })}
       </Stack>
 
-      {/* Mobile: section picker with a floating "Section" label that sits
-          on the Select's border — gives the affordance without a separate
-          label above. */}
+      {/* Mobile: the Select always renders "Section" as its label so the
+          control reads as a menu button rather than a current-state
+          indicator. The active section is communicated by the page
+          content and breadcrumb, not by this picker's surface text. */}
       <Box sx={{ display: { xs: "block", md: "none" } }}>
-        <FormControl fullWidth size="small">
-          <InputLabel id="catalog-section-label">Section</InputLabel>
-          <Select
-            labelId="catalog-section-label"
-            label="Section"
-            value={active}
-            onChange={handleSelectChange}
-            renderValue={(value) => {
-              const label = NAV_LINKS.find((link) => link.view === value)?.label ?? "";
-              return (
-                <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
-                  <MenuIcon fontSize="small" sx={{ color: "text.secondary" }} />
-                  <Box component="span" sx={{ fontSize: "0.875rem" }}>
-                    {label}
-                  </Box>
-                </Stack>
-              );
-            }}
-          >
-            {NAV_LINKS.map((link) => (
-              <MenuItem key={link.view} value={link.view}>
-                {link.label}
-              </MenuItem>
-            ))}
-          </Select>
-        </FormControl>
+        <Select
+          fullWidth
+          size="small"
+          value={active}
+          onChange={handleSelectChange}
+          inputProps={{ "aria-label": "catalog section" }}
+          renderValue={() => (
+            <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
+              <MenuIcon fontSize="small" sx={{ color: "text.secondary" }} />
+              <Box component="span" sx={{ fontSize: "0.875rem" }}>
+                Section
+              </Box>
+            </Stack>
+          )}
+        >
+          {NAV_LINKS.map((link) => (
+            <MenuItem key={link.view} value={link.view}>
+              {link.label}
+            </MenuItem>
+          ))}
+        </Select>
       </Box>
     </Box>
   );
