@@ -6,8 +6,6 @@ import BeforeAfterCodeBlocks from "@/shared/components/BeforeAfterCodeBlocks";
 import CatalogBreadcrumb from "@/shared/components/CatalogBreadcrumb";
 import CatalogEntryHeader from "@/shared/components/CatalogEntryHeader";
 import CatalogExampleSource from "@/shared/components/CatalogExampleSource";
-import CatalogPrevNext from "@/shared/components/CatalogPrevNext";
-import CatalogPrevNextStrip from "@/shared/components/CatalogPrevNextStrip";
 import CatalogSection from "@/shared/components/CatalogSection";
 import LensSwitcher from "@/shared/components/LensSwitcher";
 import SnippetPreviewButton from "@/shared/components/SnippetPreviewButton";
@@ -58,8 +56,8 @@ export default function CatalogDetail({
           destinationPattern={entry.destinationPattern}
           incomingSources={incomingSources}
           inboundPatterns={inboundPatterns}
+          neighbors={neighbors}
         />
-        <CatalogPrevNextStrip neighbors={neighbors} />
         <LensSwitcher
           humanHref={entry.href()}
           compareHref={entry.compareHref()}
@@ -82,8 +80,6 @@ export default function CatalogDetail({
         <CatalogSection label="Tradeoff" body={forces.tradeoff} />
         <CatalogSection label="Relief" body={forces.relief} />
         <CatalogSection label="Trap" body={forces.trap} />
-        <Divider />
-        <CatalogPrevNext prev={neighbors.prev} next={neighbors.next} />
       </Stack>
     </Container>
   );

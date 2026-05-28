@@ -6,8 +6,6 @@ import BeforeAfterCodeBlocks from "@/shared/components/BeforeAfterCodeBlocks";
 import CatalogBreadcrumb from "@/shared/components/CatalogBreadcrumb";
 import CatalogEntryHeader from "@/shared/components/CatalogEntryHeader";
 import CatalogExampleSource from "@/shared/components/CatalogExampleSource";
-import CatalogPrevNext from "@/shared/components/CatalogPrevNext";
-import CatalogPrevNextStrip from "@/shared/components/CatalogPrevNextStrip";
 import CatalogSection from "@/shared/components/CatalogSection";
 import CatalogSectionCompare from "@/shared/components/CatalogSectionCompare";
 import LensSwitcher from "@/shared/components/LensSwitcher";
@@ -45,8 +43,12 @@ export default function CatalogCompareDetail({
           parentLabel={backLinkLabel}
           currentLabel={entry.name.toString()}
         />
-        <CatalogEntryHeader name={entry.name} number={number} relatedNames={entry.nemeses} />
-        <CatalogPrevNextStrip neighbors={neighbors} />
+        <CatalogEntryHeader
+          name={entry.name}
+          number={number}
+          relatedNames={entry.nemeses}
+          neighbors={neighbors}
+        />
         <LensSwitcher
           humanHref={entry.href()}
           compareHref={entry.compareHref()}
@@ -69,8 +71,6 @@ export default function CatalogCompareDetail({
         <CatalogSectionCompare label="Tradeoff" human={human.tradeoff} agent={agent.tradeoff} />
         <CatalogSectionCompare label="Relief" human={human.relief} agent={agent.relief} />
         <CatalogSectionCompare label="Trap" human={human.trap} agent={agent.trap} />
-        <Divider />
-        <CatalogPrevNext prev={neighbors.prev} next={neighbors.next} />
       </Stack>
     </Container>
   );

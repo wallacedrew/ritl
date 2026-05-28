@@ -1,12 +1,27 @@
+import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
+import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
+import NextLink from "next/link";
 
 import LinkedChip from "@/shared/components/LinkedChip";
 import { MONOSPACE_FONT } from "@/shared/theme/monospace";
 import type { CatalogEntryTone } from "@/shared/lib/CatalogEntry";
 import type { CatalogEntryName } from "@/shared/lib/CatalogEntryName";
+import type { CatalogNeighbors } from "@/shared/lib/CatalogNeighbors";
 import { chipColorForTone } from "@/shared/lib/catalogChipColor";
+
+const NAV_ARROW_STYLE = {
+  display: "inline-flex" as const,
+  alignItems: "center" as const,
+  justifyContent: "center" as const,
+  width: 32,
+  height: 32,
+  borderRadius: "50%",
+  color: "#666",
+  textDecoration: "none",
+};
 
 /**
  * Soft tone-tinted background + dark text for the catalog-number badge.
@@ -31,6 +46,7 @@ interface CatalogEntryHeaderProps {
   destinationPattern?: CatalogEntryName;
   incomingSources?: readonly CatalogEntryName[];
   inboundPatterns?: readonly CatalogEntryName[];
+  neighbors?: CatalogNeighbors;
 }
 
 function LabeledChipRow({ label, chips }: { label: string; chips: readonly CatalogEntryName[] }) {
@@ -73,31 +89,55 @@ export default function CatalogEntryHeader({
   destinationPattern,
   incomingSources,
   inboundPatterns,
+  neighbors,
 }: CatalogEntryHeaderProps) {
+  const prev = neighbors?.prev ?? null;
+  const next = neighbors?.next ?? null;
+
   return (
     <Stack spacing={1.5}>
       <Stack direction="row" spacing={2} sx={{ alignItems: "flex-start" }}>
         <Typography component="h1" variant="h4" sx={{ fontWeight: 700, flex: 1, lineHeight: 1.2 }}>
           {name.toString()}
         </Typography>
-        <Box
-          aria-hidden="true"
-          sx={{
-            flexShrink: 0,
-            px: 1.25,
-            py: 0.5,
-            borderRadius: 1,
-            bgcolor: TONE_BADGE_STYLES[name.tone()].bg,
-            color: TONE_BADGE_STYLES[name.tone()].fg,
-            fontFamily: MONOSPACE_FONT,
-            fontVariantNumeric: "tabular-nums",
-            fontWeight: 700,
-            fontSize: "0.875rem",
-            lineHeight: 1.5,
-          }}
-        >
-          {String(number).padStart(2, "0")}
-        </Box>
+        <Stack direction="row" spacing={0.5} sx={{ alignItems: "center", flexShrink: 0 }}>
+          {prev ? (
+            <NextLink
+              href={prev.href}
+              aria-label={`Previous: ${prev.name}`}
+              style={NAV_ARROW_STYLE}
+            >
+              <ChevronLeftIcon fontSize="small" />
+            </NextLink>
+          ) : (
+            <Box sx={{ width: 32, height: 32 }} aria-hidden="true" />
+          )}
+          <Box
+            aria-hidden="true"
+            sx={{
+              flexShrink: 0,
+              px: 1.25,
+              py: 0.5,
+              borderRadius: 1,
+              bgcolor: TONE_BADGE_STYLES[name.tone()].bg,
+              color: TONE_BADGE_STYLES[name.tone()].fg,
+              fontFamily: MONOSPACE_FONT,
+              fontVariantNumeric: "tabular-nums",
+              fontWeight: 700,
+              fontSize: "0.875rem",
+              lineHeight: 1.5,
+            }}
+          >
+            {String(number).padStart(2, "0")}
+          </Box>
+          {next ? (
+            <NextLink href={next.href} aria-label={`Next: ${next.name}`} style={NAV_ARROW_STYLE}>
+              <ChevronRightIcon fontSize="small" />
+            </NextLink>
+          ) : (
+            <Box sx={{ width: 32, height: 32 }} aria-hidden="true" />
+          )}
+        </Stack>
       </Stack>
       <LabeledChipRow label={nemesesLabel(name)} chips={relatedNames} />
       {destinationPattern && <LabeledChipRow label="Destination" chips={[destinationPattern]} />}
