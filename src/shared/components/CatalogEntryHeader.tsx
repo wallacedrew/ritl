@@ -97,7 +97,16 @@ export default function CatalogEntryHeader({
   return (
     <Stack spacing={1.5}>
       <Stack direction="row" spacing={2} sx={{ alignItems: "flex-start" }}>
-        <Typography component="h1" variant="h4" sx={{ fontWeight: 700, flex: 1, lineHeight: 1.2 }}>
+        <Typography
+          component="h1"
+          variant="h4"
+          sx={{
+            fontWeight: 700,
+            flex: 1,
+            lineHeight: 1.2,
+            fontSize: { xs: "1.375rem", sm: "1.625rem", md: "2.125rem" },
+          }}
+        >
           {name.toString()}
         </Typography>
         <Stack direction="row" spacing={0.5} sx={{ alignItems: "center", flexShrink: 0 }}>
