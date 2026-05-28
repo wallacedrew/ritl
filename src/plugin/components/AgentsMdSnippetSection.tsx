@@ -13,7 +13,8 @@ export default function AgentsMdSnippetSection() {
         ~25-line directive snippet for non-Claude-Code agents (Codex, Aider, Cursor, etc.). Drop
         into your AGENTS.md or CLAUDE.md so any coding agent gets the same refactoring discipline
         — sense the smell, identify the source, lay down a safety net, apply one named refactoring,
-        stay green.
+        stay green. Covers the Fowler loop only; for Kerievsky composite and GoF pattern coverage,
+        install the full Claude Code plugin above.
       </Typography>
       <SnippetPreviewButton
         href="/snippets/refactoring-discipline.md"

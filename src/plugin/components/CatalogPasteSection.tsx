@@ -10,15 +10,16 @@ export default function CatalogPasteSection() {
         Full catalog paste
       </Typography>
       <Typography variant="body2" color="text.secondary">
-        All 90 SKILL.md sections concatenated — a last-resort fallback for non-Claude-Code agents
-        that can&apos;t load AGENTS.md. Paste sections relevant to the smell you&apos;re working
-        on, not the whole file; pasting all 90 into one context burns tokens and dilutes
-        attention. Prefer the AGENTS.md drop-in above whenever your agent supports it.
+        All 141 SKILL.md sections concatenated — a last-resort fallback for non-Claude-Code agents
+        that can&apos;t load AGENTS.md. Paste sections relevant to the smell, refactoring, or
+        pattern you&apos;re working on, not the whole file; pasting all 141 into one context burns
+        tokens and dilutes attention. Prefer the AGENTS.md drop-in above whenever your agent
+        supports it.
       </Typography>
       <SnippetPreviewButton
         href="/snippets/refactoring-catalog.md"
         label="refactoring-catalog.md"
-        hint="90 SKILL.md sections"
+        hint="141 SKILL.md sections"
       />
     </Stack>
   );

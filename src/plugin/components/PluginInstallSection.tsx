@@ -33,9 +33,10 @@ export default function PluginInstallSection() {
         <Chip label="Recommended" color="primary" size="small" />
       </Stack>
       <Typography variant="body2" color="text.secondary">
-        91 auto-invoking skills — 1 workflow orchestrator, 66 refactorings, 24 smells. Each loads
-        just-in-time when its description matches what you&apos;re working on, so the model only
-        pays attention to the smell or refactoring that&apos;s actually in play.
+        141 auto-invoking skills — 1 workflow orchestrator, 66 refactorings, 24 smells, 50 patterns
+        (27 Kerievsky composites + 23 GoF design patterns). Each loads just-in-time when its
+        description matches what you&apos;re working on, so the model only pays attention to the
+        smell, refactoring, or pattern that&apos;s actually in play.
       </Typography>
       <Box
         sx={{
