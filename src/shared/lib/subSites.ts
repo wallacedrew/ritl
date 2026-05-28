@@ -1,4 +1,4 @@
-import type { CatalogKind } from "./CatalogEntry";
+import type { CatalogKind, PatternBook } from "./CatalogEntry";
 import { SubSite } from "./SubSite";
 
 export const FOWLER: SubSite = SubSite.from({
@@ -13,12 +13,31 @@ export const KERIEVSKY: SubSite = SubSite.from({
   catalogs: ["patterns"],
 });
 
-export const SUB_SITES: readonly SubSite[] = [FOWLER, KERIEVSKY];
+export const GOF: SubSite = SubSite.from({
+  slug: "design-patterns",
+  title: "Design Patterns",
+  catalogs: ["patterns"],
+});
 
-export function subSiteForCatalog(catalog: CatalogKind): SubSite {
-  const owner = SUB_SITES.find((subSite) => subSite.containsCatalog(catalog));
+export const SUB_SITES: readonly SubSite[] = [FOWLER, KERIEVSKY, GOF];
+
+export type NonPatternCatalog = Exclude<CatalogKind, "patterns">;
+
+export function subSiteForCatalog(catalog: NonPatternCatalog): SubSite {
+  const owner = SUB_SITES.find(
+    (subSite) => subSite.containsCatalog(catalog) && !subSite.containsCatalog("patterns"),
+  );
   if (owner === undefined) {
     throw new Error(`subSiteForCatalog: no sub-site hosts catalog "${catalog}"`);
   }
   return owner;
+}
+
+export function subSiteForPatternBook(book: PatternBook): SubSite {
+  switch (book) {
+    case "kerievsky":
+      return KERIEVSKY;
+    case "gof":
+      return GOF;
+  }
 }

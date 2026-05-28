@@ -1,13 +1,20 @@
-import type { CatalogKind } from "./CatalogEntry";
+import type { CatalogKind, PatternBook } from "./CatalogEntry";
 import { Slug } from "./Slug";
 
 export class CatalogEntryName {
   private constructor(
     private readonly value: string,
     private readonly kind: CatalogKind,
+    private readonly book?: PatternBook,
   ) {
     if (value.trim().length === 0) {
       throw new Error("CatalogEntryName: value cannot be empty");
+    }
+    if (kind === "patterns" && book === undefined) {
+      throw new Error('CatalogEntryName: pattern names must declare a "book"');
+    }
+    if (kind !== "patterns" && book !== undefined) {
+      throw new Error('CatalogEntryName: "book" is only allowed on pattern names');
     }
   }
 
@@ -19,8 +26,8 @@ export class CatalogEntryName {
     return new CatalogEntryName(value, "smells");
   }
 
-  static pattern(value: string): CatalogEntryName {
-    return new CatalogEntryName(value, "patterns");
+  static pattern(value: string, book: PatternBook): CatalogEntryName {
+    return new CatalogEntryName(value, "patterns", book);
   }
 
   toString(): string {
@@ -32,7 +39,7 @@ export class CatalogEntryName {
   }
 
   toCatalogHref(): string {
-    return this.toSlug().toCatalogHref(this.kind);
+    return this.toSlug().toCatalogHref(this.kind, this.book);
   }
 
   toSnippetHref(): string {
@@ -40,6 +47,6 @@ export class CatalogEntryName {
   }
 
   equals(other: CatalogEntryName): boolean {
-    return this.value === other.value && this.kind === other.kind;
+    return this.value === other.value && this.kind === other.kind && this.book === other.book;
   }
 }

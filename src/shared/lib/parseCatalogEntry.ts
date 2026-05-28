@@ -168,7 +168,8 @@ export function parseCatalogEntry(raw: unknown): CatalogEntry {
   }
   const record = raw as Record<string, unknown>;
   const catalog = readCatalog(record);
-  const name = readCatalogEntryName(record, catalog);
+  const book = readPatternBook(record, catalog);
+  const name = readCatalogEntryName(record, catalog, book);
 
   return CatalogEntry.from({
     catalog,
@@ -179,13 +180,14 @@ export function parseCatalogEntry(raw: unknown): CatalogEntry {
     forces: readForces(record),
     safetyNet: readOptionalSafetyNet(record),
     exampleSource: readOptionalExampleSource(record),
-    book: readPatternBook(record, catalog),
+    book,
   });
 }
 
 function readCatalogEntryName(
   record: Record<string, unknown>,
   catalog: CatalogKind,
+  book: PatternBook | undefined,
 ): CatalogEntryName {
   const rawName = readStringField(record, "name");
   switch (catalog) {
@@ -194,6 +196,9 @@ function readCatalogEntryName(
     case "refactorings":
       return CatalogEntryName.refactoring(rawName);
     case "patterns":
-      return CatalogEntryName.pattern(rawName);
+      if (book === undefined) {
+        throw new Error('parseCatalogEntry: pattern entries must declare a "book"');
+      }
+      return CatalogEntryName.pattern(rawName, book);
   }
 }

@@ -13,14 +13,33 @@ describe("CatalogEntryName", () => {
   });
 
   it("rejects an empty pattern name at construction", () => {
-    expect(() => CatalogEntryName.pattern("")).toThrow(/cannot be empty/);
+    expect(() => CatalogEntryName.pattern("", "kerievsky")).toThrow(/cannot be empty/);
   });
 
   it("treats a pattern name distinct from a refactoring name with the same value", () => {
     const asRefactoring = CatalogEntryName.refactoring("Compose Method");
-    const asPattern = CatalogEntryName.pattern("Compose Method");
+    const asPattern = CatalogEntryName.pattern("Compose Method", "kerievsky");
 
     expect(asRefactoring.equals(asPattern)).toBe(false);
+  });
+
+  it("treats two pattern names with the same value but different books as unequal", () => {
+    const kerievsky = CatalogEntryName.pattern("Strategy", "kerievsky");
+    const gof = CatalogEntryName.pattern("Strategy", "gof");
+
+    expect(kerievsky.equals(gof)).toBe(false);
+  });
+
+  it("routes a kerievsky pattern URL under /refactoring-to-patterns", () => {
+    const name = CatalogEntryName.pattern("Compose Method", "kerievsky");
+
+    expect(name.toCatalogHref()).toBe("/refactoring-to-patterns/compose-method");
+  });
+
+  it("routes a gof pattern URL under /design-patterns", () => {
+    const name = CatalogEntryName.pattern("Strategy", "gof");
+
+    expect(name.toCatalogHref()).toBe("/design-patterns/strategy");
   });
 
   it("renders refactoring URLs under the refactorings kind", () => {

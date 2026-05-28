@@ -112,7 +112,7 @@ describe("CatalogEntry", () => {
     expect(() =>
       makeEntry({
         catalog: "patterns",
-        name: CatalogEntryName.pattern("Strategy"),
+        name: CatalogEntryName.pattern("Strategy", "kerievsky"),
         nemeses: [],
       }),
     ).toThrow(/pattern entries must declare a "book"/i);
@@ -122,7 +122,7 @@ describe("CatalogEntry", () => {
     expect(() =>
       makeEntry({
         catalog: "patterns",
-        name: CatalogEntryName.pattern("Strategy"),
+        name: CatalogEntryName.pattern("Strategy", "kerievsky"),
         nemeses: [],
         book: "fowler" as never,
       }),
@@ -138,7 +138,7 @@ describe("CatalogEntry", () => {
   it("exposes the declared book on a pattern entry", () => {
     const entry = makeEntry({
       catalog: "patterns",
-      name: CatalogEntryName.pattern("Strategy"),
+      name: CatalogEntryName.pattern("Strategy", "kerievsky"),
       nemeses: [],
       book: "gof",
     });

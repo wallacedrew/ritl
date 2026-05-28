@@ -91,9 +91,21 @@ describe("Slug.toCatalogHref", () => {
     );
   });
 
-  it("builds a patterns catalog href under the single-catalog Kerievsky sub-site", () => {
-    expect(Slug.from("Compose Method").toCatalogHref("patterns")).toBe(
+  it("builds a kerievsky pattern href under /refactoring-to-patterns", () => {
+    expect(Slug.from("Compose Method").toCatalogHref("patterns", "kerievsky")).toBe(
       "/refactoring-to-patterns/compose-method",
+    );
+  });
+
+  it("builds a gof pattern href under /design-patterns", () => {
+    expect(Slug.from("Strategy").toCatalogHref("patterns", "gof")).toBe(
+      "/design-patterns/strategy",
+    );
+  });
+
+  it("rejects a patterns href when book is not supplied", () => {
+    expect(() => Slug.from("Strategy").toCatalogHref("patterns")).toThrow(
+      /"book" is required when kind is "patterns"/i,
     );
   });
 });

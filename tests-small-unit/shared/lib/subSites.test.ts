@@ -1,6 +1,13 @@
 import { describe, expect, it } from "vitest";
 
-import { FOWLER, KERIEVSKY, SUB_SITES, subSiteForCatalog } from "@/shared/lib/subSites";
+import {
+  FOWLER,
+  GOF,
+  KERIEVSKY,
+  SUB_SITES,
+  subSiteForCatalog,
+  subSiteForPatternBook,
+} from "@/shared/lib/subSites";
 
 describe("subSites registry", () => {
   it("declares Fowler at /refactoring with refactorings and smells", () => {
@@ -15,10 +22,17 @@ describe("subSites registry", () => {
     expect(KERIEVSKY.catalogs).toEqual(["patterns"]);
   });
 
-  it("exposes Fowler and Kerievsky as the registered sub-sites", () => {
-    expect(SUB_SITES).toHaveLength(2);
+  it("declares GoF at /design-patterns with the patterns catalog", () => {
+    expect(GOF.slug).toBe("design-patterns");
+    expect(GOF.title).toBe("Design Patterns");
+    expect(GOF.catalogs).toEqual(["patterns"]);
+  });
+
+  it("exposes Fowler, Kerievsky, and GoF as the registered sub-sites", () => {
+    expect(SUB_SITES).toHaveLength(3);
     expect(SUB_SITES[0]?.equals(FOWLER)).toBe(true);
     expect(SUB_SITES[1]?.equals(KERIEVSKY)).toBe(true);
+    expect(SUB_SITES[2]?.equals(GOF)).toBe(true);
   });
 
   it("subSiteForCatalog returns Fowler for refactorings", () => {
@@ -29,7 +43,11 @@ describe("subSites registry", () => {
     expect(subSiteForCatalog("smells").equals(FOWLER)).toBe(true);
   });
 
-  it("subSiteForCatalog returns Kerievsky for patterns", () => {
-    expect(subSiteForCatalog("patterns").equals(KERIEVSKY)).toBe(true);
+  it("subSiteForPatternBook returns Kerievsky for the kerievsky book", () => {
+    expect(subSiteForPatternBook("kerievsky").equals(KERIEVSKY)).toBe(true);
+  });
+
+  it("subSiteForPatternBook returns GoF for the gof book", () => {
+    expect(subSiteForPatternBook("gof").equals(GOF)).toBe(true);
   });
 });
