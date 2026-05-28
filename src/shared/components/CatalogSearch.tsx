@@ -75,7 +75,16 @@ export default function CatalogSearch({ items }: CatalogSearchProps) {
           },
         };
         return (
-          <TextField {...params} slotProps={slotProps} placeholder="Search all" size="small" />
+          <TextField
+            {...params}
+            slotProps={slotProps}
+            placeholder="Search all"
+            size="small"
+            sx={{
+              "& .MuiOutlinedInput-root": { pl: "14px" },
+              "& .MuiInputAdornment-root": { mr: 1 },
+            }}
+          />
         );
       }}
       renderOption={(props, option) => {
