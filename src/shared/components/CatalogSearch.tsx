@@ -83,6 +83,7 @@ export default function CatalogSearch({ items }: CatalogSearchProps) {
             sx={{
               "& .MuiAutocomplete-inputRoot.MuiOutlinedInput-root.MuiInputBase-adornedStart": {
                 paddingLeft: "9px",
+                borderRadius: 2,
               },
               "& .MuiInputAdornment-positionStart": {
                 marginLeft: 0,

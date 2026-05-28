@@ -1,6 +1,6 @@
 "use client";
 
-import MenuIcon from "@mui/icons-material/Menu";
+import ReorderIcon from "@mui/icons-material/Reorder";
 import Box from "@mui/material/Box";
 import MenuItem from "@mui/material/MenuItem";
 import Select, { type SelectChangeEvent } from "@mui/material/Select";
@@ -121,12 +121,16 @@ export default function CatalogToolbar() {
           value={active}
           onChange={handleSelectChange}
           inputProps={{ "aria-label": "catalog section" }}
-          sx={{ "& .MuiSelect-select": { paddingLeft: "9px" } }}
+          sx={{
+            borderRadius: 2,
+            "& .MuiSelect-select": { paddingLeft: "9px" },
+            "& .MuiSelect-icon": { color: "text.secondary" },
+          }}
           renderValue={() => (
             <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
-              <MenuIcon fontSize="small" sx={{ color: "text.secondary" }} />
-              <Box component="span" sx={{ fontSize: "0.875rem", color: "text.secondary" }}>
-                Section
+              <ReorderIcon fontSize="small" sx={{ color: "text.secondary" }} />
+              <Box component="span" sx={{ fontSize: "0.875rem", color: "text.primary" }}>
+                Sections
               </Box>
             </Stack>
           )}
