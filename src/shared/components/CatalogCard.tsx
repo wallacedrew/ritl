@@ -10,6 +10,7 @@ import NextLink from "next/link";
 
 import CatalogNumber from "@/shared/components/CatalogNumber";
 import type { CatalogListItem } from "@/shared/lib/CatalogListItem";
+import { chipColorForTone } from "@/shared/lib/catalogChipColor";
 
 interface CatalogCardProps {
   item: CatalogListItem;
@@ -29,7 +30,13 @@ export default function CatalogCard({ item }: CatalogCardProps) {
             </Stack>
             <Stack direction="row" sx={{ flexWrap: "wrap", gap: 1 }}>
               {item.chips.map((chip) => (
-                <Chip key={chip} label={chip} size="small" variant="outlined" />
+                <Chip
+                  key={chip.label}
+                  label={chip.label}
+                  size="small"
+                  variant="outlined"
+                  color={chipColorForTone(chip.tone)}
+                />
               ))}
             </Stack>
             <Typography variant="body2" color="text.secondary">

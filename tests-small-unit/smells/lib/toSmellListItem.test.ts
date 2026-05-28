@@ -40,7 +40,7 @@ describe("toSmellListItem", () => {
     const item = toSmellListItem(baseSmell, 1);
 
     expect(item.name).toBe("Mysterious Name");
-    expect(item.chips).toEqual(["Rename Variable"]);
+    expect(item.chips).toEqual([{ label: "Rename Variable", tone: "refactoring" }]);
     expect(item.caption).toContain("don't reveal intent");
   });
 

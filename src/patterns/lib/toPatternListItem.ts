@@ -6,7 +6,10 @@ export function toPatternListItem(pattern: CatalogEntry, number: number): Catalo
     number,
     href: pattern.name.toCatalogHref(),
     name: pattern.name.toString(),
-    chips: pattern.nemeses.map((nemesisName) => nemesisName.toString()),
+    chips: pattern.nemeses.map((nemesisName) => ({
+      label: nemesisName.toString(),
+      tone: nemesisName.tone(),
+    })),
     caption: pattern.forcesFor("human").goal,
   };
 }

@@ -6,7 +6,10 @@ export function toRefactoringListItem(refactoring: CatalogEntry, number: number)
     number,
     href: refactoring.name.toCatalogHref(),
     name: refactoring.name.toString(),
-    chips: refactoring.nemeses.map((smellName) => smellName.toString()),
+    chips: refactoring.nemeses.map((smellName) => ({
+      label: smellName.toString(),
+      tone: smellName.tone(),
+    })),
     caption: refactoring.forcesFor("human").goal,
   };
 }

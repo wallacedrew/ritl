@@ -6,7 +6,10 @@ export function toSmellListItem(smell: CatalogEntry, number: number): CatalogLis
     number,
     href: smell.name.toCatalogHref(),
     name: smell.name.toString(),
-    chips: smell.nemeses.map((nemesis) => nemesis.toString()),
+    chips: smell.nemeses.map((nemesis) => ({
+      label: nemesis.toString(),
+      tone: nemesis.tone(),
+    })),
     caption: smell.forcesFor("human").symptom,
   };
 }

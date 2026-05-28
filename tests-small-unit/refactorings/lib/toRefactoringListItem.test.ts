@@ -43,7 +43,10 @@ describe("toRefactoringListItem", () => {
     const item = toRefactoringListItem(baseRefactoring, 1);
 
     expect(item.name).toBe("Extract Function");
-    expect(item.chips).toEqual(["Long Function", "Duplicated Code"]);
+    expect(item.chips).toEqual([
+      { label: "Long Function", tone: "smell" },
+      { label: "Duplicated Code", tone: "smell" },
+    ]);
     expect(item.caption).toContain("single named");
   });
 
