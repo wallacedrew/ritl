@@ -1265,5 +1265,45 @@
         "trap": "Optional fields and conditional cloning logic accreting onto the prototype mask divergent variant shapes. The agent reading the registry sees a uniform table; the runtime sees branching behaviour that depends on which fields a prototype happens to have set. The structural promise the pattern made stops holding."
       }
     }
+  },
+  {
+    "catalog": "patterns",
+    "book": "gof",
+    "name": "Singleton",
+    "nemeses": [
+      {
+        "catalog": "smells",
+        "name": "Global Data"
+      },
+      {
+        "catalog": "smells",
+        "name": "Duplicated Code"
+      },
+      {
+        "catalog": "refactorings",
+        "name": "Encapsulate Variable"
+      }
+    ],
+    "before": "class Config {\n  constructor() {\n    this.values = loadFromDisk();\n  }\n}\n// every consumer constructs its own:\nconst databaseModule = { config: new Config() };\nconst httpModule = { config: new Config() };\nconst loggerModule = { config: new Config() };\n// three disk reads; three copies that drift if the file changes;\n// no canonical 'current configuration' anywhere in the system.",
+    "after": "class Config {\n  static instance = null;\n  static getInstance() {\n    if (Config.instance === null) {\n      Config.instance = new Config(Config.#TOKEN);\n    }\n    return Config.instance;\n  }\n  static #TOKEN = Symbol('Config.constructor');\n  constructor(token) {\n    if (token !== Config.#TOKEN) {\n      throw new Error('Use Config.getInstance() — Config is a singleton');\n    }\n    this.values = loadFromDisk();\n  }\n}\nconst databaseModule = { config: Config.getInstance() };\nconst httpModule = { config: Config.getInstance() };\nconst loggerModule = { config: Config.getInstance() };",
+    "exampleSource": "Illustrative example written for this site in the spirit of Design Patterns (Gamma, Helm, Johnson, Vlissides, Addison-Wesley, 1994), chapter 3. The book's running example is a printer-spooler; this JavaScript adaptation uses a configuration registry where the expensive disk load happens at most once. The private-token guard makes new Config() unconstructable from outside, mirroring the book's private-constructor enforcement in languages that have it.",
+    "forces": {
+      "human": {
+        "symptom": "Every module that needs a piece of shared state constructs its own copy. The construction is expensive (disk read, network handshake, parser warm-up) and the copies drift the moment any consumer mutates them — but there is no architectural anchor saying which copy is canonical.",
+        "goal": "Exactly one instance exists for the system's lifetime; every consumer reaches that instance through a single named access point. Expensive setup runs once; the shared state has a canonical home; cross-consumer visibility is intentional, not accidental.",
+        "pressure": "Per-consumer construction is Duplicated Code at the worst level — the work itself is duplicated, not just the source text. Cache invalidation, hot-reload, and disk re-read semantics multiply by consumer count. Drift bugs are catastrophic and slow to diagnose: which Config does this module trust?",
+        "tradeoff": "Singletons are Global Data wearing a class costume. They couple every consumer to one concrete implementation; they break unit-test isolation because tests now share mutable state; they hide dependencies behind a static access point that linters can't trace. The pattern is famously over-used; every team has scars.",
+        "relief": "One canonical instance; one place to invalidate; one place to log access. Expensive setup runs once. Architectural intent is explicit: 'this is a system-wide shared resource.'",
+        "trap": "Singletons multiply: 'we need just one more' becomes 'we have twelve.' Each new Singleton couples every consumer to it; testing accumulates per-Singleton reset boilerplate; modularity erodes faster than the convenience wins. Stop and reach for explicit dependency injection unless the resource is genuinely process-global (loaded config, system clock, randomness source) and the alternative is materially worse."
+      },
+      "agent": {
+        "symptom": "The agent sees `new Config()` scattered across modules and cannot tell from reading whether the consumers share state. Test-isolation reasoning requires the agent to enumerate every construction site; assumptions about 'one config' are unverifiable at static read time.",
+        "goal": "A single getInstance() access point the agent can grep for to enumerate every consumer. Construction is structurally one-shot; the agent's reasoning about 'who owns this state' has exactly one answer; tests against shared state are explicit about reset.",
+        "pressure": "Per-consumer copies multiply the agent's state-graph reasoning by consumer count. Cross-module bugs caused by stale copies are nearly impossible to localize statically — the agent must trace runtime construction order, which is invisible in the source.",
+        "tradeoff": "Singleton state survives across tests by default; the agent must remember per-test reset discipline that the test framework does not enforce. Coupling consumers to a static getter hides the dependency in a way linters cannot warn about — the agent's 'who depends on what' graph is structurally incomplete.",
+        "relief": "Construction grep returns one site (the getter); 'who calls Config.getInstance' enumerates every consumer; reset semantics are localizable to the getter's reset method. Diff surface for changing the loading strategy is one class.",
+        "trap": "When tests rely on Config.getInstance() returning a real (live) instance, the agent's edits to Config silently break unrelated tests through the shared-state coupling. The pattern's convenience hides exactly the kind of cross-cutting dependency the agent needs structural visibility into."
+      }
+    }
   }
 ]
