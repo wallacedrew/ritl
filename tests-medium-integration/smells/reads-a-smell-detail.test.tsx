@@ -17,8 +17,11 @@ describe("user reads a smell detail", () => {
     expect(screen.getByText(/re-comprehension cost/i)).toBeInTheDocument();
     expect(screen.getByText(/names read as the domain/i)).toBeInTheDocument();
     expect(screen.getByText(/onboarding time/i)).toBeInTheDocument();
-    expect(screen.getByText(/function calc/)).toBeInTheDocument();
-    expect(screen.getByText(/function distance/)).toBeInTheDocument();
+    // Code is rendered through prism-react-renderer which tokenizes into
+    // many sibling <span> nodes, so getByText can't find multi-token
+    // substrings. Search the rendered text content directly.
+    expect(document.body.textContent).toContain("function calc");
+    expect(document.body.textContent).toContain("function distance");
 
     expect(screen.getByRole("button", { name: /preview Markdown/i })).toBeInTheDocument();
   });

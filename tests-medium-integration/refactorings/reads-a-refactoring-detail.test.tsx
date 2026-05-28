@@ -23,8 +23,11 @@ describe("user reads a refactoring detail with smell cross-links", () => {
     expect(screen.getByText(/maze of one-line functions/i)).toBeInTheDocument();
     expect(screen.getByText(/single named domain step/i)).toBeInTheDocument();
     expect(screen.getByText(/named subroutines/i)).toBeInTheDocument();
-    expect(screen.getByText(/let total = 0/)).toBeInTheDocument();
-    expect(screen.getByText(/subtotalAfterBulkDiscount/)).toBeInTheDocument();
+    // Code is rendered through prism-react-renderer which tokenizes into
+    // many sibling <span> nodes, so getByText can't find multi-token
+    // substrings. Search the rendered text content directly.
+    expect(document.body.textContent).toContain("let total = 0");
+    expect(document.body.textContent).toContain("subtotalAfterBulkDiscount");
 
     expect(screen.getByRole("button", { name: /preview Markdown/i })).toBeInTheDocument();
 

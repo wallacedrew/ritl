@@ -32,8 +32,10 @@ describe("user reads Replace Conditional Logic with Strategy", () => {
       screen.getByRole("heading", { name: "Replace Conditional Logic with Strategy", level: 1 }),
     ).toBeInTheDocument();
 
-    expect(screen.getByText(/capitalStrategy/)).toBeInTheDocument();
-    expect(screen.getByText(/TermLoanStrategy/)).toBeInTheDocument();
+    // Code is rendered through prism-react-renderer which tokenizes into
+    // many sibling <span> nodes; search the rendered text content directly.
+    expect(document.body.textContent).toContain("capitalStrategy");
+    expect(document.body.textContent).toContain("TermLoanStrategy");
 
     const repeatedSwitchesLink = screen.getByRole("link", { name: "Repeated Switches" });
     expect(repeatedSwitchesLink).toHaveAttribute("href", "/refactoring/smells/repeated-switches");

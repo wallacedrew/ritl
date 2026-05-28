@@ -1,5 +1,4 @@
 import Stack from "@mui/material/Stack";
-import Typography from "@mui/material/Typography";
 
 import CodeBlock from "./CodeBlock";
 
@@ -18,17 +17,11 @@ export default function BeforeAfterCodeBlocks({
 }: BeforeAfterCodeBlocksProps) {
   return (
     <Stack direction={{ xs: "column", md: "row" }} spacing={2} sx={{ alignItems: "stretch" }}>
-      <Stack spacing={1} sx={{ flex: 1, minWidth: 0 }}>
-        <Typography variant="overline" color="text.secondary">
-          {beforeLabel}
-        </Typography>
-        <CodeBlock code={beforeCode} />
+      <Stack sx={{ flex: 1, minWidth: 0 }}>
+        <CodeBlock code={beforeCode} label={beforeLabel} tone="before" />
       </Stack>
-      <Stack spacing={1} sx={{ flex: 1, minWidth: 0 }}>
-        <Typography variant="overline" color="text.secondary">
-          {afterLabel}
-        </Typography>
-        <CodeBlock code={afterCode} />
+      <Stack sx={{ flex: 1, minWidth: 0 }}>
+        <CodeBlock code={afterCode} label={afterLabel} tone="after" />
       </Stack>
     </Stack>
   );
