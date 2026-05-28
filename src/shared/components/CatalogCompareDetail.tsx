@@ -1,5 +1,4 @@
 import Container from "@mui/material/Container";
-import Divider from "@mui/material/Divider";
 import Stack from "@mui/material/Stack";
 
 import BeforeAfterCodeBlocks from "@/shared/components/BeforeAfterCodeBlocks";
@@ -56,7 +55,6 @@ export default function CatalogCompareDetail({
           agentHref={entry.agentHref()}
           currentView="compare"
         />
-        <Divider />
         {entry.safetyNet && <CatalogSection label="Safety net" body={entry.safetyNet.toString()} />}
         <CatalogSectionCompare label="Symptom" human={human.symptom} agent={agent.symptom} />
         <CatalogSectionCompare label="Goal" human={human.goal} agent={agent.goal} />

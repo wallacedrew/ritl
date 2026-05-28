@@ -1,5 +1,4 @@
 import Container from "@mui/material/Container";
-import Divider from "@mui/material/Divider";
 import Stack from "@mui/material/Stack";
 
 import BeforeAfterCodeBlocks from "@/shared/components/BeforeAfterCodeBlocks";
@@ -65,7 +64,6 @@ export default function CatalogDetail({
           agentHref={entry.agentHref()}
           currentView={lens}
         />
-        <Divider />
         {entry.safetyNet && <CatalogSection label="Safety net" body={entry.safetyNet.toString()} />}
         <CatalogSection label="Symptom" body={forces.symptom} />
         <CatalogSection label="Goal" body={forces.goal} />
