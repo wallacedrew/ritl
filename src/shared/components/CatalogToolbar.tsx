@@ -110,7 +110,7 @@ export default function CatalogToolbar() {
       </Stack>
 
       {/* Mobile: dropdown navigating on change */}
-      <Box sx={{ display: { xs: "block", md: "none" }, p: 1 }}>
+      <Box sx={{ display: { xs: "block", md: "none" } }}>
         <Select
           fullWidth
           size="small"
