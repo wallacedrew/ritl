@@ -27,25 +27,43 @@ function hrefFor(entry: CatalogEntry, view: LensView): string {
 
 export default function LensSwitcher({ entry, currentView }: LensSwitcherProps) {
   return (
-    <Stack direction="row" spacing={1} sx={{ alignItems: "baseline" }}>
-      {VIEW_ORDER.map((view, index) => (
-        <Stack key={view} direction="row" spacing={1} sx={{ alignItems: "baseline" }}>
-          {index > 0 && (
-            <Typography variant="body2" color="text.secondary" component="span">
-              ·
-            </Typography>
-          )}
-          {view === currentView ? (
-            <Typography variant="body2" component="span" color="text.secondary">
-              {VIEW_LABELS[view]}
-            </Typography>
-          ) : (
-            <Typography variant="body2" component="span">
-              <NextLink href={hrefFor(entry, view)}>{VIEW_LABELS[view]}</NextLink>
-            </Typography>
-          )}
-        </Stack>
-      ))}
+    <Stack
+      direction="row"
+      spacing={3}
+      sx={{ borderBottom: 1, borderColor: "divider", alignItems: "stretch" }}
+    >
+      {VIEW_ORDER.map((view) => {
+        const isActive = view === currentView;
+        const commonSx = {
+          py: 1,
+          fontWeight: isActive ? 600 : 500,
+          color: isActive ? "primary.main" : "text.secondary",
+          textDecoration: "none",
+          borderBottom: 2,
+          borderColor: isActive ? "primary.main" : "transparent",
+          marginBottom: "-1px",
+          transition: "color 150ms, border-color 150ms",
+          "&:hover": {
+            color: isActive ? "primary.main" : "text.primary",
+          },
+        } as const;
+
+        return isActive ? (
+          <Typography key={view} variant="body2" component="span" aria-current="page" sx={commonSx}>
+            {VIEW_LABELS[view]}
+          </Typography>
+        ) : (
+          <Typography
+            key={view}
+            variant="body2"
+            component={NextLink}
+            href={hrefFor(entry, view)}
+            sx={commonSx}
+          >
+            {VIEW_LABELS[view]}
+          </Typography>
+        );
+      })}
     </Stack>
   );
 }

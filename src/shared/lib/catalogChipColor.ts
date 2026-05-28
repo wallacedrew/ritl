@@ -45,3 +45,23 @@ export function chipColorForTone(tone: CatalogEntryTone): ChipColor {
 export function dotBgForTone(tone: CatalogEntryTone): string {
   return `${chipColorForTone(tone)}.main`;
 }
+
+/**
+ * Narrowed palette key for badges/borders that want `theme.palette[key].main`
+ * with `alpha()`. Same mapping as `chipColorForTone` but excludes "default"
+ * etc. so TypeScript can index `theme.palette[badgePaletteKey(tone)]` safely.
+ */
+export type BadgePaletteKey = "success" | "error" | "warning" | "info";
+
+export function badgePaletteKey(tone: CatalogEntryTone): BadgePaletteKey {
+  switch (tone) {
+    case "refactoring":
+      return "success";
+    case "smell":
+      return "error";
+    case "kerievsky-pattern":
+      return "warning";
+    case "gof-pattern":
+      return "info";
+  }
+}

@@ -3,13 +3,14 @@ import Divider from "@mui/material/Divider";
 import Stack from "@mui/material/Stack";
 
 import BeforeAfterCodeBlocks from "@/shared/components/BeforeAfterCodeBlocks";
-import CatalogBackLink from "@/shared/components/CatalogBackLink";
+import CatalogBreadcrumb from "@/shared/components/CatalogBreadcrumb";
 import CatalogEntryHeader from "@/shared/components/CatalogEntryHeader";
 import CatalogExampleSource from "@/shared/components/CatalogExampleSource";
 import CatalogPrevNext from "@/shared/components/CatalogPrevNext";
 import CatalogPrevNextStrip from "@/shared/components/CatalogPrevNextStrip";
 import CatalogSection from "@/shared/components/CatalogSection";
 import LensSwitcher from "@/shared/components/LensSwitcher";
+import SnippetPreviewButton from "@/shared/components/SnippetPreviewButton";
 import type { CatalogEntry, Lens } from "@/shared/lib/CatalogEntry";
 import type { CatalogNeighbors } from "@/shared/lib/CatalogNeighbors";
 
@@ -45,7 +46,11 @@ export default function CatalogDetail({
   return (
     <Container maxWidth="lg" sx={{ py: 4 }}>
       <Stack spacing={3}>
-        <CatalogBackLink href={backLinkHref} label={backLinkLabel} />
+        <CatalogBreadcrumb
+          parentHref={backLinkHref}
+          parentLabel={backLinkLabel}
+          currentLabel={entry.name.toString()}
+        />
         <CatalogEntryHeader
           name={entry.name}
           number={number}
@@ -56,6 +61,7 @@ export default function CatalogDetail({
         />
         <CatalogPrevNextStrip neighbors={neighbors} />
         <LensSwitcher entry={entry} currentView={lens} />
+        <SnippetPreviewButton href={entry.name.toSnippetHref()} label="Preview markdown" />
         <Divider />
         {entry.safetyNet && <CatalogSection label="Safety net" body={entry.safetyNet.toString()} />}
         <CatalogSection label="Symptom" body={forces.symptom} />

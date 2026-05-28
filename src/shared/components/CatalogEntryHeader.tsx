@@ -1,12 +1,12 @@
 import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
+import { alpha } from "@mui/material/styles";
 import Typography from "@mui/material/Typography";
 
-import CatalogNumber from "@/shared/components/CatalogNumber";
 import LinkedChip from "@/shared/components/LinkedChip";
-import SnippetPreviewButton from "@/shared/components/SnippetPreviewButton";
+import { MONOSPACE_FONT } from "@/shared/theme/monospace";
 import type { CatalogEntryName } from "@/shared/lib/CatalogEntryName";
-import { chipColorForTone } from "@/shared/lib/catalogChipColor";
+import { badgePaletteKey, chipColorForTone } from "@/shared/lib/catalogChipColor";
 
 interface CatalogEntryHeaderProps {
   name: CatalogEntryName;
@@ -60,17 +60,36 @@ export default function CatalogEntryHeader({
 }: CatalogEntryHeaderProps) {
   return (
     <Stack spacing={1.5}>
-      <Typography component="h1" variant="h5" sx={{ fontWeight: 600 }}>
-        {name.toString()}
-        <Box component="span" aria-hidden="true" sx={{ ml: 1, whiteSpace: "nowrap" }}>
-          <CatalogNumber value={number} size="small" />
+      <Stack direction="row" spacing={2} sx={{ alignItems: "flex-start" }}>
+        <Typography component="h1" variant="h4" sx={{ fontWeight: 700, flex: 1, lineHeight: 1.2 }}>
+          {name.toString()}
+        </Typography>
+        <Box
+          aria-hidden="true"
+          sx={(theme) => {
+            const paletteKey = badgePaletteKey(name.tone());
+            return {
+              flexShrink: 0,
+              px: 1.25,
+              py: 0.5,
+              borderRadius: 1,
+              bgcolor: alpha(theme.palette[paletteKey].main, 0.15),
+              color: theme.palette[paletteKey].dark,
+              fontFamily: MONOSPACE_FONT,
+              fontVariantNumeric: "tabular-nums",
+              fontWeight: 700,
+              fontSize: "0.875rem",
+              lineHeight: 1.5,
+            };
+          }}
+        >
+          {String(number).padStart(2, "0")}
         </Box>
-      </Typography>
+      </Stack>
       <LabeledChipRow label={nemesesLabel(name)} chips={relatedNames} />
       {destinationPattern && <LabeledChipRow label="Destination" chips={[destinationPattern]} />}
       {incomingSources && <LabeledChipRow label="Reached from" chips={incomingSources} />}
       {inboundPatterns && <LabeledChipRow label="Referenced by patterns" chips={inboundPatterns} />}
-      <SnippetPreviewButton href={name.toSnippetHref()} label="Preview Markdown" />
     </Stack>
   );
 }

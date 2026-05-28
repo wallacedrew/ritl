@@ -3,7 +3,7 @@ import Divider from "@mui/material/Divider";
 import Stack from "@mui/material/Stack";
 
 import BeforeAfterCodeBlocks from "@/shared/components/BeforeAfterCodeBlocks";
-import CatalogBackLink from "@/shared/components/CatalogBackLink";
+import CatalogBreadcrumb from "@/shared/components/CatalogBreadcrumb";
 import CatalogEntryHeader from "@/shared/components/CatalogEntryHeader";
 import CatalogExampleSource from "@/shared/components/CatalogExampleSource";
 import CatalogPrevNext from "@/shared/components/CatalogPrevNext";
@@ -11,6 +11,7 @@ import CatalogPrevNextStrip from "@/shared/components/CatalogPrevNextStrip";
 import CatalogSection from "@/shared/components/CatalogSection";
 import CatalogSectionCompare from "@/shared/components/CatalogSectionCompare";
 import LensSwitcher from "@/shared/components/LensSwitcher";
+import SnippetPreviewButton from "@/shared/components/SnippetPreviewButton";
 import type { CatalogEntry } from "@/shared/lib/CatalogEntry";
 import type { CatalogNeighbors } from "@/shared/lib/CatalogNeighbors";
 
@@ -39,10 +40,15 @@ export default function CatalogCompareDetail({
   return (
     <Container maxWidth="lg" sx={{ py: 4 }}>
       <Stack spacing={3}>
-        <CatalogBackLink href={backLinkHref} label={backLinkLabel} />
+        <CatalogBreadcrumb
+          parentHref={backLinkHref}
+          parentLabel={backLinkLabel}
+          currentLabel={entry.name.toString()}
+        />
         <CatalogEntryHeader name={entry.name} number={number} relatedNames={entry.nemeses} />
         <CatalogPrevNextStrip neighbors={neighbors} />
         <LensSwitcher entry={entry} currentView="compare" />
+        <SnippetPreviewButton href={entry.name.toSnippetHref()} label="Preview markdown" />
         <Divider />
         {entry.safetyNet && <CatalogSection label="Safety net" body={entry.safetyNet.toString()} />}
         <CatalogSectionCompare label="Symptom" human={human.symptom} agent={agent.symptom} />
