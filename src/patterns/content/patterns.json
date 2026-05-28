@@ -1425,5 +1425,45 @@
         "trap": "Leaves implementing add()/remove() as throws turns the type system's promise of uniformity into a runtime trap. The agent reading the interface expects the operation to work; the runtime experience contradicts the static read. Prefer the discriminated-union form when leaf and composite diverge on more than two operations."
       }
     }
+  },
+  {
+    "catalog": "patterns",
+    "book": "gof",
+    "name": "Decorator",
+    "nemeses": [
+      {
+        "catalog": "smells",
+        "name": "Large Class"
+      },
+      {
+        "catalog": "smells",
+        "name": "Divergent Change"
+      },
+      {
+        "catalog": "refactorings",
+        "name": "Replace Subclass with Delegate"
+      }
+    ],
+    "before": "class EmailNotifier {\n  send(message) { /* email */ }\n}\nclass EmailAndSmsNotifier {\n  send(message) { /* email + sms */ }\n}\nclass EmailAndSlackNotifier {\n  send(message) { /* email + slack */ }\n}\nclass EmailAndSmsAndSlackNotifier {\n  send(message) { /* email + sms + slack */ }\n}\n// N channels → 2^N notifier classes. Adding 'Discord' doubles the\n// hierarchy. Each new combination repeats the orchestration logic.",
+    "after": "class EmailNotifier {\n  send(message) { /* email */ }\n}\nclass SmsDecorator {\n  constructor(wrapped) { this.wrapped = wrapped; }\n  send(message) {\n    this.wrapped.send(message);\n    /* also send sms */\n  }\n}\nclass SlackDecorator {\n  constructor(wrapped) { this.wrapped = wrapped; }\n  send(message) {\n    this.wrapped.send(message);\n    /* also post to slack */\n  }\n}\n// Compose at the call site:\nconst notifier = new SlackDecorator(new SmsDecorator(new EmailNotifier()));\nnotifier.send('Build failed');\n// N channels → N classes. Adding 'Discord' = 1 new decorator.",
+    "exampleSource": "Illustrative example written for this site in the spirit of Design Patterns (Gamma, Helm, Johnson, Vlissides, Addison-Wesley, 1994), chapter 4. The book's running example is a windowing toolkit with scroll-bars and borders as decorators; this JavaScript adaptation uses a multi-channel notifier because the composability of channels makes the 2^N → N collapse visible in code.",
+    "forces": {
+      "human": {
+        "symptom": "One concrete class needs additional behaviour (logging, retries, encryption, caching, notification channels) that is genuinely orthogonal to its core responsibility. Subclassing for each combination produces a combinatorial hierarchy (Email + Sms + Slack + Logging + Retrying = 2^N classes); feature flags inside one class produce a Large Class that changes for unrelated reasons (Divergent Change).",
+        "goal": "Each cross-cutting feature is a separate wrapper class that conforms to the same interface as the wrappee. Features compose at the call site by nesting; the core class stays focused on its one responsibility.",
+        "pressure": "2^N subclasses or a 1-class-with-N-flags monolith — both options scale badly. Combining features at the construction site (with flags or factory methods) duplicates the orchestration logic; feature interactions become emergent and untestable in isolation.",
+        "tradeoff": "Reading code that uses Decorator requires navigating the wrapping chain. `new SlackDecorator(new SmsDecorator(new EmailNotifier()))` is a Russian doll the reader must unpack to know what 'send' actually does. Stack traces are deep; debugging requires understanding the wrapping order.",
+        "relief": "Each decorator is small, single-responsibility, unit-testable in isolation. New features = new wrappers, no edits to existing classes. Feature combinations are explicit at the construction site, where they belong; the type system enforces that every decorator conforms to the wrappee's interface.",
+        "trap": "Decorators that look up state on the wrappee or mutate the wrappee's behaviour stop being orthogonal additions and become semantic patches. Stack-of-decorators where order matters (RetryDecorator outside LoggingDecorator vs inside) and the ordering is not documented produces bugs no test exercises until production. Order-dependence demands explicit conventions or composition tools."
+      },
+      "agent": {
+        "symptom": "Combinatorial subclass explosion or feature-flag-laden monoliths the agent must verify exhaustively on every behavioural change. 2^N combinations means N×(N-1) feature-interaction cells the agent reasons about; feature flags inside one class make the class's behaviour parametric on flag combinations.",
+        "goal": "N small wrapper classes the agent reads one at a time. Feature composition is explicit in the construction expression; each wrapper's behaviour is its own one-file unit; tests cover each wrapper × wrappee combination compositionally.",
+        "pressure": "Combinatorial hierarchy growth turns 'add a feature' into 'edit every existing combination'. Feature-flag monoliths concentrate the verification burden into one mega-class whose behaviour the agent must trace through every flag-permutation. Both shapes consume context budget that should be spent on the calling code.",
+        "tradeoff": "Wrapping chains are stack-allocated indirection the agent must navigate per operation. Tracing why `notifier.send(msg)` produced a specific side effect requires the agent to walk the wrapping chain — and the chain's composition is dynamic, set at the construction site that may live in a different module.",
+        "relief": "Per-feature edits scope to one decorator file; verification scales linearly with feature count. Stack traces map decorators 1:1 to call frames; the agent can localize bugs by reading one wrapper at a time. Compositional tests cover combinations without enumerating them.",
+        "trap": "Decorators whose semantics depend on wrapping order (RetryDecorator(LoggingDecorator(X)) vs LoggingDecorator(RetryDecorator(X))) force the agent to verify order-correctness on every construction site. The construction expression becomes part of the spec; PR review must catch wrong-order regressions the type system cannot."
+      }
+    }
   }
 ]
