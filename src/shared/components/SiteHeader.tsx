@@ -41,7 +41,8 @@ export default function SiteHeader() {
               >
                 canonical refactorings and code smells
               </Link>{" "}
-              plus Joshua Kerievsky&rsquo;s refactoring patterns.
+              plus Joshua Kerievsky&rsquo;s refactoring patterns and the Gang of Four design
+              patterns.
             </Typography>
           </Stack>
           <CatalogSearch items={items} />
