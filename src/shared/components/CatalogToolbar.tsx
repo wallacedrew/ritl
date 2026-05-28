@@ -1,10 +1,11 @@
 "use client";
 
-import ViewStreamIcon from "@mui/icons-material/ViewStream";
+import MenuIcon from "@mui/icons-material/Menu";
 import Box from "@mui/material/Box";
 import MenuItem from "@mui/material/MenuItem";
 import Select, { type SelectChangeEvent } from "@mui/material/Select";
 import Stack from "@mui/material/Stack";
+import Typography from "@mui/material/Typography";
 import NextLink from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 
@@ -110,39 +111,30 @@ export default function CatalogToolbar() {
         })}
       </Stack>
 
-      {/* Mobile: pill-shaped section picker. Soft cream fill, leading
-          section-stack icon, no outer label — reads as a navigation
-          menu chip rather than a form control. */}
-      <Box sx={{ display: { xs: "block", md: "none" } }}>
+      {/* Mobile: section picker. Visually distinct from the search input
+          above — labeled, smaller text, menu icon prefix — so readers
+          can tell at a glance that this changes the section they're
+          browsing, not what they're searching for. */}
+      <Stack spacing={0.5} sx={{ display: { xs: "flex", md: "none" }, alignItems: "stretch" }}>
+        <Typography
+          variant="overline"
+          color="text.secondary"
+          sx={{ lineHeight: 1.2, letterSpacing: "0.08em" }}
+        >
+          Section
+        </Typography>
         <Select
           fullWidth
           size="small"
           value={active}
           onChange={handleSelectChange}
           inputProps={{ "aria-label": "catalog section" }}
-          sx={{
-            borderRadius: 999,
-            bgcolor: "#f5efe1",
-            "& .MuiOutlinedInput-notchedOutline": {
-              borderColor: "transparent",
-            },
-            "&:hover .MuiOutlinedInput-notchedOutline": {
-              borderColor: "rgba(0, 0, 0, 0.12)",
-            },
-            "&.Mui-focused .MuiOutlinedInput-notchedOutline": {
-              borderColor: "rgba(0, 0, 0, 0.24)",
-              borderWidth: 1,
-            },
-            "& .MuiSelect-select": {
-              py: 1,
-            },
-          }}
           renderValue={(value) => {
             const label = NAV_LINKS.find((link) => link.view === value)?.label ?? "";
             return (
-              <Stack direction="row" spacing={1.25} sx={{ alignItems: "center" }}>
-                <ViewStreamIcon fontSize="small" sx={{ color: "text.secondary" }} />
-                <Box component="span" sx={{ fontSize: "0.9375rem", fontWeight: 500 }}>
+              <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
+                <MenuIcon fontSize="small" sx={{ color: "text.secondary" }} />
+                <Box component="span" sx={{ fontSize: "0.875rem" }}>
                   {label}
                 </Box>
               </Stack>
@@ -155,7 +147,7 @@ export default function CatalogToolbar() {
             </MenuItem>
           ))}
         </Select>
-      </Box>
+      </Stack>
     </Box>
   );
 }
