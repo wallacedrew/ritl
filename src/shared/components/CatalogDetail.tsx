@@ -13,6 +13,8 @@ import LensSwitcher from "@/shared/components/LensSwitcher";
 import type { CatalogEntry, Lens } from "@/shared/lib/CatalogEntry";
 import type { CatalogNeighbors } from "@/shared/lib/CatalogNeighbors";
 
+import type { CatalogEntryName } from "@/shared/lib/CatalogEntryName";
+
 interface CatalogDetailProps {
   entry: CatalogEntry;
   number: number;
@@ -22,6 +24,7 @@ interface CatalogDetailProps {
   beforeLabel: string;
   afterLabel: string;
   neighbors: CatalogNeighbors;
+  incomingSources?: readonly CatalogEntryName[];
 }
 
 export default function CatalogDetail({
@@ -33,6 +36,7 @@ export default function CatalogDetail({
   beforeLabel,
   afterLabel,
   neighbors,
+  incomingSources,
 }: CatalogDetailProps) {
   const forces = entry.forcesFor(lens);
 
@@ -45,6 +49,7 @@ export default function CatalogDetail({
           number={number}
           relatedNames={entry.nemeses}
           destinationPattern={entry.destinationPattern}
+          incomingSources={incomingSources}
         />
         <CatalogPrevNextStrip neighbors={neighbors} />
         <LensSwitcher entry={entry} currentView={lens} />

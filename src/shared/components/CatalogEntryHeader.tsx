@@ -11,6 +11,7 @@ interface CatalogEntryHeaderProps {
   number: number;
   relatedNames: readonly CatalogEntryName[];
   destinationPattern?: CatalogEntryName;
+  incomingSources?: readonly CatalogEntryName[];
 }
 
 export default function CatalogEntryHeader({
@@ -18,6 +19,7 @@ export default function CatalogEntryHeader({
   number,
   relatedNames,
   destinationPattern,
+  incomingSources,
 }: CatalogEntryHeaderProps) {
   return (
     <Stack spacing={1.5}>
@@ -45,6 +47,20 @@ export default function CatalogEntryHeader({
             label={destinationPattern.toString()}
             href={destinationPattern.toCatalogHref()}
           />
+        </Stack>
+      )}
+      {incomingSources && incomingSources.length > 0 && (
+        <Stack direction="row" spacing={1} sx={{ alignItems: "center", flexWrap: "wrap", gap: 1 }}>
+          <Typography variant="body2" color="text.secondary">
+            Reached from &rarr;
+          </Typography>
+          {incomingSources.map((source) => (
+            <LinkedChip
+              key={source.toString()}
+              label={source.toString()}
+              href={source.toCatalogHref()}
+            />
+          ))}
         </Stack>
       )}
       <SnippetPreviewButton href={name.toSnippetHref()} label="Preview Markdown" />

@@ -41,4 +41,31 @@ describe("user reads Abstract Factory via the GoF sub-site", () => {
 
     expect(screen.getByText(/Gamma, Helm, Johnson, Vlissides/i)).toBeInTheDocument();
   });
+
+  it("Composite detail surfaces 'Reached from' inverse links to the three Kerievsky composite refactorings", async () => {
+    const ui = await PatternsDetailPage({
+      params: Promise.resolve({ slug: "composite" }),
+      book: "gof",
+    });
+    renderWithTheme(ui);
+
+    expect(screen.getByText(/Reached from/i)).toBeInTheDocument();
+
+    const extractComposite = screen.getByRole("link", { name: "Extract Composite" });
+    expect(extractComposite).toHaveAttribute("href", "/refactoring-to-patterns/extract-composite");
+
+    const implicitTree = screen.getByRole("link", { name: "Replace Implicit Tree With Composite" });
+    expect(implicitTree).toHaveAttribute(
+      "href",
+      "/refactoring-to-patterns/replace-implicit-tree-with-composite",
+    );
+
+    const oneMany = screen.getByRole("link", {
+      name: "Replace One/Many Distinctions With Composite",
+    });
+    expect(oneMany).toHaveAttribute(
+      "href",
+      "/refactoring-to-patterns/replace-onemany-distinctions-with-composite",
+    );
+  });
 });
