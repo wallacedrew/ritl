@@ -21,28 +21,30 @@ export default function SiteHeader() {
         bgcolor: "background.paper",
       }}
     >
-      <Container maxWidth="lg" sx={{ py: 4 }}>
+      <Container maxWidth="lg" sx={{ py: { xs: 3, md: 4 } }}>
         <Stack spacing={3}>
-          <Stack spacing={1}>
+          <Stack spacing={1.25}>
             <NextLink href="/" style={{ color: "inherit", textDecoration: "none" }}>
-              <Typography variant="h6" component="span" sx={{ fontWeight: 600 }}>
+              <Typography
+                variant="h5"
+                component="span"
+                sx={{ fontWeight: 700, letterSpacing: "-0.01em" }}
+              >
                 Refactoring in the Loop
               </Typography>
             </NextLink>
-            <Typography variant="body2" color="text.secondary">
-              A catalog explorer for the{" "}
+            <Typography variant="body2" color="text.secondary" sx={{ maxWidth: 680 }}>
+              A catalog explorer for{" "}
               <Link
                 href="https://refactoring.com/catalog/"
                 target="_blank"
                 rel="noopener noreferrer"
                 underline="hover"
-                color="inherit"
-                sx={{ textDecorationStyle: "dotted", fontWeight: 700 }}
+                color="primary"
               >
-                canonical refactorings and code smells
-              </Link>{" "}
-              plus Joshua Kerievsky&rsquo;s refactoring patterns and the Gang of Four design
-              patterns.
+                Martin Fowler&rsquo;s refactorings and code smells
+              </Link>
+              , Joshua Kerievsky&rsquo;s refactoring patterns, and the Gang of Four design patterns.
             </Typography>
           </Stack>
           <CatalogSearch items={items} />
