@@ -1,9 +1,13 @@
 "use client";
 
+import MenuIcon from "@mui/icons-material/Menu";
 import Box from "@mui/material/Box";
+import MenuItem from "@mui/material/MenuItem";
+import Select, { type SelectChangeEvent } from "@mui/material/Select";
 import Stack from "@mui/material/Stack";
+import Typography from "@mui/material/Typography";
 import NextLink from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
 import { useAnalytics } from "@/shared/hooks/useAnalytics";
 
@@ -40,8 +44,13 @@ function deriveActiveView(pathname: string): CatalogView {
   return "reference";
 }
 
+function navLinkByView(view: CatalogView): NavLink | undefined {
+  return NAV_LINKS.find((link) => link.view === view);
+}
+
 export default function CatalogToolbar() {
   const pathname = usePathname();
+  const router = useRouter();
   const active = deriveActiveView(pathname);
   const analytics = useAnalytics();
 
@@ -49,34 +58,23 @@ export default function CatalogToolbar() {
     analytics.track({ event: "nav_clicked", properties: { tab: view } });
   }
 
+  function handleSelectChange(event: SelectChangeEvent<CatalogView>) {
+    const view = event.target.value as CatalogView;
+    const target = navLinkByView(view);
+    if (target) {
+      handleNavClick(view);
+      router.push(target.href);
+    }
+  }
+
   return (
     <Box
       component="nav"
       aria-label="catalog navigation"
-      sx={{
-        borderBottom: 1,
-        borderColor: "divider",
-        // Horizontal scroll on narrow viewports; tabs keep their intrinsic
-        // width and a hairline-thin scrollbar.
-        overflowX: "auto",
-        WebkitOverflowScrolling: "touch",
-        // Hide the scrollbar visually but keep scroll behavior (subtle on
-        // touch screens; matches the "single-row tabs that scroll" pattern).
-        scrollbarWidth: "thin",
-        "&::-webkit-scrollbar": { height: 4 },
-        "&::-webkit-scrollbar-thumb": {
-          backgroundColor: "rgba(0,0,0,0.15)",
-          borderRadius: 2,
-        },
-      }}
+      sx={{ borderBottom: 1, borderColor: "divider" }}
     >
-      <Stack
-        direction="row"
-        sx={{
-          minWidth: "100%",
-          width: { xs: "max-content", md: "100%" },
-        }}
-      >
+      {/* Desktop: horizontal tab strip */}
+      <Stack direction="row" sx={{ width: "100%", display: { xs: "none", md: "flex" } }}>
         {NAV_LINKS.map((link) => {
           const isActive = link.view === active;
           return (
@@ -87,9 +85,8 @@ export default function CatalogToolbar() {
               onClick={() => handleNavClick(link.view)}
               aria-current={isActive ? "page" : undefined}
               sx={(theme) => ({
-                flex: { xs: "0 0 auto", md: 1 },
+                flex: 1,
                 textAlign: "center",
-                px: { xs: 2, md: 1 },
                 py: 1.5,
                 color: isActive ? "primary.main" : "text.secondary",
                 fontSize: theme.typography.button.fontSize,
@@ -97,7 +94,6 @@ export default function CatalogToolbar() {
                 textTransform: "uppercase",
                 letterSpacing: "0.08em",
                 textDecoration: "none",
-                whiteSpace: "nowrap",
                 borderBottom: 2,
                 borderColor: isActive ? "primary.main" : "transparent",
                 marginBottom: "-1px",
@@ -113,6 +109,44 @@ export default function CatalogToolbar() {
             </Box>
           );
         })}
+      </Stack>
+
+      {/* Mobile: section picker. Visually distinct from the search input
+          above — labeled, smaller text, menu icon prefix — so readers
+          can tell at a glance that this changes the section they're
+          browsing, not what they're searching for. */}
+      <Stack spacing={0.5} sx={{ display: { xs: "flex", md: "none" }, alignItems: "stretch" }}>
+        <Typography
+          variant="overline"
+          color="text.secondary"
+          sx={{ lineHeight: 1.2, letterSpacing: "0.08em" }}
+        >
+          Section
+        </Typography>
+        <Select
+          fullWidth
+          size="small"
+          value={active}
+          onChange={handleSelectChange}
+          inputProps={{ "aria-label": "catalog section" }}
+          renderValue={(value) => {
+            const label = NAV_LINKS.find((link) => link.view === value)?.label ?? "";
+            return (
+              <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
+                <MenuIcon fontSize="small" sx={{ color: "text.secondary" }} />
+                <Box component="span" sx={{ fontSize: "0.875rem" }}>
+                  {label}
+                </Box>
+              </Stack>
+            );
+          }}
+        >
+          {NAV_LINKS.map((link) => (
+            <MenuItem key={link.view} value={link.view}>
+              {link.label}
+            </MenuItem>
+          ))}
+        </Select>
       </Stack>
     </Box>
   );
