@@ -16,6 +16,39 @@ interface CatalogEntryHeaderProps {
   inboundPatterns?: readonly CatalogEntryName[];
 }
 
+function LabeledChipRow({ label, chips }: { label: string; chips: readonly CatalogEntryName[] }) {
+  if (chips.length === 0) return null;
+  return (
+    <Stack spacing={0.5}>
+      <Typography variant="overline" color="text.secondary" sx={{ lineHeight: 1.4 }}>
+        {label}
+      </Typography>
+      <Stack direction="row" sx={{ flexWrap: "wrap", gap: 1 }}>
+        {chips.map((chip) => (
+          <LinkedChip
+            key={chip.toCatalogHref()}
+            label={chip.toString()}
+            href={chip.toCatalogHref()}
+            color={chipColorForTone(chip.tone())}
+          />
+        ))}
+      </Stack>
+    </Stack>
+  );
+}
+
+function nemesesLabel(name: CatalogEntryName): string {
+  switch (name.tone()) {
+    case "refactoring":
+      return "Removes smells";
+    case "smell":
+      return "Apply refactorings";
+    case "kerievsky-pattern":
+    case "gof-pattern":
+      return "Triggered by";
+  }
+}
+
 export default function CatalogEntryHeader({
   name,
   number,
@@ -32,58 +65,10 @@ export default function CatalogEntryHeader({
           {name.toString()}
         </Typography>
       </Stack>
-      <Stack direction="row" sx={{ flexWrap: "wrap", gap: 1 }}>
-        {relatedNames.map((relatedName) => (
-          <LinkedChip
-            key={relatedName.toString()}
-            label={relatedName.toString()}
-            href={relatedName.toCatalogHref()}
-            color={chipColorForTone(relatedName.tone())}
-          />
-        ))}
-      </Stack>
-      {destinationPattern && (
-        <Stack direction="row" spacing={1} sx={{ alignItems: "center", flexWrap: "wrap", gap: 1 }}>
-          <Typography variant="body2" color="text.secondary">
-            Destination &rarr;
-          </Typography>
-          <LinkedChip
-            label={destinationPattern.toString()}
-            href={destinationPattern.toCatalogHref()}
-            color={chipColorForTone(destinationPattern.tone())}
-          />
-        </Stack>
-      )}
-      {incomingSources && incomingSources.length > 0 && (
-        <Stack direction="row" spacing={1} sx={{ alignItems: "center", flexWrap: "wrap", gap: 1 }}>
-          <Typography variant="body2" color="text.secondary">
-            Reached from &rarr;
-          </Typography>
-          {incomingSources.map((source) => (
-            <LinkedChip
-              key={source.toString()}
-              label={source.toString()}
-              href={source.toCatalogHref()}
-              color={chipColorForTone(source.tone())}
-            />
-          ))}
-        </Stack>
-      )}
-      {inboundPatterns && inboundPatterns.length > 0 && (
-        <Stack direction="row" spacing={1} sx={{ alignItems: "center", flexWrap: "wrap", gap: 1 }}>
-          <Typography variant="body2" color="text.secondary">
-            Referenced by patterns &rarr;
-          </Typography>
-          {inboundPatterns.map((pattern) => (
-            <LinkedChip
-              key={pattern.toCatalogHref()}
-              label={pattern.toString()}
-              href={pattern.toCatalogHref()}
-              color={chipColorForTone(pattern.tone())}
-            />
-          ))}
-        </Stack>
-      )}
+      <LabeledChipRow label={nemesesLabel(name)} chips={relatedNames} />
+      {destinationPattern && <LabeledChipRow label="Destination" chips={[destinationPattern]} />}
+      {incomingSources && <LabeledChipRow label="Reached from" chips={incomingSources} />}
+      {inboundPatterns && <LabeledChipRow label="Referenced by patterns" chips={inboundPatterns} />}
       <SnippetPreviewButton href={name.toSnippetHref()} label="Preview Markdown" />
     </Stack>
   );
