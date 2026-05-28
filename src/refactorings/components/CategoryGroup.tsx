@@ -18,7 +18,7 @@ export default function CategoryGroup({ category, items }: CategoryGroupProps) {
       </Typography>
       <Stack direction="row" sx={{ flexWrap: "wrap", gap: 1 }}>
         {items.map((item) => (
-          <LinkedChip key={item.name} label={item.name} href={item.href} />
+          <LinkedChip key={item.name} label={item.name} href={item.href} color="success" />
         ))}
       </Stack>
     </Stack>

@@ -6,6 +6,13 @@ export type CatalogKind = "smells" | "refactorings" | "patterns";
 export type Lens = "human" | "agent";
 export type PatternBook = "kerievsky" | "gof";
 
+/**
+ * Granular source label for an entry. Distinguishes Kerievsky from GoF
+ * patterns (both of which have CatalogKind "patterns") so the UI can
+ * color-code chips and search dots by source.
+ */
+export type CatalogEntryTone = "refactoring" | "smell" | "kerievsky-pattern" | "gof-pattern";
+
 export const LEGAL_CATALOGS: readonly CatalogKind[] = ["smells", "refactorings", "patterns"];
 export const LEGAL_PATTERN_BOOKS: readonly PatternBook[] = ["kerievsky", "gof"];
 

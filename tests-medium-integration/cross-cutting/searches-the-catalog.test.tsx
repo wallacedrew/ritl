@@ -15,15 +15,23 @@ vi.mock("next/navigation", () => ({
 }));
 
 const items: CatalogItem[] = [
-  { kind: "smell", number: 3, name: "Long Function", href: "/refactoring/smells/long-function" },
+  {
+    kind: "smell",
+    tone: "smell",
+    number: 3,
+    name: "Long Function",
+    href: "/refactoring/smells/long-function",
+  },
   {
     kind: "refactoring",
+    tone: "refactoring",
     number: 1,
     name: "Extract Function",
     href: "/refactoring/refactorings/extract-function",
   },
   {
     kind: "refactoring",
+    tone: "refactoring",
     number: 12,
     name: "Extract Class",
     href: "/refactoring/refactorings/extract-class",

@@ -5,6 +5,7 @@ import CatalogNumber from "@/shared/components/CatalogNumber";
 import LinkedChip from "@/shared/components/LinkedChip";
 import SnippetPreviewButton from "@/shared/components/SnippetPreviewButton";
 import type { CatalogEntryName } from "@/shared/lib/CatalogEntryName";
+import { chipColorForTone } from "@/shared/lib/catalogChipColor";
 
 interface CatalogEntryHeaderProps {
   name: CatalogEntryName;
@@ -37,6 +38,7 @@ export default function CatalogEntryHeader({
             key={relatedName.toString()}
             label={relatedName.toString()}
             href={relatedName.toCatalogHref()}
+            color={chipColorForTone(relatedName.tone())}
           />
         ))}
       </Stack>
@@ -48,6 +50,7 @@ export default function CatalogEntryHeader({
           <LinkedChip
             label={destinationPattern.toString()}
             href={destinationPattern.toCatalogHref()}
+            color={chipColorForTone(destinationPattern.tone())}
           />
         </Stack>
       )}
@@ -61,6 +64,7 @@ export default function CatalogEntryHeader({
               key={source.toString()}
               label={source.toString()}
               href={source.toCatalogHref()}
+              color={chipColorForTone(source.tone())}
             />
           ))}
         </Stack>
@@ -75,6 +79,7 @@ export default function CatalogEntryHeader({
               key={pattern.toCatalogHref()}
               label={pattern.toString()}
               href={pattern.toCatalogHref()}
+              color={chipColorForTone(pattern.tone())}
             />
           ))}
         </Stack>

@@ -1,4 +1,4 @@
-import type { CatalogKind, PatternBook } from "./CatalogEntry";
+import type { CatalogEntryTone, CatalogKind, PatternBook } from "./CatalogEntry";
 import { Slug } from "./Slug";
 
 export class CatalogEntryName {
@@ -48,5 +48,16 @@ export class CatalogEntryName {
 
   equals(other: CatalogEntryName): boolean {
     return this.value === other.value && this.kind === other.kind && this.book === other.book;
+  }
+
+  tone(): CatalogEntryTone {
+    switch (this.kind) {
+      case "refactorings":
+        return "refactoring";
+      case "smells":
+        return "smell";
+      case "patterns":
+        return this.book === "gof" ? "gof-pattern" : "kerievsky-pattern";
+    }
   }
 }

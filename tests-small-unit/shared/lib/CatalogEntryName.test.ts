@@ -73,4 +73,13 @@ describe("CatalogEntryName", () => {
 
     expect(a.equals(b)).toBe(true);
   });
+
+  it("derives the chip tone from kind and book", () => {
+    expect(CatalogEntryName.refactoring("Extract Function").tone()).toBe("refactoring");
+    expect(CatalogEntryName.smell("Long Function").tone()).toBe("smell");
+    expect(CatalogEntryName.pattern("Compose Method", "kerievsky").tone()).toBe(
+      "kerievsky-pattern",
+    );
+    expect(CatalogEntryName.pattern("Strategy", "gof").tone()).toBe("gof-pattern");
+  });
 });

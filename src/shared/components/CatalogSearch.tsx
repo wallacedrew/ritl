@@ -10,6 +10,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useAnalytics } from "@/shared/hooks/useAnalytics";
 
 import type { CatalogItem } from "../lib/CatalogItem";
+import { dotBgForTone } from "../lib/catalogChipColor";
 import CatalogNumber from "./CatalogNumber";
 
 function slugFromHref(href: string): string {
@@ -17,14 +18,16 @@ function slugFromHref(href: string): string {
   return last && last.length > 0 ? last : "";
 }
 
-function dotColorFor(kind: CatalogItem["kind"]): string {
-  switch (kind) {
-    case "smell":
-      return "warning.main";
+function captionFor(tone: CatalogItem["tone"]): string {
+  switch (tone) {
     case "refactoring":
-      return "primary.main";
-    case "pattern":
-      return "secondary.main";
+      return "refactoring";
+    case "smell":
+      return "smell";
+    case "kerievsky-pattern":
+      return "kerievsky pattern";
+    case "gof-pattern":
+      return "gof pattern";
   }
 }
 
@@ -75,14 +78,14 @@ export default function CatalogSearch({ items }: CatalogSearchProps) {
                   width: 8,
                   height: 8,
                   borderRadius: "50%",
-                  bgcolor: dotColorFor(option.kind),
+                  bgcolor: dotBgForTone(option.tone),
                   flexShrink: 0,
                 }}
               />
               <CatalogNumber value={option.number} />
               <Typography sx={{ flexGrow: 1 }}>{option.name}</Typography>
               <Typography variant="caption" color="text.secondary">
-                {option.kind}
+                {captionFor(option.tone)}
               </Typography>
             </Stack>
           </Box>
