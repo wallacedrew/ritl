@@ -1,7 +1,9 @@
 "use client";
 
+import SearchIcon from "@mui/icons-material/Search";
 import Autocomplete from "@mui/material/Autocomplete";
 import Box from "@mui/material/Box";
+import InputAdornment from "@mui/material/InputAdornment";
 import Stack from "@mui/material/Stack";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
@@ -60,13 +62,27 @@ export default function CatalogSearch({ items }: CatalogSearchProps) {
           router.push(option.href);
         }
       }}
-      renderInput={(params) => (
-        <TextField
-          {...params}
-          placeholder="Search refactorings, smells, and patterns"
-          size="small"
-        />
-      )}
+      renderInput={(params) => {
+        const slotProps = {
+          ...params.slotProps,
+          input: {
+            ...params.slotProps.input,
+            startAdornment: (
+              <InputAdornment position="start" sx={{ ml: 0.5, color: "text.secondary" }}>
+                <SearchIcon fontSize="small" />
+              </InputAdornment>
+            ),
+          },
+        };
+        return (
+          <TextField
+            {...params}
+            slotProps={slotProps}
+            placeholder="Search refactorings, smells, and patterns"
+            size="small"
+          />
+        );
+      }}
       renderOption={(props, option) => {
         const { key, ...rest } = props as typeof props & { key?: string };
         return (
