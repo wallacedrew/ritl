@@ -1,6 +1,7 @@
 [
   {
     "catalog": "patterns",
+    "book": "kerievsky",
     "name": "Chain Constructors",
     "nemeses": [
       {
@@ -41,6 +42,7 @@
   },
   {
     "catalog": "patterns",
+    "book": "kerievsky",
     "name": "Compose Method",
     "nemeses": [
       {
@@ -81,6 +83,7 @@
   },
   {
     "catalog": "patterns",
+    "book": "kerievsky",
     "name": "Encapsulate Classes With Factory",
     "nemeses": [
       {
@@ -121,6 +124,7 @@
   },
   {
     "catalog": "patterns",
+    "book": "kerievsky",
     "name": "Encapsulate Composite With Builder",
     "nemeses": [
       {
@@ -161,6 +165,7 @@
   },
   {
     "catalog": "patterns",
+    "book": "kerievsky",
     "name": "Extract Adapter",
     "nemeses": [
       {
@@ -201,6 +206,7 @@
   },
   {
     "catalog": "patterns",
+    "book": "kerievsky",
     "name": "Extract Composite",
     "nemeses": [
       {
@@ -241,6 +247,7 @@
   },
   {
     "catalog": "patterns",
+    "book": "kerievsky",
     "name": "Extract Parameter",
     "nemeses": [
       {
@@ -281,6 +288,7 @@
   },
   {
     "catalog": "patterns",
+    "book": "kerievsky",
     "name": "Form Template Method",
     "nemeses": [
       {
@@ -321,6 +329,7 @@
   },
   {
     "catalog": "patterns",
+    "book": "kerievsky",
     "name": "Inline Singleton",
     "nemeses": [
       {
@@ -361,6 +370,7 @@
   },
   {
     "catalog": "patterns",
+    "book": "kerievsky",
     "name": "Introduce Null Object",
     "nemeses": [
       {
@@ -401,6 +411,7 @@
   },
   {
     "catalog": "patterns",
+    "book": "kerievsky",
     "name": "Introduce Polymorphic Creation With Factory Method",
     "nemeses": [
       {
@@ -441,6 +452,7 @@
   },
   {
     "catalog": "patterns",
+    "book": "kerievsky",
     "name": "Limit Instantiation With Singleton",
     "nemeses": [
       {
@@ -481,6 +493,7 @@
   },
   {
     "catalog": "patterns",
+    "book": "kerievsky",
     "name": "Move Accumulation To Collecting Parameter",
     "nemeses": [
       {
@@ -521,6 +534,7 @@
   },
   {
     "catalog": "patterns",
+    "book": "kerievsky",
     "name": "Move Accumulation To Visitor",
     "nemeses": [
       {
@@ -561,6 +575,7 @@
   },
   {
     "catalog": "patterns",
+    "book": "kerievsky",
     "name": "Move Creation Knowledge To Factory",
     "nemeses": [
       {
@@ -601,6 +616,7 @@
   },
   {
     "catalog": "patterns",
+    "book": "kerievsky",
     "name": "Move Embellishment To Decorator",
     "nemeses": [
       {
@@ -641,6 +657,7 @@
   },
   {
     "catalog": "patterns",
+    "book": "kerievsky",
     "name": "Replace Conditional Dispatcher With Command",
     "nemeses": [
       {
@@ -681,6 +698,7 @@
   },
   {
     "catalog": "patterns",
+    "book": "kerievsky",
     "name": "Replace Conditional Logic with Strategy",
     "nemeses": [
       {
@@ -721,6 +739,7 @@
   },
   {
     "catalog": "patterns",
+    "book": "kerievsky",
     "name": "Replace Constructors With Creation Methods",
     "nemeses": [
       {
@@ -761,6 +780,7 @@
   },
   {
     "catalog": "patterns",
+    "book": "kerievsky",
     "name": "Replace Hard-Coded Notifications With Observer",
     "nemeses": [
       {
@@ -801,6 +821,7 @@
   },
   {
     "catalog": "patterns",
+    "book": "kerievsky",
     "name": "Replace Implicit Language With Interpreter",
     "nemeses": [
       {
@@ -841,6 +862,7 @@
   },
   {
     "catalog": "patterns",
+    "book": "kerievsky",
     "name": "Replace Implicit Tree With Composite",
     "nemeses": [
       {
@@ -881,6 +903,7 @@
   },
   {
     "catalog": "patterns",
+    "book": "kerievsky",
     "name": "Replace One/Many Distinctions With Composite",
     "nemeses": [
       {
@@ -921,6 +944,7 @@
   },
   {
     "catalog": "patterns",
+    "book": "kerievsky",
     "name": "Replace State-Altering Conditionals with State",
     "nemeses": [
       {
@@ -961,6 +985,7 @@
   },
   {
     "catalog": "patterns",
+    "book": "kerievsky",
     "name": "Replace Type Code With Class",
     "nemeses": [
       {
@@ -1001,6 +1026,7 @@
   },
   {
     "catalog": "patterns",
+    "book": "kerievsky",
     "name": "Unify Interfaces With Adapter",
     "nemeses": [
       {
@@ -1041,6 +1067,7 @@
   },
   {
     "catalog": "patterns",
+    "book": "kerievsky",
     "name": "Unify Interfaces",
     "nemeses": [
       {

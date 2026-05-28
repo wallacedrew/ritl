@@ -107,4 +107,45 @@ describe("CatalogEntry", () => {
     });
     expect(first.equals(second)).toBe(false);
   });
+
+  it("rejects a pattern entry that does not declare a book", () => {
+    expect(() =>
+      makeEntry({
+        catalog: "patterns",
+        name: CatalogEntryName.pattern("Strategy"),
+        nemeses: [],
+      }),
+    ).toThrow(/pattern entries must declare a "book"/i);
+  });
+
+  it("rejects a pattern entry with an unknown book", () => {
+    expect(() =>
+      makeEntry({
+        catalog: "patterns",
+        name: CatalogEntryName.pattern("Strategy"),
+        nemeses: [],
+        book: "fowler" as never,
+      }),
+    ).toThrow(/unknown pattern book "fowler"/i);
+  });
+
+  it("rejects a non-pattern entry that carries a book field", () => {
+    expect(() => makeEntry({ book: "kerievsky" })).toThrow(
+      /"book" is only allowed on pattern entries/i,
+    );
+  });
+
+  it("exposes the declared book on a pattern entry", () => {
+    const entry = makeEntry({
+      catalog: "patterns",
+      name: CatalogEntryName.pattern("Strategy"),
+      nemeses: [],
+      book: "gof",
+    });
+    expect(entry.book).toBe("gof");
+  });
+
+  it("leaves book undefined on smells and refactorings", () => {
+    expect(makeEntry().book).toBeUndefined();
+  });
 });

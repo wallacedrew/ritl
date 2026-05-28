@@ -4,8 +4,10 @@ import type { SafetyNet } from "@/refactorings/lib/SafetyNet";
 
 export type CatalogKind = "smells" | "refactorings" | "patterns";
 export type Lens = "human" | "agent";
+export type PatternBook = "kerievsky" | "gof";
 
 export const LEGAL_CATALOGS: readonly CatalogKind[] = ["smells", "refactorings", "patterns"];
+export const LEGAL_PATTERN_BOOKS: readonly PatternBook[] = ["kerievsky", "gof"];
 
 export type CatalogEntryProps = {
   catalog: CatalogKind;
@@ -16,6 +18,7 @@ export type CatalogEntryProps = {
   forces: { human: Forces; agent: Forces };
   safetyNet?: SafetyNet;
   exampleSource?: string;
+  book?: PatternBook;
 };
 
 export class CatalogEntry {
@@ -28,9 +31,20 @@ export class CatalogEntry {
     readonly forces: { human: Forces; agent: Forces },
     readonly safetyNet?: SafetyNet,
     readonly exampleSource?: string,
+    readonly book?: PatternBook,
   ) {
     if (!LEGAL_CATALOGS.includes(catalog)) {
       throw new Error(`CatalogEntry: unknown catalog "${catalog}"`);
+    }
+    if (catalog === "patterns") {
+      if (book === undefined) {
+        throw new Error('CatalogEntry: pattern entries must declare a "book"');
+      }
+      if (!LEGAL_PATTERN_BOOKS.includes(book)) {
+        throw new Error(`CatalogEntry: unknown pattern book "${book}"`);
+      }
+    } else if (book !== undefined) {
+      throw new Error('CatalogEntry: "book" is only allowed on pattern entries');
     }
     if (before.trim().length === 0) {
       throw new Error('CatalogEntry: field "before" cannot be empty');
@@ -50,6 +64,7 @@ export class CatalogEntry {
       props.forces,
       props.safetyNet,
       props.exampleSource,
+      props.book,
     );
   }
 

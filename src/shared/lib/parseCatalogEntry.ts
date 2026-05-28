@@ -1,6 +1,12 @@
 import { SafetyNet } from "@/refactorings/lib/SafetyNet";
 
-import { CatalogEntry, LEGAL_CATALOGS, type CatalogKind } from "./CatalogEntry";
+import {
+  CatalogEntry,
+  LEGAL_CATALOGS,
+  LEGAL_PATTERN_BOOKS,
+  type CatalogKind,
+  type PatternBook,
+} from "./CatalogEntry";
 import { CatalogEntryName } from "./CatalogEntryName";
 import { Forces, type ForcesRecord } from "./Forces";
 
@@ -134,6 +140,28 @@ function readOptionalExampleSource(record: Record<string, unknown>): string | un
   return raw;
 }
 
+function readPatternBook(
+  record: Record<string, unknown>,
+  catalog: CatalogKind,
+): PatternBook | undefined {
+  const raw = record.book;
+  if (catalog !== "patterns") {
+    if (raw !== undefined) {
+      throw new Error('parseCatalogEntry: field "book" is only allowed on pattern entries');
+    }
+    return undefined;
+  }
+  if (raw === undefined) {
+    throw new Error('parseCatalogEntry: pattern entries must declare a "book"');
+  }
+  if (typeof raw !== "string" || !(LEGAL_PATTERN_BOOKS as readonly string[]).includes(raw)) {
+    throw new Error(
+      `parseCatalogEntry: field "book" must be one of ${LEGAL_PATTERN_BOOKS.join(", ")}`,
+    );
+  }
+  return raw as PatternBook;
+}
+
 export function parseCatalogEntry(raw: unknown): CatalogEntry {
   if (raw === null || typeof raw !== "object" || Array.isArray(raw)) {
     throw new Error("parseCatalogEntry: expected an object");
@@ -151,6 +179,7 @@ export function parseCatalogEntry(raw: unknown): CatalogEntry {
     forces: readForces(record),
     safetyNet: readOptionalSafetyNet(record),
     exampleSource: readOptionalExampleSource(record),
+    book: readPatternBook(record, catalog),
   });
 }
 

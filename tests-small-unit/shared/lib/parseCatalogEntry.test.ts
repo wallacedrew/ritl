@@ -79,6 +79,7 @@ describe("parseCatalogEntry", () => {
   it("parses a pattern with object-shape nemeses targeting refactorings or smells", () => {
     const validPattern = {
       catalog: "patterns",
+      book: "kerievsky",
       name: "Compose Method",
       nemeses: [
         { catalog: "refactorings", name: "Extract Function" },
@@ -93,6 +94,7 @@ describe("parseCatalogEntry", () => {
 
     expect(entry.catalog).toBe("patterns");
     expect(entry.name.toString()).toBe("Compose Method");
+    expect(entry.book).toBe("kerievsky");
     expect(entry.nemeses.map((n) => n.toCatalogHref())).toEqual([
       "/refactoring/refactorings/extract-function",
       "/refactoring/smells/long-function",
@@ -103,6 +105,7 @@ describe("parseCatalogEntry", () => {
     expect(() =>
       parseCatalogEntry({
         catalog: "patterns",
+        book: "kerievsky",
         name: "Compose Method",
         nemeses: ["Extract Function"],
         before: "x",
@@ -116,6 +119,7 @@ describe("parseCatalogEntry", () => {
     expect(() =>
       parseCatalogEntry({
         catalog: "patterns",
+        book: "kerievsky",
         name: "Compose Method",
         nemeses: [{ catalog: "patterns", name: "Strategy" }],
         before: "x",
@@ -123,6 +127,53 @@ describe("parseCatalogEntry", () => {
         forces: { human: validForcesRecord, agent: validForcesRecord },
       }),
     ).toThrow(/pattern nemesis "catalog".*refactorings.*smells/i);
+  });
+
+  it("rejects a pattern entry that does not declare a book", () => {
+    expect(() =>
+      parseCatalogEntry({
+        catalog: "patterns",
+        name: "Strategy",
+        nemeses: [],
+        before: "x",
+        after: "y",
+        forces: { human: validForcesRecord, agent: validForcesRecord },
+      }),
+    ).toThrow(/pattern entries must declare a "book"/i);
+  });
+
+  it("rejects a pattern entry with an unknown book value", () => {
+    expect(() =>
+      parseCatalogEntry({
+        catalog: "patterns",
+        book: "fowler",
+        name: "Strategy",
+        nemeses: [],
+        before: "x",
+        after: "y",
+        forces: { human: validForcesRecord, agent: validForcesRecord },
+      }),
+    ).toThrow(/field "book" must be one of/i);
+  });
+
+  it("rejects a non-pattern entry that carries a book field", () => {
+    expect(() => parseCatalogEntry({ ...validSmell, book: "kerievsky" })).toThrow(
+      /"book" is only allowed on pattern entries/i,
+    );
+  });
+
+  it("parses gof as a valid pattern book", () => {
+    const entry = parseCatalogEntry({
+      catalog: "patterns",
+      book: "gof",
+      name: "Strategy",
+      nemeses: [],
+      before: "switch on type",
+      after: "polymorphic dispatch via Strategy",
+      forces: { human: validForcesRecord, agent: validForcesRecord },
+    });
+
+    expect(entry.book).toBe("gof");
   });
 
   it("rejects when nemeses is missing or not an array", () => {
