@@ -9,6 +9,7 @@ export interface CatalogListItem {
   number: number;
   href: string;
   name: string;
+  tone: CatalogEntryTone;
   chips: readonly CatalogListItemChip[];
   caption: string;
 }

@@ -18,7 +18,10 @@ interface CatalogCardProps {
 
 export default function CatalogCard({ item }: CatalogCardProps) {
   return (
-    <Card variant="outlined" sx={{ height: "100%" }}>
+    <Card
+      variant="outlined"
+      sx={{ height: "100%", borderColor: `${chipColorForTone(item.tone)}.main` }}
+    >
       <CardActionArea component={NextLink} href={item.href} sx={{ height: "100%" }}>
         <CardContent>
           <Stack spacing={1.5}>

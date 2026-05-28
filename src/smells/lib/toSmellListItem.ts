@@ -6,6 +6,7 @@ export function toSmellListItem(smell: CatalogEntry, number: number): CatalogLis
     number,
     href: smell.name.toCatalogHref(),
     name: smell.name.toString(),
+    tone: smell.name.tone(),
     chips: smell.nemeses.map((nemesis) => ({
       label: nemesis.toString(),
       tone: nemesis.tone(),
