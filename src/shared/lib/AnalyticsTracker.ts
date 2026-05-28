@@ -5,7 +5,9 @@ export type AnalyticsEvent =
   | { event: "snippet_downloaded"; properties: { snippet: string } }
   | {
       event: "nav_clicked";
-      properties: { tab: "refactorings" | "smells" | "reference" | "patterns" | "plugin" };
+      properties: {
+        tab: "refactorings" | "smells" | "reference" | "patterns" | "design-patterns" | "plugin";
+      };
     }
   | {
       event: "search_selected";

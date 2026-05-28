@@ -7,7 +7,13 @@ import { usePathname } from "next/navigation";
 
 import { useAnalytics } from "@/shared/hooks/useAnalytics";
 
-type CatalogView = "smells" | "refactorings" | "reference" | "patterns" | "plugin";
+type CatalogView =
+  | "smells"
+  | "refactorings"
+  | "reference"
+  | "patterns"
+  | "design-patterns"
+  | "plugin";
 
 interface NavLink {
   view: CatalogView;
@@ -21,11 +27,13 @@ const NAV_LINKS: readonly NavLink[] = [
   { view: "refactorings", label: "Refactorings", href: "/refactoring/refactorings" },
   { view: "smells", label: "Smells", href: "/refactoring/smells" },
   { view: "patterns", label: "Patterns", href: "/refactoring-to-patterns" },
+  { view: "design-patterns", label: "Design Patterns", href: "/design-patterns" },
   { view: "plugin", label: "Plugin", href: "/plugin", hideOnMobile: true },
 ];
 
 function deriveActiveView(pathname: string): CatalogView {
   if (pathname.startsWith("/refactoring-to-patterns")) return "patterns";
+  if (pathname.startsWith("/design-patterns")) return "design-patterns";
   if (pathname.startsWith("/refactoring/smells")) return "smells";
   if (pathname.startsWith("/refactoring/refactorings")) return "refactorings";
   if (pathname.startsWith("/plugin")) return "plugin";
