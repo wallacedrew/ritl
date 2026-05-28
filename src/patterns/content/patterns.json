@@ -85,6 +85,7 @@
     "catalog": "patterns",
     "book": "kerievsky",
     "name": "Encapsulate Classes With Factory",
+    "destinationPattern": { "book": "gof", "name": "Factory Method" },
     "nemeses": [
       {
         "catalog": "smells",
@@ -126,6 +127,7 @@
     "catalog": "patterns",
     "book": "kerievsky",
     "name": "Encapsulate Composite With Builder",
+    "destinationPattern": { "book": "gof", "name": "Builder" },
     "nemeses": [
       {
         "catalog": "smells",
@@ -167,6 +169,7 @@
     "catalog": "patterns",
     "book": "kerievsky",
     "name": "Extract Adapter",
+    "destinationPattern": { "book": "gof", "name": "Adapter" },
     "nemeses": [
       {
         "catalog": "smells",
@@ -208,6 +211,7 @@
     "catalog": "patterns",
     "book": "kerievsky",
     "name": "Extract Composite",
+    "destinationPattern": { "book": "gof", "name": "Composite" },
     "nemeses": [
       {
         "catalog": "smells",
@@ -290,6 +294,7 @@
     "catalog": "patterns",
     "book": "kerievsky",
     "name": "Form Template Method",
+    "destinationPattern": { "book": "gof", "name": "Template Method" },
     "nemeses": [
       {
         "catalog": "smells",
@@ -413,6 +418,7 @@
     "catalog": "patterns",
     "book": "kerievsky",
     "name": "Introduce Polymorphic Creation With Factory Method",
+    "destinationPattern": { "book": "gof", "name": "Factory Method" },
     "nemeses": [
       {
         "catalog": "smells",
@@ -454,6 +460,7 @@
     "catalog": "patterns",
     "book": "kerievsky",
     "name": "Limit Instantiation With Singleton",
+    "destinationPattern": { "book": "gof", "name": "Singleton" },
     "nemeses": [
       {
         "catalog": "smells",
@@ -536,6 +543,7 @@
     "catalog": "patterns",
     "book": "kerievsky",
     "name": "Move Accumulation To Visitor",
+    "destinationPattern": { "book": "gof", "name": "Visitor" },
     "nemeses": [
       {
         "catalog": "smells",
@@ -577,6 +585,7 @@
     "catalog": "patterns",
     "book": "kerievsky",
     "name": "Move Creation Knowledge To Factory",
+    "destinationPattern": { "book": "gof", "name": "Factory Method" },
     "nemeses": [
       {
         "catalog": "smells",
@@ -618,6 +627,7 @@
     "catalog": "patterns",
     "book": "kerievsky",
     "name": "Move Embellishment To Decorator",
+    "destinationPattern": { "book": "gof", "name": "Decorator" },
     "nemeses": [
       {
         "catalog": "smells",
@@ -659,6 +669,7 @@
     "catalog": "patterns",
     "book": "kerievsky",
     "name": "Replace Conditional Dispatcher With Command",
+    "destinationPattern": { "book": "gof", "name": "Command" },
     "nemeses": [
       {
         "catalog": "smells",
@@ -700,6 +711,7 @@
     "catalog": "patterns",
     "book": "kerievsky",
     "name": "Replace Conditional Logic with Strategy",
+    "destinationPattern": { "book": "gof", "name": "Strategy" },
     "nemeses": [
       {
         "catalog": "smells",
@@ -782,6 +794,7 @@
     "catalog": "patterns",
     "book": "kerievsky",
     "name": "Replace Hard-Coded Notifications With Observer",
+    "destinationPattern": { "book": "gof", "name": "Observer" },
     "nemeses": [
       {
         "catalog": "smells",
@@ -823,6 +836,7 @@
     "catalog": "patterns",
     "book": "kerievsky",
     "name": "Replace Implicit Language With Interpreter",
+    "destinationPattern": { "book": "gof", "name": "Interpreter" },
     "nemeses": [
       {
         "catalog": "smells",
@@ -864,6 +878,7 @@
     "catalog": "patterns",
     "book": "kerievsky",
     "name": "Replace Implicit Tree With Composite",
+    "destinationPattern": { "book": "gof", "name": "Composite" },
     "nemeses": [
       {
         "catalog": "smells",
@@ -905,6 +920,7 @@
     "catalog": "patterns",
     "book": "kerievsky",
     "name": "Replace One/Many Distinctions With Composite",
+    "destinationPattern": { "book": "gof", "name": "Composite" },
     "nemeses": [
       {
         "catalog": "smells",
@@ -946,6 +962,7 @@
     "catalog": "patterns",
     "book": "kerievsky",
     "name": "Replace State-Altering Conditionals with State",
+    "destinationPattern": { "book": "gof", "name": "State" },
     "nemeses": [
       {
         "catalog": "smells",
@@ -1028,6 +1045,7 @@
     "catalog": "patterns",
     "book": "kerievsky",
     "name": "Unify Interfaces With Adapter",
+    "destinationPattern": { "book": "gof", "name": "Adapter" },
     "nemeses": [
       {
         "catalog": "smells",

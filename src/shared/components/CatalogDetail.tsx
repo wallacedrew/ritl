@@ -40,7 +40,12 @@ export default function CatalogDetail({
     <Container maxWidth="lg" sx={{ py: 4 }}>
       <Stack spacing={3}>
         <CatalogBackLink href={backLinkHref} label={backLinkLabel} />
-        <CatalogEntryHeader name={entry.name} number={number} relatedNames={entry.nemeses} />
+        <CatalogEntryHeader
+          name={entry.name}
+          number={number}
+          relatedNames={entry.nemeses}
+          destinationPattern={entry.destinationPattern}
+        />
         <CatalogPrevNextStrip neighbors={neighbors} />
         <LensSwitcher entry={entry} currentView={lens} />
         <Divider />

@@ -48,4 +48,20 @@ describe("user reads Replace Conditional Logic with Strategy", () => {
 
     expect(screen.getByText(/Adapted from Joshua Kerievsky/i)).toBeInTheDocument();
   });
+
+  it("detail page surfaces the GoF destination as a Strategy chip linking to /design-patterns/strategy", async () => {
+    const ui = await PatternsDetailPage({
+      params: Promise.resolve({ slug: "replace-conditional-logic-with-strategy" }),
+      book: "kerievsky",
+    });
+    renderWithTheme(ui);
+
+    expect(screen.getByText(/Destination/i)).toBeInTheDocument();
+
+    const destinationChips = screen.getAllByRole("link", { name: "Strategy" });
+    const gofLink = destinationChips.find(
+      (chip) => chip.getAttribute("href") === "/design-patterns/strategy",
+    );
+    expect(gofLink).toBeDefined();
+  });
 });

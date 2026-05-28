@@ -10,12 +10,14 @@ interface CatalogEntryHeaderProps {
   name: CatalogEntryName;
   number: number;
   relatedNames: readonly CatalogEntryName[];
+  destinationPattern?: CatalogEntryName;
 }
 
 export default function CatalogEntryHeader({
   name,
   number,
   relatedNames,
+  destinationPattern,
 }: CatalogEntryHeaderProps) {
   return (
     <Stack spacing={1.5}>
@@ -34,6 +36,17 @@ export default function CatalogEntryHeader({
           />
         ))}
       </Stack>
+      {destinationPattern && (
+        <Stack direction="row" spacing={1} sx={{ alignItems: "center", flexWrap: "wrap", gap: 1 }}>
+          <Typography variant="body2" color="text.secondary">
+            Destination &rarr;
+          </Typography>
+          <LinkedChip
+            label={destinationPattern.toString()}
+            href={destinationPattern.toCatalogHref()}
+          />
+        </Stack>
+      )}
       <SnippetPreviewButton href={name.toSnippetHref()} label="Preview Markdown" />
     </Stack>
   );

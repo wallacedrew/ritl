@@ -19,6 +19,7 @@ export type CatalogEntryProps = {
   safetyNet?: SafetyNet;
   exampleSource?: string;
   book?: PatternBook;
+  destinationPattern?: CatalogEntryName;
 };
 
 export class CatalogEntry {
@@ -32,6 +33,7 @@ export class CatalogEntry {
     readonly safetyNet?: SafetyNet,
     readonly exampleSource?: string,
     readonly book?: PatternBook,
+    readonly destinationPattern?: CatalogEntryName,
   ) {
     if (!LEGAL_CATALOGS.includes(catalog)) {
       throw new Error(`CatalogEntry: unknown catalog "${catalog}"`);
@@ -45,6 +47,9 @@ export class CatalogEntry {
       }
     } else if (book !== undefined) {
       throw new Error('CatalogEntry: "book" is only allowed on pattern entries');
+    }
+    if (destinationPattern !== undefined && catalog !== "patterns") {
+      throw new Error('CatalogEntry: "destinationPattern" is only allowed on pattern entries');
     }
     if (before.trim().length === 0) {
       throw new Error('CatalogEntry: field "before" cannot be empty');
@@ -65,6 +70,7 @@ export class CatalogEntry {
       props.safetyNet,
       props.exampleSource,
       props.book,
+      props.destinationPattern,
     );
   }
 

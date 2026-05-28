@@ -176,6 +176,61 @@ describe("parseCatalogEntry", () => {
     expect(entry.book).toBe("gof");
   });
 
+  it("parses a destinationPattern pointing across books from kerievsky to gof", () => {
+    const entry = parseCatalogEntry({
+      catalog: "patterns",
+      book: "kerievsky",
+      name: "Replace Conditional Logic with Strategy",
+      nemeses: [{ catalog: "refactorings", name: "Replace Conditional with Polymorphism" }],
+      before: "x",
+      after: "y",
+      forces: { human: validForcesRecord, agent: validForcesRecord },
+      destinationPattern: { book: "gof", name: "Strategy" },
+    });
+
+    expect(entry.destinationPattern?.toString()).toBe("Strategy");
+    expect(entry.destinationPattern?.toCatalogHref()).toBe("/design-patterns/strategy");
+  });
+
+  it("rejects a destinationPattern on a non-pattern entry", () => {
+    expect(() =>
+      parseCatalogEntry({
+        ...validSmell,
+        destinationPattern: { book: "gof", name: "Strategy" },
+      }),
+    ).toThrow(/destinationPattern.*only allowed on pattern entries/i);
+  });
+
+  it("rejects a destinationPattern whose book matches the entry's own book", () => {
+    expect(() =>
+      parseCatalogEntry({
+        catalog: "patterns",
+        book: "kerievsky",
+        name: "Replace Conditional Logic with Strategy",
+        nemeses: [],
+        before: "x",
+        after: "y",
+        forces: { human: validForcesRecord, agent: validForcesRecord },
+        destinationPattern: { book: "kerievsky", name: "Compose Method" },
+      }),
+    ).toThrow(/must point at a pattern in a different book/i);
+  });
+
+  it("rejects a destinationPattern with an unknown book", () => {
+    expect(() =>
+      parseCatalogEntry({
+        catalog: "patterns",
+        book: "kerievsky",
+        name: "Replace Conditional Logic with Strategy",
+        nemeses: [],
+        before: "x",
+        after: "y",
+        forces: { human: validForcesRecord, agent: validForcesRecord },
+        destinationPattern: { book: "fowler", name: "Strategy" },
+      }),
+    ).toThrow(/"destinationPattern\.book" must be one of/i);
+  });
+
   it("rejects when nemeses is missing or not an array", () => {
     const withoutNemeses = { ...validSmell } as Record<string, unknown>;
     delete withoutNemeses.nemeses;

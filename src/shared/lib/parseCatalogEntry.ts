@@ -140,6 +140,44 @@ function readOptionalExampleSource(record: Record<string, unknown>): string | un
   return raw;
 }
 
+function readDestinationPattern(
+  record: Record<string, unknown>,
+  ownCatalog: CatalogKind,
+  ownBook: PatternBook | undefined,
+): CatalogEntryName | undefined {
+  const raw = record.destinationPattern;
+  if (raw === undefined) {
+    return undefined;
+  }
+  if (ownCatalog !== "patterns") {
+    throw new Error(
+      'parseCatalogEntry: field "destinationPattern" is only allowed on pattern entries',
+    );
+  }
+  if (raw === null || typeof raw !== "object" || Array.isArray(raw)) {
+    throw new Error(
+      'parseCatalogEntry: field "destinationPattern" must be an object { book, name }',
+    );
+  }
+  const ref = raw as Record<string, unknown>;
+  const book = ref.book;
+  const name = ref.name;
+  if (typeof book !== "string" || !(LEGAL_PATTERN_BOOKS as readonly string[]).includes(book)) {
+    throw new Error(
+      `parseCatalogEntry: "destinationPattern.book" must be one of ${LEGAL_PATTERN_BOOKS.join(", ")}`,
+    );
+  }
+  if (book === ownBook) {
+    throw new Error(
+      `parseCatalogEntry: "destinationPattern" must point at a pattern in a different book (got "${book}")`,
+    );
+  }
+  if (typeof name !== "string") {
+    throw new Error('parseCatalogEntry: "destinationPattern.name" must be a string');
+  }
+  return CatalogEntryName.pattern(name, book as PatternBook);
+}
+
 function readPatternBook(
   record: Record<string, unknown>,
   catalog: CatalogKind,
@@ -181,6 +219,7 @@ export function parseCatalogEntry(raw: unknown): CatalogEntry {
     safetyNet: readOptionalSafetyNet(record),
     exampleSource: readOptionalExampleSource(record),
     book,
+    destinationPattern: readDestinationPattern(record, catalog, book),
   });
 }
 
