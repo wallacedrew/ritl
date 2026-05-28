@@ -1945,5 +1945,45 @@
         "trap": "Strategy interfaces with optional methods (some algorithms implement calibrate(), others do not) blur the contract. The agent must verify per-implementation interface completeness rather than reading the interface as a structural promise. Define one focused interface, or split the family by capability."
       }
     }
+  },
+  {
+    "catalog": "patterns",
+    "book": "gof",
+    "name": "Template Method",
+    "nemeses": [
+      {
+        "catalog": "smells",
+        "name": "Duplicated Code"
+      },
+      {
+        "catalog": "smells",
+        "name": "Shotgun Surgery"
+      },
+      {
+        "catalog": "refactorings",
+        "name": "Pull Up Method"
+      }
+    ],
+    "before": "class JavaScriptBuilder {\n  build() {\n    this.fetchSource();\n    this.compile();\n    this.runTests();\n    this.package();\n  }\n  fetchSource() { return git.clone(this.repo); }\n  compile()    { return run('npx tsc'); }\n  runTests()   { return run('npm test'); }\n  package()    { return run('npm pack'); }\n}\nclass PythonBuilder {\n  build() {\n    this.fetchSource();\n    this.compile();\n    this.runTests();\n    this.package();\n  }\n  fetchSource() { return git.clone(this.repo); }\n  compile()    { return run('python -m py_compile .'); }\n  runTests()   { return run('pytest'); }\n  package()    { return run('python -m build'); }\n}\nclass GoBuilder {\n  build() {\n    this.fetchSource();\n    this.compile();\n    this.runTests();\n    this.package();\n  }\n  fetchSource() { return git.clone(this.repo); }\n  compile()    { return run('go build ./...'); }\n  runTests()   { return run('go test ./...'); }\n  package()    { return run('tar -czf project.tar.gz .'); }\n}\n// build() skeleton + fetchSource() duplicated across every builder.\n// Adding a 'lint' step in the pipeline = 3 edits in lockstep.",
+    "after": "class Builder {\n  build() {\n    this.fetchSource();\n    this.compile();\n    this.runTests();\n    this.package();\n  }\n  fetchSource() {\n    return git.clone(this.repo);\n  }\n  compile() {\n    throw new Error('subclass implements compile');\n  }\n  runTests() {\n    throw new Error('subclass implements runTests');\n  }\n  package() {\n    throw new Error('subclass implements package');\n  }\n}\nclass JavaScriptBuilder extends Builder {\n  compile()  { return run('npx tsc'); }\n  runTests() { return run('npm test'); }\n  package()  { return run('npm pack'); }\n}\nclass PythonBuilder extends Builder {\n  compile()  { return run('python -m py_compile .'); }\n  runTests() { return run('pytest'); }\n  package()  { return run('python -m build'); }\n}\nclass GoBuilder extends Builder {\n  compile()  { return run('go build ./...'); }\n  runTests() { return run('go test ./...'); }\n  package()  { return run('tar -czf project.tar.gz .'); }\n}",
+    "exampleSource": "Illustrative example written for this site in the spirit of Design Patterns (Gamma, Helm, Johnson, Vlissides, Addison-Wesley, 1994), chapter 5. The book uses an Application/Document framework with skeletal initialization; this JavaScript adaptation uses a per-language build pipeline because the fixed-shape, variable-step structure is recognizable and the Pull Up Method savings show clearly.",
+    "forces": {
+      "human": {
+        "symptom": "Several classes implement near-identical algorithms that differ only in a few specific steps. The shape is duplicated in every class; the shared structure is convention rather than code; adding a step to the algorithm shape means editing every class in lockstep.",
+        "goal": "The base class owns the algorithm's skeleton as a concrete method (the template method). Each variable step is an overridable method (hook). Subclasses fill in only the steps that differ; the shared skeleton lives in one place.",
+        "pressure": "Duplicated algorithm skeletons are the worst form of Duplicated Code — the duplication is in shape, not just in code text. Adding a new pipeline step (e.g., 'lint') is Shotgun Surgery; one missed subclass produces a pipeline that's silently incomplete.",
+        "tradeoff": "Inheritance couples subclasses tightly to the base class's skeleton; subclasses cannot easily reorder, skip, or insert steps without breaking the contract. The base class's hook set is the spec; subclasses cannot evolve independently without coordinated edits.",
+        "relief": "Skeleton lives in one place; new steps land as a single edit; subclasses are small and read as 'here are the variable bits.' The algorithm shape becomes a structural commitment, not a convention; the type system can enforce hook implementations on every subclass.",
+        "trap": "When the template method's skeleton stops describing what every subclass actually does — when subclasses need conditional skipping, reordering, or alternate paths — inheritance becomes a straitjacket. At that point reach for Strategy or a builder-style pipeline that constructs the algorithm shape from composable parts rather than inheriting it."
+      },
+      "agent": {
+        "symptom": "Duplicated algorithm skeletons across N classes the agent must verify in lockstep on every shape edit. The shared structure is invisible to static analysis; the agent cannot prove that all N implementations follow the same shape from source alone.",
+        "goal": "One template method in a base class the agent reads to understand the algorithm shape. Per-subclass reasoning collapses to 'which hooks does this subclass override'; cross-subclass verification of skeleton consistency is structural.",
+        "pressure": "Skeleton duplication blows up the agent's edit-blast-radius reasoning. Adding a pipeline step requires editing every subclass; one missed subclass is a structurally-invisible bug the test suite may not catch on a less-exercised variant.",
+        "tradeoff": "Inheritance binds the agent to a vertical hierarchy: every edit to the base class implicitly affects every subclass, and the agent must verify cross-subclass invariants on every hook addition. Stack traces span base + subclass methods; investigating one runtime error often requires reading both.",
+        "relief": "Skeleton edits scope to the base class file; per-subclass edits are bounded by hook implementation; the type system enforces hook presence (where languages support it) catching missed subclasses at compile time.",
+        "trap": "Hook proliferation — base class with 10 hooks each subclass overrides — turns the parallel hierarchy into the same N×M cell-verification problem the pattern was supposed to solve, only spread across more files. Watch for 'template method with > 4 hooks' as a sign the abstraction is over-reaching."
+      }
+    }
   }
 ]
