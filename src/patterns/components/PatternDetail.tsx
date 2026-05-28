@@ -1,5 +1,6 @@
 import CatalogDetail from "@/shared/components/CatalogDetail";
 import type { CatalogEntry, Lens, PatternBook } from "@/shared/lib/CatalogEntry";
+import { subSiteForPatternBook } from "@/shared/lib/subSites";
 
 import { getPatternNeighbors } from "../lib/getPatternNeighbors";
 
@@ -16,7 +17,7 @@ export default function PatternDetail({ pattern, number, lens, book }: PatternDe
       entry={pattern}
       number={number}
       lens={lens}
-      backLinkHref="/refactoring-to-patterns"
+      backLinkHref={subSiteForPatternBook(book).href()}
       backLinkLabel="Patterns"
       beforeLabel="Before the pattern"
       afterLabel="After the pattern"

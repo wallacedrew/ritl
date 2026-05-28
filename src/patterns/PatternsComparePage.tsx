@@ -2,6 +2,7 @@ import CatalogCompareDetail from "@/shared/components/CatalogCompareDetail";
 import type { PatternBook } from "@/shared/lib/CatalogEntry";
 import { findCatalogEntryBySlug } from "@/shared/lib/findCatalogEntryBySlug";
 import { generateCatalogStaticParams } from "@/shared/lib/generateCatalogStaticParams";
+import { subSiteForPatternBook } from "@/shared/lib/subSites";
 
 import { getPatternNeighbors } from "./lib/getPatternNeighbors";
 import { loadPatterns } from "./lib/loadPatterns";
@@ -18,7 +19,7 @@ export default async function PatternsComparePage({ params, book }: PatternsComp
     <CatalogCompareDetail
       entry={pattern}
       number={number}
-      backLinkHref="/refactoring-to-patterns"
+      backLinkHref={subSiteForPatternBook(book).href()}
       backLinkLabel="Patterns"
       beforeLabel="Before the pattern"
       afterLabel="After the pattern"
