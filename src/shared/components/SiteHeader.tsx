@@ -1,6 +1,5 @@
 import Box from "@mui/material/Box";
 import Container from "@mui/material/Container";
-import Link from "@mui/material/Link";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import NextLink from "next/link";
@@ -34,17 +33,8 @@ export default function SiteHeader() {
               </Typography>
             </NextLink>
             <Typography variant="body2" color="text.secondary" sx={{ maxWidth: 680 }}>
-              A catalog explorer for{" "}
-              <Link
-                href="https://refactoring.com/catalog/"
-                target="_blank"
-                rel="noopener noreferrer"
-                underline="hover"
-                color="primary"
-              >
-                Martin Fowler&rsquo;s refactorings and code smells
-              </Link>
-              , Joshua Kerievsky&rsquo;s refactoring patterns, and the Gang of Four design patterns.
+              A catalog explorer inspired by Martin Fowler&rsquo;s refactorings and code smells,
+              Joshua Kerievsky&rsquo;s refactoring patterns, and the Gang of Four design patterns.
             </Typography>
           </Stack>
           <CatalogSearch items={items} />
