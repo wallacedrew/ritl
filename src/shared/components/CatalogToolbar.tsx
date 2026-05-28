@@ -24,12 +24,12 @@ interface NavLink {
 }
 
 const NAV_LINKS: readonly NavLink[] = [
-  { view: "reference", label: "Reference", href: "/refactoring" },
   { view: "refactorings", label: "Refactorings", href: "/refactoring/refactorings" },
   { view: "smells", label: "Smells", href: "/refactoring/smells" },
   { view: "patterns", label: "Patterns", href: "/refactoring-to-patterns" },
   { view: "design-patterns", label: "Design Patterns", href: "/design-patterns" },
   { view: "plugin", label: "Plugin", href: "/plugin" },
+  { view: "reference", label: "Reference", href: "/refactoring" },
 ];
 
 function deriveActiveView(pathname: string): CatalogView {
