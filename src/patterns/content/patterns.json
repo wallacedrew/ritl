@@ -1705,5 +1705,45 @@
         "trap": "Grammars growing past ~10 operators turn into class proliferation the agent navigates as a graph rather than a hierarchy. Visitor or AST-walker tooling becomes mandatory at that scale; without it, every traversal-style analysis requires editing every rule class — the cross-cutting problem the pattern was supposed to avoid."
       }
     }
+  },
+  {
+    "catalog": "patterns",
+    "book": "gof",
+    "name": "Iterator",
+    "nemeses": [
+      {
+        "catalog": "smells",
+        "name": "Insider Trading"
+      },
+      {
+        "catalog": "smells",
+        "name": "Message Chains"
+      },
+      {
+        "catalog": "refactorings",
+        "name": "Encapsulate Collection"
+      }
+    ],
+    "before": "class RingBuffer {\n  constructor(capacity) {\n    this.buffer = new Array(capacity);\n    this.head = 0;\n    this.tail = 0;\n    this.size = 0;\n    this.capacity = capacity;\n  }\n  push(item) { /* ... */ }\n}\nfunction dump(buf) {\n  let i = buf.head;\n  let count = 0;\n  while (count < buf.size) {\n    console.log(buf.buffer[i]);\n    i = (i + 1) % buf.capacity;\n    count++;\n  }\n}\n// Every consumer that wants to iterate must know head/tail/capacity\n// and the modular arithmetic.",
+    "after": "class RingBuffer {\n  constructor(capacity) {\n    this.buffer = new Array(capacity);\n    this.head = 0;\n    this.tail = 0;\n    this.size = 0;\n    this.capacity = capacity;\n  }\n  push(item) { /* ... */ }\n  [Symbol.iterator]() {\n    let i = this.head;\n    let count = 0;\n    const that = this;\n    return {\n      next() {\n        if (count >= that.size) return { done: true, value: undefined };\n        const value = that.buffer[i];\n        i = (i + 1) % that.capacity;\n        count++;\n        return { done: false, value };\n      },\n    };\n  }\n}\nfor (const item of ringBuffer) {\n  console.log(item);\n}",
+    "exampleSource": "Illustrative example written for this site in the spirit of Design Patterns (Gamma, Helm, Johnson, Vlissides, Addison-Wesley, 1994), chapter 5. The book uses a List + ListIterator pair; this JavaScript adaptation uses the language's built-in Symbol.iterator protocol on a ring buffer because the encapsulation benefit (hiding modular arithmetic) reads more concretely than a generic List.",
+    "forces": {
+      "human": {
+        "symptom": "Custom collections (ring buffer, skip list, B-tree, linked list, sparse array) expose their internal representation to consumers who want to walk them. Every traversal site duplicates the internal-structure knowledge; refactoring the collection's representation breaks every consumer in lockstep.",
+        "goal": "The collection exposes one iterator-shaped surface (next() / done); consumers use it without knowing the underlying representation. Replacing the representation (array-backed to linked-list-backed) is a one-file change inside the collection.",
+        "pressure": "Per-consumer traversal logic is Insider Trading on the collection's internals — Message Chains (`buf.buffer[buf.head]`) that walk through fields the collection should encapsulate. Changing head/tail semantics or storage layout forces editing every consumer.",
+        "tradeoff": "Iterators allocate per-traversal (an iterator object per for-of loop); in tight inner loops this matters. They also obscure performance characteristics — a consumer cannot tell from `for (const x of collection)` whether the iterator is O(1) per step or O(log n).",
+        "relief": "Consumers read as `for (const x of collection)`; the collection's representation changes without touching consumers; performance and correctness optimizations on the iteration live in one place; the language's iteration protocols (for-of, spread, destructuring) work out of the box.",
+        "trap": "Iterators that mutate the collection underneath (allow .push() during iteration, or invalidate on .delete()) produce inconsistent traversal behaviour that no test exercises completely. Either freeze the collection during iteration or document mutation semantics; ad-hoc behaviour is a footgun."
+      },
+      "agent": {
+        "symptom": "Per-traversal duplication of representation-specific logic the agent must verify uniformly on every collection-internals change. Insider Trading on collection internals couples every consumer to the collection's private fields; refactoring the collection's storage is N-files-in-lockstep.",
+        "goal": "One iterator protocol the agent reads to understand traversal semantics. Consumer code is uniform `for (const x of coll)` — the agent's reasoning about traversal collapses to one shape; representation changes inside the collection scope to one file.",
+        "pressure": "Per-consumer traversal logic blows up the agent's cross-cutting verification budget on every storage-layout change. The agent must enumerate every consumer to prove the change is safe; partial verification produces silent bugs that survive review.",
+        "tradeoff": "Per-traversal iterator allocation and the closure semantics of [Symbol.iterator] hide performance characteristics from the agent's static read. Tight-loop performance bugs require the agent to look at the iterator implementation, which is hidden behind the protocol.",
+        "relief": "Consumer-side traversal is one expression; collection-side representation is one file; agent edits to storage shape scope to one place and need no cross-consumer verification. Static analysis of 'where is this collection iterated' returns complete results.",
+        "trap": "Iterators with hidden mutability (re-entrant push during iteration, snapshot-vs-live semantics) produce bugs the agent cannot localize from the iterator protocol alone. The agent reading `for (const x of coll)` trusts the consumer side; runtime ordering bugs live in the iterator's interaction with the underlying mutation. Document or freeze; do not leave ambiguous."
+      }
+    }
   }
 ]
