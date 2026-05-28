@@ -121,7 +121,7 @@ export default function CatalogToolbar() {
           value={active}
           onChange={handleSelectChange}
           inputProps={{ "aria-label": "catalog section" }}
-          sx={{ "& .MuiSelect-select": { pl: "14px" } }}
+          sx={{ "& .MuiSelect-select": { paddingLeft: "9px" } }}
           renderValue={() => (
             <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
               <MenuIcon fontSize="small" sx={{ color: "text.secondary" }} />

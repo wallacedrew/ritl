@@ -81,8 +81,13 @@ export default function CatalogSearch({ items }: CatalogSearchProps) {
             placeholder="Search all"
             size="small"
             sx={{
-              "& .MuiOutlinedInput-root": { pl: "14px" },
-              "& .MuiInputAdornment-root": { mr: 1 },
+              "& .MuiAutocomplete-inputRoot.MuiOutlinedInput-root.MuiInputBase-adornedStart": {
+                paddingLeft: "9px",
+              },
+              "& .MuiInputAdornment-positionStart": {
+                marginLeft: 0,
+                marginRight: "8px",
+              },
             }}
           />
         );
