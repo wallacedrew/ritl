@@ -1305,5 +1305,45 @@
         "trap": "When tests rely on Config.getInstance() returning a real (live) instance, the agent's edits to Config silently break unrelated tests through the shared-state coupling. The pattern's convenience hides exactly the kind of cross-cutting dependency the agent needs structural visibility into."
       }
     }
+  },
+  {
+    "catalog": "patterns",
+    "book": "gof",
+    "name": "Adapter",
+    "nemeses": [
+      {
+        "catalog": "smells",
+        "name": "Alternative Classes with Different Interfaces"
+      },
+      {
+        "catalog": "refactorings",
+        "name": "Change Function Declaration"
+      },
+      {
+        "catalog": "refactorings",
+        "name": "Replace Subclass with Delegate"
+      }
+    ],
+    "before": "class LegacyStripeClient {\n  charge_card(amount_cents, card_token) {\n    return fetch('https://stripe.legacy/charge', { method: 'POST', body: `${amount_cents}|${card_token}` });\n  }\n}\n// The rest of the app expects: processor.charge({ amount, source })\n// Adapters are sprinkled inline at every consumer:\nfunction checkout(cart) {\n  const client = new LegacyStripeClient();\n  return client.charge_card(Math.round(cart.total * 100), cart.token);\n}\nfunction refundOrder(order) {\n  const client = new LegacyStripeClient();\n  return client.charge_card(-Math.round(order.amount * 100), order.token);\n}",
+    "after": "class StripeAdapter {\n  constructor(legacy) {\n    this.legacy = legacy;\n  }\n  charge({ amount, source }) {\n    return this.legacy.charge_card(Math.round(amount * 100), source);\n  }\n}\nconst processor = new StripeAdapter(new LegacyStripeClient());\nfunction checkout(cart) {\n  return processor.charge({ amount: cart.total, source: cart.token });\n}\nfunction refundOrder(order) {\n  return processor.charge({ amount: -order.amount, source: order.token });\n}",
+    "exampleSource": "Illustrative example written for this site in the spirit of Design Patterns (Gamma, Helm, Johnson, Vlissides, Addison-Wesley, 1994), chapter 4. The book's running example is a graphic toolkit adapting Shape to TextView; this JavaScript adaptation uses a payment-gateway integration where a legacy snake_case + cents API gets adapted to a modern camelCase + dollars interface.",
+    "forces": {
+      "human": {
+        "symptom": "Two classes do effectively the same job but expose different method names, argument orders, or unit conventions. Consumers either learn both interfaces or sprinkle ad-hoc conversion code at every call site; converting the unit (cents vs dollars, snake_case vs camelCase, ms vs seconds) happens over and over in inconsistent ways.",
+        "goal": "One wrapper class adapts the legacy or third-party interface to the canonical one the rest of the system uses. Consumers see only the canonical interface; the wrapper owns the unit conversion and naming translation in one place.",
+        "pressure": "Inline conversion at every call site is Alternative Classes with Different Interfaces in its worst form: the smell is duplicated across consumers, and any unit change (cents to mils, dollars to euros) requires editing every site in lockstep with no compiler help.",
+        "tradeoff": "The adapter adds an indirection layer; debugging requires stepping through both the adapter and the underlying client. Some adapter implementations leak the underlying interface (return values that still reference the legacy shape), defeating the encapsulation. Adapters that grow optional methods drift toward Middle Man.",
+        "relief": "Conversion happens in one place; call sites read in domain terms; replacing the underlying client is one-file work. The unit and naming convention of the canonical interface becomes a contract the type system can enforce.",
+        "trap": "When the adapter starts adding behaviour beyond translation — caching, retry logic, metric instrumentation — it stops being an Adapter and becomes a Facade or a Decorator. Honest naming matters: an 'adapter' that does five things is a Service in disguise; clarity demands renaming or decomposition."
+      },
+      "agent": {
+        "symptom": "Inline conversion code scattered across call sites means the agent must spot the convention mismatch at every consumer and verify the conversion is consistent. Unit-of-measure bugs (cents vs dollars, ms vs seconds) are type-compatible — the compiler will not catch them — but they produce wrong-by-100x outputs.",
+        "goal": "The canonical interface is the agent's single anchor for reasoning about how the system uses payments; the adapter is a thin file the agent reads once to understand the translation rules. Conversion bugs surface as adapter-test failures, not as scattered consumer-side errors.",
+        "pressure": "N consumers × M conversion rules = N×M cells the agent verifies on every unit-related change. Inconsistent conventions across consumers (some pass cents, some pass dollars) produce subtle data-shape bugs the agent struggles to localize statically.",
+        "tradeoff": "The agent must navigate adapter + underlying client to trace a runtime error end-to-end. Stack traces span both layers; partial-failure modes (legacy client returns a half-broken response that the adapter passes through unchanged) require the agent to verify error handling at both layers.",
+        "relief": "Edits scoped to the adapter; consumer code unchanged; tests for the adapter cover unit conversion exhaustively. Replacing the underlying client is a one-file diff the agent can verify in isolation.",
+        "trap": "Adapters that accumulate non-translation logic (retries, caching, metrics) become god objects the agent must understand fully before any payment-related edit. The pattern's promise of 'thin translation layer' degrades into a black box where the agent loses confidence about which layer owns which behaviour."
+      }
+    }
   }
 ]
