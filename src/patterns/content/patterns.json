@@ -1625,5 +1625,45 @@
         "trap": "Handlers that peek at chain neighbors or skip ahead by mutating the request reintroduce cross-handler coupling. The agent reading one handler can no longer reason about its behaviour in isolation; chain-aware verification becomes mandatory on every handler edit, defeating the per-handler isolation the pattern promised."
       }
     }
+  },
+  {
+    "catalog": "patterns",
+    "book": "gof",
+    "name": "Command",
+    "nemeses": [
+      {
+        "catalog": "smells",
+        "name": "Repeated Switches"
+      },
+      {
+        "catalog": "smells",
+        "name": "Primitive Obsession"
+      },
+      {
+        "catalog": "refactorings",
+        "name": "Replace Function with Command"
+      }
+    ],
+    "before": "class TextEditor {\n  constructor() {\n    this.text = '';\n  }\n  type(s) {\n    this.text += s;\n  }\n  delete(n) {\n    this.text = this.text.slice(0, -n);\n  }\n}\n// Adding undo: we have no record of what was done, so undo is impossible.\n// Adding macros (replay 5 operations): we have no first-class notion of\n// an operation. Adding remote dispatch (send a command to another editor):\n// we'd have to invent a serializable representation by hand.",
+    "after": "class TypeCommand {\n  constructor(editor, text) {\n    this.editor = editor;\n    this.text = text;\n  }\n  execute() {\n    this.editor.text += this.text;\n  }\n  undo() {\n    this.editor.text = this.editor.text.slice(0, -this.text.length);\n  }\n}\nclass DeleteCommand {\n  constructor(editor, n) {\n    this.editor = editor;\n    this.n = n;\n    this.removed = '';\n  }\n  execute() {\n    this.removed = this.editor.text.slice(-this.n);\n    this.editor.text = this.editor.text.slice(0, -this.n);\n  }\n  undo() {\n    this.editor.text += this.removed;\n  }\n}\nclass TextEditor {\n  constructor() {\n    this.text = '';\n    this.history = [];\n  }\n  execute(command) {\n    command.execute();\n    this.history.push(command);\n  }\n  undo() {\n    const cmd = this.history.pop();\n    if (cmd) cmd.undo();\n  }\n}",
+    "exampleSource": "Illustrative example written for this site in the spirit of Design Patterns (Gamma, Helm, Johnson, Vlissides, Addison-Wesley, 1994), chapter 5. The book's running example is a menu-item framework with PasteCommand etc.; this JavaScript adaptation uses a text editor with TypeCommand and DeleteCommand because the undo motivation is concrete and the redo/macro/replay generalizations follow directly.",
+    "forces": {
+      "human": {
+        "symptom": "Operations on an object are method calls — they exist only as transient verbs that happen and disappear. Adding undo, macro replay, remote dispatch, queuing, or audit logging requires retrofitting an operation-as-object surface that the existing method-call shape does not provide.",
+        "goal": "Each operation is a first-class object with execute() and (where reversible) undo(). Operations are storable, queueable, serializable, replayable, undoable; the receiver (editor, account, queue) executes commands as a uniform interface.",
+        "pressure": "Method-call operations are not data. Adding any cross-cutting concern (undo, audit log, batch dispatch, network replay) requires either invasive per-method instrumentation or replacing the call with a Command object after the fact — the second migration is the more disruptive.",
+        "tradeoff": "Each operation becomes a class with execute + (optional) undo; what was a one-line method call is now a class definition + a usage site. The class count grows with operation count; tests for the receiver still exist, plus tests for each Command's execute/undo symmetry.",
+        "relief": "Undo, macro, queue, replay, and audit are all generic over Command. Adding any of those features happens once, at the receiver, not once per operation. New operations land as new Command classes without editing the receiver or any cross-cutting feature.",
+        "trap": "Commands that hold references to mutable receiver state and rely on receiver state not changing between execute() and undo() produce undo bugs no test catches. A DeleteCommand whose undo restores 'whatever was deleted earlier' must capture the deleted text at execute() time; getting this wrong on a single Command produces silent corruption that survives reviews and ships."
+      },
+      "agent": {
+        "symptom": "Operations are scattered methods the agent must enumerate by reading the receiver class. Adding a cross-cutting feature (undo, audit, replay) forces the agent to touch every method symmetrically — the verification problem grows linearly with operation count.",
+        "goal": "One Command interface (execute + undo) the agent reads as the structural commitment. Each operation is a one-class file; cross-cutting features attach to the interface, not the methods. Static analysis of 'what operations exist' returns a complete list (subclasses of Command).",
+        "pressure": "Method-shaped operations are invisible to the type system as a set; the agent cannot prove 'every operation has been retrofitted with undo' without enumerating methods by hand. Method enumeration is fragile against new operations sneaking in unnoticed.",
+        "tradeoff": "N Command classes for N operations doubles the file count compared to N methods. The agent navigates more files per task; debugging an operation requires reading the Command + the receiver method it ultimately calls; stack traces span both layers.",
+        "relief": "The Command interface is the agent's single anchor; per-operation edits scope to one Command file; cross-cutting features are tested once against the interface. Static enumeration of operations is complete and verifiable.",
+        "trap": "Commands that mutate receiver state outside their own captured fields produce undo bugs the agent cannot localize from the Command's source alone. The agent reading TypeCommand.undo() trusts the captured text length; if execute() actually invoked side effects (autocomplete, save-on-keypress) the undo is silently incomplete. Capture every effect the execute touches, or the pattern's reversibility promise is a lie."
+      }
+    }
   }
 ]
