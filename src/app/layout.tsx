@@ -15,8 +15,8 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en">
-      <body>
+    <html lang="en" suppressHydrationWarning>
+      <body suppressHydrationWarning>
         <AnalyticsProvider>
           <ThemeRegistry>
             <Box sx={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
