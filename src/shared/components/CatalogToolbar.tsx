@@ -1,6 +1,7 @@
 "use client";
 
-import ReorderIcon from "@mui/icons-material/Reorder";
+import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
+import ViewStreamIcon from "@mui/icons-material/ViewStream";
 import Box from "@mui/material/Box";
 import MenuItem from "@mui/material/MenuItem";
 import Select, { type SelectChangeEvent } from "@mui/material/Select";
@@ -120,6 +121,7 @@ export default function CatalogToolbar() {
           size="small"
           value={active}
           onChange={handleSelectChange}
+          IconComponent={KeyboardArrowDownIcon}
           inputProps={{ "aria-label": "catalog section" }}
           sx={{
             borderRadius: 2,
@@ -128,7 +130,7 @@ export default function CatalogToolbar() {
           }}
           renderValue={() => (
             <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
-              <ReorderIcon fontSize="small" sx={{ color: "text.secondary" }} />
+              <ViewStreamIcon fontSize="small" sx={{ color: "text.secondary" }} />
               <Box component="span" sx={{ fontSize: "0.875rem", color: "text.primary" }}>
                 Sections
               </Box>

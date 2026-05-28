@@ -1,5 +1,6 @@
 "use client";
 
+import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
 import SearchIcon from "@mui/icons-material/Search";
 import Autocomplete from "@mui/material/Autocomplete";
 import Box from "@mui/material/Box";
@@ -51,6 +52,7 @@ export default function CatalogSearch({ items }: CatalogSearchProps) {
       blurOnSelect
       clearOnEscape
       selectOnFocus
+      popupIcon={<KeyboardArrowDownIcon fontSize="small" sx={{ color: "text.secondary" }} />}
       getOptionLabel={(option) => option.name}
       isOptionEqualToValue={(option, value) => option.href === value.href}
       onChange={(_, option) => {
