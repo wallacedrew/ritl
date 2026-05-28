@@ -58,7 +58,11 @@ export default function CatalogSearch({ items }: CatalogSearchProps) {
         }
       }}
       renderInput={(params) => (
-        <TextField {...params} placeholder="Search smells and refactorings" size="small" />
+        <TextField
+          {...params}
+          placeholder="Search refactorings, smells, and patterns"
+          size="small"
+        />
       )}
       renderOption={(props, option) => {
         const { key, ...rest } = props as typeof props & { key?: string };

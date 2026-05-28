@@ -40,8 +40,8 @@ export default function SiteHeader() {
                 sx={{ textDecorationStyle: "dotted", fontWeight: 700 }}
               >
                 canonical refactorings and code smells
-              </Link>
-              .
+              </Link>{" "}
+              plus Joshua Kerievsky&rsquo;s refactoring patterns.
             </Typography>
           </Stack>
           <CatalogSearch items={items} />

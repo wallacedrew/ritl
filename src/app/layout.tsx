@@ -9,7 +9,8 @@ import ThemeRegistry from "@/shared/theme/ThemeRegistry";
 
 export const metadata: Metadata = {
   title: "Refactoring in the Loop",
-  description: "A catalog explorer for code smells and Fowler refactorings.",
+  description:
+    "A catalog explorer for code smells, Fowler refactorings, and Kerievsky's refactoring patterns.",
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
