@@ -112,8 +112,8 @@ export default function CatalogToolbar() {
 
       {/* Mobile: the Select always renders "Section" as its label so the
           control reads as a menu button rather than a current-state
-          indicator. The active section is communicated by the page
-          content and breadcrumb, not by this picker's surface text. */}
+          indicator. Icon + text styling mirrors the search field above
+          (same icon size, same gap, same secondary-text color). */}
       <Box sx={{ display: { xs: "block", md: "none" } }}>
         <Select
           fullWidth
@@ -124,7 +124,7 @@ export default function CatalogToolbar() {
           renderValue={() => (
             <Stack direction="row" spacing={1} sx={{ alignItems: "center" }}>
               <MenuIcon fontSize="small" sx={{ color: "text.secondary" }} />
-              <Box component="span" sx={{ fontSize: "0.875rem" }}>
+              <Box component="span" sx={{ fontSize: "0.875rem", color: "text.secondary" }}>
                 Section
               </Box>
             </Stack>

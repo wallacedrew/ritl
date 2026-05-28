@@ -68,19 +68,14 @@ export default function CatalogSearch({ items }: CatalogSearchProps) {
           input: {
             ...params.slotProps.input,
             startAdornment: (
-              <InputAdornment position="start" sx={{ ml: 0.5, color: "text.secondary" }}>
+              <InputAdornment position="start" sx={{ color: "text.secondary" }}>
                 <SearchIcon fontSize="small" />
               </InputAdornment>
             ),
           },
         };
         return (
-          <TextField
-            {...params}
-            slotProps={slotProps}
-            placeholder="Search refactorings, smells, and patterns"
-            size="small"
-          />
+          <TextField {...params} slotProps={slotProps} placeholder="Search all" size="small" />
         );
       }}
       renderOption={(props, option) => {
