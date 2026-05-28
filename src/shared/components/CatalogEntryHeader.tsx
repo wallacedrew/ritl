@@ -60,12 +60,12 @@ export default function CatalogEntryHeader({
 }: CatalogEntryHeaderProps) {
   return (
     <Stack spacing={1.5}>
-      <Stack direction="row" spacing={1.5} sx={{ alignItems: "baseline", flexWrap: "wrap" }}>
-        <Typography component="h1" variant="h5" sx={{ fontWeight: 600 }}>
-          {name.toString()}
-        </Typography>
-        <CatalogNumber value={number} size="small" />
-      </Stack>
+      <Typography component="h1" variant="h5" sx={{ fontWeight: 600 }}>
+        {name.toString()}
+        <Box component="span" aria-hidden="true" sx={{ ml: 1, whiteSpace: "nowrap" }}>
+          <CatalogNumber value={number} size="small" />
+        </Box>
+      </Typography>
       <LabeledChipRow label={nemesesLabel(name)} chips={relatedNames} />
       {destinationPattern && <LabeledChipRow label="Destination" chips={[destinationPattern]} />}
       {incomingSources && <LabeledChipRow label="Reached from" chips={incomingSources} />}
