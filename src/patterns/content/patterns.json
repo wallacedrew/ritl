@@ -1105,5 +1105,45 @@
         "trap": "Unifying names across two classes whose operations only superficially match silently misleads future readers. The agent reads `findById` on both and assumes equivalent behaviour; when one has implicit side effects the other doesn't, the trap is hard to detect statically. Verify behaviour matches before unifying names."
       }
     }
+  },
+  {
+    "catalog": "patterns",
+    "book": "gof",
+    "name": "Abstract Factory",
+    "nemeses": [
+      {
+        "catalog": "smells",
+        "name": "Shotgun Surgery"
+      },
+      {
+        "catalog": "smells",
+        "name": "Repeated Switches"
+      },
+      {
+        "catalog": "refactorings",
+        "name": "Replace Constructor with Factory Function"
+      }
+    ],
+    "before": "function renderToolbar(theme) {\n  let button;\n  let textField;\n  if (theme === 'light') {\n    button = new LightButton();\n    textField = new LightTextField();\n  } else if (theme === 'dark') {\n    button = new DarkButton();\n    textField = new DarkTextField();\n  } else {\n    throw new Error(`unknown theme: ${theme}`);\n  }\n  return [button, textField];\n}",
+    "after": "class LightWidgetFactory {\n  createButton() { return new LightButton(); }\n  createTextField() { return new LightTextField(); }\n}\nclass DarkWidgetFactory {\n  createButton() { return new DarkButton(); }\n  createTextField() { return new DarkTextField(); }\n}\nfunction renderToolbar(factory) {\n  return [factory.createButton(), factory.createTextField()];\n}",
+    "exampleSource": "Illustrative example written for this site in the spirit of Design Patterns (Gamma, Helm, Johnson, Vlissides, Addison-Wesley, 1994), chapter 3. The book's running example is a UI toolkit with multiple look-and-feel families; this JavaScript adaptation keeps the family-of-products structure with two concrete factories (light/dark theme) producing matching button and text-field widgets.",
+    "forces": {
+      "human": {
+        "symptom": "Every site that constructs a UI widget switches on theme — and adding a new theme means hunting every switch and adding a new branch in lockstep. One missed branch silently produces a half-themed UI that ships looking 'mostly right' until a designer or QA notices.",
+        "goal": "A factory interface that produces a coherent family of widgets, with concrete factories enforcing family-internal consistency. Client code receives a factory and asks for products; it never names the concrete class and cannot mix widgets across themes by accident.",
+        "pressure": "Theme dispatch is Shotgun Surgery at every construction site. The type system has no way to enforce that all widgets in one render path belong to the same theme — that invariant lives in convention and reviewer attention, both of which erode under deadline pressure.",
+        "tradeoff": "The factory interface and concrete subfactories grow in lockstep with the product set. Every new product method must be implemented across every concrete factory. Adding one product becomes a one-place-times-N change instead of a one-place change, and concrete factories drift apart if any one is forgotten.",
+        "relief": "Client code reads as `factory.createButton(); factory.createTextField()` regardless of theme. New theme = one new concrete factory; products in one render path are family-coherent by construction; the linter or the type system catches missing factory methods at compile time, not at user-visible runtime.",
+        "trap": "The factory interface accretes product methods over time and becomes a god interface. Sub-families with optional products (e.g., one theme has a DateRangePicker, another doesn't) force either NotImplemented throws or interface segregation — both costlier than the original switch and harder to undo. Stop and reach for a different pattern when the interface stops describing one coherent family."
+      },
+      "agent": {
+        "symptom": "The agent must scan multiple call sites to verify theme consistency on any UI-construction edit. Type-tag dispatch on theme is structurally invisible — from one call site the agent cannot tell whether all sibling sites have been kept in sync, so verification balloons to the full file set.",
+        "goal": "The agent reads one factory interface to know what products exist; concrete factories are short and exhaustive; client code is one factory pointer away from the right family. Cross-call-site family consistency becomes structurally guaranteed, not inspection-required.",
+        "pressure": "N call sites × M theme branches = N×M cells the agent must verify on every theme-related edit. Adding a theme requires the agent to find every switch and prove no branch was missed — high context cost, high verification load, and the proof is fragile because nothing structural anchors it.",
+        "tradeoff": "A new product method requires the agent to update every concrete factory in lockstep. The factory interface becomes a single mutation surface the agent must understand fully before any product edit; partial knowledge produces compile errors, but compile errors that surface late in the iteration cycle.",
+        "relief": "Edits scoped to one factory implementation; type system enforces interface completeness; the agent reasons about one client call site (the one taking the factory) rather than every place that constructs widgets. Diff surface for a new theme is bounded and locally verifiable.",
+        "trap": "Factory interface bloat — over many edits the agent loses sight of which products are still in use. Dead factory methods accumulate because no client demands them but the interface contract still requires them; cleanup requires touching every concrete factory together, exactly the cross-cutting edit the pattern was supposed to eliminate."
+      }
+    }
   }
 ]

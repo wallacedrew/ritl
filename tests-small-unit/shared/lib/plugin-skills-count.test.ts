@@ -13,8 +13,8 @@ function isSkillDirectory(name: string): boolean {
 describe("refactor plugin skills folder", () => {
   const skillFolders = readdirSync(skillsRoot).filter(isSkillDirectory);
 
-  it("contains exactly 118 skill folders (1 workflow orchestrator + 66 refactorings + 24 smells + 27 patterns)", () => {
-    expect(skillFolders).toHaveLength(118);
+  it("contains exactly 119 skill folders (1 workflow orchestrator + 66 refactorings + 24 smells + 28 patterns)", () => {
+    expect(skillFolders).toHaveLength(119);
   });
 
   it("has a SKILL.md inside every skill folder", () => {
