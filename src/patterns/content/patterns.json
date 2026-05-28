@@ -1785,5 +1785,45 @@
         "trap": "Mediators that grow into general-purpose coordinators (FormMediator + ValidationMediator + ErrorMediator + SubmitMediator merged into one mega-class) reintroduce the cross-cutting problem at a different shape. The agent now navigates one giant Mediator file rather than N collaborators; the verification cost is the same total, concentrated rather than distributed."
       }
     }
+  },
+  {
+    "catalog": "patterns",
+    "book": "gof",
+    "name": "Memento",
+    "nemeses": [
+      {
+        "catalog": "smells",
+        "name": "Insider Trading"
+      },
+      {
+        "catalog": "smells",
+        "name": "Mutable Data"
+      },
+      {
+        "catalog": "refactorings",
+        "name": "Extract Class"
+      }
+    ],
+    "before": "class GraphEditor {\n  constructor() {\n    this.nodes = [];\n    this.edges = [];\n    this.selection = new Set();\n  }\n}\nfunction undoableMutation(editor, fn) {\n  const prev = {\n    nodes: editor.nodes,\n    edges: editor.edges,\n    selection: editor.selection,\n  };\n  fn();\n  return () => {\n    editor.nodes = prev.nodes;\n    editor.edges = prev.edges;\n    editor.selection = prev.selection;\n  };\n}\n// Clients reach into internals to snapshot; references shared with the editor\n// mutate underneath; restore is a partial revert because nested objects were\n// not cloned. Insider Trading + Mutable Data conspire to produce silent\n// state-leak bugs.",
+    "after": "class GraphMemento {\n  constructor(snapshot) {\n    this.snapshot = snapshot;\n  }\n}\nclass GraphEditor {\n  constructor() {\n    this.nodes = [];\n    this.edges = [];\n    this.selection = new Set();\n  }\n  save() {\n    return new GraphMemento({\n      nodes: structuredClone(this.nodes),\n      edges: structuredClone(this.edges),\n      selection: new Set(this.selection),\n    });\n  }\n  restore(memento) {\n    this.nodes = memento.snapshot.nodes;\n    this.edges = memento.snapshot.edges;\n    this.selection = memento.snapshot.selection;\n  }\n}\nconst before = editor.save();\n/* mutate */\neditor.restore(before);",
+    "exampleSource": "Illustrative example written for this site in the spirit of Design Patterns (Gamma, Helm, Johnson, Vlissides, Addison-Wesley, 1994), chapter 5. The book's running example is a graphical editor with undo support; this JavaScript adaptation keeps the editor framing and shows the memento as an opaque token clients pass back to restore() without inspecting its fields.",
+    "forces": {
+      "human": {
+        "symptom": "Save / restore semantics for an object are implemented by clients reaching into the object's internals, copying or referencing its fields, and writing them back later. Aliasing bugs (shared references mutate underneath), shallow-clone bugs (nested fields not deep-copied), and encapsulation breaches accumulate.",
+        "goal": "The object exposes save() returning an opaque Memento and restore(memento) accepting one. Clients treat the Memento as a token they cannot inspect or modify; the object owns deep-copy semantics and field selection.",
+        "pressure": "Per-client snapshot logic is Insider Trading on the object's internals AND Mutable Data risk through shared references. Subtle state-leak bugs accumulate over time; undo that 'mostly works' is the worst kind of broken because it survives every test that checks the happy path.",
+        "tradeoff": "Mementos can be expensive — deep-cloning a large state every save() costs CPU and memory. Persistent data structures or copy-on-write are advanced alternatives but more complex. Naive Memento on a big object scales badly with save frequency.",
+        "relief": "Save / restore is one call per side; the editor owns the cloning depth; clients cannot accidentally peek into or mutate a Memento; undo history is a list of opaque tokens the editor knows how to apply. New fields land in save() / restore() together, not in every client.",
+        "trap": "Mementos that expose their internal snapshot field (memento.snapshot.nodes) to outside readers defeat the encapsulation. Clients that depend on snapshot inspection become coupled to the editor's representation; the pattern's promise degrades to 'a copy of the editor's state in a different name'. Keep the Memento truly opaque."
+      },
+      "agent": {
+        "symptom": "Client-side snapshot logic the agent must verify across every consumer for deep-copy correctness. Shared-reference aliasing is invisible to static reads; the agent cannot prove from one call site whether 'snapshot then mutate' is safe.",
+        "goal": "One save / restore pair the agent reads inside the editor class. Cross-client correctness is structurally guaranteed by treating Memento as opaque; the agent verifies one location for clone depth and one location for restore field-set completeness.",
+        "pressure": "Per-client snapshot/restore code is N×M cells (N consumers × M state fields) the agent verifies on every state-shape change. Adding a new field requires editing every snapshot site; one missed site silently produces a partial undo that survives review.",
+        "tradeoff": "Opaque Memento means the agent investigating a runtime issue (e.g., 'why did this undo restore the wrong selection?') cannot inspect the Memento in stack traces. Debugging requires save/restore-aware instrumentation; without it, mementos look like black boxes the agent must trust.",
+        "relief": "Edits scope to save() and restore() inside the editor; consumers pass tokens around; the agent verifies clone-depth and field-set once per editor type. Diff surface for a new field is two lines in one file.",
+        "trap": "Clients that read memento.snapshot directly defeat the encapsulation and create new Insider Trading on the editor's representation. The agent reading client code trusts the Memento contract; the runtime coupling contradicts that trust silently. Lint or document the opacity invariant or it will erode commit-by-commit."
+      }
+    }
   }
 ]
