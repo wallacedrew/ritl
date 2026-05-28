@@ -1505,5 +1505,45 @@
         "trap": "When the Facade grows to N user tasks (submitOrder + refund + modify + audit + ...), it becomes a god object the agent must read fully before any edit. The pattern's clarity wins were proportional to focused scope; god-facade scope reintroduces the verification problem at a higher level."
       }
     }
+  },
+  {
+    "catalog": "patterns",
+    "book": "gof",
+    "name": "Flyweight",
+    "nemeses": [
+      {
+        "catalog": "smells",
+        "name": "Duplicated Code"
+      },
+      {
+        "catalog": "smells",
+        "name": "Large Class"
+      },
+      {
+        "catalog": "refactorings",
+        "name": "Extract Class"
+      }
+    ],
+    "before": "class Tree {\n  constructor(species, x, y, age, scale) {\n    this.species = species;\n    this.texture = loadTexture(species);\n    this.mesh = loadMesh(species);\n    this.animation = loadAnimation(species);\n    this.x = x;\n    this.y = y;\n    this.age = age;\n    this.scale = scale;\n  }\n  render(ctx) {\n    /* uses this.texture, this.mesh, this.x, this.y */\n  }\n}\nconst forest = [];\nfor (let i = 0; i < 10000; i++) {\n  forest.push(new Tree('oak', randomX(), randomY(), randomAge(), 1.0));\n}\n// 10000 × 7MB of texture/mesh data per tree = catastrophic memory cost.",
+    "after": "class TreeType {\n  constructor(species) {\n    this.species = species;\n    this.texture = loadTexture(species);\n    this.mesh = loadMesh(species);\n    this.animation = loadAnimation(species);\n  }\n  render(ctx, x, y, age, scale) {\n    /* uses this.texture, this.mesh, x, y, scale */\n  }\n}\nclass TreeTypeRegistry {\n  static cache = new Map();\n  static get(species) {\n    if (!TreeTypeRegistry.cache.has(species)) {\n      TreeTypeRegistry.cache.set(species, new TreeType(species));\n    }\n    return TreeTypeRegistry.cache.get(species);\n  }\n}\nclass Tree {\n  constructor(species, x, y, age, scale) {\n    this.type = TreeTypeRegistry.get(species);\n    this.x = x;\n    this.y = y;\n    this.age = age;\n    this.scale = scale;\n  }\n  render(ctx) {\n    this.type.render(ctx, this.x, this.y, this.age, this.scale);\n  }\n}\n// 10000 Trees × ~40 bytes each + one shared TreeType per species.",
+    "exampleSource": "Illustrative example written for this site in the spirit of Design Patterns (Gamma, Helm, Johnson, Vlissides, Addison-Wesley, 1994), chapter 4. The book's running example is a text editor's per-character glyph objects; this JavaScript adaptation uses a forest of game-engine trees because the texture/mesh-sharing payoff (and the intrinsic/extrinsic split) reads more concretely in modern terms.",
+    "forces": {
+      "human": {
+        "symptom": "A type that should have many instances (every glyph in a document, every tile on a map, every projectile in a scene) carries enough per-instance state that memory blows up linearly with instance count. Most of that state — texture, mesh, font metrics — is identical across instances of the same kind.",
+        "goal": "Intrinsic state (the kind-shared data) lives in one Flyweight object per kind; extrinsic state (the per-instance data: position, scale, custom parameters) lives on the instance. A registry hands out the shared Flyweight; instances reference it rather than copy it.",
+        "pressure": "Per-instance copies of shared state are Duplicated Code in memory form — N×M bytes when 1×M would suffice, where N is instance count and M is intrinsic-state size. The cost is invisible during development on small datasets and catastrophic when the dataset reaches realistic scale.",
+        "tradeoff": "Splitting intrinsic from extrinsic state forces every method on the instance to receive the extrinsic state explicitly (as args or as `this.x`-style fields) rather than reading it from intrinsic-side fields. Methods on the Flyweight take more parameters; client code at every call site provides them.",
+        "relief": "Memory cost drops from N×M to N + M; load time drops because each kind loads once; instance construction becomes a registry lookup + per-instance field set. Tests of the intrinsic state run once per kind, not per instance.",
+        "trap": "Flyweight applied where extrinsic state is mutable and the instance count is small adds indirection without paying for itself. The agent reads `tree.type.render(ctx, this.x, ...)` and must follow two hops to understand what render actually does, costing context budget that the memory savings can't justify at small N."
+      },
+      "agent": {
+        "symptom": "Instances of the same kind hold identical bytes for kind-shared fields. The agent reading the Tree class sees a constructor doing expensive work (loadTexture, loadMesh) per instance and must verify the duplication is intentional or a bug; static reads cannot distinguish 'cached lookup' from 'fresh load' without per-call instrumentation.",
+        "goal": "A structural separation between kind-shared data (TreeType) and per-instance data (Tree). The agent verifies expensive setup is in TreeType.constructor (runs once per species); per-instance construction is cheap and obvious. Memory characteristics are statically derivable.",
+        "pressure": "N×M memory cost is invisible at static-read time but devastating at runtime; the agent reasoning about scaling characteristics must run instrumentation to surface it. Per-instance heavy state is a bug shape the agent cannot easily detect from the source.",
+        "tradeoff": "Two-class structure (Flyweight + per-instance wrapper) doubles the file count the agent navigates per kind. Methods on Tree that delegate to TreeType are one-line passes that consume read budget; deep call chains for trivial behaviour confuse 'where does this actually do work' reasoning.",
+        "relief": "Memory and load-time characteristics become structurally provable from a single-file read of TreeType + its registry. The agent verifies kind-load semantics once; per-instance reasoning collapses to the four extrinsic fields. Cost-of-scale predictions are reliable from source alone.",
+        "trap": "Premature flyweighting at low N adds indirection the agent pays for at every read with no memory payoff. Watch for 'Flyweight with one or two instances per kind' as a sign the pattern was speculative — the cost is paid forever, the benefit is hypothetical."
+      }
+    }
   }
 ]
