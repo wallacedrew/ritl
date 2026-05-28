@@ -25,6 +25,7 @@ interface CatalogDetailProps {
   afterLabel: string;
   neighbors: CatalogNeighbors;
   incomingSources?: readonly CatalogEntryName[];
+  inboundPatterns?: readonly CatalogEntryName[];
 }
 
 export default function CatalogDetail({
@@ -37,6 +38,7 @@ export default function CatalogDetail({
   afterLabel,
   neighbors,
   incomingSources,
+  inboundPatterns,
 }: CatalogDetailProps) {
   const forces = entry.forcesFor(lens);
 
@@ -50,6 +52,7 @@ export default function CatalogDetail({
           relatedNames={entry.nemeses}
           destinationPattern={entry.destinationPattern}
           incomingSources={incomingSources}
+          inboundPatterns={inboundPatterns}
         />
         <CatalogPrevNextStrip neighbors={neighbors} />
         <LensSwitcher entry={entry} currentView={lens} />

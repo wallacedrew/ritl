@@ -12,6 +12,7 @@ interface CatalogEntryHeaderProps {
   relatedNames: readonly CatalogEntryName[];
   destinationPattern?: CatalogEntryName;
   incomingSources?: readonly CatalogEntryName[];
+  inboundPatterns?: readonly CatalogEntryName[];
 }
 
 export default function CatalogEntryHeader({
@@ -20,6 +21,7 @@ export default function CatalogEntryHeader({
   relatedNames,
   destinationPattern,
   incomingSources,
+  inboundPatterns,
 }: CatalogEntryHeaderProps) {
   return (
     <Stack spacing={1.5}>
@@ -59,6 +61,20 @@ export default function CatalogEntryHeader({
               key={source.toString()}
               label={source.toString()}
               href={source.toCatalogHref()}
+            />
+          ))}
+        </Stack>
+      )}
+      {inboundPatterns && inboundPatterns.length > 0 && (
+        <Stack direction="row" spacing={1} sx={{ alignItems: "center", flexWrap: "wrap", gap: 1 }}>
+          <Typography variant="body2" color="text.secondary">
+            Referenced by patterns &rarr;
+          </Typography>
+          {inboundPatterns.map((pattern) => (
+            <LinkedChip
+              key={pattern.toCatalogHref()}
+              label={pattern.toString()}
+              href={pattern.toCatalogHref()}
             />
           ))}
         </Stack>
