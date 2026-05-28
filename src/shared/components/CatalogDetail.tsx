@@ -60,7 +60,12 @@ export default function CatalogDetail({
           inboundPatterns={inboundPatterns}
         />
         <CatalogPrevNextStrip neighbors={neighbors} />
-        <LensSwitcher entry={entry} currentView={lens} />
+        <LensSwitcher
+          humanHref={entry.href()}
+          compareHref={entry.compareHref()}
+          agentHref={entry.agentHref()}
+          currentView={lens}
+        />
         <SnippetPreviewButton href={entry.name.toSnippetHref()} label="Preview markdown" />
         <Divider />
         {entry.safetyNet && <CatalogSection label="Safety net" body={entry.safetyNet.toString()} />}

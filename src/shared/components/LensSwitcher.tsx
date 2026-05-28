@@ -1,13 +1,15 @@
+"use client";
+
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import NextLink from "next/link";
 
-import type { CatalogEntry } from "@/shared/lib/CatalogEntry";
-
 export type LensView = "human" | "agent" | "compare";
 
 interface LensSwitcherProps {
-  entry: CatalogEntry;
+  humanHref: string;
+  compareHref: string;
+  agentHref: string;
   currentView: LensView;
 }
 
@@ -19,13 +21,18 @@ const VIEW_LABELS: Record<LensView, string> = {
 
 const VIEW_ORDER: readonly LensView[] = ["human", "compare", "agent"];
 
-function hrefFor(entry: CatalogEntry, view: LensView): string {
-  if (view === "human") return entry.href();
-  if (view === "agent") return entry.agentHref();
-  return entry.compareHref();
-}
+export default function LensSwitcher({
+  humanHref,
+  compareHref,
+  agentHref,
+  currentView,
+}: LensSwitcherProps) {
+  const hrefFor: Record<LensView, string> = {
+    human: humanHref,
+    compare: compareHref,
+    agent: agentHref,
+  };
 
-export default function LensSwitcher({ entry, currentView }: LensSwitcherProps) {
   return (
     <Stack
       direction="row"
@@ -57,7 +64,7 @@ export default function LensSwitcher({ entry, currentView }: LensSwitcherProps) 
             key={view}
             variant="body2"
             component={NextLink}
-            href={hrefFor(entry, view)}
+            href={hrefFor[view]}
             sx={commonSx}
           >
             {VIEW_LABELS[view]}

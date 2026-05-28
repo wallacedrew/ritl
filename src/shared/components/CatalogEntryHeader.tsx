@@ -1,12 +1,28 @@
 import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
-import { alpha } from "@mui/material/styles";
 import Typography from "@mui/material/Typography";
 
 import LinkedChip from "@/shared/components/LinkedChip";
 import { MONOSPACE_FONT } from "@/shared/theme/monospace";
+import type { CatalogEntryTone } from "@/shared/lib/CatalogEntry";
 import type { CatalogEntryName } from "@/shared/lib/CatalogEntryName";
-import { badgePaletteKey, chipColorForTone } from "@/shared/lib/catalogChipColor";
+import { chipColorForTone } from "@/shared/lib/catalogChipColor";
+
+/**
+ * Soft tone-tinted background + dark text for the catalog-number badge.
+ * Hard-coded so the sx prop stays a plain object — required because this
+ * component runs as a server component (sx callbacks serialize as
+ * functions, which Next.js can't pass from server to client children).
+ *
+ * Colors match MUI's default success/error/warning/info palette: bg is
+ * the `.main` hex at ~15% alpha, fg is the `.dark` hex.
+ */
+const TONE_BADGE_STYLES: Record<CatalogEntryTone, { bg: string; fg: string }> = {
+  refactoring: { bg: "rgba(46, 125, 50, 0.15)", fg: "#1b5e20" },
+  smell: { bg: "rgba(211, 47, 47, 0.15)", fg: "#c62828" },
+  "kerievsky-pattern": { bg: "rgba(237, 108, 2, 0.15)", fg: "#e65100" },
+  "gof-pattern": { bg: "rgba(2, 136, 209, 0.15)", fg: "#01579b" },
+};
 
 interface CatalogEntryHeaderProps {
   name: CatalogEntryName;
@@ -66,21 +82,18 @@ export default function CatalogEntryHeader({
         </Typography>
         <Box
           aria-hidden="true"
-          sx={(theme) => {
-            const paletteKey = badgePaletteKey(name.tone());
-            return {
-              flexShrink: 0,
-              px: 1.25,
-              py: 0.5,
-              borderRadius: 1,
-              bgcolor: alpha(theme.palette[paletteKey].main, 0.15),
-              color: theme.palette[paletteKey].dark,
-              fontFamily: MONOSPACE_FONT,
-              fontVariantNumeric: "tabular-nums",
-              fontWeight: 700,
-              fontSize: "0.875rem",
-              lineHeight: 1.5,
-            };
+          sx={{
+            flexShrink: 0,
+            px: 1.25,
+            py: 0.5,
+            borderRadius: 1,
+            bgcolor: TONE_BADGE_STYLES[name.tone()].bg,
+            color: TONE_BADGE_STYLES[name.tone()].fg,
+            fontFamily: MONOSPACE_FONT,
+            fontVariantNumeric: "tabular-nums",
+            fontWeight: 700,
+            fontSize: "0.875rem",
+            lineHeight: 1.5,
           }}
         >
           {String(number).padStart(2, "0")}
