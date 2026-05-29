@@ -29,16 +29,16 @@ describe("user installs the plugin from /plugin", () => {
     ).toBeInTheDocument();
   });
 
-  it("frames the full skills bundle as a last-resort fallback", () => {
+  it("offers the skills index for agents that can fetch URLs on demand", () => {
     renderWithTheme(<PluginPage />);
 
     expect(
-      screen.getByRole("heading", { level: 2, name: /Full skills bundle/i }),
+      screen.getByRole("heading", { level: 2, name: /Skills index/i }),
     ).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: /ritl-skills-bundle\.md/i })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /ritl-skills-index\.md/i })).toBeInTheDocument();
     expect(
       screen.getByText(
-        /last-resort fallback for non-Claude-Code agents.*Paste\s+sections relevant to the smell/i,
+        /fetch only the SKILL\.md files whose description matches what you're working on/i,
       ),
     ).toBeInTheDocument();
   });

@@ -129,7 +129,7 @@ describe("GET /api/stats", () => {
     const kv = buildFakeKv({
       "event:snippet_copied:total:2026-05-01": "5",
       "event:snippet_copied:snippet=refactoring-discipline.md:2026-05-01": "3",
-      "event:snippet_copied:snippet=ritl-skills-bundle.md:2026-05-01": "2",
+      "event:snippet_copied:snippet=ritl-skills-index.md:2026-05-01": "2",
     });
 
     const response = await handleStats(
@@ -146,7 +146,7 @@ describe("GET /api/stats", () => {
     expect(body.total).toBe(5);
     expect(body.byProperty).toEqual({
       "snippet=refactoring-discipline.md": 3,
-      "snippet=ritl-skills-bundle.md": 2,
+      "snippet=ritl-skills-index.md": 2,
     });
   });
 

@@ -2,8 +2,9 @@
 // Generates Claude-skill-shaped markdown snippets from the catalog JSON.
 //
 // Output layout:
-//   docs/snippets/ritl-skills-bundle.md              (single bulk reference of every SKILL.md)
+//   docs/snippets/ritl-skills-index.md               (slugs + descriptions + per-skill URLs)
 //   docs/snippets/refactoring-discipline.md          (AGENTS.md / CLAUDE.md drop-in directive)
+//   docs/snippets/workflow.md                        (orchestrator SKILL.md mirror)
 //   docs/snippets/refactorings/<slug>.md             (one valid SKILL.md per refactoring)
 //   docs/snippets/smells/<slug>.md                   (one valid SKILL.md per smell)
 //   docs/snippets/patterns/<slug>.md                 (one valid SKILL.md per pattern)
@@ -333,58 +334,91 @@ function formatSmellSkill(s, index) {
   return frontmatter(slug, description) + formatSmellBody(s, index);
 }
 
-function renderCatalogFile() {
+const SITE_ORIGIN = "https://refactoringintheloop.com";
+
+function parseFrontmatterDescription(skillMd) {
+  const match = skillMd.match(/^---\nname:[^\n]*\ndescription:\s*(.*)\n---/);
+  if (!match) {
+    throw new Error("parseFrontmatterDescription: SKILL.md is missing frontmatter description");
+  }
+  return match[1].trim();
+}
+
+function indexBullet(slug, description, urlPath) {
+  return `- **${slug}** — ${description}\n  ${SITE_ORIGIN}${urlPath}`;
+}
+
+function renderIndexFile() {
   const byName = new Map(refactorings.map((r) => [r.name, r]));
   const kerievskyPatterns = patterns.filter((p) => p.book === "kerievsky");
   const gofPatterns = patterns.filter((p) => p.book === "gof");
-  const totalSections =
+  const totalSkills =
     1 + refactorings.length + smells.length + kerievskyPatterns.length + gofPatterns.length;
 
-  const header = `# RITL skills bundle
+  const workflowDescription = parseFrontmatterDescription(workflowSkillMd);
 
-Centralized view of all ${totalSections} SKILL.md sections this plugin ships — 1 workflow orchestrator, ${refactorings.length} Fowler refactorings, ${smells.length} Fowler smells, ${kerievskyPatterns.length} Kerievsky composite refactorings, and ${gofPatterns.length} GoF design patterns. Each section below is the full SKILL.md content of the matching per-entity download; the content is identical at the section level.
+  const header = `# RITL skills index
 
-Use this single paste only when an agent cannot auto-load skills (no Claude Code, no per-file retrieval). Pasting all ${totalSections} sections into one context burns tokens and dilutes attention; paste only the sections relevant to the smell, refactoring, or pattern you're working on. For Claude Code users the plugin's auto-invoking skills are strictly better — each loads just-in-time on description match.
+Index of all ${totalSkills} skills in the catalog — 1 workflow orchestrator, ${refactorings.length} Fowler refactorings, ${smells.length} Fowler smells, ${kerievskyPatterns.length} Kerievsky composite refactorings, and ${gofPatterns.length} GoF design patterns. Each entry lists the skill's slug, its routing description, and the URL of the full SKILL.md to fetch when the description matches what you're working on.
+
+## When to use this index
+
+For coding agents with file or URL fetch (Cursor, Aider, Codex, Cline, Continue, custom agents). Read this index once, fetch only the matching skills on demand, work the cycle, repeat.
+
+For Claude Code users, install the plugin instead — auto-loading via description match is strictly better than this index plus manual fetch:
+
+    /plugin marketplace add wallacedrew/ritl
+    /plugin install refactor@ritl
+
+For agents that cannot fetch URLs at all, paste \`refactoring-discipline.md\` into your AGENTS.md or CLAUDE.md — it's a ~30-line behavior shape that does not depend on catalog lookup.
+
+Do not concatenate every linked SKILL.md into one context. The whole point of this index is on-demand retrieval; loading the full ${totalSkills} skills at once is the anti-pattern this catalog teaches against.
 
 `;
 
-  const parts = [header, "---", "", "## Workflow", "", workflowSkillMd, ""];
+  const parts = [header, "## Workflow", ""];
 
-  parts.push("---", "", "## Refactorings", "");
+  parts.push(indexBullet("workflow", workflowDescription, "/snippets/workflow.md"), "");
 
+  parts.push("## Refactorings (Fowler 2e)", "");
   for (const [category, names] of Object.entries(REFACTORING_CATEGORIES)) {
-    parts.push(`### ${category}`);
-    parts.push("");
+    parts.push(`### ${category}`, "");
     for (const name of names) {
       const refactoring = byName.get(name);
       if (!refactoring) continue;
-      parts.push(formatRefactoringSkill(refactoring));
+      const slug = slugify(refactoring.name);
+      const description = routingDescriptionForRefactoring(refactoring);
+      parts.push(indexBullet(slug, description, `/snippets/refactorings/${slug}.md`), "");
     }
   }
 
-  parts.push("---", "", "## Code smells", "");
-  smells.forEach((smell, index) => {
-    parts.push(formatSmellSkill(smell, index));
+  parts.push("## Code smells (Fowler 2e)", "");
+  smells.forEach((smell) => {
+    const slug = slugify(smell.name);
+    const description = routingDescriptionForSmell(smell);
+    parts.push(indexBullet(slug, description, `/snippets/smells/${slug}.md`), "");
   });
 
-  parts.push("---", "", "## Patterns (Kerievsky — Refactoring to Patterns)", "");
-  patterns.forEach((pattern, index) => {
-    if (pattern.book === "kerievsky") {
-      parts.push(formatPatternSkill(pattern, index));
-    }
+  parts.push("## Patterns — Refactoring to Patterns (Kerievsky 2004)", "");
+  patterns.forEach((pattern) => {
+    if (pattern.book !== "kerievsky") return;
+    const slug = slugify(pattern.name);
+    const description = routingDescriptionForPattern(pattern);
+    parts.push(indexBullet(slug, description, `/snippets/patterns/${slug}.md`), "");
   });
 
-  parts.push("---", "", "## Patterns (GoF — Design Patterns)", "");
-  patterns.forEach((pattern, index) => {
-    if (pattern.book === "gof") {
-      parts.push(formatPatternSkill(pattern, index));
-    }
+  parts.push("## Patterns — Design Patterns (Gamma/Helm/Johnson/Vlissides 1994)", "");
+  patterns.forEach((pattern) => {
+    if (pattern.book !== "gof") return;
+    const slug = slugify(pattern.name);
+    const description = routingDescriptionForPattern(pattern);
+    parts.push(indexBullet(slug, description, `/snippets/patterns/${slug}.md`), "");
   });
 
   return parts.join("\n");
 }
 
-const catalogMd = renderCatalogFile();
+const indexMd = renderIndexFile();
 
 // AGENTS.md-shaped discipline snippet. Directive voice, no catalog data
 // inline beyond naming the 24 smell vocabulary. This is the
@@ -432,8 +466,9 @@ Fowler 2e (https://refactoring.com/catalog/), Kerievsky's *Refactoring to Patter
 
 for (const dest of ["docs/snippets", "public/snippets"]) {
   mkdirSync(resolve(root, dest), { recursive: true });
-  writeFileSync(resolve(root, `${dest}/ritl-skills-bundle.md`), catalogMd);
+  writeFileSync(resolve(root, `${dest}/ritl-skills-index.md`), indexMd);
   writeFileSync(resolve(root, `${dest}/refactoring-discipline.md`), disciplineMd);
+  writeFileSync(resolve(root, `${dest}/workflow.md`), workflowSkillMd);
 
   mkdirSync(resolve(root, `${dest}/refactorings`), { recursive: true });
   for (const r of refactorings) {
@@ -551,8 +586,9 @@ console.log("Generated skill-shaped snippets in docs/snippets/ and public/snippe
 console.log(`  ${refactorings.length} refactoring SKILL.md files`);
 console.log(`  ${smells.length} smell SKILL.md files`);
 console.log(`  ${patterns.length} pattern SKILL.md files`);
-console.log("  1 consolidated ritl-skills-bundle.md");
+console.log("  1 ritl-skills-index.md (catalog of slugs + descriptions + URLs)");
 console.log("  1 refactoring-discipline.md (AGENTS.md rules snippet)");
+console.log("  1 workflow.md (orchestrator SKILL.md mirror)");
 console.log(`Generated plugin '${PLUGIN_NAME}' at plugin/${PLUGIN_NAME}/`);
 console.log(`  marketplace.json at .claude-plugin/marketplace.json`);
 console.log(
