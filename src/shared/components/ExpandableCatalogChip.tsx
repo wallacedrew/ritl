@@ -1,6 +1,6 @@
 "use client";
 
-import { type MouseEvent, useMemo, useState } from "react";
+import { type MouseEvent, useId, useMemo, useState } from "react";
 
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import Box from "@mui/material/Box";
@@ -13,6 +13,7 @@ import type { CatalogEntryTone } from "@/shared/lib/CatalogEntry";
 import { computeCrossReferencesForHref } from "@/shared/lib/CatalogGraph";
 import { badgePaletteKey, type BadgePaletteKey } from "@/shared/lib/catalogChipColor";
 import { useCatalogGraph } from "@/shared/hooks/useCatalogGraph";
+import { useOpenPopover } from "@/shared/hooks/useOpenPopover";
 
 import { isEmptyCrossReferences } from "../lib/RelationshipGroup";
 import CrossReferencePanel from "./CrossReferencePanel";
@@ -25,8 +26,9 @@ interface Props {
 
 export default function ExpandableCatalogChip({ label, href, tone }: Props) {
   const graph = useCatalogGraph();
+  const instanceId = useId();
+  const { isOpen, toggle: togglePanel, close: closePanel } = useOpenPopover(instanceId);
   const [anchorElement, setAnchorElement] = useState<HTMLDivElement | null>(null);
-  const [isOpen, setIsOpen] = useState(false);
   const popoverLabel = `${label} cross-references`;
 
   const crossReferences = useMemo(
@@ -34,12 +36,6 @@ export default function ExpandableCatalogChip({ label, href, tone }: Props) {
     [graph, href],
   );
 
-  function closePanel() {
-    setIsOpen(false);
-  }
-  function togglePanel() {
-    setIsOpen((open) => !open);
-  }
   function dismissOnInnerLinkClick(event: MouseEvent<HTMLDivElement>) {
     const target = event.target as HTMLElement;
     if (target.closest("a")) closePanel();
