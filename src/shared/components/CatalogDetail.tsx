@@ -6,7 +6,6 @@ import CatalogBreadcrumb from "@/shared/components/CatalogBreadcrumb";
 import CatalogEntryHeader from "@/shared/components/CatalogEntryHeader";
 import CatalogExampleSource from "@/shared/components/CatalogExampleSource";
 import CatalogSection from "@/shared/components/CatalogSection";
-import CatalogToneLegend from "@/shared/components/CatalogToneLegend";
 import LensSwitcher from "@/shared/components/LensSwitcher";
 import SnippetPreviewButton from "@/shared/components/SnippetPreviewButton";
 import type { CatalogEntry, Lens } from "@/shared/lib/CatalogEntry";
@@ -58,7 +57,6 @@ export default function CatalogDetail({
           inboundPatterns={inboundPatterns}
           neighbors={neighbors}
         />
-        <CatalogToneLegend />
         <Stack
           direction="row"
           sx={{
