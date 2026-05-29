@@ -32,9 +32,9 @@ function iconFor(tone: CatalogEntryTone): ReactElement {
 
 function tonedSx(paletteKey: BadgePaletteKey): SxProps<Theme> {
   return (theme) => ({
-    backgroundColor: alpha(theme.palette[paletteKey].main, 0.12),
+    backgroundColor: "transparent",
     color: theme.palette[paletteKey].dark,
-    border: `1px solid ${alpha(theme.palette[paletteKey].main, 0.35)}`,
+    border: `1px solid ${alpha(theme.palette[paletteKey].main, 0.5)}`,
     fontWeight: 500,
     "& .MuiChip-icon": {
       color: theme.palette[paletteKey].main,
@@ -42,7 +42,7 @@ function tonedSx(paletteKey: BadgePaletteKey): SxProps<Theme> {
       marginRight: "-2px",
     },
     "&:hover": {
-      backgroundColor: alpha(theme.palette[paletteKey].main, 0.2),
+      backgroundColor: alpha(theme.palette[paletteKey].main, 0.08),
     },
   });
 }
