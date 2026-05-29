@@ -1,13 +1,15 @@
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 
-import LinkedChip from "@/shared/components/LinkedChip";
+import ExpandableCatalogChip from "@/shared/components/ExpandableCatalogChip";
 import type { CatalogEntryTone } from "@/shared/lib/CatalogEntry";
+import type { CrossReferences } from "@/shared/lib/RelationshipGroup";
 
 export interface LabeledChipRowChip {
   label: string;
   href: string;
   tone: CatalogEntryTone;
+  crossReferences?: CrossReferences;
 }
 
 interface Props {
@@ -22,9 +24,15 @@ export default function LabeledChipRow({ label, chips }: Props) {
       <Typography variant="overline" color="text.secondary" sx={{ lineHeight: 1.4 }}>
         {label}
       </Typography>
-      <Stack direction="row" sx={{ flexWrap: "wrap", gap: 1 }}>
+      <Stack direction="row" sx={{ flexWrap: "wrap", gap: 1, rowGap: 1 }}>
         {chips.map((chip) => (
-          <LinkedChip key={chip.href} label={chip.label} href={chip.href} tone={chip.tone} />
+          <ExpandableCatalogChip
+            key={chip.href}
+            label={chip.label}
+            href={chip.href}
+            tone={chip.tone}
+            crossReferences={chip.crossReferences}
+          />
         ))}
       </Stack>
     </Stack>

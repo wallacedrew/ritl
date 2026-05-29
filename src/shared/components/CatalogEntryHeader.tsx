@@ -7,11 +7,39 @@ import NextLink from "next/link";
 
 import LabeledChipRow, { type LabeledChipRowChip } from "@/shared/components/LabeledChipRow";
 import { MONOSPACE_FONT } from "@/shared/theme/monospace";
+import { collectCrossReferences, type CatalogSnapshot } from "@/shared/lib/collectCrossReferences";
+import type { CatalogEntry } from "@/shared/lib/CatalogEntry";
 import type { CatalogEntryName } from "@/shared/lib/CatalogEntryName";
 import type { CatalogNeighbors } from "@/shared/lib/CatalogNeighbors";
 
-function toChip(name: CatalogEntryName): LabeledChipRowChip {
-  return { label: name.toString(), href: name.toCatalogHref(), tone: name.tone() };
+function indexEntriesByHref(snapshot: CatalogSnapshot): ReadonlyMap<string, CatalogEntry> {
+  const lookup = new Map<string, CatalogEntry>();
+  for (const entry of [...snapshot.smells, ...snapshot.refactorings, ...snapshot.patterns]) {
+    lookup.set(entry.name.toCatalogHref(), entry);
+  }
+  return lookup;
+}
+
+function toChipFactory(
+  snapshot: CatalogSnapshot | undefined,
+): (name: CatalogEntryName) => LabeledChipRowChip {
+  if (!snapshot) {
+    return (name) => ({
+      label: name.toString(),
+      href: name.toCatalogHref(),
+      tone: name.tone(),
+    });
+  }
+  const entriesByHref = indexEntriesByHref(snapshot);
+  return (name) => {
+    const entry = entriesByHref.get(name.toCatalogHref());
+    return {
+      label: name.toString(),
+      href: name.toCatalogHref(),
+      tone: name.tone(),
+      crossReferences: entry ? collectCrossReferences(entry, snapshot) : undefined,
+    };
+  };
 }
 
 const NAV_ARROW_STYLE = {
@@ -34,6 +62,12 @@ interface CatalogEntryHeaderProps {
   incomingSources?: readonly CatalogEntryName[];
   inboundPatterns?: readonly CatalogEntryName[];
   neighbors?: CatalogNeighbors;
+  /**
+   * When supplied, each chip in the labeled rows is enriched with the
+   * connected entries that would render in its cross-reference popover.
+   * Omit to render plain chips (no chevron).
+   */
+  snapshot?: CatalogSnapshot;
 }
 
 function nemesesLabel(name: CatalogEntryName): string {
@@ -56,9 +90,11 @@ export default function CatalogEntryHeader({
   incomingSources,
   inboundPatterns,
   neighbors,
+  snapshot,
 }: CatalogEntryHeaderProps) {
   const prev = neighbors?.prev ?? null;
   const next = neighbors?.next ?? null;
+  const toChip = toChipFactory(snapshot);
 
   return (
     <Stack spacing={3}>

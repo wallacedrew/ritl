@@ -2,6 +2,7 @@ import CatalogCompareDetail from "@/shared/components/CatalogCompareDetail";
 import type { PatternBook } from "@/shared/lib/CatalogEntry";
 import { findCatalogEntryBySlug } from "@/shared/lib/findCatalogEntryBySlug";
 import { generateCatalogStaticParams } from "@/shared/lib/generateCatalogStaticParams";
+import { loadCatalogSnapshot } from "@/shared/lib/loadCatalogSnapshot";
 import { subSiteForPatternBook } from "@/shared/lib/subSites";
 
 import { findPatternSources } from "./lib/findPatternSources";
@@ -15,8 +16,9 @@ interface PatternsComparePageProps {
 
 export default async function PatternsComparePage({ params, book }: PatternsComparePageProps) {
   const { slug: rawSlug } = await params;
+  const snapshot = loadCatalogSnapshot();
   const { entry: pattern, number } = findCatalogEntryBySlug(rawSlug, loadPatterns(book));
-  const sources = findPatternSources(pattern.name, loadPatterns()).map((source) => source.name);
+  const sources = findPatternSources(pattern.name, snapshot.patterns).map((source) => source.name);
   return (
     <CatalogCompareDetail
       entry={pattern}
@@ -27,6 +29,7 @@ export default async function PatternsComparePage({ params, book }: PatternsComp
       afterLabel="After the pattern"
       neighbors={getPatternNeighbors(number, book)}
       incomingSources={sources}
+      snapshot={snapshot}
     />
   );
 }

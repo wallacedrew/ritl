@@ -12,6 +12,7 @@ import SnippetPreviewButton from "@/shared/components/SnippetPreviewButton";
 import type { CatalogEntry } from "@/shared/lib/CatalogEntry";
 import type { CatalogEntryName } from "@/shared/lib/CatalogEntryName";
 import type { CatalogNeighbors } from "@/shared/lib/CatalogNeighbors";
+import type { CatalogSnapshot } from "@/shared/lib/collectCrossReferences";
 
 interface CatalogCompareDetailProps {
   entry: CatalogEntry;
@@ -23,6 +24,7 @@ interface CatalogCompareDetailProps {
   neighbors: CatalogNeighbors;
   incomingSources?: readonly CatalogEntryName[];
   inboundPatterns?: readonly CatalogEntryName[];
+  snapshot?: CatalogSnapshot;
 }
 
 export default function CatalogCompareDetail({
@@ -35,6 +37,7 @@ export default function CatalogCompareDetail({
   neighbors,
   incomingSources,
   inboundPatterns,
+  snapshot,
 }: CatalogCompareDetailProps) {
   const human = entry.forcesFor("human");
   const agent = entry.forcesFor("agent");
@@ -55,6 +58,7 @@ export default function CatalogCompareDetail({
           incomingSources={incomingSources}
           inboundPatterns={inboundPatterns}
           neighbors={neighbors}
+          snapshot={snapshot}
         />
         <Stack
           direction="row"
