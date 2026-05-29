@@ -2,6 +2,7 @@ import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 
 import LinkedChip from "@/shared/components/LinkedChip";
+import { chipColorForTone } from "@/shared/lib/catalogChipColor";
 
 import type { CatalogListItem } from "@/shared/lib/CatalogListItem";
 
@@ -18,7 +19,12 @@ export default function CategoryGroup({ category, items }: CategoryGroupProps) {
       </Typography>
       <Stack direction="row" sx={{ flexWrap: "wrap", gap: 1 }}>
         {items.map((item) => (
-          <LinkedChip key={item.name} label={item.name} href={item.href} color="success" />
+          <LinkedChip
+            key={item.name}
+            label={item.name}
+            href={item.href}
+            color={chipColorForTone(item.tone)}
+          />
         ))}
       </Stack>
     </Stack>
