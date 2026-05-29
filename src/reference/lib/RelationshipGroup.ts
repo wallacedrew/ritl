@@ -1,4 +1,4 @@
-import type { CatalogEntryName } from "@/shared/lib/CatalogEntryName";
+import type { CatalogEntryTone } from "@/shared/lib/CatalogEntry";
 
 export type RelationshipKind =
   | "apply-refactorings"
@@ -17,38 +17,45 @@ const RELATIONSHIP_LABELS: Readonly<Record<RelationshipKind, string>> = {
   "referenced-by-patterns": "Referenced by patterns",
 };
 
-export class RelationshipGroup {
-  private constructor(
-    readonly kind: RelationshipKind,
-    readonly label: string,
-    readonly entries: readonly CatalogEntryName[],
-  ) {}
-
-  static of(kind: RelationshipKind, entries: readonly CatalogEntryName[]): RelationshipGroup {
-    return new RelationshipGroup(kind, RELATIONSHIP_LABELS[kind], entries);
-  }
-
-  isEmpty(): boolean {
-    return this.entries.length === 0;
-  }
+export interface CrossReferenceChip {
+  readonly label: string;
+  readonly href: string;
+  readonly tone: CatalogEntryTone;
 }
 
-export class CrossReferences {
-  private constructor(readonly groups: readonly RelationshipGroup[]) {}
+export interface RelationshipGroup {
+  readonly kind: RelationshipKind;
+  readonly label: string;
+  readonly chips: readonly CrossReferenceChip[];
+}
 
-  static of(groups: readonly RelationshipGroup[]): CrossReferences {
-    return new CrossReferences(groups.filter((group) => !group.isEmpty()));
-  }
+export interface CrossReferences {
+  readonly groups: readonly RelationshipGroup[];
+}
 
-  static empty(): CrossReferences {
-    return new CrossReferences([]);
-  }
+export function relationshipGroup(
+  kind: RelationshipKind,
+  chips: readonly CrossReferenceChip[],
+): RelationshipGroup {
+  return { kind, label: RELATIONSHIP_LABELS[kind], chips };
+}
 
-  isEmpty(): boolean {
-    return this.groups.length === 0;
-  }
+export function isEmptyRelationshipGroup(group: RelationshipGroup): boolean {
+  return group.chips.length === 0;
+}
 
-  totalEntries(): number {
-    return this.groups.reduce((sum, group) => sum + group.entries.length, 0);
-  }
+export function crossReferences(groups: readonly RelationshipGroup[]): CrossReferences {
+  return { groups: groups.filter((group) => !isEmptyRelationshipGroup(group)) };
+}
+
+export function emptyCrossReferences(): CrossReferences {
+  return { groups: [] };
+}
+
+export function isEmptyCrossReferences(value: CrossReferences): boolean {
+  return value.groups.length === 0;
+}
+
+export function totalCrossReferenceCount(value: CrossReferences): number {
+  return value.groups.reduce((sum, group) => sum + group.chips.length, 0);
 }

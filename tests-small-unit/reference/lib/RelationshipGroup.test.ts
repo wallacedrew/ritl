@@ -1,24 +1,27 @@
 import { describe, expect, it } from "vitest";
 
 import {
-  CrossReferences,
-  RelationshipGroup,
+  crossReferences,
+  emptyCrossReferences,
+  isEmptyCrossReferences,
+  relationshipGroup,
+  totalCrossReferenceCount,
   type RelationshipKind,
 } from "@/reference/lib/RelationshipGroup";
-import { CatalogEntryName } from "@/shared/lib/CatalogEntryName";
 
-describe("RelationshipGroup", () => {
+describe("relationshipGroup", () => {
   it("attaches the canonical label for its kind", () => {
-    const group = RelationshipGroup.of("apply-refactorings", [
-      CatalogEntryName.refactoring("Extract Function"),
+    const group = relationshipGroup("apply-refactorings", [
+      {
+        label: "Extract Function",
+        href: "/refactoring/canon/extract-function",
+        tone: "refactoring",
+      },
     ]);
 
     expect(group.label).toBe("Apply refactorings");
     expect(group.kind).toBe("apply-refactorings");
-  });
-
-  it("treats a zero-entry group as empty", () => {
-    expect(RelationshipGroup.of("removes-smells", []).isEmpty()).toBe(true);
+    expect(group.chips).toHaveLength(1);
   });
 
   it("uses the existing detail-page vocabulary for every relationship kind", () => {
@@ -33,38 +36,54 @@ describe("RelationshipGroup", () => {
     for (const [kind, expected] of Object.entries(labelByKind) as Array<
       [RelationshipKind, string]
     >) {
-      expect(RelationshipGroup.of(kind, []).label).toBe(expected);
+      expect(relationshipGroup(kind, []).label).toBe(expected);
     }
   });
 });
 
-describe("CrossReferences", () => {
+describe("crossReferences", () => {
   it("drops empty groups when constructed", () => {
-    const populated = RelationshipGroup.of("apply-refactorings", [
-      CatalogEntryName.refactoring("Extract Function"),
+    const populated = relationshipGroup("apply-refactorings", [
+      {
+        label: "Extract Function",
+        href: "/refactoring/canon/extract-function",
+        tone: "refactoring",
+      },
     ]);
-    const empty = RelationshipGroup.of("referenced-by-patterns", []);
+    const empty = relationshipGroup("referenced-by-patterns", []);
 
-    const crossReferences = CrossReferences.of([populated, empty]);
+    const value = crossReferences([populated, empty]);
 
-    expect(crossReferences.groups).toHaveLength(1);
-    expect(crossReferences.groups[0]?.kind).toBe("apply-refactorings");
+    expect(value.groups).toHaveLength(1);
+    expect(value.groups[0]?.kind).toBe("apply-refactorings");
   });
 
   it("reports an empty cross-reference set when given no non-empty groups", () => {
-    expect(CrossReferences.of([]).isEmpty()).toBe(true);
-    expect(CrossReferences.empty().isEmpty()).toBe(true);
+    expect(isEmptyCrossReferences(crossReferences([]))).toBe(true);
+    expect(isEmptyCrossReferences(emptyCrossReferences())).toBe(true);
   });
 
-  it("sums the total number of connected entries across all groups", () => {
-    const refactorings = RelationshipGroup.of("apply-refactorings", [
-      CatalogEntryName.refactoring("Extract Function"),
-      CatalogEntryName.refactoring("Replace Temp with Query"),
+  it("sums the total number of connected chips across all groups", () => {
+    const refactorings = relationshipGroup("apply-refactorings", [
+      {
+        label: "Extract Function",
+        href: "/refactoring/canon/extract-function",
+        tone: "refactoring",
+      },
+      {
+        label: "Replace Temp with Query",
+        href: "/refactoring/canon/replace-temp-with-query",
+        tone: "refactoring",
+      },
     ]);
-    const patterns = RelationshipGroup.of("referenced-by-patterns", [
-      CatalogEntryName.pattern("Compose Method", "kerievsky"),
+    const patterns = relationshipGroup("referenced-by-patterns", [
+      {
+        label: "Compose Method",
+        href: "/refactoring-to-patterns/compose-method",
+        tone: "kerievsky-pattern",
+      },
     ]);
 
-    expect(CrossReferences.of([refactorings, patterns]).totalEntries()).toBe(3);
+    expect(totalCrossReferenceCount(crossReferences([refactorings, patterns]))).toBe(3);
   });
 });

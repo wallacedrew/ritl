@@ -5,10 +5,14 @@ import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import NextLink from "next/link";
 
-import LabeledChipRow from "@/shared/components/LabeledChipRow";
+import LabeledChipRow, { type LabeledChipRowChip } from "@/shared/components/LabeledChipRow";
 import { MONOSPACE_FONT } from "@/shared/theme/monospace";
 import type { CatalogEntryName } from "@/shared/lib/CatalogEntryName";
 import type { CatalogNeighbors } from "@/shared/lib/CatalogNeighbors";
+
+function toChip(name: CatalogEntryName): LabeledChipRowChip {
+  return { label: name.toString(), href: name.toCatalogHref(), tone: name.tone() };
+}
 
 const NAV_ARROW_STYLE = {
   display: "inline-flex" as const,
@@ -107,10 +111,16 @@ export default function CatalogEntryHeader({
           )}
         </Stack>
       </Stack>
-      <LabeledChipRow label={nemesesLabel(name)} chips={relatedNames} />
-      {destinationPattern && <LabeledChipRow label="Destination" chips={[destinationPattern]} />}
-      {incomingSources && <LabeledChipRow label="Reached from" chips={incomingSources} />}
-      {inboundPatterns && <LabeledChipRow label="Referenced by patterns" chips={inboundPatterns} />}
+      <LabeledChipRow label={nemesesLabel(name)} chips={relatedNames.map(toChip)} />
+      {destinationPattern && (
+        <LabeledChipRow label="Destination" chips={[toChip(destinationPattern)]} />
+      )}
+      {incomingSources && (
+        <LabeledChipRow label="Reached from" chips={incomingSources.map(toChip)} />
+      )}
+      {inboundPatterns && (
+        <LabeledChipRow label="Referenced by patterns" chips={inboundPatterns.map(toChip)} />
+      )}
     </Stack>
   );
 }

@@ -1,8 +1,14 @@
 import { findPatternSources } from "@/patterns/lib/findPatternSources";
 import type { CatalogEntry } from "@/shared/lib/CatalogEntry";
+import type { CatalogEntryName } from "@/shared/lib/CatalogEntryName";
 import { findInboundPatterns } from "@/shared/lib/findInboundPatterns";
 
-import { CrossReferences, RelationshipGroup } from "./RelationshipGroup";
+import {
+  crossReferences,
+  type CrossReferenceChip,
+  type CrossReferences,
+  relationshipGroup,
+} from "./RelationshipGroup";
 
 export interface CatalogSnapshot {
   readonly refactorings: readonly CatalogEntry[];
@@ -30,11 +36,11 @@ function collectSmellCrossReferences(
   smell: CatalogEntry,
   snapshot: CatalogSnapshot,
 ): CrossReferences {
-  return CrossReferences.of([
-    RelationshipGroup.of("apply-refactorings", smell.nemeses),
-    RelationshipGroup.of(
+  return crossReferences([
+    relationshipGroup("apply-refactorings", smell.nemeses.map(toChip)),
+    relationshipGroup(
       "referenced-by-patterns",
-      findInboundPatterns(smell.name, snapshot.patterns).map((pattern) => pattern.name),
+      findInboundPatterns(smell.name, snapshot.patterns).map((pattern) => toChip(pattern.name)),
     ),
   ]);
 }
@@ -43,28 +49,38 @@ function collectRefactoringCrossReferences(
   refactoring: CatalogEntry,
   snapshot: CatalogSnapshot,
 ): CrossReferences {
-  return CrossReferences.of([
-    RelationshipGroup.of("removes-smells", refactoring.nemeses),
-    RelationshipGroup.of(
+  return crossReferences([
+    relationshipGroup("removes-smells", refactoring.nemeses.map(toChip)),
+    relationshipGroup(
       "referenced-by-patterns",
-      findInboundPatterns(refactoring.name, snapshot.patterns).map((pattern) => pattern.name),
+      findInboundPatterns(refactoring.name, snapshot.patterns).map((pattern) =>
+        toChip(pattern.name),
+      ),
     ),
   ]);
 }
 
 function collectKerievskyCrossReferences(pattern: CatalogEntry): CrossReferences {
   const destination = pattern.destinationPattern;
-  return CrossReferences.of([
-    RelationshipGroup.of("triggered-by", pattern.nemeses),
-    RelationshipGroup.of("destination", destination ? [destination] : []),
+  return crossReferences([
+    relationshipGroup("triggered-by", pattern.nemeses.map(toChip)),
+    relationshipGroup("destination", destination ? [toChip(destination)] : []),
   ]);
 }
 
 function collectGofCrossReferences(gof: CatalogEntry, snapshot: CatalogSnapshot): CrossReferences {
-  return CrossReferences.of([
-    RelationshipGroup.of(
+  return crossReferences([
+    relationshipGroup(
       "reached-from",
-      findPatternSources(gof.name, snapshot.patterns).map((pattern) => pattern.name),
+      findPatternSources(gof.name, snapshot.patterns).map((pattern) => toChip(pattern.name)),
     ),
   ]);
+}
+
+function toChip(name: CatalogEntryName): CrossReferenceChip {
+  return {
+    label: name.toString(),
+    href: name.toCatalogHref(),
+    tone: name.tone(),
+  };
 }

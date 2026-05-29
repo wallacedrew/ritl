@@ -81,15 +81,13 @@ describe("collectCrossReferences", () => {
     expect(labels).toEqual(["Apply refactorings", "Referenced by patterns"]);
 
     const applyRefactorings = crossReferences.groups[0];
-    expect(applyRefactorings?.entries.map((name) => name.toString())).toEqual([
+    expect(applyRefactorings?.chips.map((chip) => chip.label)).toEqual([
       "Extract Function",
       "Replace Temp with Query",
     ]);
 
     const referencedByPatterns = crossReferences.groups[1];
-    expect(referencedByPatterns?.entries.map((name) => name.toString())).toEqual([
-      "Compose Method",
-    ]);
+    expect(referencedByPatterns?.chips.map((chip) => chip.label)).toEqual(["Compose Method"]);
   });
 
   it("returns 'Removes smells' and 'Referenced by patterns' for a refactoring", () => {
@@ -99,12 +97,10 @@ describe("collectCrossReferences", () => {
     expect(labels).toEqual(["Removes smells", "Referenced by patterns"]);
 
     const removesSmells = crossReferences.groups[0];
-    expect(removesSmells?.entries.map((name) => name.toString())).toEqual(["Long Function"]);
+    expect(removesSmells?.chips.map((chip) => chip.label)).toEqual(["Long Function"]);
 
     const referencedByPatterns = crossReferences.groups[1];
-    expect(referencedByPatterns?.entries.map((name) => name.toString())).toEqual([
-      "Compose Method",
-    ]);
+    expect(referencedByPatterns?.chips.map((chip) => chip.label)).toEqual(["Compose Method"]);
   });
 
   it("returns 'Triggered by' and 'Destination' for a Kerievsky pattern with a destination", () => {
@@ -114,7 +110,7 @@ describe("collectCrossReferences", () => {
     expect(labels).toEqual(["Destination"]);
 
     const destination = crossReferences.groups[0];
-    expect(destination?.entries.map((name) => name.toString())).toEqual(["Factory Method"]);
+    expect(destination?.chips.map((chip) => chip.label)).toEqual(["Factory Method"]);
   });
 
   it("returns only 'Triggered by' for a Kerievsky pattern with no destination", () => {
@@ -124,7 +120,7 @@ describe("collectCrossReferences", () => {
     expect(labels).toEqual(["Triggered by"]);
 
     const triggeredBy = crossReferences.groups[0];
-    expect(triggeredBy?.entries.map((name) => name.toString())).toEqual([
+    expect(triggeredBy?.chips.map((chip) => chip.label)).toEqual([
       "Long Function",
       "Extract Function",
     ]);
@@ -137,7 +133,7 @@ describe("collectCrossReferences", () => {
     expect(labels).toEqual(["Reached from"]);
 
     const reachedFrom = crossReferences.groups[0];
-    expect(reachedFrom?.entries.map((name) => name.toString())).toEqual([
+    expect(reachedFrom?.chips.map((chip) => chip.label)).toEqual([
       "Encapsulate Classes With Factory",
     ]);
   });
@@ -148,7 +144,7 @@ describe("collectCrossReferences", () => {
       name: CatalogEntryName.smell("Lone Smell"),
     });
 
-    const crossReferences = collectCrossReferences(isolatedSmell, snapshot);
-    expect(crossReferences.isEmpty()).toBe(true);
+    const result = collectCrossReferences(isolatedSmell, snapshot);
+    expect(result.groups).toEqual([]);
   });
 });

@@ -2,11 +2,17 @@ import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 
 import LinkedChip from "@/shared/components/LinkedChip";
-import type { CatalogEntryName } from "@/shared/lib/CatalogEntryName";
+import type { CatalogEntryTone } from "@/shared/lib/CatalogEntry";
+
+export interface LabeledChipRowChip {
+  label: string;
+  href: string;
+  tone: CatalogEntryTone;
+}
 
 interface Props {
   label: string;
-  chips: readonly CatalogEntryName[];
+  chips: readonly LabeledChipRowChip[];
 }
 
 export default function LabeledChipRow({ label, chips }: Props) {
@@ -18,12 +24,7 @@ export default function LabeledChipRow({ label, chips }: Props) {
       </Typography>
       <Stack direction="row" sx={{ flexWrap: "wrap", gap: 1 }}>
         {chips.map((chip) => (
-          <LinkedChip
-            key={chip.toCatalogHref()}
-            label={chip.toString()}
-            href={chip.toCatalogHref()}
-            tone={chip.tone()}
-          />
+          <LinkedChip key={chip.href} label={chip.label} href={chip.href} tone={chip.tone} />
         ))}
       </Stack>
     </Stack>

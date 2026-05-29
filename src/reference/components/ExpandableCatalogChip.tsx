@@ -10,7 +10,7 @@ import Stack from "@mui/material/Stack";
 import LinkedChip from "@/shared/components/LinkedChip";
 import type { CatalogEntryTone } from "@/shared/lib/CatalogEntry";
 
-import type { CrossReferences } from "../lib/RelationshipGroup";
+import { isEmptyCrossReferences, type CrossReferences } from "../lib/RelationshipGroup";
 import CrossReferencePanel from "./CrossReferencePanel";
 
 interface Props {
@@ -36,7 +36,7 @@ export default function ExpandableCatalogChip({ label, href, tone, crossReferenc
     if (target.closest("a")) closePanel();
   }
 
-  if (crossReferences.isEmpty()) {
+  if (isEmptyCrossReferences(crossReferences)) {
     return <LinkedChip label={label} href={href} tone={tone} />;
   }
 
