@@ -140,6 +140,23 @@ function readOptionalExampleSource(record: Record<string, unknown>): string | un
   return raw;
 }
 
+function readOptionalCompareDifferential(record: Record<string, unknown>): string | undefined {
+  const raw = record.compareDifferential;
+  if (raw === undefined) {
+    return undefined;
+  }
+  if (typeof raw !== "string") {
+    throw new Error('parseCatalogEntry: field "compareDifferential" must be a string when present');
+  }
+  const sentenceCount = (raw.match(/[.!?](\s|$)/g) ?? []).length;
+  if (sentenceCount > 3) {
+    throw new Error(
+      `parseCatalogEntry: field "compareDifferential" must be at most 3 sentences (got ${sentenceCount})`,
+    );
+  }
+  return raw;
+}
+
 function readDestinationPattern(
   record: Record<string, unknown>,
   ownCatalog: CatalogKind,
@@ -220,6 +237,7 @@ export function parseCatalogEntry(raw: unknown): CatalogEntry {
     exampleSource: readOptionalExampleSource(record),
     book,
     destinationPattern: readDestinationPattern(record, catalog, book),
+    compareDifferential: readOptionalCompareDifferential(record),
   });
 }
 

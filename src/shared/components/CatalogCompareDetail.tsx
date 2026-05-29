@@ -69,9 +69,10 @@ export default function CatalogCompareDetail({
         <Typography
           variant="body2"
           color="text.secondary"
-          sx={{ fontStyle: "italic", lineHeight: 1.5 }}
+          sx={{ fontStyle: "italic", lineHeight: 1.55 }}
         >
-          Humans pay in attention; agents pay in tokens — same target, different failure modes.
+          {entry.compareDifferential ??
+            "Humans pay in attention; agents pay in tokens — same target, different failure modes."}
         </Typography>
         {entry.safetyNet && <CatalogSection label="Safety net" body={entry.safetyNet.toString()} />}
         <CatalogSectionCompare label="Symptom" human={human.symptom} agent={agent.symptom} />
