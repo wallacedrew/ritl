@@ -22,8 +22,7 @@
         "relief": "Smaller diff surface per commit; behavior preservation verifiable per refactoring step; chained orchestrations work from named subroutines instead of re-derived semantics.",
         "trap": "Forces the agent to chase a dozen function definitions to follow what was once a 20-line procedure — context cost inflates and cross-function invariants disappear."
       }
-    },
-    "compareDifferential": "Humans extract to fit the algorithm in working memory; the cost is naming the helper so it earns its place. Agents extract to bound the token span they must reason over per edit; the cost is that every new helper definition takes up window space the next step must load. The trade pays off when the named span is reusable enough to leave the body smaller than its parts."
+    }
   },
   {
     "catalog": "refactorings",
@@ -48,8 +47,7 @@
         "relief": "Shorter call chains; the agent loads one fewer definition per reasoning step.",
         "trap": "Mechanically inlining every short function — including ones that name a real domain concept — collapses semantic anchors the agent uses to reason about behavior."
       }
-    },
-    "compareDifferential": "Humans inline when a helper hides nothing — its body is as clear as its name. Agents inline when a misnamed helper's call site is fewer tokens to reason about than the trip through a misnamed indirection. The inline pays off when the body's tokens cost less than the redirection plus the body together did."
+    }
   },
   {
     "catalog": "refactorings",
@@ -74,8 +72,7 @@
         "relief": "The agent references named intermediate values; expression-level reasoning becomes reference-level reasoning, which is cheaper.",
         "trap": "Extracting every sub-expression — including ones already obvious — bloats the agent's scope table with names that document nothing the agent didn't already know."
       }
-    },
-    "compareDifferential": "Humans extract a variable to give an expression a name worth remembering through the rest of the function. Agents extract because subsequent reads of the value pay one read of the name instead of re-evaluating the expression, and the name is what the model edits against in later steps. Without the extraction, each reference forces the agent to re-derive the value from upstream tokens."
+    }
   },
   {
     "catalog": "refactorings",
@@ -100,8 +97,7 @@
         "relief": "Less local clutter in the agent's scope table; expressions read as themselves.",
         "trap": "Inlining variables that named non-obvious intermediate values forces the agent to repeatedly parse the same expression across every reference site."
       }
-    },
-    "compareDifferential": "Humans inline a variable whose name carries no information beyond the expression itself. Agents inline because the variable's name is a token without semantic payload — the expression itself communicates more than the binding does. Inlining frees the window space the binding occupied without losing any signal the agent uses."
+    }
   },
   {
     "catalog": "refactorings",
@@ -130,8 +126,7 @@
         "relief": "Call sites read fluently; the agent's signature-based reasoning becomes trustworthy; mismatches surface at the boundary.",
         "trap": "Reshaping signatures across team boundaries without coordination forces other consumers to rebuild — the agent shipping the change may not see the downstream breakage."
       }
-    },
-    "compareDifferential": "Humans reshape a signature when it no longer matches the caller's mental model. Agents reshape because the signature is the one piece of evidence later reasoning steps have for what the function does — drift between name, parameters, and behavior costs tokens at every future call site edit. Aligned signatures let the agent answer 'what does this do' from the signature alone, without reading the body."
+    }
   },
   {
     "catalog": "refactorings",
@@ -156,8 +151,7 @@
         "relief": "The agent has one audit point for validation/logging/invariants; consumers don't need to change when the wrapper grows new behavior.",
         "trap": "Wrapping the variable without enforcing wrapper-only access leaves leaks the agent doesn't see; the wrapper becomes a false safety signal."
       }
-    },
-    "compareDifferential": "Humans encapsulate a variable when reads and writes are scattered enough that the next change can't be localized. Agents encapsulate because every read or write is then a method the model finds by name, instead of grep-tracking a bare identifier across files. Generated code that bypasses the encapsulation is one missed call site away from invalidating an invariant the methods would have enforced."
+    }
   },
   {
     "catalog": "refactorings",
@@ -182,8 +176,7 @@
         "relief": "Fewer context-lookup hops per reasoning step; planning loops run cheaper and resist drift.",
         "trap": "Compulsive renaming generates spurious diffs that crowd the review surface and burn context the human reviewer has to skim past."
       }
-    },
-    "compareDifferential": "Humans rename when the current name forces re-reading the value to recall what it represents. Agents rename to bring the variable's name in line with its role, because the first reading of the name anchors interpretation and every later prediction carries that anchor forward. Code an agent generates against a misanchored name treats the variable as something it is not, and the bug ships looking correct."
+    }
   },
   {
     "catalog": "refactorings",
@@ -208,8 +201,7 @@
         "relief": "Operations on the clump (formatting, validation, equality) live with it; the agent reasons about one named concept instead of N coupled fields.",
         "trap": "Wrapping coincidental field groups creates fake value objects the agent must construct and destructure with no comprehension gain."
       }
-    },
-    "compareDifferential": "Humans bundle parameters when call sites pass the same trio every time. Agents bundle because positional alignment is a source of edit drift the type system doesn't catch as long as the parameters share base types. With the bundle, the agent matches one named field at a time and one missed field is a type error instead of a silent positional swap."
+    }
   },
   {
     "catalog": "refactorings",
@@ -234,8 +226,7 @@
         "relief": "The agent loads the class as a single unit; behavior, fields, and invariants all in one place with one import.",
         "trap": "Wrapping data that nobody else operates on creates a class the agent must instantiate everywhere with no encapsulation gain — pure overhead."
       }
-    },
-    "compareDifferential": "Humans combine when a set of functions take the same first parameter — that parameter is the implicit self. Agents combine because related behaviors then live in one type, reducing the cross-file lookups the agent pays for when reasoning about any one of them. The class also makes the contract over the shared data the one place the agent maintains, instead of N functions to keep aligned."
+    }
   },
   {
     "catalog": "refactorings",
@@ -260,8 +251,7 @@
         "relief": "Derivations are consistent by construction; the agent reads field accesses on the enriched record instead of computing across the codebase.",
         "trap": "Pre-building transforms for hypothetical consumers creates intermediate shapes the agent must understand and maintain with no active reuse."
       }
-    },
-    "compareDifferential": "Humans combine when several functions derive values from the same input. Agents combine because the transform exposes one input-to-shape contract that lives in the window for one read, instead of forcing the model to recover invariants from scattered helpers. Edits to the derived values happen against a single signature the agent holds against the input shape."
+    }
   },
   {
     "catalog": "refactorings",
@@ -286,8 +276,7 @@
         "relief": "Each phase becomes the agent's unit of reasoning; the intermediate shape documents the contract; testing and modification isolate to one phase at a time.",
         "trap": "Splitting tightly-coupled phases creates an artificial seam the agent must coordinate across — the intermediate shape leaks one phase's implementation into the next."
       }
-    },
-    "compareDifferential": "Humans split a function whose body bridges two unrelated concerns connected only by intermediate data. Agents split because each phase fits its own context window with its own input-output contract — either side can be edited without loading the other. The intermediate data becomes the one contract between phases, narrowing what the agent has to read to make a change."
+    }
   },
   {
     "catalog": "refactorings",
@@ -312,8 +301,7 @@
         "relief": "The function's data sits inside the agent's current reasoning context; verifying behavior touches one class instead of two.",
         "trap": "Mechanical move-the-function-to-the-data on every cross-class read creates a fan-out the agent must follow at every call site — the cure becomes a worse smell than the original."
       }
-    },
-    "compareDifferential": "Humans move a function when its parameters reveal it belongs somewhere else. Agents move because the function then lives next to the data it operates on — locality reduces the number of files the agent loads when walking a behavior. The cross-file lookup the misplaced function forced becomes a same-file read."
+    }
   },
   {
     "catalog": "refactorings",
@@ -338,8 +326,7 @@
         "relief": "Class boundaries align with data ownership; the agent reasons about mutations locally; refactoring becomes safer because the field's true owner is visible.",
         "trap": "Moving fields purely on derivation grounds — without checking whether the original class's identity depends on the field's presence — breaks consumer expectations the agent didn't model."
       }
-    },
-    "compareDifferential": "Humans move a field when one class never uses it but another does on every access. Agents move because the field's owner is then also its read-write surface, saving the cross-file load the misplaced field forced on every access. Reasoning about behaviors that touch the field happens against one type instead of two."
+    }
   },
   {
     "catalog": "refactorings",
@@ -364,8 +351,7 @@
         "relief": "The function reads as cohesive blocks the agent can extract or reason about as units; setup for further refactoring becomes mechanical.",
         "trap": "Aggressive sliding without verifying side-effect ordering — observer logs, time reads, async dispatch — silently changes behavior the agent's local tests may not catch."
       }
-    },
-    "compareDifferential": "Humans reorder declarations and statements to group what's used together. Agents reorder because adjacent statements that are causally adjacent fit in attention as a unit, and attention is weakest on tokens scattered across an interleaved span. Generated edits to a tight cluster are more reliable than edits to a span the agent reads in pieces."
+    }
   },
   {
     "catalog": "refactorings",
@@ -390,8 +376,7 @@
         "relief": "Each loop becomes an independently-replaceable unit (pipeline candidate); the agent's edit surface per concern shrinks.",
         "trap": "Splitting loops whose concerns share per-iteration state — accumulator-of-running-difference, look-behind logic — fragments coupled state the agent must now re-derive in each split."
       }
-    },
-    "compareDifferential": "Humans split a loop doing two jobs so each purpose scans alone. Agents reading a combined body have to hold both state machines in attention at once, and attention is weakest in the middle of long bodies. The job sitting between start and end is the one an agent miscounts when generating the next edit, and the miscount ships."
+    }
   },
   {
     "catalog": "refactorings",
@@ -416,8 +401,7 @@
         "relief": "Intent is readable; the agent reasons about each pipeline stage independently with type signatures documenting the transformation.",
         "trap": "Forcing every loop into a pipeline — including ones with early-exit, side-effects, or sequential dependencies — produces twisted .reduce() bodies the agent has to untangle to understand."
       }
-    },
-    "compareDifferential": "Humans replace because a pipeline reads top-to-bottom as a list of named transformations. Agents replace because each stage is its own checkable contract — one stage can be edited without re-deriving the loop's invariants from the body's tokens. The pipeline shrinks the span the agent must read to make any single-stage change."
+    }
   },
   {
     "catalog": "refactorings",
@@ -442,8 +426,7 @@
         "relief": "The agent's reasoning context shrinks; static analysis becomes ground truth; planning loops don't waste cycles on phantom paths.",
         "trap": "Aggressive deletion based purely on grep/static-analysis evidence misses reflection-reachable, plugin-loaded, or externally-referenced code — the cleanup ships a silent regression the agent's tests don't catch."
       }
-    },
-    "compareDifferential": "Humans delete dead code because it forces them to ask 'is this load-bearing?' every time they pass it. Agents delete because dead code is dead tokens — window space spent producing no constraint on the answer the agent generates. Removing it widens the budget left for the code that actually matters."
+    }
   },
   {
     "catalog": "refactorings",
@@ -468,8 +451,7 @@
         "relief": "The agent reasons about each variable as a stable name; the type system can narrow each role; each use becomes independently refactorable.",
         "trap": "Splitting variables whose uses genuinely shared state forces the agent to re-establish the coupling outside the variable, complicating the original logic."
       }
-    },
-    "compareDifferential": "Humans split a variable that's been reused for two purposes within one function. Agents split because a reused name forces the model to disambiguate the semantic load from surrounding context at every read, doubling the per-occurrence reasoning cost. With two names, each read resolves to one role without context recovery."
+    }
   },
   {
     "catalog": "refactorings",
@@ -494,8 +476,7 @@
         "relief": "The agent reasons about field access with the field's name as ground truth; consumer-side reasoning becomes self-documenting.",
         "trap": "Renaming fields purely for cosmetic preference creates churn across persistence + API surfaces the agent must coordinate without comprehension gain."
       }
-    },
-    "compareDifferential": "Humans rename a field when the current name no longer fits how the field is used. Agents rename because the field's name anchors interpretation at every access point, and an outdated name carries the wrong reading forward into every read. Code generated against an outdated field name treats the field as something it is not."
+    }
   },
   {
     "catalog": "refactorings",
@@ -520,8 +501,7 @@
         "relief": "Mutation scope shrinks to source fields; the agent reasons about state without modeling derivation update timing; consistency is by construction.",
         "trap": "Replacing every derived field with a query — including ones wrapping expensive computations called many times — trades runtime cost for correctness without measuring the impact."
       }
-    },
-    "compareDifferential": "Humans replace because computing on demand kills a stale-cache bug class. Agents replace because the query is one piece of state instead of two — there's no synchronization between the derived value and its source for the model to track across edits. Generated code that updates the source without the derived value ships as a stale read otherwise."
+    }
   },
   {
     "catalog": "refactorings",
@@ -546,8 +526,7 @@
         "relief": "The agent reasons about named domain decisions; the branching logic reads top-to-bottom as a story.",
         "trap": "Extracting names that don't sharpen the condition — `isMonthBetweenFiveAndEight` instead of `isSummer` — adds indirection without revealing intent."
       }
-    },
-    "compareDifferential": "Humans extract the test and the branches into named pieces so the conditional reads as intent, not mechanics. Agents extract because 'what makes a customer eligible' lives in one named function the model edits against, instead of being recovered from the test's plumbing every time. The next edit reads the name once instead of reading the predicate."
+    }
   },
   {
     "catalog": "refactorings",
@@ -572,8 +551,7 @@
         "relief": "The agent reasons about one named predicate with one consequent; new conditions extend in one place.",
         "trap": "Collapsing conditions that look the same but encode independent rules hides distinctions the agent will need to re-split when one rule evolves differently from the others."
       }
-    },
-    "compareDifferential": "Humans collapse two checks that return the same result into one combined check. Agents collapse because the predicate lives in one place the model maintains, instead of two near-identical branches that drift under independent edits. Generated code that updates one branch but not the other ships as a divergence that survives the build."
+    }
   },
   {
     "catalog": "refactorings",
@@ -598,8 +576,7 @@
         "relief": "The agent reads the happy path linearly with edge cases as exceptions; new edge cases land at the top without disturbing the main flow.",
         "trap": "Inlining guards for every condition — including ones that shared follow-up work — fragments the shared logic across early-return branches the agent must keep consistent."
       }
-    },
-    "compareDifferential": "Humans flatten because guard clauses surface what doesn't apply up front, leaving the body for the happy path. Agents flatten because each guard is one single-purpose return — preconditions can be added, removed, or reasoned about one at a time instead of rewriting the whole pyramid. The happy path then fits in attention without paging the precondition pyramid in and out."
+    }
   },
   {
     "catalog": "refactorings",
@@ -624,8 +601,7 @@
         "relief": "Adding a new variant is mechanical and the type checker enforces completeness; the agent's plan-and-execute loop for new cases is bounded.",
         "trap": "Replacing every switch with polymorphism — including ones with two stable cases — creates a class hierarchy the agent must navigate without buying any extension flexibility."
       }
-    },
-    "compareDifferential": "Humans replace switch/case with polymorphism so each behavior lives next to its data, not in a central dispatcher. Agents replace because a missing subclass override is a compile error the build catches, where a missing switch case is a silent fall-through the agent's generated code ships. The cost of adding a variant goes from 'edit every dispatcher' to 'write one subclass'."
+    }
   },
   {
     "catalog": "refactorings",
@@ -650,8 +626,7 @@
         "relief": "The agent reasons polymorphically; the special behavior lives in one class and consumers don't branch.",
         "trap": "Introducing a Null Object class for special checks used in only one place creates a class the agent must load and reason about with no consistency gain."
       }
-    },
-    "compareDifferential": "Humans introduce a special-case object to keep callers from sprinkling 'if null' everywhere. Agents introduce because every call site is then uniformly polymorphic — the model does not have to remember which sites have already checked for the edge case. Generated calls against the special-case object behave correctly without per-site null-guarding."
+    }
   },
   {
     "catalog": "refactorings",
@@ -676,8 +651,7 @@
         "relief": "Invariants fail loudly at the source; the agent's debugging traces are short; assumptions become enforceable contracts.",
         "trap": "Coupling production behavior to assertion presence/absence — the agent reads them as documentation but the runtime depends on them firing or not."
       }
-    },
-    "compareDifferential": "Humans assert when a precondition is otherwise invisible and would surface as a confusing bug downstream. Agents assert because the assertion is a typed constraint the model uses when generating code — the precondition lives next to the code instead of in a comment or a caller's memory. Generated code that would have violated the precondition fails loudly at the assertion site instead of corrupting the downstream state."
+    }
   },
   {
     "catalog": "refactorings",
@@ -702,8 +676,7 @@
         "relief": "The agent reasons about side effects locally; queries compose cleanly; tests target each shape independently.",
         "trap": "Splitting atomic query-and-modify operations introduces race windows the agent must reason about at every call site — the cure becomes worse than the smell."
       }
-    },
-    "compareDifferential": "Humans separate so reads don't have side effects callers can't see at the call site. Agents separate because each function's name then predicts its effect — purity narrows the set of states an edit has to consider. Generated code that calls a separated query never accidentally mutates, where a combined query-and-modify forces the model to consider both readings at every call."
+    }
   },
   {
     "catalog": "refactorings",
@@ -728,8 +701,7 @@
         "relief": "One canonical implementation the agent reasons about; new variations are new parameter values, not new code paths.",
         "trap": "Parameterizing conceptually different operations accumulates flag-driven branches the agent must reason about — the function becomes a switch statement in disguise."
       }
-    },
-    "compareDifferential": "Humans parameterize when two functions differ only in a literal. Agents parameterize because two near-identical functions are duplication the model cannot keep in sync across independent edits. With one parameterized function, the body lives in one window-loaded place and the variants are arguments at the call sites."
+    }
   },
   {
     "catalog": "refactorings",
@@ -754,8 +726,7 @@
         "relief": "Call sites read fluently; the agent reasons about one function per concern.",
         "trap": "Splitting flag-dispatched functions without extracting shared body creates N copies of the same logic the agent must keep in sync — the cure becomes the duplication smell."
       }
-    },
-    "compareDifferential": "Humans split a flag-arg function because the flag forces re-reading the body to know which branch the caller wants. Agents split because the model otherwise has to track the flag's value through every call site to predict behavior — naming the variants makes intent local at each call. Generated code that passes the wrong flag value ships as a silent choice of the wrong branch."
+    }
   },
   {
     "catalog": "refactorings",
@@ -780,8 +751,7 @@
         "relief": "Signatures shrink; adding a needed field is an internal change; the agent reasons about one parameter at every call.",
         "trap": "Passing whole objects when only one field is needed couples the function to the object's full surface the agent must consider as the function's input scope."
       }
-    },
-    "compareDifferential": "Humans pass the whole object when several values from it are needed — the caller stops shaping data on the callee's behalf. Agents pass the whole object because each parameter costs tokens at every call site, and the object keeps the contract narrow even as the callee's needs grow. Generated calls do not have to track which fields are currently passed and which were added in the last edit."
+    }
   },
   {
     "catalog": "refactorings",
@@ -806,8 +776,7 @@
         "relief": "Signatures shrink; the agent calls the function directly without reproducing caller-side derivations.",
         "trap": "Replacing parameters with queries that are expensive or have side effects multiplies cost or introduces hidden coupling the agent reads as 'just a parameter swap'."
       }
-    },
-    "compareDifferential": "Humans replace when a parameter is just data the callee can fetch itself, removing a coupling at the call site. Agents replace because the callee then owns its inputs — call sites do not have to be updated to keep a parameter in sync as the source changes. Generated edits to the source flow through one query path instead of every caller's argument list."
+    }
   },
   {
     "catalog": "refactorings",
@@ -832,8 +801,7 @@
         "relief": "The agent extends construction in one place; consumers don't depend on which concrete class they're getting.",
         "trap": "Wrapping every constructor in a factory adds an indirection layer the agent must navigate without buying any new construction capability."
       }
-    },
-    "compareDifferential": "Humans replace because factory functions can return subclasses, take meaningful names, and fail gracefully. Agents replace because a named factory carries intent the model uses when generating call sites — newCustomerFromSignup resolves to a recipe; new Customer(args) does not. Generated code that picks the wrong constructor variant is caught by the factory name; bare constructor overloads are not."
+    }
   },
   {
     "catalog": "refactorings",
@@ -858,8 +826,7 @@
         "relief": "One implementation; the agent reasons about one place for the shared behavior; subclasses focus on what's actually different.",
         "trap": "Pulling up superficially-similar methods creates fake-shared behavior the agent must constantly verify means the same thing across subclasses."
       }
-    },
-    "compareDifferential": "Humans pull up duplicated subclass methods into the parent. Agents pull up because duplicated logic in two subclasses is a drift trap — a future edit might land in only one and the build accepts the divergence as long as both still type-check. With one parent definition, edits land once and propagate through inheritance."
+    }
   },
   {
     "catalog": "refactorings",
@@ -884,8 +851,7 @@
         "relief": "The parent's surface shrinks; subclasses that don't need the method aren't burdened; the agent reasons about each subclass's contract accurately.",
         "trap": "Pushing down methods the parent occasionally needs for dispatch forces downcasts at every consumer the agent must add and verify."
       }
-    },
-    "compareDifferential": "Humans push a method down when only one subclass actually uses it. Agents push down because the parent contract then stays narrow — the model loads fewer methods into the window when reasoning about any sibling. Generated code that calls the irrelevant method on the wrong subclass becomes a type error instead of an inherited surprise."
+    }
   },
   {
     "catalog": "refactorings",
@@ -910,8 +876,7 @@
         "relief": "Adding a new kind is mechanical and type-system-enforced; the agent's plan-and-execute loop for new variants is bounded.",
         "trap": "Subclassing for type codes used in only one or two switches creates a hierarchy the agent must navigate for a coordination cost that was already small."
       }
-    },
-    "compareDifferential": "Humans replace string or int type codes with real subclasses so dispatch follows the type. Agents replace because polymorphic dispatch tells the model where a new variant goes — type-code switches scatter the answer across every switch site. A missing subclass override is a compile error; a missing type-code case is a silent fall-through that ships."
+    }
   },
   {
     "catalog": "refactorings",
@@ -936,8 +901,7 @@
         "relief": "Shared behavior lives in one place; the agent's reasoning about the relationship is documented in code via the inheritance link.",
         "trap": "Extracting superclasses for shallow duplication locks the agent into inheritance constraints when composition would have left both classes free to diverge."
       }
-    },
-    "compareDifferential": "Humans extract when two classes share enough that the duplication is a maintenance hazard. Agents extract because shared structure then has one definition — parallel changes across siblings stop being a coordination problem the model has to perform across two windows. Generated edits to the shared behavior land once and apply to every subclass."
+    }
   },
   {
     "catalog": "refactorings",
@@ -962,8 +926,7 @@
         "relief": "Smaller hierarchy; less ceremony; the agent loads one class instead of navigating a degenerate two-class chain.",
         "trap": "Collapsing subclasses that document planned future variation destroys extension points the agent will need to re-introduce later at higher cost."
       }
-    },
-    "compareDifferential": "Humans collapse when subclass and parent no longer differ enough to justify two types. Agents collapse because needless inheritance is needless indirection — one fewer definition the model loads when reasoning about behavior. The collapse frees window space the redundant parent or subclass occupied."
+    }
   },
   {
     "catalog": "refactorings",
@@ -988,8 +951,7 @@
         "relief": "Variants can be combined or swapped at runtime; Liskov violations vanish; the agent reasons about explicit delegation.",
         "trap": "Replacing every subclass — including ones where Liskov genuinely holds — pays construction-site verbosity without buying flexibility the agent will actually use."
       }
-    },
-    "compareDifferential": "Humans replace inheritance with composition when the 'is-a' relationship is forced. Agents replace because delegation makes the relationship explicit at the call site — no climbing the inheritance chain to predict behavior, and the relationship can be probed by reading the delegate's type. Generated code against the delegate is type-checked against one collaborator instead of an inheritance graph."
+    }
   },
   {
     "catalog": "refactorings",
@@ -1014,8 +976,7 @@
         "relief": "Smaller focused units; the agent tests one concept at a time and reasons about each class as a coherent whole.",
         "trap": "Extracting candidate concepts that are just trivial field groups creates class files the agent must navigate without buying any encapsulation gain."
       }
-    },
-    "compareDifferential": "Humans extract when one class is doing two jobs. Agents pay token cost for both jobs every time they query about one: a question about billing loads the shipping logic in the same file. The more unrelated payload sits in the window, the more the agent's billing answer drifts from what billing actually needs."
+    }
   },
   {
     "catalog": "refactorings",
@@ -1040,8 +1001,7 @@
         "relief": "Wrong-primitive misuse becomes a type error the agent catches without runtime testing; behavior accretes around the concept where the agent expects to find it.",
         "trap": "Wrapping every primitive — including ones with no domain rules — adds boilerplate the agent must navigate at every signature with no reasoning benefit."
       }
-    },
-    "compareDifferential": "Humans replace because a Money type can't be added to a Duration, while two numbers silently can. Agents replace because the type checker then rejects category errors the model would otherwise have to detect from naming context alone. Generated code that confuses two domains is a compile error instead of a runtime surprise."
+    }
   },
   {
     "catalog": "refactorings",
@@ -1066,8 +1026,7 @@
         "relief": "Encapsulation tightens; the agent reasons about one boundary; intermediate objects can change shape without breaking callers.",
         "trap": "Wrapping every dotted chain in passthroughs migrates the chain from call sites into the host's surface — the agent now wades through a wall of delegations to find real behavior."
       }
-    },
-    "compareDifferential": "Humans hide the delegate when callers shouldn't know one object holds another. Agents hide because call sites then cannot take shortcuts through the chain — the wrapper changes without breaking 'did this caller reach in?' assumptions the model would otherwise have to track. Generated code that walks the encapsulated chain is a type error; bare chain access is not."
+    }
   },
   {
     "catalog": "refactorings",
@@ -1092,8 +1051,7 @@
         "relief": "Fewer files; shorter call stacks; the agent's plan-and-execute loop touches the real implementation directly.",
         "trap": "Deleting a passthrough that was doing real work — authorization, validation, auditing — removes a load-bearing layer the agent didn't recognize because the trivial-looking delegation masked it."
       }
-    },
-    "compareDifferential": "Humans remove the middle man when too many of its methods are pass-throughs. Agents remove because pass-through indirection is hops without information — tokens spent walking the chain for no constraint on the answer. Removing the wrapper frees window space for the code that actually does the work."
+    }
   },
   {
     "catalog": "refactorings",
@@ -1118,8 +1076,7 @@
         "relief": "The agent reasons about values by name with the type system enforcing valid uses; changing the value is one edit the type checker confirms.",
         "trap": "Naming every literal — including indices, loop bounds, and obvious status codes — bloats the agent's mental constant table without comprehension gain."
       }
-    },
-    "compareDifferential": "Humans name the magic number so the next reader does not have to grep for its origin. Agents name because every usage then points to one constant — a value drift across literals is invisible to the build; a constant rename or value change is mechanical and propagates. Generated code referencing the constant inherits any future updates; literal copies do not."
+    }
   },
   {
     "catalog": "refactorings",
@@ -1144,8 +1101,7 @@
         "relief": "The agent reasons about the function's full contract from its definition; consistency is enforced by the function, not by convention.",
         "trap": "Moving statements into a function some callers don't want adds a flag argument the agent must thread through every call site — substitutes one boilerplate for another."
       }
-    },
-    "compareDifferential": "Humans move adjacent statements into a function that already does part of the work. Agents move because adjacent statements outside a function are uncontracted side effects — folding them in gives the function one signature for what it owns. Generated code at the call site then reasons against the signature instead of the surrounding statements."
+    }
   },
   {
     "catalog": "refactorings",
@@ -1170,8 +1126,7 @@
         "relief": "The function's contract narrows to its single responsibility; callers express variation explicitly; the agent reasons about one body and one branch per caller.",
         "trap": "Pushing statements to callers when most callers want them creates duplication the agent must keep in sync across every site — substitutes one smell for another."
       }
-    },
-    "compareDifferential": "Humans move statements out when a function does too much for the level it sits at. Agents move because each caller may want a different variant — specialization at the call site is cheaper than growing the function with flags or parameters. The function's contract narrows and the caller's intent becomes local."
+    }
   },
   {
     "catalog": "refactorings",
@@ -1196,8 +1151,7 @@
         "relief": "The agent reasons about one definition; future improvements reach every site that used to inline; consistency is enforced by reference.",
         "trap": "Replacing inline code with a call to a poorly-named function smears semantic mismatch across the codebase — the agent must constantly verify that the function's name still describes the local use."
       }
-    },
-    "compareDifferential": "Humans replace because an existing function already names what the inline code does. Agents replace because inline duplication is invisible drift — two copies will eventually diverge under unrelated edits, and the build accepts the divergence as long as both still parse. With one named function, edits land once and apply to every caller."
+    }
   },
   {
     "catalog": "refactorings",
@@ -1222,8 +1176,7 @@
         "relief": "The agent's plan-and-execute loop for Extract Function becomes mechanical; the named query is reusable anywhere it makes sense.",
         "trap": "Replacing temps that wrap expensive computations called many times multiplies runtime cost the agent's local tests may not catch."
       }
-    },
-    "compareDifferential": "Humans replace because a temp's name usually says less than a query's. Agents replace because the query eliminates a piece of state — one fewer value the model tracks across reads, and the value is recomputed from the current source instead of risking staleness. Generated code that reads the query is current by construction; a temp can age between edits."
+    }
   },
   {
     "catalog": "refactorings",
@@ -1248,8 +1201,7 @@
         "relief": "Each sub-step becomes a named method on the command; the agent extracts and tests them in pieces without rewiring shared state.",
         "trap": "Promoting every long function to a command — including ones with no genuine shared state — adds class ceremony the agent must navigate without gaining any decomposition advantage."
       }
-    },
-    "compareDifferential": "Humans replace when the function carries enough state and behavior to warrant being its own thing. Agents replace because a command object exposes named operations — command.undo() is a one-token lookup the model uses, where undo by convention is inferred. Generated code against the command reasons against its named methods instead of guessing the operation set."
+    }
   },
   {
     "catalog": "refactorings",
@@ -1274,8 +1226,7 @@
         "relief": "Fewer files; shorter call stacks; the agent's plan-and-execute loop touches the function directly without the construct-then-call hop.",
         "trap": "Collapsing commands that genuinely decomposed into named sub-steps regrows the temps they eliminated and the function-with-many-locals smell returns."
       }
-    },
-    "compareDifferential": "Humans replace when a command has shrunk to one method and no state. Agents replace because a command class wrapping a single call is two definitions the model loads where one would do — a function is the same behavior in less window space. Generated call sites against the function are one signature shorter to read."
+    }
   },
   {
     "catalog": "refactorings",
@@ -1300,8 +1251,7 @@
         "relief": "Side effects on inputs disappear from the agent's contract reasoning; the function reads as a pure transformation; composition and snapshotting work.",
         "trap": "Forcing return-modified-value on every in-place mutator — including ones where mutation is the contract callers want (performance-critical batch ops) — substitutes one mismatch for another."
       }
-    },
-    "compareDifferential": "Humans return so the caller decides whether to apply the change. Agents return because explicit return values are reasonable inputs to the next reasoning step — hidden mutation is invisible to a chain of thought and forces the model to track state across the caller's window. Generated code against an explicit return picks up the new value; code that depends on hidden mutation is brittle to call ordering."
+    }
   },
   {
     "catalog": "refactorings",
@@ -1326,8 +1276,7 @@
         "relief": "The agent recognizes the algorithm by name and reasons about it via its standard properties; correctness arguments become reusable.",
         "trap": "Substituting without characterization tests at every input boundary ships silent regressions where the original quietly handled edge cases the substitute handles differently."
       }
-    },
-    "compareDifferential": "Humans swap one algorithm for one that's easier to understand or extend. Agents swap because the replacement should be one the model can verify in one read — clarity at the algorithm level reduces the token span that must be held in attention. The shorter span pays off at every future edit that touches the algorithm's behavior."
+    }
   },
   {
     "catalog": "refactorings",
@@ -1352,8 +1301,7 @@
         "relief": "The owner enforces invariants in one place; the agent refactoring the collection's internal shape stays local to the owner.",
         "trap": "Returning copies silently changes the contract callers depended on — the agent shipping the encapsulation must verify every reader doesn't rely on mutate-the-returned-collection semantics."
       }
-    },
-    "compareDifferential": "Humans encapsulate so callers can't mutate the internals and silently break invariants. Agents encapsulate because direct collection access is an open-ended surface — every method on the collection is a potential mutation the model has to consider. The wrapper leaves a discrete set of named operations to reason about and rejects everything else at the type level."
+    }
   },
   {
     "catalog": "refactorings",
@@ -1378,8 +1326,7 @@
         "relief": "Field renames stay internal; invariants enforce in one place; the agent reasons about the class as a real domain object.",
         "trap": "Wrapping records on principle without invariants or behavior to add creates classes the agent must instantiate everywhere with no encapsulation gain."
       }
-    },
-    "compareDifferential": "Humans encapsulate so the record's clients depend on methods, not field names. Agents encapsulate because the record's interface is then the contract — field-level access scatters knowledge of the shape across every caller, and a field rename requires editing each one. With the encapsulation, the agent edits one type's methods and call sites stay valid."
+    }
   },
   {
     "catalog": "refactorings",
@@ -1404,8 +1351,7 @@
         "relief": "The agent reasons about the class as immutable-after-construction; bugs from late mutation vanish; the API expresses what users can actually do.",
         "trap": "Removing setters that meaningfully encoded a domain state change — like markPaid() coordinating paidAt+status — without replacing them with the equivalent domain method strips the semantic anchor."
       }
-    },
-    "compareDifferential": "Humans remove a setter when a field should be set only at creation. Agents remove because a removed setter is a removed pathway — the model cannot propose mutating the field if there's no method to do so. Generated code that tries to mutate the field becomes a compile error instead of a silent invariant break."
+    }
   },
   {
     "catalog": "refactorings",
@@ -1430,8 +1376,7 @@
         "relief": "Fewer files; shorter call paths; the absorber's coherence improves when it owns the methods it was orchestrating.",
         "trap": "Inlining into an already-large class creates a worse Large Class smell — the agent must reason about a god-class instead of two focused ones."
       }
-    },
-    "compareDifferential": "Humans inline a class that's no longer pulling its weight. Agents inline because a near-empty class is overhead — the model loads the definition for very little behavioral signal, and the file load competes with code that has more to say. The inline frees window space the empty class occupied."
+    }
   },
   {
     "catalog": "refactorings",
@@ -1456,8 +1401,7 @@
         "relief": "Concurrency hazards disappear; the type system can mark fields readonly; the agent reasons about the object as a stable value.",
         "trap": "Switching domain entities (Customer, Account) to value semantics strips the identity the agent's consumers depended on — equality replaces 'this specific thing' with 'anything that looks like it'."
       }
-    },
-    "compareDifferential": "Humans change so equality compares content, not identity. Agents change because two value objects with the same data are then interchangeable, and the model does not have to track identity across copies to reason about equality. Generated code that compares values gets the same answer regardless of which copy the caller holds."
+    }
   },
   {
     "catalog": "refactorings",
@@ -1482,8 +1426,7 @@
         "relief": "Updates land in one place; storage shrinks; the agent reasons about the entity as a single referent with meaningful identity.",
         "trap": "Sharing references without explicit ownership creates lifetime ambiguities the agent must model — the cure introduces a different category of bug than the original duplication."
       }
-    },
-    "compareDifferential": "Humans change so all aliases see the same state. Agents change because shared state with value semantics is a contradiction the model has to reconcile at every edit — picking one or the other gives the agent an unambiguous mental model. Generated code against the reference is consistent about which copies share writes; ambiguous semantics break under refactoring."
+    }
   },
   {
     "catalog": "refactorings",
@@ -1508,8 +1451,7 @@
         "relief": "The agent reads termination as a direct statement at the point of decision; the loop's intent becomes literal.",
         "trap": "Replacing flags with breaks in large loop bodies buries the exit point — the agent must scan the body to find termination, which can be harder than tracking the flag."
       }
-    },
-    "compareDifferential": "Humans replace because break says the loop is done now, while a flag delays the exit by one iteration. Agents replace because control flow is then locally visible at the exit point — the model does not have to scan the rest of the body to see if the flag still matters. Generated edits to a flagged loop are easy to make against the wrong assumption about whether the loop is still running."
+    }
   },
   {
     "catalog": "refactorings",
@@ -1534,8 +1476,7 @@
         "relief": "The agent reasons about pure transformations; tests target the function in isolation; signatures document dependencies.",
         "trap": "Externalizing every internal query — including ones reading stable encapsulated state — bloats signatures the agent must thread through every call site for marginal isolation benefit."
       }
-    },
-    "compareDifferential": "Humans replace when a function should take its input explicitly instead of fetching it. Agents replace because explicit parameters are typed contracts the model verifies against — the input can be checked without simulating the query's source. Generated code that passes the wrong value becomes a type error; a query result that drifts under load is a silent fault."
+    }
   },
   {
     "catalog": "refactorings",
@@ -1560,8 +1501,7 @@
         "relief": "The agent reasons about success and failure paths separately; cleanup happens via finally / try-with; forgetting to handle no longer silently swallows.",
         "trap": "Throwing for predictable conditions (not-found, validation failure) makes expected outcomes look like bugs to the agent reading the catch blocks."
       }
-    },
-    "compareDifferential": "Humans replace because exceptions force callers to handle or propagate, while error codes can be silently ignored. Agents replace because error paths are then typed — failure-handling sites are identifiable by signature, not by checking integer returns at every call. Generated code that ignores an error code ships; code that ignores an exception is a compile error or a stack-traced runtime fault."
+    }
   },
   {
     "catalog": "refactorings",
@@ -1586,8 +1526,7 @@
         "relief": "The agent reads the rule top-to-bottom; debuggers stop catching benign throws; exception handlers reserve for truly exceptional cases.",
         "trap": "Replacing exceptions with prechecks for conditions the caller can't atomically verify introduces race windows the agent's local tests won't catch."
       }
-    },
-    "compareDifferential": "Humans precheck when the exception is for a condition the caller can easily test up front. Agents precheck because exceptions are non-local control flow — a guard is locally visible while a try/catch crosses functions and forces the model to reason about an exception path it cannot see in the immediate window. Generated code with explicit guards is verifiable in one read; exception handling spans multiple files."
+    }
   },
   {
     "catalog": "refactorings",
@@ -1612,8 +1551,7 @@
         "relief": "One canonical init; new subclasses inherit for free; the agent reasons about parent-state setup in one place.",
         "trap": "Pulling up init logic only some subclasses need forces the others to override with awkward opt-outs the agent must reason about."
       }
-    },
-    "compareDifferential": "Humans pull up shared constructor logic so subclasses don't repeat it. Agents pull up because two near-identical constructors drift — there's no way from tokens alone to tell which version is current after parallel edits. With one parent constructor, edits land once and subclasses inherit them."
+    }
   },
   {
     "catalog": "refactorings",
@@ -1638,8 +1576,7 @@
         "relief": "One source of truth for the field's type and default; subclasses focus on what they actually specialize.",
         "trap": "Pulling up fields with divergent semantic roles creates a shared declaration that masks subclass-specific behavior the agent must constantly re-verify."
       }
-    },
-    "compareDifferential": "Humans pull a field up when both subclasses already declared it. Agents pull up because the field then has one definition — duplicated declarations are silent drift sources under future schema changes. Generated code against the shared field reasons against one type instead of N."
+    }
   },
   {
     "catalog": "refactorings",
@@ -1664,8 +1601,7 @@
         "relief": "Other subclasses no longer carry ignored storage; the parent's surface shrinks; the agent reasons about each subclass's shape accurately.",
         "trap": "Pushing down fields the parent occasionally consults for dispatch forces downcasts the agent must add at every consumer."
       }
-    },
-    "compareDifferential": "Humans push a field down when only one subclass actually uses it. Agents push down because the parent's state then carries no irrelevant fields — fewer fields considered per behavior when reasoning about other subclasses. The window space saved compounds across every query that loads the parent class."
+    }
   },
   {
     "catalog": "refactorings",
@@ -1690,8 +1626,7 @@
         "relief": "Smaller hierarchy; new variants are field values not new files; the agent reasons about variability as data.",
         "trap": "Removing subclasses referenced by factories, registries, or type-tests breaks those references — the agent must find every such consumer before deletion."
       }
-    },
-    "compareDifferential": "Humans remove a subclass that no longer differentiates itself from the parent. Agents remove because each empty subclass is a definition the model loads without payoff — window space spent on a type that adds no behavior. Generated code against the parent now does not have to consider an empty variant."
+    }
   },
   {
     "catalog": "refactorings",
@@ -1716,7 +1651,6 @@
         "relief": "The misleading is-a relationship disappears; the agent's polymorphic reasoning becomes trustworthy because every reference type honors its declared contract.",
         "trap": "Replacing every inheritance — including ones where Liskov genuinely holds — pays forwarding ceremony at every method without buying any contract safety the agent actually needed."
       }
-    },
-    "compareDifferential": "Humans replace when 'is-a' is forced and 'has-a' describes the relationship better. Agents replace because delegation makes the relationship a property — the delegate can be probed from one type's signature without climbing an inheritance graph. Generated code reasons against one collaborator instead of a chain of parents."
+    }
   }
 ]

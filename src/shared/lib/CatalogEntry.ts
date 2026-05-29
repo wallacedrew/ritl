@@ -25,7 +25,6 @@ export type CatalogEntryProps = {
   exampleSource?: string;
   book?: PatternBook;
   destinationPattern?: CatalogEntryName;
-  compareDifferential?: string;
 };
 
 export class CatalogEntry {
@@ -39,7 +38,6 @@ export class CatalogEntry {
     readonly exampleSource?: string,
     readonly book?: PatternBook,
     readonly destinationPattern?: CatalogEntryName,
-    readonly compareDifferential?: string,
   ) {
     if (!LEGAL_CATALOGS.includes(catalog)) {
       throw new Error(`CatalogEntry: unknown catalog "${catalog}"`);
@@ -76,7 +74,6 @@ export class CatalogEntry {
       props.exampleSource,
       props.book,
       props.destinationPattern,
-      props.compareDifferential,
     );
   }
 

@@ -1,6 +1,5 @@
 import Container from "@mui/material/Container";
 import Stack from "@mui/material/Stack";
-import Typography from "@mui/material/Typography";
 
 import BeforeAfterCodeBlocks from "@/shared/components/BeforeAfterCodeBlocks";
 import CatalogBreadcrumb from "@/shared/components/CatalogBreadcrumb";
@@ -74,14 +73,6 @@ export default function CatalogCompareDetail({
           />
           <SnippetPreviewButton href={entry.name.toSnippetHref()} label="Preview markdown" />
         </Stack>
-        <Typography
-          variant="body1"
-          color="text.secondary"
-          sx={{ fontStyle: "italic", lineHeight: 1.55 }}
-        >
-          {entry.compareDifferential ??
-            "Humans pay in attention; agents pay in tokens — same target, different failure modes."}
-        </Typography>
         <CatalogSectionCompare label="Symptom" human={human.symptom} agent={agent.symptom} />
         <CatalogSectionCompare label="Goal" human={human.goal} agent={agent.goal} />
         <BeforeAfterCodeBlocks

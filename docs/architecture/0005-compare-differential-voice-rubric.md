@@ -1,6 +1,6 @@
 # 0005. Compare-view differentials ground every entry in one specific failure mode
 
-- **Status**: accepted
+- **Status**: superseded by ADR-0006
 - **Date**: 2026-05-29
 - **Deciders**: project owner, agent
 
