@@ -5,7 +5,7 @@ import Stack from "@mui/material/Stack";
 import NextLink from "next/link";
 import { usePathname } from "next/navigation";
 
-type ReferenceView = "list" | "atlas";
+type ReferenceView = "list" | "map";
 
 interface ToggleLink {
   view: ReferenceView;
@@ -15,11 +15,11 @@ interface ToggleLink {
 
 const TOGGLE_LINKS: readonly ToggleLink[] = [
   { view: "list", label: "List", href: "/reference/list" },
-  { view: "atlas", label: "Atlas", href: "/reference/atlas" },
+  { view: "map", label: "Map", href: "/reference/map" },
 ];
 
 function deriveActiveView(pathname: string): ReferenceView {
-  return pathname.startsWith("/reference/atlas") ? "atlas" : "list";
+  return pathname.startsWith("/reference/map") ? "map" : "list";
 }
 
 export default function ReferenceViewToggle() {
