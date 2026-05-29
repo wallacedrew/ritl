@@ -3,12 +3,14 @@
 import { type MouseEvent, useState } from "react";
 
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import IconButton from "@mui/material/IconButton";
+import Box from "@mui/material/Box";
 import Popover from "@mui/material/Popover";
-import Stack from "@mui/material/Stack";
+import { alpha, type SxProps, type Theme } from "@mui/material/styles";
+import NextLink from "next/link";
 
 import LinkedChip from "@/shared/components/LinkedChip";
 import type { CatalogEntryTone } from "@/shared/lib/CatalogEntry";
+import { badgePaletteKey, type BadgePaletteKey } from "@/shared/lib/catalogChipColor";
 
 import { isEmptyCrossReferences, type CrossReferences } from "../lib/RelationshipGroup";
 import CrossReferencePanel from "./CrossReferencePanel";
@@ -21,14 +23,14 @@ interface Props {
 }
 
 export default function ExpandableCatalogChip({ label, href, tone, crossReferences }: Props) {
-  const [anchorElement, setAnchorElement] = useState<HTMLButtonElement | null>(null);
+  const [anchorElement, setAnchorElement] = useState<HTMLDivElement | null>(null);
   const [isOpen, setIsOpen] = useState(false);
   const popoverLabel = `${label} cross-references`;
 
   function closePanel() {
     setIsOpen(false);
   }
-  function toggle() {
+  function togglePanel() {
     setIsOpen((open) => !open);
   }
   function dismissOnInnerLinkClick(event: MouseEvent<HTMLDivElement>) {
@@ -40,20 +42,27 @@ export default function ExpandableCatalogChip({ label, href, tone, crossReferenc
     return <LinkedChip label={label} href={href} tone={tone} />;
   }
 
+  const paletteKey = badgePaletteKey(tone);
+
   return (
-    <Stack direction="row" spacing={0.25} sx={{ alignItems: "center" }}>
-      <LinkedChip label={label} href={href} tone={tone} />
-      <IconButton
-        ref={setAnchorElement}
-        size="small"
-        aria-label={popoverLabel}
-        aria-expanded={isOpen}
-        aria-haspopup="dialog"
-        onClick={toggle}
-        sx={{ p: 0.25 }}
-      >
-        <ExpandMoreIcon fontSize="small" />
-      </IconButton>
+    <>
+      <Box ref={setAnchorElement} sx={splitChipContainerSx(paletteKey)}>
+        <Box component={NextLink} href={href} sx={splitChipLabelSx(paletteKey)}>
+          {label}
+        </Box>
+        <Box sx={splitChipDividerSx(paletteKey)} aria-hidden="true" />
+        <Box
+          component="button"
+          type="button"
+          onClick={togglePanel}
+          aria-label={popoverLabel}
+          aria-haspopup="dialog"
+          aria-expanded={isOpen}
+          sx={splitChipChevronSx(paletteKey)}
+        >
+          <ExpandMoreIcon sx={{ fontSize: 16 }} />
+        </Box>
+      </Box>
       <Popover
         open={isOpen}
         anchorEl={anchorElement}
@@ -70,6 +79,71 @@ export default function ExpandableCatalogChip({ label, href, tone, crossReferenc
       >
         <CrossReferencePanel crossReferences={crossReferences} />
       </Popover>
-    </Stack>
+    </>
   );
+}
+
+function splitChipContainerSx(paletteKey: BadgePaletteKey): SxProps<Theme> {
+  return (theme) => ({
+    display: "inline-flex",
+    alignItems: "stretch",
+    height: 24,
+    borderRadius: 12,
+    border: `1px solid ${alpha(theme.palette[paletteKey].main, 0.5)}`,
+    backgroundColor: "transparent",
+    overflow: "hidden",
+  });
+}
+
+function splitChipLabelSx(paletteKey: BadgePaletteKey): SxProps<Theme> {
+  return (theme) => ({
+    display: "inline-flex",
+    alignItems: "center",
+    paddingLeft: "10px",
+    paddingRight: "8px",
+    color: theme.palette[paletteKey].dark,
+    fontSize: "0.8125rem",
+    fontWeight: 500,
+    textDecoration: "none",
+    lineHeight: 1,
+    transition: "background-color 120ms",
+    "&:hover": {
+      backgroundColor: alpha(theme.palette[paletteKey].main, 0.08),
+    },
+    "&:focus-visible": {
+      outline: `2px solid ${theme.palette[paletteKey].main}`,
+      outlineOffset: -2,
+    },
+  });
+}
+
+function splitChipDividerSx(paletteKey: BadgePaletteKey): SxProps<Theme> {
+  return (theme) => ({
+    width: "1px",
+    alignSelf: "center",
+    height: "65%",
+    backgroundColor: alpha(theme.palette[paletteKey].main, 0.4),
+  });
+}
+
+function splitChipChevronSx(paletteKey: BadgePaletteKey): SxProps<Theme> {
+  return (theme) => ({
+    display: "inline-flex",
+    alignItems: "center",
+    justifyContent: "center",
+    paddingLeft: "6px",
+    paddingRight: "6px",
+    background: "transparent",
+    border: "none",
+    color: theme.palette[paletteKey].dark,
+    cursor: "pointer",
+    transition: "background-color 120ms",
+    "&:hover": {
+      backgroundColor: alpha(theme.palette[paletteKey].main, 0.08),
+    },
+    "&:focus-visible": {
+      outline: `2px solid ${theme.palette[paletteKey].main}`,
+      outlineOffset: -2,
+    },
+  });
 }

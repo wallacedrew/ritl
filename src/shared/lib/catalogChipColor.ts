@@ -1,3 +1,5 @@
+import { alpha, type SxProps, type Theme } from "@mui/material/styles";
+
 import type { CatalogEntryTone } from "./CatalogEntry";
 
 /**
@@ -64,4 +66,23 @@ export function badgePaletteKey(tone: CatalogEntryTone): BadgePaletteKey {
     case "gof-pattern":
       return "info";
   }
+}
+
+/**
+ * Shared chip styling for any MUI Chip representing a catalog entry —
+ * transparent fill, toned border and label, subtle hover fill. Used by
+ * LinkedChip; ExpandableCatalogChip composes its own split-chip styling
+ * because the divider and chevron section need element-level control.
+ */
+export function tonedChipSx(tone: CatalogEntryTone): SxProps<Theme> {
+  const paletteKey = badgePaletteKey(tone);
+  return (theme) => ({
+    backgroundColor: "transparent",
+    color: theme.palette[paletteKey].dark,
+    border: `1px solid ${alpha(theme.palette[paletteKey].main, 0.5)}`,
+    fontWeight: 500,
+    "&:hover": {
+      backgroundColor: alpha(theme.palette[paletteKey].main, 0.08),
+    },
+  });
 }
