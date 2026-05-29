@@ -1,3 +1,4 @@
+import type { CatalogSnapshot } from "@/reference/lib/collectCrossReferences";
 import type { CatalogListItem } from "@/shared/lib/CatalogListItem";
 
 import { REFACTORING_CATEGORIES } from "./categories";
@@ -9,7 +10,7 @@ export interface RefactoringCategoryGroup {
   items: CatalogListItem[];
 }
 
-export function getRefactoringsByCategory(): RefactoringCategoryGroup[] {
+export function getRefactoringsByCategory(snapshot?: CatalogSnapshot): RefactoringCategoryGroup[] {
   const allRefactorings = loadRefactorings();
   const byName = new Map(
     allRefactorings.map((refactoring, index) => [
@@ -22,7 +23,7 @@ export function getRefactoringsByCategory(): RefactoringCategoryGroup[] {
     category,
     items: names.flatMap((name) => {
       const entry = byName.get(name);
-      return entry ? [toRefactoringListItem(entry.refactoring, entry.number)] : [];
+      return entry ? [toRefactoringListItem(entry.refactoring, entry.number, snapshot)] : [];
     }),
   }));
 }

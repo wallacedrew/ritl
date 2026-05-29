@@ -1,3 +1,5 @@
+import type { CrossReferences } from "@/reference/lib/RelationshipGroup";
+
 import type { CatalogEntryTone } from "./CatalogEntry";
 
 export interface CatalogListItemChip {
@@ -12,4 +14,5 @@ export interface CatalogListItem {
   tone: CatalogEntryTone;
   chips: readonly CatalogListItemChip[];
   caption: string;
+  crossReferences?: CrossReferences;
 }

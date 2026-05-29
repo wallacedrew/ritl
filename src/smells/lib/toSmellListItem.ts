@@ -1,7 +1,15 @@
+import {
+  collectCrossReferences,
+  type CatalogSnapshot,
+} from "@/reference/lib/collectCrossReferences";
 import type { CatalogEntry } from "@/shared/lib/CatalogEntry";
 import type { CatalogListItem } from "@/shared/lib/CatalogListItem";
 
-export function toSmellListItem(smell: CatalogEntry, number: number): CatalogListItem {
+export function toSmellListItem(
+  smell: CatalogEntry,
+  number: number,
+  snapshot?: CatalogSnapshot,
+): CatalogListItem {
   return {
     number,
     href: smell.name.toCatalogHref(),
@@ -12,5 +20,6 @@ export function toSmellListItem(smell: CatalogEntry, number: number): CatalogLis
       tone: nemesis.tone(),
     })),
     caption: smell.forcesFor("human").symptom,
+    crossReferences: snapshot ? collectCrossReferences(smell, snapshot) : undefined,
   };
 }

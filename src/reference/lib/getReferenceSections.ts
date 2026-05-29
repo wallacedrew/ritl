@@ -1,7 +1,9 @@
 import type { RefactoringCategoryGroup } from "@/refactorings/lib/getRefactoringsByCategory";
 import { getRefactoringsByCategory } from "@/refactorings/lib/getRefactoringsByCategory";
+import { loadRefactorings } from "@/refactorings/lib/loadRefactorings";
 import { loadPatterns } from "@/patterns/lib/loadPatterns";
 import { toPatternListItem } from "@/patterns/lib/toPatternListItem";
+import type { CatalogSnapshot } from "@/reference/lib/collectCrossReferences";
 import type { CatalogListItem } from "@/shared/lib/CatalogListItem";
 import { loadSmells } from "@/smells/lib/loadSmells";
 import { toSmellListItem } from "@/smells/lib/toSmellListItem";
@@ -34,13 +36,18 @@ const GOF_BANDS: readonly GofBand[] = [
 ];
 
 export function getReferenceSections(): ReferenceSections {
-  const refactoringsByCategory = getRefactoringsByCategory();
-  const smells = loadSmells().map((entry, index) => toSmellListItem(entry, index + 1));
+  const snapshot: CatalogSnapshot = {
+    refactorings: loadRefactorings(),
+    smells: loadSmells(),
+    patterns: loadPatterns(),
+  };
+  const refactoringsByCategory = getRefactoringsByCategory(snapshot);
+  const smells = snapshot.smells.map((entry, index) => toSmellListItem(entry, index + 1, snapshot));
   const kerievskyPatterns = loadPatterns("kerievsky").map((pattern, index) =>
-    toPatternListItem(pattern, index + 1),
+    toPatternListItem(pattern, index + 1, snapshot),
   );
   const gofItems = loadPatterns("gof").map((pattern, index) =>
-    toPatternListItem(pattern, index + 1),
+    toPatternListItem(pattern, index + 1, snapshot),
   );
   const gofPatternsByBand = GOF_BANDS.map((band) => ({
     category: band.name,

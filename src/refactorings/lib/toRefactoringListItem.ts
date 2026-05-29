@@ -1,7 +1,15 @@
+import {
+  collectCrossReferences,
+  type CatalogSnapshot,
+} from "@/reference/lib/collectCrossReferences";
 import type { CatalogEntry } from "@/shared/lib/CatalogEntry";
 import type { CatalogListItem } from "@/shared/lib/CatalogListItem";
 
-export function toRefactoringListItem(refactoring: CatalogEntry, number: number): CatalogListItem {
+export function toRefactoringListItem(
+  refactoring: CatalogEntry,
+  number: number,
+  snapshot?: CatalogSnapshot,
+): CatalogListItem {
   return {
     number,
     href: refactoring.name.toCatalogHref(),
@@ -12,5 +20,6 @@ export function toRefactoringListItem(refactoring: CatalogEntry, number: number)
       tone: smellName.tone(),
     })),
     caption: refactoring.forcesFor("human").goal,
+    crossReferences: snapshot ? collectCrossReferences(refactoring, snapshot) : undefined,
   };
 }
