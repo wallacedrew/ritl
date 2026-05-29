@@ -50,7 +50,7 @@ export default function ExpandableCatalogChip({ label, href, tone }: Props) {
   return (
     <>
       <Box ref={setAnchorElement} sx={splitChipContainerSx(paletteKey)}>
-        <Box component={NextLink} href={href} sx={splitChipLabelSx(paletteKey)}>
+        <Box component={NextLink} href={href} title={label} sx={splitChipLabelSx(paletteKey)}>
           {label}
         </Box>
         <Box sx={splitChipDividerSx(paletteKey)} aria-hidden="true" />
@@ -90,7 +90,7 @@ function splitChipContainerSx(paletteKey: BadgePaletteKey): SxProps<Theme> {
   return (theme) => ({
     display: "inline-flex",
     alignItems: "stretch",
-    minHeight: 24,
+    height: 24,
     borderRadius: 12,
     border: `1px solid ${alpha(theme.palette[paletteKey].main, 0.5)}`,
     backgroundColor: "transparent",
@@ -101,18 +101,19 @@ function splitChipContainerSx(paletteKey: BadgePaletteKey): SxProps<Theme> {
 
 function splitChipLabelSx(paletteKey: BadgePaletteKey): SxProps<Theme> {
   return (theme) => ({
-    display: "inline-flex",
-    alignItems: "center",
+    display: "block",
+    flex: "1 1 auto",
+    minWidth: 0,
     paddingLeft: "10px",
     paddingRight: "8px",
-    paddingTop: "3px",
-    paddingBottom: "3px",
     color: theme.palette[paletteKey].dark,
     fontSize: "0.8125rem",
     fontWeight: 500,
     textDecoration: "none",
-    lineHeight: 1.25,
-    wordBreak: "break-word",
+    lineHeight: "22px",
+    whiteSpace: "nowrap",
+    overflow: "hidden",
+    textOverflow: "ellipsis",
     transition: "background-color 120ms",
     "&:hover": {
       backgroundColor: alpha(theme.palette[paletteKey].main, 0.08),
@@ -127,8 +128,8 @@ function splitChipLabelSx(paletteKey: BadgePaletteKey): SxProps<Theme> {
 function splitChipDividerSx(paletteKey: BadgePaletteKey): SxProps<Theme> {
   return (theme) => ({
     width: "1px",
-    alignSelf: "stretch",
-    marginY: "4px",
+    alignSelf: "center",
+    height: "65%",
     backgroundColor: alpha(theme.palette[paletteKey].main, 0.4),
     flexShrink: 0,
   });
