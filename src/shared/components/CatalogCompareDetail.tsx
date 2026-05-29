@@ -11,6 +11,7 @@ import CatalogSectionCompare from "@/shared/components/CatalogSectionCompare";
 import LensSwitcher from "@/shared/components/LensSwitcher";
 import SnippetPreviewButton from "@/shared/components/SnippetPreviewButton";
 import type { CatalogEntry } from "@/shared/lib/CatalogEntry";
+import type { CatalogEntryName } from "@/shared/lib/CatalogEntryName";
 import type { CatalogNeighbors } from "@/shared/lib/CatalogNeighbors";
 
 interface CatalogCompareDetailProps {
@@ -21,6 +22,8 @@ interface CatalogCompareDetailProps {
   beforeLabel: string;
   afterLabel: string;
   neighbors: CatalogNeighbors;
+  incomingSources?: readonly CatalogEntryName[];
+  inboundPatterns?: readonly CatalogEntryName[];
 }
 
 export default function CatalogCompareDetail({
@@ -31,6 +34,8 @@ export default function CatalogCompareDetail({
   beforeLabel,
   afterLabel,
   neighbors,
+  incomingSources,
+  inboundPatterns,
 }: CatalogCompareDetailProps) {
   const human = entry.forcesFor("human");
   const agent = entry.forcesFor("agent");
@@ -47,6 +52,9 @@ export default function CatalogCompareDetail({
           name={entry.name}
           number={number}
           relatedNames={entry.nemeses}
+          destinationPattern={entry.destinationPattern}
+          incomingSources={incomingSources}
+          inboundPatterns={inboundPatterns}
           neighbors={neighbors}
         />
         <Stack

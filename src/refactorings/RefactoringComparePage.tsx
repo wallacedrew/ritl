@@ -1,5 +1,7 @@
+import { loadPatterns } from "@/patterns/lib/loadPatterns";
 import CatalogCompareDetail from "@/shared/components/CatalogCompareDetail";
 import { findCatalogEntryBySlug } from "@/shared/lib/findCatalogEntryBySlug";
+import { findInboundPatterns } from "@/shared/lib/findInboundPatterns";
 import { generateCatalogStaticParams } from "@/shared/lib/generateCatalogStaticParams";
 
 import { getRefactoringNeighbors } from "./lib/getRefactoringNeighbors";
@@ -12,6 +14,9 @@ interface RefactoringComparePageProps {
 export default async function RefactoringComparePage({ params }: RefactoringComparePageProps) {
   const { slug: rawSlug } = await params;
   const { entry: refactoring, number } = findCatalogEntryBySlug(rawSlug, loadRefactorings());
+  const inboundPatterns = findInboundPatterns(refactoring.name, loadPatterns()).map(
+    (pattern) => pattern.name,
+  );
   return (
     <CatalogCompareDetail
       entry={refactoring}
@@ -21,6 +26,7 @@ export default async function RefactoringComparePage({ params }: RefactoringComp
       beforeLabel="Before the refactoring"
       afterLabel="After the refactoring"
       neighbors={getRefactoringNeighbors(number)}
+      inboundPatterns={inboundPatterns}
     />
   );
 }
