@@ -6,17 +6,14 @@ import CategoryGroup from "@/refactorings/components/CategoryGroup";
 
 import BookSection from "./components/BookSection";
 import FlatChipStrip from "./components/FlatChipStrip";
-import ReferencePageHeader from "./components/ReferencePageHeader";
 import { getReferenceSections } from "./lib/getReferenceSections";
 
 export default function ReferencePage() {
   const sections = getReferenceSections();
 
   return (
-    <Container maxWidth="lg" sx={{ py: 4 }}>
+    <Container maxWidth="lg" sx={{ pt: 2, pb: 4 }}>
       <Stack spacing={5}>
-        <ReferencePageHeader counts={sections.counts} />
-
         <BookSection
           title="Refactorings"
           attribution="Martin Fowler, Refactoring (2nd ed., 2018) — organized by chapter."
