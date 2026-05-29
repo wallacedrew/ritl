@@ -1,7 +1,7 @@
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 
-import LinkedChip from "@/shared/components/LinkedChip";
+import ExpandableCatalogChip from "@/shared/components/ExpandableCatalogChip";
 
 import type { CrossReferenceChip } from "@/shared/lib/RelationshipGroup";
 
@@ -21,7 +21,13 @@ export default function ChipsRow({ chips, emptyMessage }: Props) {
   return (
     <Stack direction="row" sx={{ flexWrap: "wrap", gap: 1 }}>
       {chips.map((chip) => (
-        <LinkedChip key={chip.href} label={chip.label} href={chip.href} tone={chip.tone} />
+        <ExpandableCatalogChip
+          key={chip.href}
+          label={chip.label}
+          href={chip.href}
+          tone={chip.tone}
+          crossReferences={chip.crossReferences}
+        />
       ))}
     </Stack>
   );

@@ -1,7 +1,7 @@
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 
-import LinkedChip from "@/shared/components/LinkedChip";
+import ExpandableCatalogChip from "@/shared/components/ExpandableCatalogChip";
 
 import type { RankedEntry } from "../lib/computeCatalogMap";
 
@@ -27,7 +27,12 @@ export default function RankedEntriesList({ entries, emptyMessage }: Props) {
           spacing={1}
           sx={{ alignItems: "center", flexWrap: "wrap" }}
         >
-          <LinkedChip label={entry.chip.label} href={entry.chip.href} tone={entry.chip.tone} />
+          <ExpandableCatalogChip
+            label={entry.chip.label}
+            href={entry.chip.href}
+            tone={entry.chip.tone}
+            crossReferences={entry.chip.crossReferences}
+          />
           <Typography variant="body2" color="text.secondary">
             {entry.outboundCount} outbound · {entry.inboundCount} inbound
           </Typography>

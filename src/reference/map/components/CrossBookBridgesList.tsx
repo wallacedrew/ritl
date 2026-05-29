@@ -3,7 +3,7 @@ import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 
-import LinkedChip from "@/shared/components/LinkedChip";
+import ExpandableCatalogChip from "@/shared/components/ExpandableCatalogChip";
 
 import type { CatalogMapBridge } from "../lib/computeCatalogMap";
 
@@ -29,18 +29,20 @@ export default function CrossBookBridgesList({ bridges, emptyMessage }: Props) {
           spacing={1}
           sx={{ alignItems: "center", flexWrap: "wrap" }}
         >
-          <LinkedChip
+          <ExpandableCatalogChip
             label={bridge.source.label}
             href={bridge.source.href}
             tone={bridge.source.tone}
+            crossReferences={bridge.source.crossReferences}
           />
           <Box sx={{ display: "flex", alignItems: "center", color: "text.secondary" }}>
             <ArrowForwardIcon fontSize="small" />
           </Box>
-          <LinkedChip
+          <ExpandableCatalogChip
             label={bridge.destination.label}
             href={bridge.destination.href}
             tone={bridge.destination.tone}
+            crossReferences={bridge.destination.crossReferences}
           />
         </Stack>
       ))}
