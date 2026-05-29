@@ -6,17 +6,19 @@ import type { CatalogListItem } from "@/shared/lib/CatalogListItem";
 import { loadSmells } from "@/smells/lib/loadSmells";
 import { toSmellListItem } from "@/smells/lib/toSmellListItem";
 
+export interface ReferenceCatalogCounts {
+  refactorings: number;
+  smells: number;
+  kerievskyPatterns: number;
+  gofPatterns: number;
+}
+
 export interface ReferenceSections {
   refactoringsByCategory: RefactoringCategoryGroup[];
   smells: CatalogListItem[];
   kerievskyPatterns: CatalogListItem[];
   gofPatternsByBand: RefactoringCategoryGroup[];
-  counts: {
-    refactorings: number;
-    smells: number;
-    kerievskyPatterns: number;
-    gofPatterns: number;
-  };
+  counts: ReferenceCatalogCounts;
 }
 
 interface GofBand {

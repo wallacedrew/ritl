@@ -1,32 +1,21 @@
 import Container from "@mui/material/Container";
 import Divider from "@mui/material/Divider";
 import Stack from "@mui/material/Stack";
-import Typography from "@mui/material/Typography";
-import { visuallyHidden } from "@mui/utils";
 
 import CategoryGroup from "@/refactorings/components/CategoryGroup";
 
 import BookSection from "./components/BookSection";
 import FlatChipStrip from "./components/FlatChipStrip";
+import ReferencePageHeader from "./components/ReferencePageHeader";
 import { getReferenceSections } from "./lib/getReferenceSections";
 
 export default function ReferencePage() {
   const sections = getReferenceSections();
-  const { counts } = sections;
 
   return (
     <Container maxWidth="lg" sx={{ py: 4 }}>
       <Stack spacing={5}>
-        <Stack spacing={1}>
-          <Typography component="h1" sx={visuallyHidden}>
-            Reference
-          </Typography>
-          <Typography variant="body1" color="text.secondary">
-            Every refactoring, smell, and pattern in the catalog, grouped by its source book.{" "}
-            {counts.refactorings} refactorings · {counts.smells} smells · {counts.kerievskyPatterns}{" "}
-            Kerievsky patterns · {counts.gofPatterns} GoF design patterns.
-          </Typography>
-        </Stack>
+        <ReferencePageHeader counts={sections.counts} />
 
         <BookSection
           title="Refactorings"
