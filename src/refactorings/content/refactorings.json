@@ -19,7 +19,7 @@
         "goal": "Each function is a verifiable unit small enough that the agent can reason about its full behavior in a single reasoning step.",
         "pressure": "Every edit pays full re-read cost; chained changes compound context usage and increase the chance of missing a cross-statement invariant.",
         "tradeoff": "Each extracted helper inflates context-window cost by one definition the next reasoning step must load; over-extracting blows effective working memory.",
-        "relief": "Smaller diff surface per commit; behavior preservation verifiable per refactoring step; chained orchestrations work from named subroutines instead of re-derived semantics.",
+        "relief": "Each extracted helper fits inside one read; the agent verifies behavior against one signature instead of holding the entire original procedure in attention to predict what changed.",
         "trap": "Forces the agent to chase a dozen function definitions to follow what was once a 20-line procedure — context cost inflates and cross-function invariants disappear."
       }
     }
@@ -66,10 +66,10 @@
       },
       "agent": {
         "symptom": "An expression complex enough that the agent must parse it sub-step by sub-step to interpret; subsequent reasoning about the value requires re-parsing the full expression.",
-        "goal": "Intermediate values have names the agent can reference directly; reasoning about the expression decomposes into reasoning about named sub-values.",
+        "goal": "Intermediate values carry domain names; subsequent reads resolve to one token of name instead of re-evaluating the expression at every use.",
         "pressure": "The agent re-parses complex expressions at every reference; debugging requires the agent to mentally evaluate the full subexpression chain.",
         "tradeoff": "Each extracted variable is a name in the agent's local scope; over-extraction creates scope clutter the agent must navigate to find what's actually relevant.",
-        "relief": "The agent references named intermediate values; expression-level reasoning becomes reference-level reasoning, which is cheaper.",
+        "relief": "Subsequent reads of the value pay one token of name instead of re-evaluating the expression at every use; the binding's definition site is the only place the expression appears.",
         "trap": "Extracting every sub-expression — including ones already obvious — bloats the agent's scope table with names that document nothing the agent didn't already know."
       }
     }
@@ -123,7 +123,7 @@
         "goal": "Names and signatures express what the function does; the agent reasons about call sites from the signature alone.",
         "pressure": "The agent must read the function body to verify call-site intent; chained edits compound the cost as the agent re-derives intent at every site.",
         "tradeoff": "Every caller pays for the change at once; for cross-team consumers, the agent must coordinate updates or risk breaking external code.",
-        "relief": "Call sites read fluently; the agent's signature-based reasoning becomes trustworthy; mismatches surface at the boundary.",
+        "relief": "The signature carries the contract the agent reads at every call site; arguments that violate the contract become type errors at compile time instead of runtime mismatches generated against the old signature.",
         "trap": "Reshaping signatures across team boundaries without coordination forces other consumers to rebuild — the agent shipping the change may not see the downstream breakage."
       }
     }
@@ -198,7 +198,7 @@
         "goal": "The clump becomes a named value object the agent passes through as a single token; structure validation happens once at construction.",
         "pressure": "Adding or reordering a field touches every signature; the agent must find and update each consistently or risk silent positional drift.",
         "tradeoff": "Constructing the object at every call adds an allocation and a name the agent must learn; if the clump appears in <3 places the wrapper is overhead.",
-        "relief": "Operations on the clump (formatting, validation, equality) live with it; the agent reasons about one named concept instead of N coupled fields.",
+        "relief": "The bundled parameter carries the values together as one typed object; the agent matches one field per name at each call site instead of N positional arguments where a mis-alignment passes the type checker.",
         "trap": "Wrapping coincidental field groups creates fake value objects the agent must construct and destructure with no comprehension gain."
       }
     }
@@ -245,7 +245,7 @@
       },
       "agent": {
         "symptom": "The agent encounters consumers each independently computing the same derived values from the same source; reasoning about consistency requires tracing every derivation.",
-        "goal": "One transform produces the enriched record; the agent reasons about derivations in one place and consumers read named fields.",
+        "goal": "One transform produces the enriched record from the input; the agent reads one input-to-shape contract and consumers read named output fields without simulating the derivation.",
         "pressure": "Each consumer re-derives the same values; the agent can't trust them to be consistent and must verify equivalence on every change.",
         "tradeoff": "Building the transform when only one consumer exists creates an intermediate type the agent must learn before its second use justifies it.",
         "relief": "Derivations are consistent by construction; the agent reads field accesses on the enriched record instead of computing across the codebase.",
@@ -348,7 +348,7 @@
         "goal": "Related statements sit next to each other; the agent reads the function as a sequence of cohesive blocks ready for extraction.",
         "pressure": "The agent holds partial sub-step state across non-adjacent lines; reasoning about any single concern requires tracking the others through the interleave.",
         "tradeoff": "Sliding can silently change behavior if statements aren't truly independent (hidden side effects, timing dependencies, observer effects); the agent verifying the slide must confirm independence at every gap.",
-        "relief": "The function reads as cohesive blocks the agent can extract or reason about as units; setup for further refactoring becomes mechanical.",
+        "relief": "Statements that depend on one another sit next to each other; the agent reads each cluster as a unit without paging tokens between unrelated lines to follow data flow.",
         "trap": "Aggressive sliding without verifying side-effect ordering — observer logs, time reads, async dispatch — silently changes behavior the agent's local tests may not catch."
       }
     }
@@ -373,7 +373,7 @@
         "goal": "Each loop does one thing; the agent reasons about one concern per loop and can replace each loop independently with a pipeline.",
         "pressure": "The agent's per-line reasoning must account for every concern the loop body addresses; changing one concern risks silent interaction with the others.",
         "tradeoff": "Two loops over the same collection cost more per iteration than one; for hot paths the runtime overhead matters and the agent verifying performance must measure.",
-        "relief": "Each loop becomes an independently-replaceable unit (pipeline candidate); the agent's edit surface per concern shrinks.",
+        "relief": "Each loop body holds one state machine the agent simulates without interleaving; an edit to one job no longer needs the other job's tokens loaded to predict the loop's output.",
         "trap": "Splitting loops whose concerns share per-iteration state — accumulator-of-running-difference, look-behind logic — fragments coupled state the agent must now re-derive in each split."
       }
     }
@@ -398,7 +398,7 @@
         "goal": "Transformations read as named operation sequences (filter, map, reduce); the agent recognizes the shape without simulating the loop.",
         "pressure": "The agent must trace the loop body step by step to verify behavior; off-by-one bugs hide where the agent's mental simulation diverges from runtime.",
         "tradeoff": "Pipeline form adds per-element call overhead and forces the agent to track intermediate collection types through the chain; for hot paths the runtime cost matters.",
-        "relief": "Intent is readable; the agent reasons about each pipeline stage independently with type signatures documenting the transformation.",
+        "relief": "Each pipeline stage carries a typed input and output; the agent verifies one stage against its signature instead of simulating accumulator state across the loop's iterations to predict the result.",
         "trap": "Forcing every loop into a pipeline, including ones with early-exit, side-effects, or sequential dependencies, produces .reduce() bodies whose accumulator state the agent has to simulate at every read; the simulation cost exceeds what the original loop's straight-line control flow required."
       }
     }
@@ -423,7 +423,7 @@
         "goal": "Every definition the agent encounters is reachable; reasoning about behavior doesn't have to consider phantom paths.",
         "pressure": "The agent's plan-and-execute loop has to consider dead branches as live until proven otherwise; tests pass while code-walking analyses include dead surface area.",
         "tradeoff": "Deletion is one-way under static analysis but reachability can hide in reflection, dynamic dispatch, external callers, or runtime config — the agent that deletes without checking risks a regression nothing catches.",
-        "relief": "The agent's reasoning context shrinks; static analysis becomes ground truth; planning loops don't waste cycles on phantom paths.",
+        "relief": "Dead tokens no longer load with the surrounding code; static analysis returns a complete picture because every branch in the window represents code that runs, and the agent edits against the reachable shape instead of paying tokens for paths that fire never.",
         "trap": "Aggressive deletion based purely on grep/static-analysis evidence misses reflection-reachable, plugin-loaded, or externally-referenced code — the cleanup ships a silent regression the agent's tests don't catch."
       }
     }
@@ -473,7 +473,7 @@
         "goal": "Field names carry the domain term; read or write sites resolve to one token of name without loading the class definition for context recovery.",
         "pressure": "Every access site pays the cost of loading the class definition to recover what the field stores; tokens consumed scale with the number of consumers, and generated code that misinterprets the field's role ships against the wrong invariant.",
         "tradeoff": "Renaming a field invalidates more cached associations than a variable rename — persistence layers (DB columns, JSON schemas, API contracts) carry the old name until they update.",
-        "relief": "The agent reasons about field access with the field's name as ground truth; consumer-side reasoning becomes self-documenting.",
+        "relief": "Field reads and writes resolve to one token of name without loading the class definition to recover what the field stores; the name is what the agent edits against in subsequent steps.",
         "trap": "Renaming a field whose current name another reviewer would have accepted forces coordinated migrations across every external surface (database columns, JSON schemas, API contracts) without changing what the field stores."
       }
     }
@@ -523,7 +523,7 @@
         "goal": "Conditions read as named domain decisions; the agent reasons about isSummer(date) instead of re-deriving the month range.",
         "pressure": "The agent re-parses the expression at every reference; debugging the condition's value requires the agent to mentally evaluate the full chain.",
         "tradeoff": "Extracted names that aren't crisper than the original condition add a layer of indirection — the agent now follows a name to find the same expression.",
-        "relief": "The agent reasons about named domain decisions; the branching logic reads top-to-bottom as a story.",
+        "relief": "Each condition and branch lives at one named function the agent reads against the function's name instead of recovering the predicate's domain meaning from its boolean expression.",
         "trap": "Extracting names that don't sharpen the condition — `isMonthBetweenFiveAndEight` instead of `isSummer` — adds indirection without revealing intent."
       }
     }
@@ -545,10 +545,10 @@
       },
       "agent": {
         "symptom": "Multiple conditions in sequence lead to the same action; the agent must verify each branch leads to identical behavior and that adding a new condition won't accidentally diverge.",
-        "goal": "The conditions collapse into one named predicate; the agent reasons about one rule with one action.",
+        "goal": "The predicate lives at one named function the agent reads once; edits to the rule land at the function definition and propagate to every caller through reference.",
         "pressure": "Adding or modifying any branch's behavior requires the agent to update every branch consistently; the shared rationale is invisible.",
         "tradeoff": "If the conditions encode independent reasons (different rules that happen to produce the same outcome today), collapsing them hides distinctions the agent will need to re-split later.",
-        "relief": "The agent reasons about one named predicate with one consequent; new conditions extend in one place.",
+        "relief": "The predicate lives at one named function; edits to the rule land at the definition and propagate through reference, removing the chance of one branch updating without the others.",
         "trap": "Collapsing conditions that look the same but encode independent rules hides distinctions the agent will need to re-split when one rule evolves differently from the others."
       }
     }
@@ -570,10 +570,10 @@
       },
       "agent": {
         "symptom": "A function with deeply nested if/else where the happy path is buried under indentation; the agent must trace through edge-case branches to find the main flow.",
-        "goal": "Edge cases bail out early; the main flow is unindented and reads linearly as the dominant story.",
+        "goal": "Edge cases exit at the top of the function; the happy path runs at the function's base indent level, and adding a precondition is one new guard at the top instead of a rewrite of the nested branches.",
         "pressure": "The agent's parsing of the function's intent is obscured by indentation; reasoning about the happy path requires tracking which edge cases have already been ruled out.",
         "tradeoff": "Early returns can duplicate work if multiple paths share follow-up logic; the agent inlining guards must verify the shared work is genuinely separable.",
-        "relief": "The agent reads the happy path linearly with edge cases as exceptions; new edge cases land at the top without disturbing the main flow.",
+        "relief": "Guards exit at the top of the function and the happy path runs at the function's base indent level; adding a precondition is one new guard prepended at the top instead of a rewrite of the nested branches.",
         "trap": "Inlining guards for every condition — including ones that shared follow-up work — fragments the shared logic across early-return branches the agent must keep consistent."
       }
     }
@@ -645,7 +645,7 @@
       },
       "agent": {
         "symptom": "Code that depends on unwritten invariants the agent must reconstruct from context; bugs that violate the invariant surface far from the source.",
-        "goal": "Invariants are stated explicitly; the agent reads them and reasons about behavior under their guarantee.",
+        "goal": "Invariants live in code as runtime checks; the agent reads the assertion as a typed constraint that downstream code can take as a precondition without re-deriving it from caller context.",
         "pressure": "The agent must reconstruct invariants from surrounding code; bugs surface far from the source and tracing them costs reasoning hops.",
         "tradeoff": "Assertions used as control flow couple production behavior to debug-mode invariants; the agent that conflates the two ships a flow-dependent change disguised as documentation.",
         "relief": "Invariants fail loudly at the source; the agent's debugging traces are short; assumptions become enforceable contracts.",
@@ -673,7 +673,7 @@
         "goal": "Functions either return or mutate, never both; the agent composes queries without surprise side effects.",
         "pressure": "Every call to the function pays for both contracts; the agent can't query without triggering mutation, which complicates testing and composition.",
         "tradeoff": "If the modification and query are genuinely atomic (find-and-remove, compare-and-swap), splitting them introduces a race window the agent must close at every call site.",
-        "relief": "The agent reasons about side effects locally; queries compose cleanly; tests target each shape independently.",
+        "relief": "Queries return values without mutating; the agent predicts each function's effect from its name alone, and code generated against a query never accidentally writes the state the query reads.",
         "trap": "Splitting atomic query-and-modify operations introduces race windows the agent must reason about at every call site — the cure becomes worse than the smell."
       }
     }
@@ -723,7 +723,7 @@
         "goal": "Each flag value becomes a named function; the agent reads call sites as direct invocations of the intended behavior.",
         "pressure": "The agent must reason about flag values at every call site; the function's body conflates multiple concerns the agent must mentally split.",
         "tradeoff": "If the branches share substantial body, splitting produces duplication the agent must keep in sync; pair this with Extract Function for shared internals.",
-        "relief": "Call sites read fluently; the agent reasons about one function per concern.",
+        "relief": "Each variant becomes its own function with one signature; call sites name the intent directly, and the agent does not track a flag value through the function body to predict which branch runs.",
         "trap": "Splitting flag-dispatched functions without extracting shared body creates N copies of the same logic the agent must keep in sync — the cure becomes the duplication smell."
       }
     }
@@ -895,10 +895,10 @@
       },
       "agent": {
         "symptom": "Two classes with substantial shared structure (fields, methods); the agent verifying changes must update both consistently.",
-        "goal": "The shared structure lives in a common parent; the agent reasons about shared behavior in one place.",
+        "goal": "Shared structure lives on the parent with one declaration; queries about either subclass load the parent's contract once instead of paying the cost of loading N near-identical subclass declarations.",
         "pressure": "Bug fixes must land in both classes; the agent's reasoning about shared invariants must verify they hold identically across both.",
         "tradeoff": "Inheritance is inflexible; for shallow duplication, the agent's downstream changes are constrained by the parent in ways composition (Extract Class) would have avoided.",
-        "relief": "Shared behavior lives in one place; the agent's reasoning about the relationship is documented in code via the inheritance link.",
+        "relief": "Shared behavior lives on the parent with one definition; edits to the shared method land once and propagate to every subclass through inheritance, removing the N-copy synchronization cost.",
         "trap": "Extracting superclasses for shallow duplication locks the agent into inheritance constraints when composition would have left both classes free to diverge."
       }
     }
@@ -973,7 +973,7 @@
         "goal": "Each class has one purpose; the agent loads a small focused file to reason about any single concept.",
         "pressure": "The agent's reasoning context per method inflates with unrelated members; changes to one concept require reasoning about all of them.",
         "tradeoff": "Extracting too eagerly — 1-2 fields with no behavior — adds a class file the agent must load with no encapsulation gain.",
-        "relief": "Smaller focused units; the agent tests one concept at a time and reasons about each class as a coherent whole.",
+        "relief": "Each class holds one responsibility's data and methods; queries about one responsibility load only its file, and the unrelated payload that previously sat in the same window for every read is gone.",
         "trap": "Extracting candidate concepts that are just trivial field groups creates class files the agent must navigate without buying any encapsulation gain."
       }
     }
@@ -1020,10 +1020,10 @@
       },
       "agent": {
         "symptom": "The agent finds long dotted access paths through several object hops; renaming any intermediate field silently breaks every caller.",
-        "goal": "Callers ask the closest object directly; the agent reasons about one boundary instead of traversing N.",
+        "goal": "Callers reach for the wrapper's methods directly; the agent reads one type signature instead of walking the delegate chain to predict what the call returns.",
         "pressure": "Every link in the chain is a coupling point the agent holds in working memory; refactoring any intermediate shape requires updating every chain access.",
         "tradeoff": "Each hidden delegate adds a passthrough method on the host; for chains used in one place the passthrough is overhead the agent now maintains in two places.",
-        "relief": "Encapsulation tightens; the agent reasons about one boundary; intermediate objects can change shape without breaking callers.",
+        "relief": "Callers read one type's methods to reach the delegate's behavior; the delegate's shape changes without breaking caller code, because the wrapper's signature is the only contract the agent's generated code depends on.",
         "trap": "Wrapping every dotted chain in passthroughs migrates the chain from call sites into the host's surface — the agent now wades through a wall of delegations to find real behavior."
       }
     }
@@ -1173,7 +1173,7 @@
         "goal": "Computations become named queries the agent can reference by name from anywhere; functions decompose without dragging the temp's lifetime.",
         "pressure": "The agent extracting parts of the function must thread the temp through every extracted helper; the named computation can't be reused outside the function.",
         "tradeoff": "If the temp wraps an expensive calculation called many times, naive replacement multiplies cost; the agent verifying performance must measure or cache before substituting.",
-        "relief": "The agent's plan-and-execute loop for Extract Function becomes mechanical; the named query is reusable anywhere it makes sense.",
+        "relief": "The value is recomputed from its source at every read; the agent does not track a temp's binding across reads to predict staleness, and the query is callable from any site without the binding's scope constraint.",
         "trap": "Replacing temps that wrap expensive computations called many times multiplies runtime cost the agent's local tests may not catch."
       }
     }
@@ -1195,7 +1195,7 @@
       },
       "agent": {
         "symptom": "A function whose body holds many shared locals across conceptually distinct sub-steps; the agent extracting any step must thread temps through helper parameters.",
-        "goal": "Sub-steps become named methods sharing state via fields; the agent reasons about each step in isolation and extracts/tests them independently.",
+        "goal": "Each sub-step becomes a named method on the command object; sub-step methods share state through fields the agent reads from one class file, and tests target one method at a time without simulating the full function body.",
         "pressure": "Every step the agent wants to extract drags shared state through parameter lists; the function's algorithm shape resists decomposition.",
         "tradeoff": "Command ceremony (constructor + execute + named private methods) is overhead for functions without genuine multi-step state; the agent now navigates a class where one function used to suffice.",
         "relief": "Each sub-step becomes a named method on the command; the agent extracts and tests them in pieces without rewiring shared state.",
@@ -1273,7 +1273,7 @@
         "goal": "The clearer algorithm replaces the bespoke; the agent reasons about a recognized pattern instead of reverse-engineering the original.",
         "pressure": "Every read of the bespoke algorithm pays the same decoding cost; the agent can't trust correctness without re-deriving the algorithm's invariants on every change.",
         "tradeoff": "Swapping algorithms wholesale forfeits behavioral safety unless every input boundary is characterized first; the agent that substitutes without characterization tests ships silent regressions.",
-        "relief": "The agent recognizes the algorithm by name and reasons about it via its standard properties; correctness arguments become reusable.",
+        "relief": "The replacement algorithm has a known cost profile and known invariants the agent reads from one well-named function; verification against the new algorithm pays one read of its definition instead of simulating the original's behavior step by step.",
         "trap": "Substituting without characterization tests at every input boundary ships silent regressions where the original quietly handled edge cases the substitute handles differently."
       }
     }
@@ -1323,7 +1323,7 @@
         "goal": "The record is a class with accessors; the agent reasons about its shape, invariants, and behavior in one definition.",
         "pressure": "Field changes ripple through every consumer; the agent must coordinate updates and verify each consumer respects the (implicit) contract.",
         "tradeoff": "Wrapping every record adds construction ceremony at every entry; for records without invariants or behavior to attract, the agent gains nothing for the per-call cost.",
-        "relief": "Field renames stay internal; invariants enforce in one place; the agent reasons about the class as a real domain object.",
+        "relief": "Field accesses run through named methods; a field rename touches one class definition without changing any caller, and invariants enforced in those methods catch invalid combinations the field-level access would otherwise let through.",
         "trap": "Wrapping records on principle without invariants or behavior to add creates classes the agent must instantiate everywhere with no encapsulation gain."
       }
     }
