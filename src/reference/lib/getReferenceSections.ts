@@ -3,7 +3,7 @@ import { getRefactoringsByCategory } from "@/refactorings/lib/getRefactoringsByC
 import { loadRefactorings } from "@/refactorings/lib/loadRefactorings";
 import { loadPatterns } from "@/patterns/lib/loadPatterns";
 import { toPatternListItem } from "@/patterns/lib/toPatternListItem";
-import type { CatalogSnapshot } from "@/reference/lib/collectCrossReferences";
+import type { CatalogSnapshot } from "@/shared/lib/collectCrossReferences";
 import type { CatalogListItem } from "@/shared/lib/CatalogListItem";
 import { loadSmells } from "@/smells/lib/loadSmells";
 import { toSmellListItem } from "@/smells/lib/toSmellListItem";

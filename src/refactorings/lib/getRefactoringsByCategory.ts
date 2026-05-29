@@ -1,4 +1,4 @@
-import type { CatalogSnapshot } from "@/reference/lib/collectCrossReferences";
+import type { CatalogSnapshot } from "@/shared/lib/collectCrossReferences";
 import type { CatalogListItem } from "@/shared/lib/CatalogListItem";
 
 import { REFACTORING_CATEGORIES } from "./categories";

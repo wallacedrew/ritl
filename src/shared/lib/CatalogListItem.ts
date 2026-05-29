@@ -1,4 +1,4 @@
-import type { CrossReferences } from "@/reference/lib/RelationshipGroup";
+import type { CrossReferences } from "@/shared/lib/RelationshipGroup";
 
 import type { CatalogEntryTone } from "./CatalogEntry";
 

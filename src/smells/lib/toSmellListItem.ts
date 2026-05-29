@@ -1,7 +1,4 @@
-import {
-  collectCrossReferences,
-  type CatalogSnapshot,
-} from "@/reference/lib/collectCrossReferences";
+import { collectCrossReferences, type CatalogSnapshot } from "@/shared/lib/collectCrossReferences";
 import type { CatalogEntry } from "@/shared/lib/CatalogEntry";
 import type { CatalogListItem } from "@/shared/lib/CatalogListItem";
 

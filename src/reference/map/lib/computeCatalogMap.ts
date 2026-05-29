@@ -1,5 +1,5 @@
-import type { CatalogSnapshot } from "@/reference/lib/collectCrossReferences";
-import type { CrossReferenceChip } from "@/reference/lib/RelationshipGroup";
+import type { CatalogSnapshot } from "@/shared/lib/collectCrossReferences";
+import type { CrossReferenceChip } from "@/shared/lib/RelationshipGroup";
 import type { CatalogEntry } from "@/shared/lib/CatalogEntry";
 import type { CatalogEntryName } from "@/shared/lib/CatalogEntryName";
 

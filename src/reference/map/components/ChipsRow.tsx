@@ -3,7 +3,7 @@ import Typography from "@mui/material/Typography";
 
 import LinkedChip from "@/shared/components/LinkedChip";
 
-import type { CrossReferenceChip } from "@/reference/lib/RelationshipGroup";
+import type { CrossReferenceChip } from "@/shared/lib/RelationshipGroup";
 
 interface Props {
   chips: readonly CrossReferenceChip[];

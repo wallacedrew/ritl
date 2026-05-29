@@ -7,7 +7,7 @@ import {
   relationshipGroup,
   totalCrossReferenceCount,
   type RelationshipKind,
-} from "@/reference/lib/RelationshipGroup";
+} from "@/shared/lib/RelationshipGroup";
 
 describe("relationshipGroup", () => {
   it("attaches the canonical label for its kind", () => {

@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import type { CatalogSnapshot } from "@/reference/lib/collectCrossReferences";
+import type { CatalogSnapshot } from "@/shared/lib/collectCrossReferences";
 import { computeCatalogMap } from "@/reference/map/lib/computeCatalogMap";
 import { CatalogEntry, type CatalogEntryProps } from "@/shared/lib/CatalogEntry";
 import { CatalogEntryName } from "@/shared/lib/CatalogEntryName";

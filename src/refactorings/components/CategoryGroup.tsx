@@ -1,7 +1,7 @@
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 
-import ExpandableCatalogChip from "@/reference/components/ExpandableCatalogChip";
+import ExpandableCatalogChip from "@/shared/components/ExpandableCatalogChip";
 import LinkedChip from "@/shared/components/LinkedChip";
 
 import type { CatalogListItem } from "@/shared/lib/CatalogListItem";
