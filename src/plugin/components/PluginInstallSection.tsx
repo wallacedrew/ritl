@@ -2,7 +2,6 @@
 
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import Box from "@mui/material/Box";
-import Chip from "@mui/material/Chip";
 import IconButton from "@mui/material/IconButton";
 import Stack from "@mui/material/Stack";
 import Tooltip from "@mui/material/Tooltip";
@@ -26,12 +25,9 @@ export default function PluginInstallSection() {
 
   return (
     <Stack spacing={1.5}>
-      <Stack direction="row" spacing={1.5} sx={{ alignItems: "center" }}>
-        <Typography component="h2" variant="h6" sx={{ fontWeight: 600 }}>
-          Claude Code plugin
-        </Typography>
-        <Chip label="Recommended" color="primary" size="small" />
-      </Stack>
+      <Typography component="h2" variant="h6" sx={{ fontWeight: 600 }}>
+        Claude Code plugin
+      </Typography>
       <Typography variant="body2" color="text.secondary">
         141 auto-invoking skills — 1 workflow orchestrator, 66 refactorings, 24 smells, 50 patterns
         (27 Kerievsky composites + 23 GoF design patterns). Each loads just-in-time when its

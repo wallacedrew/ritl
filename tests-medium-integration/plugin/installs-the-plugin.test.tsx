@@ -7,14 +7,13 @@ import PluginPage from "@/plugin/PluginPage";
 import { RecordingAnalyticsTracker } from "@/shared/lib/RecordingAnalyticsTracker";
 
 describe("user installs the plugin from /plugin", () => {
-  it("leads with the Claude Code marketplace install marked Recommended", () => {
+  it("leads with the Claude Code marketplace install command", () => {
     renderWithTheme(<PluginPage />);
 
     expect(screen.getByRole("heading", { level: 1, name: "Plugin" })).toBeInTheDocument();
     expect(
       screen.getByRole("heading", { level: 2, name: /Claude Code plugin/i }),
     ).toBeInTheDocument();
-    expect(screen.getByText("Recommended")).toBeInTheDocument();
     expect(screen.getByText(/plugin marketplace add wallacedrew\/ritl/)).toBeInTheDocument();
     expect(screen.getByText(/plugin install refactor@ritl/)).toBeInTheDocument();
   });
