@@ -39,7 +39,7 @@
         "trap": "The canonical constructor balloons into a many-parameter signature where the agent loses track of which combinations are legal. Context cost moves from per-path duplication to per-parameter combination explosion; a parameter object or named-argument shape becomes overdue."
       }
     },
-    "compareDifferential": "Humans chain so each constructor variant delegates to a base that owns the actual setup, eliminating duplication. Agents chain so any future field change lands in one place — duplicated constructors silently drift under independent edits."
+    "compareDifferential": "Humans chain so each constructor variant delegates to a base that owns the actual setup, eliminating duplication. Agents chain because any future field change lands in one place — duplicated constructor logic across variants drifts silently under independent edits. Generated code against the chained constructors inherits any update to the base; duplicated copies do not."
   },
   {
     "catalog": "patterns",
@@ -81,7 +81,7 @@
         "trap": "A deeply-nested hierarchy of helpers where the agent must chase multiple definitions to understand a single original method — context cost multiplies and cross-helper invariants vanish from view."
       }
     },
-    "compareDifferential": "Humans compose to surface the algorithm at the top and push details into named steps; the cost is jumping across many small functions to follow a single behavior. Agents compose so each step is independently rewritable when intent shifts; the cost is loading more files into context to keep the whole flow coherent."
+    "compareDifferential": "Humans compose to surface the algorithm at the top and push details into named steps; the cost is jumping across many small functions to follow a single behavior. Agents compose because each step is independently rewritable when intent shifts; the cost is loading more files into the window to keep the whole flow coherent. The trade pays off when steps are reused or independently versioned across edits."
   },
   {
     "catalog": "patterns",
@@ -127,7 +127,7 @@
         "trap": "A factory with one method per subclass and no other logic just renames `new` to `factory.new`. Context cost rises by one definition layer without proportional reasoning gain; the encapsulation pays only when the factory can hide non-trivial creation choices."
       }
     },
-    "compareDifferential": "Humans encapsulate so the factory carries the construction knowledge and clients depend on names, not constructors. Agents encapsulate because each variant has a named entry point — `customerFromSignup` is more retrievable than `new Customer(args)`."
+    "compareDifferential": "Humans encapsulate so the factory carries the construction knowledge and clients depend on names, not constructors. Agents encapsulate because each variant has a named entry point — customerFromSignup resolves to one recipe the model uses, where new Customer(args) requires inspecting the constructor body. Generated client code against the factory inherits any change to the recipe; bare constructor calls would have to be rewritten."
   },
   {
     "catalog": "patterns",
@@ -173,7 +173,7 @@
         "trap": "A builder that returns `this` everywhere becomes one massive expression; the agent's reasoning about partial-state failures degrades because there are no intermediate names to anchor on. Debugging requires re-reading the entire chain to localize where the failure happened."
       }
     },
-    "compareDifferential": "Humans use a Builder so call sites build nested composites step by step without manual tree construction. Agents use a Builder because nested-tree construction by positional arguments is exactly where token-level edits drift; each named builder step is a checkable contract."
+    "compareDifferential": "Humans use a Builder so call sites build nested composites step by step without manual tree construction. Agents use a Builder because nested-tree construction by positional arguments is exactly where token-level edits drift — each named builder step is a checkable contract the type system enforces. Generated build code is verifiable one step at a time; a deeply nested positional call is not."
   },
   {
     "catalog": "patterns",
@@ -219,7 +219,7 @@
         "trap": "An adapter for a single, stable variant is dead weight — one extra file the agent must learn before reading the host. The pattern pays only when adapter count > 1 or when adapter-level test isolation buys verifiability the host couldn't achieve alone."
       }
     },
-    "compareDifferential": "Humans extract an adapter to wrap one third-party surface in your project's vocabulary. Agents extract so vendor-specific calls live behind one named interface — the wrapper is edited without crawling the third-party SDK."
+    "compareDifferential": "Humans extract an adapter to wrap one third-party surface in your project's vocabulary. Agents extract because vendor-specific calls then live behind one named interface — the wrapper is the only place the model has to load the third-party SDK's shape. Generated code against the adapter survives a vendor API change; calls scattered across the codebase do not."
   },
   {
     "catalog": "patterns",
@@ -265,7 +265,7 @@
         "trap": "A bloated Composite forces the agent to load a large superclass before reading any sibling. If sibling behaviours diverge later, the agent must constantly cross-check superclass methods against per-sibling overrides — context cost migrates from duplication to inheritance traversal."
       }
     },
-    "compareDifferential": "Humans extract when two subclasses both implement a tree-like structure independently. Agents extract because two near-identical tree implementations are duplication the model can't keep in sync under feature growth."
+    "compareDifferential": "Humans extract when two subclasses both implement a tree-like structure independently. Agents extract because two near-identical tree implementations are duplication the model cannot keep in sync under feature growth — every node-shape change has to land in both. With one composite, the tree contract lives in one type and edits propagate."
   },
   {
     "catalog": "patterns",
@@ -307,7 +307,7 @@
         "trap": "Replacing N methods with a method that takes a stringy parameter pushes the type information out of the type system and into runtime. The agent must verify caller intent by tracing the literal across files, which costs more context than reading N distinct method names."
       }
     },
-    "compareDifferential": "Humans extract to give a named slot to a value callers already think of as a thing. Agents extract because a named parameter is a typed contract — callers can no longer pass the wrong value in the wrong slot."
+    "compareDifferential": "Humans extract to give a named slot to a value callers already think of as a thing. Agents extract because a named parameter is a typed contract callers cannot violate by passing the wrong value to the wrong slot. Generated calls against the parameterized signature respect the slot; values passed positionally to an untyped placeholder do not."
   },
   {
     "catalog": "patterns",
@@ -353,7 +353,7 @@
         "trap": "A long Template Method with many fine-grained primitives forces the agent to read across many small methods to reconstruct what the algorithm does in any given subclass. Context cost migrates from inline duplication to hierarchy traversal; per-step debugging requires loading the relevant primitive override before the template makes sense."
       }
     },
-    "compareDifferential": "Humans factor the algorithm into a parent that owns the shape and lets subclasses fill in the steps. Agents factor so subclass extensions only have to override the right hook — not duplicate-and-edit the whole algorithm."
+    "compareDifferential": "Humans factor the algorithm into a parent that owns the shape and lets subclasses fill in the steps. Agents factor because subclass extensions then only have to override the right hook — not duplicate-and-edit the whole algorithm. Generated subclasses against the template inherit the algorithm's structure for free; duplicated implementations drift across siblings."
   },
   {
     "catalog": "patterns",
@@ -395,7 +395,7 @@
         "trap": "Inlining without a composition root forces the agent to scatter `new Logger()` calls across the codebase, each implicitly creating independent state. The agent then has to verify intent (one logger or many?) at every call site, which is harder than reading one global accessor."
       }
     },
-    "compareDifferential": "Humans inline a singleton when global access is now a liability and the consumer should hold its own collaborator. Agents inline because singleton access hides dependencies invisible from the call site — explicit collaborators show up in signatures."
+    "compareDifferential": "Humans inline a singleton when global access is now a liability and the consumer should hold its own collaborator. Agents inline because singleton access hides dependencies invisible from the call site — the model cannot predict from a function's signature whether it touches the singleton. Generated code with explicit collaborators in signatures reasons against typed inputs; singleton access shows up only by reading the body."
   },
   {
     "catalog": "patterns",
@@ -437,7 +437,7 @@
         "trap": "A Null Object that quietly returns the wrong neutral element (zero where one was needed, identity where blocking was needed) produces silent failures the agent cannot detect from static reading. The pattern requires careful semantic alignment between 'absent' and the chosen default."
       }
     },
-    "compareDifferential": "Humans use Null Object so callers don't have to `if null` everywhere. Agents use it because uniform polymorphism is more predictable than null-guarding — no need to remember which call sites have already checked."
+    "compareDifferential": "Humans use Null Object so callers don't have to if-null everywhere. Agents use it because every call site is then uniformly polymorphic — the model does not have to remember which sites have already null-checked. Generated calls against the null object behave correctly without per-site guarding."
   },
   {
     "catalog": "patterns",
@@ -483,7 +483,7 @@
         "trap": "A hierarchy with one trivial Factory Method per subclass forces the agent to load the inheritance chain to know what a single base-class call returns. The pattern's context-cost gain materializes only when each Factory Method does non-trivial work — otherwise the indirection adds cost without proportional clarity."
       }
     },
-    "compareDifferential": "Humans extract a creation method so subclasses can pick which product they make. Agents extract because polymorphic creation localizes 'which variant' — a new product is added by overriding one method, not by editing dispatch."
+    "compareDifferential": "Humans extract a creation method so subclasses can pick which product they make. Agents extract because polymorphic creation localizes 'which variant' — a new product is added by overriding one method, not by editing a dispatcher. Generated subclasses against the factory method create their product in one place; dispatcher edits would have to land at every site."
   },
   {
     "catalog": "patterns",
@@ -529,7 +529,7 @@
         "trap": "Singletons hide dependencies from the agent's static view; the agent must grep for static accessors to enumerate consumers. Test-order flakiness from leaked state is invisible until it manifests; the agent cannot statically detect Singletons that should have been per-instance."
       }
     },
-    "compareDifferential": "Humans use Singleton when exactly one instance must exist for the system's lifetime. Agents use it because a singleton's access surface is named and discoverable — `Settings.instance()` is probable; lifecycle is otherwise inferred."
+    "compareDifferential": "Humans use Singleton when exactly one instance must exist for the system's lifetime. Agents use it because the singleton's access surface is named and discoverable — Settings.instance() resolves to one recipe the model uses, where the lifecycle is otherwise inferred from constructor calls. Generated code against the singleton reads the one access point; ad-hoc lifecycle management forces the agent to track ownership across files."
   },
   {
     "catalog": "patterns",
@@ -571,7 +571,7 @@
         "trap": "An accumulator that escapes the traversal is a shared mutable reference the agent must trace through subsequent code to verify safety. The pattern's verifiability gain inside the traversal is partially undone by the safety analysis required outside it."
       }
     },
-    "compareDifferential": "Humans pass an accumulator through a chain of methods so each contributes to it. Agents pass one because the accumulator is now an explicit parameter — the final shape can be predicted from the signatures alone."
+    "compareDifferential": "Humans pass an accumulator through a chain of methods so each contributes to it. Agents pass one because the accumulator is then an explicit parameter — the final shape can be predicted from the signatures alone, without reading every method's body. Generated code reads one parameter to see what's being built; implicit accumulation forces the model to simulate the chain."
   },
   {
     "catalog": "patterns",
@@ -617,7 +617,7 @@
         "trap": "A visitor hierarchy applied to an unstable node set forces the agent to chase a Shotgun Surgery across visitor files every time a node is added. Per-edit context cost goes up linearly with operation count when nodes change — the inverse of the pattern's intended cost shape."
       }
     },
-    "compareDifferential": "Humans use a visitor when many algorithms walk the same structure for different aggregations. Agents use one because separating walk from work decouples algorithms — one aggregation can be edited without re-reading the others."
+    "compareDifferential": "Humans use a visitor when many algorithms walk the same structure for different aggregations. Agents use one because separating walk from work decouples algorithms — one aggregation can be edited without re-reading the others. Generated visitors against the structure live in their own files and never collide with sibling algorithms."
   },
   {
     "catalog": "patterns",
@@ -663,7 +663,7 @@
         "trap": "A factory whose recipe is itself a long sequence of conditional steps can become as opaque as the duplicated callers were — the agent must trace the factory body line-by-line to know what came out. The pattern's gain materializes when the factory's recipe is itself decomposed into named build steps."
       }
     },
-    "compareDifferential": "Humans move construction logic to one place so callers don't repeat the recipe. Agents move because a recipe duplicated across callers will drift — a factory makes the recipe one definition the model maintains."
+    "compareDifferential": "Humans move construction logic to one place so callers don't repeat the recipe. Agents move because a recipe duplicated across callers drifts — a factory makes the recipe one definition the model maintains. Generated client code calls the factory and inherits any future change; duplicated recipes ship as divergence."
   },
   {
     "catalog": "patterns",
@@ -709,7 +709,7 @@
         "trap": "Five-deep decorator chains require the agent to load five definitions before reading the call. Stack traces obscure where in the chain a failure occurred; the agent's debugging cost goes up with depth. A composition-style API that names the intended capability set can be more legible than the raw chain."
       }
     },
-    "compareDifferential": "Humans wrap an object in a decorator when behavior should be opt-in per instance. Agents wrap because composition lets each decoration be reasoned about independently — no need to consider every variant of the inner class."
+    "compareDifferential": "Humans wrap an object in a decorator when behavior should be opt-in per instance. Agents wrap because composition lets each decoration be reasoned about independently — no need to consider every subclass-permutation as a separate type. Generated code that adds a decoration writes one wrapper class; subclassing every variant would have required N edits."
   },
   {
     "catalog": "patterns",
@@ -755,7 +755,7 @@
         "trap": "Many trivial Commands (`class XCommand { execute() { return X(); } }`) raise context cost without buying anything — the agent loads one definition per command name to verify what it does. The pattern's gain materializes when commands carry meaningful state or when cross-cutting concerns reuse the uniform interface."
       }
     },
-    "compareDifferential": "Humans replace because a switch over command IDs becomes a class with named methods. Agents replace so each operation has its own name and signature — adding a new command is mechanical, not a fan-out edit."
+    "compareDifferential": "Humans replace because a switch over command IDs becomes a class with named methods. Agents replace because each operation then has its own name and signature — adding a new command is mechanical instead of a fan-out edit across every dispatch site. Generated command classes are one definition the type checker constrains; missing dispatch cases are silent."
   },
   {
     "catalog": "patterns",
@@ -801,7 +801,7 @@
         "trap": "A maze of one-method strategy classes that exist only to satisfy the pattern — the agent loads N files to understand what a single conditional once expressed in one. Context cost multiplies without proportional reasoning gain."
       }
     },
-    "compareDifferential": "Humans replace because each strategy is a small class with a clear name, instead of a switch buried in a calculator. Agents replace so the next strategy is one class to add, not one branch threaded through every dispatch site."
+    "compareDifferential": "Humans replace because each strategy is a small class with a clear name, instead of a switch buried in a calculator. Agents replace because the next strategy is one class to add — the host's dispatch remains unchanged and every existing strategy stays outside the window for that edit. Generated code that adds a switch case has to update every dispatcher; a new strategy class touches one site."
   },
   {
     "catalog": "patterns",
@@ -843,7 +843,7 @@
         "trap": "A wall of nearly-identical static creation methods that differ only in defaults can become harder to scan than one constructor with documented defaults. The pattern's clarity gain depends on each method representing a genuinely distinct intention."
       }
     },
-    "compareDifferential": "Humans replace so each construction path has a meaningful name. Agents replace because named creation methods carry intent the model uses — overloaded constructors hide which variant a caller wants."
+    "compareDifferential": "Humans replace so each construction path has a meaningful name. Agents replace because named creation methods carry intent the model uses — overloaded constructors require reading bodies to tell variants apart. Generated calls against creation methods pick the right variant by name; overloaded constructor calls match by type and can pick the wrong one silently."
   },
   {
     "catalog": "patterns",
@@ -889,7 +889,7 @@
         "trap": "Subscription wiring scattered across the composition root requires the agent to grep for `subscribe(` calls to enumerate the consumer set. Stale subscriptions (uncleaned references) cause hard-to-debug memory and behaviour leaks the agent cannot detect statically."
       }
     },
-    "compareDifferential": "Humans replace because hard-coded fan-out is brittle — every new listener edits the publisher. Agents replace so the publisher's signature is fixed; new listeners attach without re-reasoning about the publisher."
+    "compareDifferential": "Humans replace because hard-coded fan-out is brittle — every new listener edits the publisher. Agents replace because the publisher's signature is then fixed — new listeners attach without forcing the model to re-read the publisher to add another call. Generated code that adds an observer touches one site; hard-coded fan-out forces edits to the publisher itself."
   },
   {
     "catalog": "patterns",
@@ -935,7 +935,7 @@
         "trap": "A grammar with many nodes representing fine-grained syntactic variations forces the agent to load a large hierarchy to reason about any expression. Per-node specialization (NumericEquals vs. StringEquals vs. DateEquals) can multiply file count without proportional reasoning gain."
       }
     },
-    "compareDifferential": "Humans recognize when string formats or DSL fragments are accumulating ad-hoc parsing. Agents recognize because an interpreter centralizes the grammar — one parser to reason about, not scattered string handling."
+    "compareDifferential": "Humans recognize when string formats or DSL fragments are accumulating ad-hoc parsing. Agents recognize because an interpreter centralizes the grammar — one parser the model loads once instead of scattered string handling at every consumer. Generated code that respects the grammar pays one read of the interpreter; ad-hoc parsing scales token cost with the number of consumers."
   },
   {
     "catalog": "patterns",
@@ -981,7 +981,7 @@
         "trap": "If the on-disk form remains the flat record set, the agent has to verify the in-memory tree stays consistent with it across edits. The pattern's gain materializes when the tree owns the canonical form; when it's a transient view over a relational store, the implicit form may stay authoritative."
       }
     },
-    "compareDifferential": "Humans replace when nested data structures are reconstructed by every consumer. Agents replace so the tree has its own type — no reverse-engineering the shape from each caller's traversal code."
+    "compareDifferential": "Humans replace when nested data structures are reconstructed by every consumer. Agents replace because the tree then has its own type — the shape lives in one definition the model loads, not in N caller-side traversals. Generated code against the typed tree relies on its contract; implicit trees require reverse-engineering the shape from every traversal."
   },
   {
     "catalog": "patterns",
@@ -1027,7 +1027,7 @@
         "trap": "A Composite applied to a distinction that is actually load-bearing context (e.g., when callers need to know cardinality to render differently) ends up restoring the `if (isMulti)` branches at the call site, just with `.isMultivalued()` instead of `Array.isArray`. The pattern pays when callers genuinely don't care which shape they have."
       }
     },
-    "compareDifferential": "Humans replace when 'single vs. many' branches everywhere. Agents replace so callers treat one or many uniformly — one call path instead of two."
+    "compareDifferential": "Humans replace when 'single versus many' branches everywhere. Agents replace because callers then treat one or many uniformly — one call path instead of two, halving the per-call-site branch the model has to track. Generated code respects the uniform contract; explicit one-vs-many branching scatters the answer across every consumer."
   },
   {
     "catalog": "patterns",
@@ -1073,7 +1073,7 @@
         "trap": "A state machine with many states that mostly throw makes the agent load N files to discover that operation X is only legal in state Y. A state-transition table (data, not code) may be more economical for the agent to scan than N state classes."
       }
     },
-    "compareDifferential": "Humans replace because conditionals over a state code scatter behavior across one big method. Agents replace so each state is its own class — adding a new state means adding a class, not threading conditions through every transition."
+    "compareDifferential": "Humans replace because conditionals over a state code scatter behavior across one big method. Agents adding a new state without the pattern have to load every method that branches on the code and edit each one, which costs tokens proportional to the fan-out. With the pattern, an agent adds a state by writing one new class and existing classes stay outside the context window for that edit."
   },
   {
     "catalog": "patterns",
@@ -1115,7 +1115,7 @@
         "trap": "Value objects relying on reference equality across serialization boundaries (HTTP, persistence, message queues) require careful canonicalization; getting it wrong produces runtime equality bugs the agent cannot detect statically. The pattern is straightforward in pure-runtime code; thornier across persistence boundaries."
       }
     },
-    "compareDifferential": "Humans replace because a bare string for 'type' carries no rules. Agents replace so the type code is a class with its own behavior and validation — type-checker support replaces naming convention."
+    "compareDifferential": "Humans replace because a bare string for 'type' carries no rules. Agents replace because the type code is then a class with its own behavior and validation — the type checker enforces what naming convention used to. Generated code that constructs an invalid type is a compile error instead of a runtime surprise."
   },
   {
     "catalog": "patterns",
@@ -1161,7 +1161,7 @@
         "trap": "An adapter that smuggles non-trivial logic (validation, error remapping, retries) hides behaviour the agent might expect to see at the consumer or at the vendor — neither location is now authoritative. When the adapter is doing more than shape-conversion, its name should reflect that (Gateway, Anti-Corruption Layer)."
       }
     },
-    "compareDifferential": "Humans wrap a third-party interface to match the one the rest of the system uses. Agents wrap so callers depend on the project's vocabulary — the adapter is the only place the vendor's shape leaks in."
+    "compareDifferential": "Humans wrap a third-party interface to match the one the rest of the system uses. Agents wrap because callers then depend on the project's vocabulary — the adapter is the only place the vendor's shape leaks into the window. Generated code against the unified interface survives a vendor API change; calls that touch the vendor shape directly do not."
   },
   {
     "catalog": "patterns",
@@ -1203,7 +1203,7 @@
         "trap": "Unifying names across two classes whose operations only superficially match silently misleads future readers. The agent reads `findById` on both and assumes equivalent behaviour; when one has implicit side effects the other doesn't, the trap is hard to detect statically. Verify behaviour matches before unifying names."
       }
     },
-    "compareDifferential": "Humans unify when two classes do similar work but expose different method names. Agents unify so the call site is polymorphic — one call against the unified interface instead of branching per concrete type."
+    "compareDifferential": "Humans unify when two classes do similar work but expose different method names. Agents unify because the call site is then polymorphic — one call against the unified interface instead of branching per concrete type. Generated code reasons against one signature; pre-unification each branch is its own contract to maintain."
   },
   {
     "catalog": "patterns",
@@ -1244,7 +1244,7 @@
         "trap": "Factory interface bloat — over many edits the agent loses sight of which products are still in use. Dead factory methods accumulate because no client demands them but the interface contract still requires them; cleanup requires touching every concrete factory together, exactly the cross-cutting edit the pattern was supposed to eliminate."
       }
     },
-    "compareDifferential": "Humans use Abstract Factory to swap a whole family of related products at once. Agents use it because the family contract is one interface — light/dark, mac/windows variants are substitutable by changing one factory call."
+    "compareDifferential": "Humans use Abstract Factory to swap a whole family of related products at once. Agents use it because the family contract is one interface — light/dark, mac/windows variants are substitutable by changing one factory call instead of editing every product instantiation. Generated code against the abstract factory inherits any future family addition; scattered product calls would have to be rewritten."
   },
   {
     "catalog": "patterns",
@@ -1285,7 +1285,7 @@
         "trap": "Inconsistent builder discipline — some builders enforce required-input checks at build(), others tolerate missing inputs and produce half-built products with default sentinels — forces the agent to verify enforcement on every new builder it encounters. The pattern stops being a structural promise and becomes a per-class convention to look up."
       }
     },
-    "compareDifferential": "Humans reach for Builder when positional arguments make the call site unreadable — null and 0 as placeholders, no way to tell what each slot means. Agents reach for Builder because positional alignment in long signatures is exactly where token-level edits drift; named setters give the agent a stable surface to match against fields."
+    "compareDifferential": "Humans reach for Builder when positional arguments make the call site unreadable — null and 0 as placeholders, no way to tell what each slot means. Agents reach for Builder because positional alignment in long signatures is exactly where token-level edits drift — named setters give the agent a stable surface to match against fields. Generated code that assigns through named builder steps is verifiable; a long positional call can pick the wrong slot silently."
   },
   {
     "catalog": "patterns",
@@ -1326,7 +1326,7 @@
         "trap": "Subclasses that override more than the factory method (extra hooks, extra state, extra invariants) reintroduce the cross-cutting verification problem in a different shape — now the agent must verify N subclasses each implement M hooks consistently. The parallel hierarchy becomes the same N×M cell-check problem the switch had, only spread across more files."
       }
     },
-    "compareDifferential": "Humans use Factory Method when subclasses should pick which product to make. Agents use it so the creation point is one virtual hook — variants are subclasses overriding one method, not branches across dispatchers."
+    "compareDifferential": "Humans use Factory Method when subclasses should pick which product to make. Agents use it because the creation point is then one virtual hook — variants are subclasses overriding one method, not branches scattered across dispatchers. Generated subclasses against the factory method create their product in one site; dispatcher edits would have had to land at every branch."
   },
   {
     "catalog": "patterns",
@@ -1367,7 +1367,7 @@
         "trap": "Optional fields and conditional cloning logic accreting onto the prototype mask divergent variant shapes. The agent reading the registry sees a uniform table; the runtime sees branching behaviour that depends on which fields a prototype happens to have set. The structural promise the pattern made stops holding."
       }
     },
-    "compareDifferential": "Humans use Prototype when configured instances are the source of truth and new objects are tweaked copies. Agents use it because cloning a prototype is one step the model reasons about; reconstructing the configuration manually is a many-step recipe."
+    "compareDifferential": "Humans use Prototype when configured instances are the source of truth and new objects are tweaked copies. Agents use it because cloning a prototype is one step the model reasons about — reconstructing the configuration manually is a many-step recipe that costs tokens at every variant. Generated code that clones inherits the prototype's settings; manual construction has to re-derive them each time."
   },
   {
     "catalog": "patterns",
@@ -1408,7 +1408,7 @@
         "trap": "When tests rely on Config.getInstance() returning a real (live) instance, the agent's edits to Config silently break unrelated tests through the shared-state coupling. The pattern's convenience hides exactly the kind of cross-cutting dependency the agent needs structural visibility into."
       }
     },
-    "compareDifferential": "Humans use Singleton when exactly one instance must coordinate a shared resource. Agents use it because singleton access is a named, discoverable entry point — `Cache.instance()` is probable; lifecycle is otherwise inferred from constructor calls."
+    "compareDifferential": "Humans use Singleton when exactly one instance must coordinate a shared resource. Agents use it because singleton access is a named, discoverable entry point — Cache.instance() resolves to one recipe the model uses, where lifecycle is otherwise inferred from constructor calls. Generated code against the singleton reads one access surface; ad-hoc lifecycle management forces the agent to track ownership across files."
   },
   {
     "catalog": "patterns",
@@ -1449,7 +1449,7 @@
         "trap": "Adapters that accumulate non-translation logic (retries, caching, metrics) become god objects the agent must understand fully before any payment-related edit. The pattern's promise of 'thin translation layer' degrades into a black box where the agent loses confidence about which layer owns which behaviour."
       }
     },
-    "compareDifferential": "Humans wrap an existing class to match the interface a client expects. Agents wrap because the adapter centralizes translation — one boundary type to edit instead of every call site that bridges the two interfaces."
+    "compareDifferential": "Humans wrap an existing class to match the interface a client expects. Agents wrap because the adapter centralizes translation — one boundary type to edit instead of every call site that bridges the two interfaces. Generated code against the adapter survives a third-party shape change; direct calls scatter the breakage across every consumer."
   },
   {
     "catalog": "patterns",
@@ -1490,7 +1490,7 @@
         "trap": "Premature bridging doubles the file count and adds an indirection the agent must navigate on every read, with zero pay-off until the second axis variant ships. Watch for 'bridge with one implementation' as a sign the pattern was applied too early; the agent's reading cost is paid forever, even if the predicted second axis never arrives."
       }
     },
-    "compareDifferential": "Humans separate an abstraction from its implementation so each can vary independently. Agents separate so abstraction and implementation have their own types — implementations swap without re-reasoning about the abstraction's shape."
+    "compareDifferential": "Humans separate an abstraction from its implementation so each can vary independently. Agents separate because abstraction and implementation then have their own types — implementations swap without forcing the model to re-reason about the abstraction's shape. Generated code against the bridge can replace the implementation by changing one wiring; coupled designs require editing both."
   },
   {
     "catalog": "patterns",
@@ -1531,7 +1531,7 @@
         "trap": "Leaves implementing add()/remove() as throws turns the type system's promise of uniformity into a runtime trap. The agent reading the interface expects the operation to work; the runtime experience contradicts the static read. Prefer the discriminated-union form when leaf and composite diverge on more than two operations."
       }
     },
-    "compareDifferential": "Humans use Composite when leaf and group nodes should be handled by the same callers. Agents use it because the uniform interface eliminates 'is this a leaf or a group' branches everywhere — one call path instead of two."
+    "compareDifferential": "Humans use Composite when leaf and group nodes should be handled by the same callers. Agents use it because the uniform interface eliminates 'is this a leaf or a group' branches everywhere — one call path instead of two, halving the per-call-site branch the model tracks. Generated code respects the uniform contract; explicit leaf-vs-group branching scatters the answer."
   },
   {
     "catalog": "patterns",
@@ -1572,7 +1572,7 @@
         "trap": "Decorators whose semantics depend on wrapping order (RetryDecorator(LoggingDecorator(X)) vs LoggingDecorator(RetryDecorator(X))) force the agent to verify order-correctness on every construction site. The construction expression becomes part of the spec; PR review must catch wrong-order regressions the type system cannot."
       }
     },
-    "compareDifferential": "Humans wrap objects in decorators to compose features at runtime instead of editing the base class. Agents wrap because each decoration is independently reasonable — no need to consider every combination as a new subclass."
+    "compareDifferential": "Humans wrap objects in decorators to compose features at runtime instead of editing the base class. Agents wrap because each decoration is independently reasonable — no need to consider every subclass-permutation as a separate type the model loads. Generated code that adds a feature writes one decorator; subclassing every combination would have required N edits."
   },
   {
     "catalog": "patterns",
@@ -1613,7 +1613,7 @@
         "trap": "When the Facade grows to N user tasks (submitOrder + refund + modify + audit + ...), it becomes a god object the agent must read fully before any edit. The pattern's clarity wins were proportional to focused scope; god-facade scope reintroduces the verification problem at a higher level."
       }
     },
-    "compareDifferential": "Humans use Facade to expose a small clean interface over a complicated subsystem. Agents use it because the facade is the contract clients depend on — subsystem internals don't have to be loaded to predict client-visible behavior."
+    "compareDifferential": "Humans use Facade to expose a small clean interface over a complicated subsystem. Agents use it because the facade is the contract clients depend on — subsystem internals do not have to be loaded to predict client-visible behavior. Generated code against the facade reasons against one signature; without it, every client edit pays the load cost of the subsystem."
   },
   {
     "catalog": "patterns",
@@ -1654,7 +1654,7 @@
         "trap": "Premature flyweighting at low N adds indirection the agent pays for at every read with no memory payoff. Watch for 'Flyweight with one or two instances per kind' as a sign the pattern was speculative — the cost is paid forever, the benefit is hypothetical."
       }
     },
-    "compareDifferential": "Humans use Flyweight when many objects share state and per-object copies waste memory. Agents use it because intrinsic-vs-extrinsic state separation makes the contract explicit — which state lives in the flyweight and which the caller passes in are typed apart."
+    "compareDifferential": "Humans use Flyweight when many objects share state and per-object copies waste memory. Agents use it because intrinsic-vs-extrinsic state separation makes the contract explicit in the type — which state lives in the flyweight and which the caller passes in are typed apart. Generated code respects the separation by signature; without it, the model has to reconstruct which state lives where from caller bodies."
   },
   {
     "catalog": "patterns",
@@ -1695,7 +1695,7 @@
         "trap": "Subject and Proxy diverging on subtle semantics (concurrency, error types, side-effect timing) produces type-compatible bugs the agent struggles to localize. The agent reading client code trusts the interface contract; the runtime experience contradicts that trust intermittently, exactly the bug shape that survives review and ships."
       }
     },
-    "compareDifferential": "Humans use Proxy to interpose access control, caching, or remote calls without changing clients. Agents use it because clients see one interface — behavior at the proxy boundary is predictable without crawling delegation logic."
+    "compareDifferential": "Humans use Proxy to interpose access control, caching, or remote calls without changing clients. Agents use it because clients see one interface — behavior at the proxy boundary is predictable without crawling the delegation logic. Generated client code against the proxy inherits any future interposition; clients that touched the target directly would have to be rewritten."
   },
   {
     "catalog": "patterns",
@@ -1736,7 +1736,7 @@
         "trap": "Handlers that peek at chain neighbors or skip ahead by mutating the request reintroduce cross-handler coupling. The agent reading one handler can no longer reason about its behaviour in isolation; chain-aware verification becomes mandatory on every handler edit, defeating the per-handler isolation the pattern promised."
       }
     },
-    "compareDifferential": "Humans use the chain when many handlers might handle a request but the sender shouldn't know which. Agents use it because each handler is independently reasonable — adding a new handler is one class, not a switch update."
+    "compareDifferential": "Humans use the chain when many handlers might handle a request but the sender shouldn't know which. Agents use it because each handler is independently reasonable — adding a new handler is one class, not a switch update across every site. Generated handler classes inherit the chain's protocol; a switch-based dispatch would require editing the central dispatcher."
   },
   {
     "catalog": "patterns",
@@ -1777,7 +1777,7 @@
         "trap": "Commands that mutate receiver state outside their own captured fields produce undo bugs the agent cannot localize from the Command's source alone. The agent reading TypeCommand.undo() trusts the captured text length; if execute() actually invoked side effects (autocomplete, save-on-keypress) the undo is silently incomplete. Capture every effect the execute touches, or the pattern's reversibility promise is a lie."
       }
     },
-    "compareDifferential": "Humans wrap a request as an object so it can be queued, logged, or undone. Agents wrap because each command has a named operation and signature — `command.undo()` is probable; undo semantics by invocation convention are inferred."
+    "compareDifferential": "Humans wrap a request as an object so it can be queued, logged, or undone. Agents wrap because each command has a named operation and signature — command.undo() is a one-token lookup the model uses, where undo semantics by invocation convention are inferred. Generated code against the command class reasons against typed methods; convention-based undo is brittle to call ordering."
   },
   {
     "catalog": "patterns",
@@ -1818,7 +1818,7 @@
         "trap": "Grammars growing past ~10 operators turn into class proliferation the agent navigates as a graph rather than a hierarchy. Visitor or AST-walker tooling becomes mandatory at that scale; without it, every traversal-style analysis requires editing every rule class — the cross-cutting problem the pattern was supposed to avoid."
       }
     },
-    "compareDifferential": "Humans use Interpreter for a small language that's frequent enough to formalize. Agents use it because a grammar centralizes parsing — one interpreter to reason about, not scattered string handling."
+    "compareDifferential": "Humans use Interpreter for a small language that's frequent enough to formalize. Agents use it because the grammar centralizes parsing — one interpreter the model loads instead of scattered string handling across N consumers. Generated code that respects the grammar pays one read of the interpreter; ad-hoc parsing scales token cost with the number of consumers."
   },
   {
     "catalog": "patterns",
@@ -1859,7 +1859,7 @@
         "trap": "Iterators with hidden mutability (re-entrant push during iteration, snapshot-vs-live semantics) produce bugs the agent cannot localize from the iterator protocol alone. The agent reading `for (const x of coll)` trusts the consumer side; runtime ordering bugs live in the iterator's interaction with the underlying mutation. Document or freeze; do not leave ambiguous."
       }
     },
-    "compareDifferential": "Humans use Iterator so traversal is independent of structure. Agents use it because the traversal contract is one signature — a consumer can be written without knowing whether the underlying collection is array, tree, or linked list."
+    "compareDifferential": "Humans use Iterator so traversal is independent of structure. Agents use it because the traversal contract is one signature — a consumer can be written without knowing whether the underlying collection is array, tree, or linked list. Generated traversal code inherits the contract; collection-specific iteration forces the model to load each shape separately."
   },
   {
     "catalog": "patterns",
@@ -1900,7 +1900,7 @@
         "trap": "Mediators that grow into general-purpose coordinators (FormMediator + ValidationMediator + ErrorMediator + SubmitMediator merged into one mega-class) reintroduce the cross-cutting problem at a different shape. The agent now navigates one giant Mediator file rather than N collaborators; the verification cost is the same total, concentrated rather than distributed."
       }
     },
-    "compareDifferential": "Humans use Mediator when a tangle of object-to-object connections becomes a maintenance hazard. Agents use it because point-to-point coupling is a graph the model has to traverse — the mediator centralizes it into one named coordinator."
+    "compareDifferential": "Humans use Mediator when a tangle of object-to-object connections becomes a maintenance hazard. Agents use it because point-to-point coupling is a graph the model has to load into the window — the mediator collapses N-by-N connections into one named coordinator. Generated code against the mediator routes through one site; without it, every edit to one collaborator forces re-reading all of them."
   },
   {
     "catalog": "patterns",
@@ -1941,7 +1941,7 @@
         "trap": "Clients that read memento.snapshot directly defeat the encapsulation and create new Insider Trading on the editor's representation. The agent reading client code trusts the Memento contract; the runtime coupling contradicts that trust silently. Lint or document the opacity invariant or it will erode commit-by-commit."
       }
     },
-    "compareDifferential": "Humans use Memento to capture and restore an object's state without exposing internals. Agents use it because the snapshot is one opaque object — save and restore happen without reasoning about every field that goes into the state."
+    "compareDifferential": "Humans use Memento to capture and restore an object's state without exposing internals. Agents use it because the snapshot is one opaque object — save and restore happen without reasoning about every field that goes into the state. Generated code that uses the memento reads two operations; explicit field-by-field state copies pay tokens at every field."
   },
   {
     "catalog": "patterns",
@@ -1982,7 +1982,7 @@
         "trap": "Re-entrancy bugs (observer A's notify() triggers a state change that re-fires notify() on A) and silent unsubscribe leaks are runtime-only failure modes. The agent reading subscribe/notify trusts the contract; runtime ordering and memory bugs survive review and surface as flaky behaviour in production."
       }
     },
-    "compareDifferential": "Humans use Observer when one source has many dependents whose count changes at runtime. Agents use it because the publisher's signature is fixed — new subscribers don't force re-reasoning about the publisher's behavior."
+    "compareDifferential": "Humans use Observer when one source has many dependents whose count changes at runtime. Agents use it because the publisher's signature is fixed — new subscribers do not force the model to re-read the publisher to add another call. Generated code adds an observer by attaching to the publisher's protocol; hard-coded fan-out would force a publisher edit."
   },
   {
     "catalog": "patterns",
@@ -2023,7 +2023,7 @@
         "trap": "Shared behaviour across states (every cancel logs an audit event) repeated across state files re-creates Duplicated Code at the new layer. The agent reading the State class hierarchy must verify the shared logic per state; without a common policy or superclass, the agent loses confidence in cross-state consistency on every edit."
       }
     },
-    "compareDifferential": "Humans use State to replace conditionals on a state code with class-per-state. Agents use it because each state owns its own transitions — adding a new state is one class, not branches across every transition site."
+    "compareDifferential": "Humans use State to replace conditionals on a state code with class-per-state. Agents use it because each state owns its own transitions — adding a new state is one class to write, not branches across every transition site. Generated state classes inherit the protocol; switch-based state handling forces a fan-out edit across every transition method."
   },
   {
     "catalog": "patterns",
@@ -2064,7 +2064,7 @@
         "trap": "Strategy interfaces with optional methods (some algorithms implement calibrate(), others do not) blur the contract. The agent must verify per-implementation interface completeness rather than reading the interface as a structural promise. Define one focused interface, or split the family by capability."
       }
     },
-    "compareDifferential": "Humans use Strategy when one operation has many interchangeable algorithms. Agents use it because each strategy is a small class with one signature — switching algorithms is changing one collaborator, not re-reading the host."
+    "compareDifferential": "Humans use Strategy when one operation has many interchangeable algorithms. Agents asking 'which algorithm runs here' read only the host method's name with the pattern in place — not any algorithm body. Without it, the agent reads every branch and the answer's quality is bounded by the budget it had to read all of them."
   },
   {
     "catalog": "patterns",
@@ -2105,7 +2105,7 @@
         "trap": "Hook proliferation — base class with 10 hooks each subclass overrides — turns the parallel hierarchy into the same N×M cell-verification problem the pattern was supposed to solve, only spread across more files. Watch for 'template method with > 4 hooks' as a sign the abstraction is over-reaching."
       }
     },
-    "compareDifferential": "Humans use Template Method to share an algorithm's shape across subclasses while letting them fill in the steps. Agents use it because the parent owns the algorithm's contract — subclass extensions are constrained to the overridable hooks."
+    "compareDifferential": "Humans use Template Method to share an algorithm's shape across subclasses while letting them fill in the steps. Agents use it because the parent owns the algorithm's contract — subclass extensions are constrained to the overridable hooks and the type checker rejects extensions outside them. Generated subclass code respects the algorithm's shape; ad-hoc extension forces the model to maintain the shape itself."
   },
   {
     "catalog": "patterns",
@@ -2146,6 +2146,6 @@
         "trap": "Visitors with hidden state across visit calls produce traversal-order-dependent bugs the agent cannot localize from any one visit method. Stack traces span accept + visit boundaries; the agent must reason about the interleaving of accept and visit calls on every traversal-related bug."
       }
     },
-    "compareDifferential": "Humans use Visitor when many operations should walk one fixed object structure. Agents use it because separating walk from work decouples operations — a new visitor is added without editing the data classes."
+    "compareDifferential": "Humans use Visitor when many operations should walk one fixed object structure. Agents adding an operation with Visitor write one new file and the data classes stay outside the context window for that edit. Without it, the agent loads and re-emits every data class to add the operation, and the chance of missing one grows with how many are paged in and out of the window."
   }
 ]
