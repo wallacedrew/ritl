@@ -34,8 +34,8 @@ describe("getRefactoringsByCategory", () => {
     const composing = groups.find((g) => g.category === "Composing Methods");
     const extractFunction = composing?.items.find((i) => i.name === "Extract Function");
     expect(extractFunction?.href).toBe("/refactoring/canon/extract-function");
-    expect(extractFunction?.chips).toContainEqual({ label: "Long Function", tone: "smell" });
     expect(extractFunction?.number).toBe(1);
+    expect(extractFunction?.tone).toBe("refactoring");
   });
 
   it("categorizes every refactoring in the catalog (no orphans)", () => {

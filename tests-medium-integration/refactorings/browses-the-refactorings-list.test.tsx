@@ -5,10 +5,15 @@ import { renderWithTheme } from "../../tests-small-unit/_helpers/renderWithTheme
 import RefactoringsPage from "@/refactorings/RefactoringsPage";
 
 describe("user browses the refactorings list", () => {
-  it("sees Extract Function with the smells it solves on /refactorings", () => {
+  it("sees Extract Function on /refactorings with a chevron that peeks at the smells it removes", () => {
     renderWithTheme(<RefactoringsPage />);
 
-    expect(screen.getByRole("heading", { name: "Extract Function" })).toBeInTheDocument();
-    expect(screen.getAllByText("Long Function").length).toBeGreaterThanOrEqual(1);
+    expect(screen.getByRole("link", { name: "Extract Function" })).toHaveAttribute(
+      "href",
+      "/refactoring/canon/extract-function",
+    );
+    expect(
+      screen.getByRole("button", { name: /Extract Function cross-references/i }),
+    ).toBeInTheDocument();
   });
 });

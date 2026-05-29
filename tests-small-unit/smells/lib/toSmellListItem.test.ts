@@ -36,12 +36,11 @@ describe("toSmellListItem", () => {
     expect(item.href).toBe("/refactoring/smells/mysterious-name");
   });
 
-  it("projects name + nemeses and human-lens symptom into the generic chips + caption shape", () => {
+  it("projects the smell's name, tone, and human-lens symptom into the list-item caption", () => {
     const item = toSmellListItem(baseSmell, 1);
 
     expect(item.name).toBe("Mysterious Name");
     expect(item.tone).toBe("smell");
-    expect(item.chips).toEqual([{ label: "Rename Variable", tone: "refactoring" }]);
     expect(item.caption).toContain("don't reveal intent");
   });
 

@@ -12,10 +12,6 @@ export function toSmellListItem(
     href: smell.name.toCatalogHref(),
     name: smell.name.toString(),
     tone: smell.name.tone(),
-    chips: smell.nemeses.map((nemesis) => ({
-      label: nemesis.toString(),
-      tone: nemesis.tone(),
-    })),
     caption: smell.forcesFor("human").symptom,
     crossReferences: snapshot ? collectCrossReferences(smell, snapshot) : undefined,
   };

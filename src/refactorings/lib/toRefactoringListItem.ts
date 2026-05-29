@@ -12,10 +12,6 @@ export function toRefactoringListItem(
     href: refactoring.name.toCatalogHref(),
     name: refactoring.name.toString(),
     tone: refactoring.name.tone(),
-    chips: refactoring.nemeses.map((smellName) => ({
-      label: smellName.toString(),
-      tone: smellName.tone(),
-    })),
     caption: refactoring.forcesFor("human").goal,
     crossReferences: snapshot ? collectCrossReferences(refactoring, snapshot) : undefined,
   };

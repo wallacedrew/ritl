@@ -8,7 +8,10 @@ describe("user browses the smells list", () => {
   it("sees the Mysterious Name smell with its symptom on /smells", () => {
     renderWithTheme(<SmellsPage />);
 
-    expect(screen.getByRole("heading", { name: "Mysterious Name" })).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: "Mysterious Name" })).toHaveAttribute(
+      "href",
+      "/refactoring/smells/mysterious-name",
+    );
     expect(screen.getByText(/identifiers that don.{0,3}t reveal intent/i)).toBeInTheDocument();
   });
 });

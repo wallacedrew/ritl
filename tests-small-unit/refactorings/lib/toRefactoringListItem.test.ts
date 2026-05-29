@@ -39,15 +39,11 @@ describe("toRefactoringListItem", () => {
     expect(item.href).toBe("/refactoring/canon/extract-function");
   });
 
-  it("projects name + nemeses and human-lens goal into the generic chips + caption shape", () => {
+  it("projects the refactoring's name, tone, and human-lens goal into the list-item caption", () => {
     const item = toRefactoringListItem(baseRefactoring, 1);
 
     expect(item.name).toBe("Extract Function");
     expect(item.tone).toBe("refactoring");
-    expect(item.chips).toEqual([
-      { label: "Long Function", tone: "smell" },
-      { label: "Duplicated Code", tone: "smell" },
-    ]);
     expect(item.caption).toContain("single named");
   });
 
