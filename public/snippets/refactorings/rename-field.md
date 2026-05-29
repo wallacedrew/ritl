@@ -1,13 +1,13 @@
 ---
 name: rename-field
-description: Apply Rename Field when you see Mysterious Name. Field names carry domain meaning so the agent can interpret reads and writes without examining the class definition.
+description: Apply Rename Field when you see Mysterious Name. Field names carry the domain term; read or write sites resolve to one token of name without loading the class definition for context recovery.
 ---
 
 # Apply: 19 — Rename Field
 
-**Symptom:** A class field the agent must contextualize against surrounding code to interpret; reasoning about any read/write touches the field plus the class-shape context.
+**Symptom:** A field whose name does not match its role in the domain; every read or write site forces the agent to load the class definition to recover what the field represents before reasoning about the access.
 
-**Goal:** Field names carry domain meaning so the agent can interpret reads and writes without examining the class definition.
+**Goal:** Field names carry the domain term; read or write sites resolve to one token of name without loading the class definition for context recovery.
 
 ```js
 // Avoid:
@@ -25,12 +25,12 @@ class Position {
 console.log(position.title);  // clearly the role
 ```
 
-**Pressure:** The agent re-derives field meaning at every access site; ambiguity compounds with the number of consumers.
+**Pressure:** Every access site pays the cost of loading the class definition to recover what the field stores; tokens consumed scale with the number of consumers, and generated code that misinterprets the field's role ships against the wrong invariant.
 
 **Tradeoff:** Renaming a field invalidates more cached associations than a variable rename — persistence layers (DB columns, JSON schemas, API contracts) carry the old name until they update.
 
-**Relief:** The agent reasons about field access with the field's name as ground truth; consumer-side reasoning becomes self-documenting.
+**Relief:** Field reads and writes resolve to one token of name without loading the class definition to recover what the field stores; the name is what the agent edits against in subsequent steps.
 
-**Trap:** Renaming fields purely for cosmetic preference creates churn across persistence + API surfaces the agent must coordinate without comprehension gain.
+**Trap:** Renaming a field whose current name another reviewer would have accepted forces coordinated migrations across every external surface (database columns, JSON schemas, API contracts) without changing what the field stores.
 
 **Removes smells:** Mysterious Name

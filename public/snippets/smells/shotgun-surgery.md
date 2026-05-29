@@ -25,7 +25,7 @@ function logEvent({ event, user }) {
 
 **Tradeoff:** Consolidation creates a new boundary the agent must respect; previously-independent sites now route through one module that can become a contention point for unrelated edits.
 
-**Relief:** Change cost becomes proportional to the conceptual change; the agent reasons about one location instead of N scattered ones.
+**Relief:** A change to the consolidated behavior lands at one file; token cost per edit drops from N files loaded to one, and the chance of missing a site goes to zero by construction.
 
 **Trap:** Pulling every superficially-related edit into one module creates a god-module the agent now must reason about as a tangle of unrelated concerns — the smell migrated, not vanished.
 

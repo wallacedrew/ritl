@@ -60,7 +60,7 @@ _Example source: Illustrative example written for this site, faithful to Kerievs
 
 **Tradeoff:** Multiple creation methods expand the class's static API surface; the agent must learn them all to know which to call for a given intent. For agents working from a SKILL or doc rather than full source, the proliferation is a real cost.
 
-**Relief:** Static analysis identifies creation-method usage by name; intent at the call site is statically visible. Diff surface for adding an intent is one new method; the canonical constructor stays narrow.
+**Relief:** Each construction path has a named method the agent reads at the call site to predict intent; adding a new intent is one new creation method on the class without changing the canonical constructor.
 
 **Trap:** A wall of nearly-identical static creation methods that differ only in defaults can become harder to scan than one constructor with documented defaults. The pattern's clarity gain depends on each method representing a genuinely distinct intention.
 

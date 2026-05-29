@@ -33,7 +33,7 @@ function invoiceTotal(invoice) {
 
 **Tradeoff:** Each extracted helper inflates context-window cost by one definition the next reasoning step must load; over-extracting blows effective working memory.
 
-**Relief:** Smaller diff surface per commit; behavior preservation verifiable per refactoring step; chained orchestrations work from named subroutines instead of re-derived semantics.
+**Relief:** Each extracted helper fits inside one read; the agent verifies behavior against one signature instead of holding the entire original procedure in attention to predict what changed.
 
 **Trap:** Forces the agent to chase a dozen function definitions to follow what was once a 20-line procedure — context cost inflates and cross-function invariants disappear.
 

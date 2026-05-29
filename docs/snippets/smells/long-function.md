@@ -31,7 +31,7 @@ function ship(order) {
 
 **Tradeoff:** Splitting inflates context-window usage at orchestration time — the agent now loads N function definitions to follow what was once one body. Worth it when the orchestration outline is clearer than the linear body.
 
-**Relief:** Smaller diff surface per commit; behavior preservation verifiable per refactoring step; chained orchestrations work from named subroutines instead of re-derived semantics.
+**Relief:** Each extracted function fits inside one read; the agent verifies behavior against one signature instead of holding the full procedure in working memory across edits.
 
 **Trap:** Forces the agent to chase a dozen function definitions for what was once a 20-line procedure — context cost inflates and cross-function invariants disappear.
 

@@ -54,7 +54,7 @@ _Example source: Illustrative example written for this site in the spirit of Des
 
 **Tradeoff:** A parallel hierarchy doubles the file count the agent must navigate to understand the system. 'Which Document am I dealing with?' becomes an additional step in every reasoning trace, and refactoring across the hierarchy requires editing N files in lockstep — exactly the cross-cutting pattern the agent struggles with most.
 
-**Relief:** Per-variant edits scope to one subclass; the creator's workflow is read-once. Tests for the creator cover all variants transitively; tests for each variant cover one method. Diff surface for a new variant is a single new file the agent generates by mirroring an existing sibling.
+**Relief:** Adding a new variant is one new subclass that overrides the factory method; the creator's body stays constant in size, and the agent generates the new subclass by reading one sibling instead of editing dispatch logic across the codebase.
 
 **Trap:** Subclasses that override more than the factory method (extra hooks, extra state, extra invariants) reintroduce the cross-cutting verification problem in a different shape — now the agent must verify N subclasses each implement M hooks consistently. The parallel hierarchy becomes the same N×M cell-check problem the switch had, only spread across more files.
 

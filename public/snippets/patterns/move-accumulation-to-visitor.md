@@ -1,13 +1,13 @@
 ---
 name: move-accumulation-to-visitor
-description: Apply Move Accumulation To Visitor when you see Divergent Change, Extract Class, Move Function. One file per operation; the agent verifies a Visitor in isolation.
+description: Apply Move Accumulation To Visitor when you see Divergent Change, Extract Class, Move Function. One file per operation; the agent verifies a Visitor against its declared interface in isolation.
 ---
 
 # Apply: 14 — Move Accumulation To Visitor
 
 **Symptom:** An operation's logic the agent must trace across N node classes to reconstruct what happens on a recursive call. The structure's source files are large because each one carries every operation; adding an operation requires the agent to coordinate edits across the full type hierarchy.
 
-**Goal:** One file per operation; the agent verifies a Visitor in isolation. Node classes shrink to data + one accept method; the structure's complexity drops to its actual shape rather than the cumulative weight of every operation it has accumulated.
+**Goal:** One file per operation; the agent verifies a Visitor against its declared interface in isolation. Node classes hold data plus one accept method, dropping the per-operation surface area the agent loads when reading any node type.
 
 ```js
 // Before:
@@ -67,7 +67,7 @@ _Example source: Illustrative example written for this site, faithful to Kerievs
 
 **Tradeoff:** Visitor splits a single conceptual operation across two layers (accept + visit); the agent must follow the double dispatch to trace what runs for a given node + operation pair. Adding a node type requires the agent to edit every visitor — Shotgun Surgery shifts from operations to nodes.
 
-**Relief:** Per-operation diff surface is one file the agent reads end-to-end. Static-analysis tools can verify each Visitor implements every visitX method (whereas the inline-method version had no such guarantee). Tests target Visitor classes directly.
+**Relief:** Each operation lives at one Visitor file the agent reads end-to-end; the type checker confirms each Visitor implements every visit method, and adding an operation does not edit any node class.
 
 **Trap:** A visitor hierarchy applied to an unstable node set forces the agent to chase a Shotgun Surgery across visitor files every time a node is added. Per-edit context cost goes up linearly with operation count when nodes change — the inverse of the pattern's intended cost shape.
 

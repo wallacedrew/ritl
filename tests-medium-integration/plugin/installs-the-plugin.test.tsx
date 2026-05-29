@@ -29,16 +29,16 @@ describe("user installs the plugin from /plugin", () => {
     ).toBeInTheDocument();
   });
 
-  it("frames the full catalog paste as a last-resort fallback", () => {
+  it("frames the full skills bundle as a last-resort fallback", () => {
     renderWithTheme(<PluginPage />);
 
     expect(
-      screen.getByRole("heading", { level: 2, name: /Full catalog paste/i }),
+      screen.getByRole("heading", { level: 2, name: /Full skills bundle/i }),
     ).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: /refactoring-catalog\.md/i })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: /ritl-skills-bundle\.md/i })).toBeInTheDocument();
     expect(
       screen.getByText(
-        /last-resort fallback for non-Claude-Code agents.*Paste sections relevant to the smell/i,
+        /last-resort fallback for non-Claude-Code agents.*Paste\s+sections relevant to the smell/i,
       ),
     ).toBeInTheDocument();
   });

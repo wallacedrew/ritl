@@ -72,7 +72,7 @@ _Example source: Illustrative example written for this site in the spirit of Des
 
 **Tradeoff:** Opaque Memento means the agent investigating a runtime issue (e.g., 'why did this undo restore the wrong selection?') cannot inspect the Memento in stack traces. Debugging requires save/restore-aware instrumentation; without it, mementos look like black boxes the agent must trust.
 
-**Relief:** Edits scope to save() and restore() inside the editor; consumers pass tokens around; the agent verifies clone-depth and field-set once per editor type. Diff surface for a new field is two lines in one file.
+**Relief:** Save and restore live on the editor in two methods; adding a new field is one assignment in save plus one in restore, and consumers pass the memento as an opaque token without reading its field set.
 
 **Trap:** Clients that read memento.snapshot directly defeat the encapsulation and create new Insider Trading on the editor's representation. The agent reading client code trusts the Memento contract; the runtime coupling contradicts that trust silently. Lint or document the opacity invariant or it will erode commit-by-commit.
 

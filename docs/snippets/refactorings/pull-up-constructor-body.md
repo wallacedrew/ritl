@@ -1,13 +1,13 @@
 ---
 name: pull-up-constructor-body
-description: Apply Pull Up Constructor Body when you see Duplicated Code. The shared init lives in the parent's constructor and is called via super; the agent reasons about one initialization path.
+description: Apply Pull Up Constructor Body when you see Duplicated Code. Shared initialization lives in the parent's constructor and runs via super; subclass constructors hold only their specific setup, and the agent reads one canonical init for parent-state setup.
 ---
 
 # Apply: 62 — Pull Up Constructor Body
 
 **Symptom:** Multiple subclass constructors initialize the same parent fields with the same logic; the agent verifying constructors must check every subclass for consistency.
 
-**Goal:** The shared init lives in the parent's constructor and is called via super; the agent reasons about one initialization path.
+**Goal:** Shared initialization lives in the parent's constructor and runs via super; subclass constructors hold only their specific setup, and the agent reads one canonical init for parent-state setup.
 
 ```js
 // Avoid:
@@ -24,9 +24,9 @@ class Engineer extends Employee {}
 
 **Pressure:** Bug fixes in init logic must land in every subclass; the agent must update each consistently or risk silent drift.
 
-**Tradeoff:** If only some subclasses share the init logic, pulling it up forces the others to override or opt out; the agent verifying must check whether the shared init is genuinely common.
+**Tradeoff:** Subclasses that need different parent-state setup pay the cost of overriding the pulled-up init or passing flags through super; the agent reading those overrides loads both the parent's shared init and the subclass's override to predict what runs.
 
-**Relief:** One canonical init; new subclasses inherit for free; the agent reasons about parent-state setup in one place.
+**Relief:** New subclasses inherit the parent's init without re-declaring it; edits to the shared setup land in one constructor and the agent loads one body to verify the change instead of N near-identical subclass constructors.
 
 **Trap:** Pulling up init logic only some subclasses need forces the others to override with awkward opt-outs the agent must reason about.
 

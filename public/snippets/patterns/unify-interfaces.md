@@ -1,13 +1,13 @@
 ---
 name: unify-interfaces
-description: Apply Unify Interfaces when you see Alternative Classes with Different Interfaces, Change Function Declaration, Pull Up Method. One canonical name per operation across the codebase; the agent's static reasoning about 'where is X called?' returns a complete answer.
+description: Apply Unify Interfaces when you see Alternative Classes with Different Interfaces, Change Function Declaration, Pull Up Method. Each operation has one name across every class that exposes it; a grep for the name returns every call site, and the agent enumerates consumers without paying for an alias map.
 ---
 
 # Apply: 27 — Unify Interfaces
 
-**Symptom:** Accidental name divergence across N classes the agent must remember when reading or editing code. Search results for one operation miss the variants under different names; refactoring tools can't unify the rename without manual mapping.
+**Symptom:** Operations with the same semantics carry different names across N classes; a grep for one name returns one class's call sites, missing the aliases; the agent enumerating consumers pays the cost of knowing the alias map for the operation.
 
-**Goal:** One canonical name per operation across the codebase; the agent's static reasoning about 'where is X called?' returns a complete answer. Per-class behaviour is verified once against the canonical interface.
+**Goal:** Each operation has one name across every class that exposes it; a grep for the name returns every call site, and the agent enumerates consumers without paying for an alias map.
 
 ```js
 // Before:
@@ -58,7 +58,7 @@ _Example source: Illustrative example written for this site, faithful to Kerievs
 
 **Tradeoff:** Renames break external consumers who depend on the old names; the agent must verify the rename's blast radius before applying it. For library code with documented APIs, the rename cost may exceed the consistency gain.
 
-**Relief:** Static analysis returns complete results; the agent's verification budget on cross-class edits drops to the unified surface. Diff surface for future variants is well-defined: implement the canonical names.
+**Relief:** Edits to the operation's contract land against one name across every class; tooling that searches by name returns every call site, and the agent does not pay the alias-mapping cost on cross-class changes.
 
 **Trap:** Unifying names across two classes whose operations only superficially match silently misleads future readers. The agent reads `findById` on both and assumes equivalent behaviour; when one has implicit side effects the other doesn't, the trap is hard to detect statically. Verify behaviour matches before unifying names.
 

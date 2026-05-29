@@ -67,7 +67,7 @@ _Example source: Illustrative example written for this site, faithful to Kerievs
 
 **Tradeoff:** A factory hides construction details from the call site; the agent must read the factory to know what the returned object actually carries. Static type information at the call site narrows to the return type, with construction-level invariants pushed inside the factory.
 
-**Relief:** Diff surface for a recipe change is one file. Tests cover the factory's contract once; per-call-site behaviour reduces to verifying the intent, not the assembly. Recipe drift across callers becomes statically impossible.
+**Relief:** The recipe lives at one factory the agent edits once; callers reach for the factory's named methods, and the recipe cannot drift across callers because callers do not hold a copy of the assembly steps.
 
 **Trap:** A factory whose recipe is itself a long sequence of conditional steps can become as opaque as the duplicated callers were — the agent must trace the factory body line-by-line to know what came out. The pattern's gain materializes when the factory's recipe is itself decomposed into named build steps.
 

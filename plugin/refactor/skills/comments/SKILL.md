@@ -22,7 +22,7 @@ chargeWithTax(customer, total);
 
 **Tradeoff:** Renaming to express the comment's content ripples across consumers (cross-repo greps, embedding indexes, prior conversation context) the agent must accept will drift stale for a window.
 
-**Relief:** The agent trusts names as the source of truth; reasoning steps don't need to cross-reference comments that might be wrong; the code is the documentation.
+**Relief:** Naming carries the intent directly; the agent reads one symbol to predict behavior instead of loading both the symbol and the comment and reconciling any disagreement between them.
 
 **Trap:** Deleting every comment in a cleanup pass — including ones documenting hidden constraints, historical context, or invariants names can't express — strips load-bearing context the agent will need later.
 

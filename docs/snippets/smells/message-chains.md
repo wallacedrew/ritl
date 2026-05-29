@@ -7,7 +7,7 @@ description: Refuse Message Chains when long dotted access paths the agent must 
 
 **Symptom:** Long dotted access paths the agent must trace through several object hops to understand any single read; renaming any intermediate field breaks every caller silently.
 
-**Goal:** Callers ask the closest object for what they want; the agent reasons about one boundary instead of traversing N.
+**Goal:** Callers ask the closest object for what they want; the agent reads one method signature instead of walking N link types to predict what the chain produces.
 
 ```js
 // Smellier:

@@ -1,13 +1,13 @@
 ---
 name: pull-up-method
-description: Apply Pull Up Method when you see Duplicated Code, Alternative Classes with Different Interfaces. The method lives on the shared superclass; the agent reasons about one implementation that all subclasses inherit.
+description: Apply Pull Up Method when you see Duplicated Code, Alternative Classes with Different Interfaces. The method lives on the parent with one implementation; queries about behavior across subclasses load one method body instead of paying the token cost of loading N near-identical bodies.
 ---
 
 # Apply: 33 — Pull Up Method
 
 **Symptom:** Two or more subclasses implement the same method identically; the agent verifying behavior must check every subclass and confirm they actually agree.
 
-**Goal:** The method lives on the shared superclass; the agent reasons about one implementation that all subclasses inherit.
+**Goal:** The method lives on the parent with one implementation; queries about behavior across subclasses load one method body instead of paying the token cost of loading N near-identical bodies.
 
 ```js
 // Avoid:
@@ -24,8 +24,8 @@ class Engineer extends Employee {}
 
 **Tradeoff:** If the methods only superficially resemble each other (same name, different semantics), pulling up creates a fake-shared abstraction the agent must constantly disambiguate.
 
-**Relief:** One implementation; the agent reasons about one place for the shared behavior; subclasses focus on what's actually different.
+**Relief:** Edits to the shared behavior land in one parent method; the agent does not load N subclass bodies to verify they still agree, and generated code that calls the method from any subclass dispatches to the same implementation.
 
-**Trap:** Pulling up superficially-similar methods creates fake-shared behavior the agent must constantly verify means the same thing across subclasses.
+**Trap:** Pulling up methods that share a name but not behavior produces one parent method the agent reads as canonical; generated code that calls the method from any subclass runs the parent's behavior, dropping the subclass-specific work the original separate methods performed.
 
 **Removes smells:** Duplicated Code, Alternative Classes with Different Interfaces

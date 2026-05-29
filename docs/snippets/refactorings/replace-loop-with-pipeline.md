@@ -26,8 +26,8 @@ const seniors = users
 
 **Tradeoff:** Pipeline form adds per-element call overhead and forces the agent to track intermediate collection types through the chain; for hot paths the runtime cost matters.
 
-**Relief:** Intent is readable; the agent reasons about each pipeline stage independently with type signatures documenting the transformation.
+**Relief:** Each pipeline stage carries a typed input and output; the agent verifies one stage against its signature instead of simulating accumulator state across the loop's iterations to predict the result.
 
-**Trap:** Forcing every loop into a pipeline — including ones with early-exit, side-effects, or sequential dependencies — produces twisted .reduce() bodies the agent has to untangle to understand.
+**Trap:** Forcing every loop into a pipeline, including ones with early-exit, side-effects, or sequential dependencies, produces .reduce() bodies whose accumulator state the agent has to simulate at every read; the simulation cost exceeds what the original loop's straight-line control flow required.
 
 **Removes smells:** Loops

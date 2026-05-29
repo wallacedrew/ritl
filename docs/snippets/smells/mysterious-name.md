@@ -25,8 +25,8 @@ function distance(speed, time) {
 
 **Tradeoff:** Renames invalidate cached associations — commit history, RAG snippets, embedding indexes, and prior conversation context all carry the old name until they refresh.
 
-**Relief:** Fewer context-lookup hops per reasoning step; planning loops run cheaper and resist drift.
+**Relief:** Every later read of the symbol resolves to one token of name instead of name plus a context lookup; per-occurrence reading cost drops by the size of the context the agent previously had to load to recover meaning.
 
-**Trap:** Compulsive renaming generates spurious diffs that crowd the review surface and burn context the human reviewer has to skim past.
+**Trap:** Renaming every variable whose current name another reviewer would also accept invalidates cached associations across RAG indexes, prior conversation context, and code comments referencing the old name, without changing what the symbol stands for.
 
 **Apply refactorings:** Change Function Declaration, Rename Variable, Rename Field

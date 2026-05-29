@@ -1,13 +1,13 @@
 ---
 name: replace-subclass-with-delegate
-description: Apply Replace Subclass with Delegate when you see Refused Bequest, Insider Trading. Variants live in delegate objects swappable at runtime; the agent reasons about composition with explicit delegation calls.
+description: Apply Replace Subclass with Delegate when you see Refused Bequest, Insider Trading. Variants live in delegate objects the host holds and forwards to; the agent reads one host class plus the held delegate's interface instead of climbing an inheritance chain to predict behavior.
 ---
 
 # Apply: 38 — Replace Subclass with Delegate
 
 **Symptom:** A subclass that overrides several methods to implement variant behavior; the agent reasoning about polymorphic dispatch must enumerate variants across the hierarchy.
 
-**Goal:** Variants live in delegate objects swappable at runtime; the agent reasons about composition with explicit delegation calls.
+**Goal:** Variants live in delegate objects the host holds and forwards to; the agent reads one host class plus the held delegate's interface instead of climbing an inheritance chain to predict behavior.
 
 ```js
 // Avoid:
@@ -27,8 +27,8 @@ class Booking {
 
 **Tradeoff:** Composition is more verbose at construction sites; the agent loses syntactic polymorphism and must verify behavior through explicit delegation calls.
 
-**Relief:** Variants can be combined or swapped at runtime; Liskov violations vanish; the agent reasons about explicit delegation.
+**Relief:** Behavior changes at runtime by swapping the delegate; the agent reasons against one host signature plus the delegate's interface, without loading the inheritance graph to verify which override applies to a given instance.
 
-**Trap:** Replacing every subclass — including ones where Liskov genuinely holds — pays construction-site verbosity without buying flexibility the agent will actually use.
+**Trap:** Replacing inheritance with delegation on hierarchies where every subclass honors the parent's contract adds construction-site setup and a forwarding method per parent method without changing what the agent's generated calls do.
 
 **Removes smells:** Refused Bequest, Insider Trading

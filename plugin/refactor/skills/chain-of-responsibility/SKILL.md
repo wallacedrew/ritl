@@ -88,7 +88,7 @@ _Example source: Illustrative example written for this site in the spirit of Des
 
 **Tradeoff:** Chain composition is implicit in the construction expression's nesting order. The agent investigating a runtime issue must trace through N handlers; stack traces span N frames; concern interactions (handler-A short-circuits before handler-B logs the failure) require explicit chain-aware reasoning the type system cannot enforce.
 
-**Relief:** Per-concern edits scope to one handler class; tests for each handler are unit-sized; chain composition tests cover ordering exhaustively at one construction site. Diff surface for adding a concern is a new file + a one-line edit to the chain.
+**Relief:** Adding a new concern is one new handler class plus one wiring entry in the chain; per-handler tests load one class instead of the full chain, and the chain's composition lives at one construction site the agent reads to predict ordering.
 
 **Trap:** Handlers that peek at chain neighbors or skip ahead by mutating the request reintroduce cross-handler coupling. The agent reading one handler can no longer reason about its behaviour in isolation; chain-aware verification becomes mandatory on every handler edit, defeating the per-handler isolation the pattern promised.
 

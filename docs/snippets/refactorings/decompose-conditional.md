@@ -27,7 +27,7 @@ charge = isSummer(date)
 
 **Tradeoff:** Extracted names that aren't crisper than the original condition add a layer of indirection — the agent now follows a name to find the same expression.
 
-**Relief:** The agent reasons about named domain decisions; the branching logic reads top-to-bottom as a story.
+**Relief:** Each condition and branch lives at one named function the agent reads against the function's name instead of recovering the predicate's domain meaning from its boolean expression.
 
 **Trap:** Extracting names that don't sharpen the condition — `isMonthBetweenFiveAndEight` instead of `isSummer` — adds indirection without revealing intent.
 

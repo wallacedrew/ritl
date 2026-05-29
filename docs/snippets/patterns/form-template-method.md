@@ -76,7 +76,7 @@ _Example source: Illustrative example written for this site, faithful to Kerievs
 
 **Tradeoff:** Template Method splits behaviour across the superclass (algorithm) and subclasses (primitives); the agent must traverse the hierarchy to know what a single call produces. Method resolution order issues complicate static reasoning when intermediate subclasses partially override primitives.
 
-**Relief:** Algorithmic diffs collapse to one method body. Per-subclass tests verify only the primitives; the algorithm is exercised by superclass tests once. Diff surface for adding a step is one new abstract primitive + N implementations — visible and bounded.
+**Relief:** Algorithmic edits land at one parent method body the agent reads once; per-subclass tests target the primitive overrides without re-running the full algorithm, and adding a step is one new abstract primitive plus one override per subclass.
 
 **Trap:** A long Template Method with many fine-grained primitives forces the agent to read across many small methods to reconstruct what the algorithm does in any given subclass. Context cost migrates from inline duplication to hierarchy traversal; per-step debugging requires loading the relevant primitive override before the template makes sense.
 

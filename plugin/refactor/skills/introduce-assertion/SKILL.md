@@ -1,13 +1,13 @@
 ---
 name: introduce-assertion
-description: Apply Introduce Assertion when you see Comments, Mutable Data. Invariants are stated explicitly; the agent reads them and reasons about behavior under their guarantee.
+description: Apply Introduce Assertion when you see Comments, Mutable Data. Invariants live in code as runtime checks; the agent reads the assertion as a typed constraint that downstream code can take as a precondition without re-deriving it from caller context.
 ---
 
 # Apply: 26 — Introduce Assertion
 
 **Symptom:** Code that depends on unwritten invariants the agent must reconstruct from context; bugs that violate the invariant surface far from the source.
 
-**Goal:** Invariants are stated explicitly; the agent reads them and reasons about behavior under their guarantee.
+**Goal:** Invariants live in code as runtime checks; the agent reads the assertion as a typed constraint that downstream code can take as a precondition without re-deriving it from caller context.
 
 ```js
 // Avoid:

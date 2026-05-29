@@ -1,13 +1,13 @@
 ---
 name: consolidate-conditional-expression
-description: Apply Consolidate Conditional Expression when you see Duplicated Code. The conditions collapse into one named predicate; the agent reasons about one rule with one action.
+description: Apply Consolidate Conditional Expression when you see Duplicated Code. The predicate lives at one named function the agent reads once; edits to the rule land at the function definition and propagate to every caller through reference.
 ---
 
 # Apply: 22 — Consolidate Conditional Expression
 
 **Symptom:** Multiple conditions in sequence lead to the same action; the agent must verify each branch leads to identical behavior and that adding a new condition won't accidentally diverge.
 
-**Goal:** The conditions collapse into one named predicate; the agent reasons about one rule with one action.
+**Goal:** The predicate lives at one named function the agent reads once; edits to the rule land at the function definition and propagate to every caller through reference.
 
 ```js
 // Avoid:
@@ -23,7 +23,7 @@ if (isIneligibleForBonus(employee)) return 0;
 
 **Tradeoff:** If the conditions encode independent reasons (different rules that happen to produce the same outcome today), collapsing them hides distinctions the agent will need to re-split later.
 
-**Relief:** The agent reasons about one named predicate with one consequent; new conditions extend in one place.
+**Relief:** The predicate lives at one named function; edits to the rule land at the definition and propagate through reference, removing the chance of one branch updating without the others.
 
 **Trap:** Collapsing conditions that look the same but encode independent rules hides distinctions the agent will need to re-split when one rule evolves differently from the others.
 

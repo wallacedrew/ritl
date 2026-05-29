@@ -31,7 +31,7 @@ class Person { name; phone; }
 
 **Tradeoff:** Extracting too eagerly — 1-2 fields with no behavior — adds a class file the agent must load with no encapsulation gain.
 
-**Relief:** Smaller focused units; the agent tests one concept at a time and reasons about each class as a coherent whole.
+**Relief:** Each class holds one responsibility's data and methods; queries about one responsibility load only its file, and the unrelated payload that previously sat in the same window for every read is gone.
 
 **Trap:** Extracting candidate concepts that are just trivial field groups creates class files the agent must navigate without buying any encapsulation gain.
 

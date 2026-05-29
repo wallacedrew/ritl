@@ -29,7 +29,7 @@ function basePrice() { return qty * itemPrice; }
 
 **Tradeoff:** If the temp wraps an expensive calculation called many times, naive replacement multiplies cost; the agent verifying performance must measure or cache before substituting.
 
-**Relief:** The agent's plan-and-execute loop for Extract Function becomes mechanical; the named query is reusable anywhere it makes sense.
+**Relief:** The value is recomputed from its source at every read; the agent does not track a temp's binding across reads to predict staleness, and the query is callable from any site without the binding's scope constraint.
 
 **Trap:** Replacing temps that wrap expensive computations called many times multiplies runtime cost the agent's local tests may not catch.
 

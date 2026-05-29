@@ -25,7 +25,7 @@ function book(traveler, address, trip) {
 
 **Tradeoff:** A new parameter object adds a class the agent must load to construct values; if used in only one place the cost is pure overhead.
 
-**Relief:** Call sites become readable as named intent; the agent constructs and passes domain objects instead of remembering positional contracts.
+**Relief:** Parameters bundled into a typed object are matched by name at every call site; one missed field becomes a type error instead of a silent positional swap the agent would otherwise have to detect from context.
 
 **Trap:** Synthesizing parameter objects that don't represent real domain concepts forces the agent through extra wrapping and unwrapping with no comprehension payoff — pure ceremony.
 

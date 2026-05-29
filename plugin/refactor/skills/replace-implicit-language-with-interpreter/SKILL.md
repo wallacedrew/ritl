@@ -55,7 +55,7 @@ _Example source: Illustrative example written for this site, faithful to Kerievs
 
 **Tradeoff:** Interpreter spreads a single conceptual query across multiple class files; the agent traverses the tree to know what an expression does. Static call-graph analysis loses precision on polymorphic `matches` calls — the agent must enumerate concrete node types.
 
-**Relief:** Diff surface for a new operator is one class. The grammar's surface is the type hierarchy — the agent can enumerate operators by inspecting the class declarations. Parser and evaluator concerns separate cleanly; tests target evaluation only.
+**Relief:** Adding a new operator is one new class in the grammar hierarchy; the agent enumerates operators by listing the classes that implement the interface, and tests target evaluation against the typed AST instead of raw string parsing.
 
 **Trap:** A grammar with many nodes representing fine-grained syntactic variations forces the agent to load a large hierarchy to reason about any expression. Per-node specialization (NumericEquals vs. StringEquals vs. DateEquals) can multiply file count without proportional reasoning gain.
 

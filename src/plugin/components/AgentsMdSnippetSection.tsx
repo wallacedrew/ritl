@@ -10,11 +10,13 @@ export default function AgentsMdSnippetSection() {
         AGENTS.md drop-in
       </Typography>
       <Typography variant="body2" color="text.secondary">
-        ~25-line directive snippet for non-Claude-Code agents (Codex, Aider, Cursor, etc.). Drop
-        into your AGENTS.md or CLAUDE.md so any coding agent gets the same refactoring discipline
-        — sense the smell, identify the source, lay down a safety net, apply one named refactoring,
-        stay green. Covers the Fowler loop only; for Kerievsky composite and GoF pattern coverage,
-        install the full Claude Code plugin above.
+        ~30-line directive snippet for non-Claude-Code agents (Codex, Aider, Cursor, etc.). Drop
+        into your AGENTS.md or CLAUDE.md so any coding agent gets the same six-step discipline
+        — sense the smell, identify the source, lay down a safety net, apply one named
+        refactoring, stay green, and recognize when a stack of refactorings climbs toward a
+        Kerievsky composite or GoF pattern destination. The discipline references the catalog
+        at refactoringintheloop.com/reference for the lookup data; for richest coverage install
+        the full Claude Code plugin above.
       </Typography>
       <SnippetPreviewButton
         href="/snippets/refactoring-discipline.md"

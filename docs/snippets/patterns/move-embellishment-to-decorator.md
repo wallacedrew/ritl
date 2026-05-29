@@ -90,7 +90,7 @@ _Example source: Illustrative example written for this site, faithful to Kerievs
 
 **Tradeoff:** Decorator chains spread the call-path across multiple files; the agent must traverse the chain to know what a single method call does. Wrapping-order is not statically declared anywhere; the agent must read the construction site to recover the intent.
 
-**Relief:** Diff surface for adding or removing a feature is one decorator file or one chain edit at the construction site. Per-feature tests are isolated; static analysis of the core class is unburdened by optional-behaviour conditionals.
+**Relief:** Adding or removing an embellishment is one decorator file or one wiring edit at the construction site; the core class holds the base behavior without optional-feature conditionals, and per-feature tests load one decorator instead of every combination.
 
 **Trap:** Five-deep decorator chains require the agent to load five definitions before reading the call. Stack traces obscure where in the chain a failure occurred; the agent's debugging cost goes up with depth. A composition-style API that names the intended capability set can be more legible than the raw chain.
 

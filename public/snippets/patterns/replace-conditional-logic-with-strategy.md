@@ -68,6 +68,6 @@ _Example source: Adapted from Joshua Kerievsky's loan-calculator example in Refa
 
 **Relief:** Each strategy is independently verifiable. Adding a variant is one new file, not a multi-file change. The dispatching site stays trivial regardless of variant count; per-variant tests pin exactly the behavior they own.
 
-**Trap:** A maze of one-method strategy classes that exist only to satisfy the pattern — the agent loads N files to understand what a single conditional once expressed in one. Context cost multiplies without proportional reasoning gain.
+**Trap:** Splitting a small set of one-line cases into one-method strategy classes forces the agent to load N files to reconstruct what one conditional once expressed in one file; context cost multiplies without a corresponding reduction in per-edit scope.
 
 **Triggered by:** Repeated Switches (smells), Replace Conditional with Polymorphism (refactorings), Decompose Conditional (refactorings)

@@ -1,13 +1,13 @@
 ---
 name: replace-function-with-command
-description: Apply Replace Function with Command when you see Long Function. Sub-steps become named methods sharing state via fields; the agent reasons about each step in isolation and extracts/tests them independently.
+description: Apply Replace Function with Command when you see Long Function. Each sub-step becomes a named method on the command object; sub-step methods share state through fields the agent reads from one class file, and tests target one method at a time without simulating the full function body.
 ---
 
 # Apply: 48 — Replace Function with Command
 
 **Symptom:** A function whose body holds many shared locals across conceptually distinct sub-steps; the agent extracting any step must thread temps through helper parameters.
 
-**Goal:** Sub-steps become named methods sharing state via fields; the agent reasons about each step in isolation and extracts/tests them independently.
+**Goal:** Each sub-step becomes a named method on the command object; sub-step methods share state through fields the agent reads from one class file, and tests target one method at a time without simulating the full function body.
 
 ```js
 // Avoid:

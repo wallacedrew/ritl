@@ -45,7 +45,7 @@ _Example source: Illustrative example written for this site, adapted from Keriev
 
 **Tradeoff:** A parameterized method obscures static call-graph analysis — the agent cannot tell from the call site alone which behaviour fires. Stringy parameters (`'author'`) defeat static type-checking; misspellings ship to runtime.
 
-**Relief:** Diff surface for shared logic collapses to one method body. Per-parameter behaviour is covered by table-driven tests the agent can read and reason about in one block; new variants are one new test row.
+**Relief:** Shared logic lives at one method body the agent reads once; the parameter holds the per-call variation, and tests cover the variants through a table the agent reads as one block instead of N near-identical test methods.
 
 **Trap:** Replacing N methods with a method that takes a stringy parameter pushes the type information out of the type system and into runtime. The agent must verify caller intent by tracing the literal across files, which costs more context than reading N distinct method names.
 

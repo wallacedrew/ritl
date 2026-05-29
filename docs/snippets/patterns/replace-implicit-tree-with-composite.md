@@ -69,7 +69,7 @@ _Example source: Illustrative example written for this site, faithful to Kerievs
 
 **Tradeoff:** Composite construction is itself a translation step the agent must verify against the flat form. Persistence boundaries require the agent to keep two representations in mind — the in-memory tree and the on-disk flat form. Serialization round-trips are a new bug surface.
 
-**Relief:** Traversal code shrinks to one-line recursive calls; static analysis verifies node-type coverage; per-method tests target tree behaviour without record-soup setup. Diff surface for tree operations is the Composite class itself.
+**Relief:** Traversal runs through one-line recursive calls on the Composite interface; the type checker confirms every node type implements the traversal contract, and tree-operation tests construct one typed tree instead of reconstructing the shape from raw records.
 
 **Trap:** If the on-disk form remains the flat record set, the agent has to verify the in-memory tree stays consistent with it across edits. The pattern's gain materializes when the tree owns the canonical form; when it's a transient view over a relational store, the implicit form may stay authoritative.
 

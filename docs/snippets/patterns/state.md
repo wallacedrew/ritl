@@ -80,7 +80,7 @@ _Example source: Illustrative example written for this site in the spirit of Des
 
 **Tradeoff:** N state classes is N files the agent navigates to understand the system. Stack traces show 'ShippedState.cancel' but resolving 'what is cancel here' requires reading the State class hierarchy. The cost is paid on every state-related investigation.
 
-**Relief:** Per-state edits scope to one file; per-method edits scope to N small additions across state files (mechanical); the type system catches missing operations at compile time. Diff surface for a new state is one new file + a few initial-transition fixes.
+**Relief:** Each state lives at one file the agent reads in isolation; adding a new state is one new class implementing the protocol, and the type checker confirms every state handles every operation defined on the protocol.
 
 **Trap:** Shared behaviour across states (every cancel logs an audit event) repeated across state files re-creates Duplicated Code at the new layer. The agent reading the State class hierarchy must verify the shared logic per state; without a common policy or superclass, the agent loses confidence in cross-state consistency on every edit.
 

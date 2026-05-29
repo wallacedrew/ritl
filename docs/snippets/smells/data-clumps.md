@@ -26,7 +26,7 @@ function send(name, email, address) {
 
 **Tradeoff:** Constructing the value object on every call adds an allocation and a name the agent must learn; if the bundle isn't reused it's pure ceremony.
 
-**Relief:** Operations on the clump (formatting, validation, equality) live with it; signatures shrink and the agent reasons about one named concept instead of N coupled fields.
+**Relief:** Operations on the clump (formatting, validation, equality) live with the type; signatures carry one parameter instead of N, and edits to clump-related behavior land at one class instead of every site that previously passed the fields separately.
 
 **Trap:** Wrapping coincidental field groups creates fake value objects the agent must construct and destructure with no comprehension gain — naming what isn't a concept doesn't help reason.
 

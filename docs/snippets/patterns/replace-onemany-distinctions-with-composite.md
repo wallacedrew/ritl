@@ -73,7 +73,7 @@ _Example source: Illustrative example written for this site, faithful to Kerievs
 
 **Tradeoff:** Composite spreads behaviour across a type hierarchy; the agent must traverse subtypes to know what a method does for a given value. Subtype construction at boundaries is itself a place the agent must verify the one-vs-many decision lands correctly.
 
-**Relief:** Diff surface for a new operation is one method per subtype. Static analysis verifies subtype coverage; per-subtype tests exercise their implementations independently. The shape decision moves out of operation bodies and into the construction boundary.
+**Relief:** Adding a new operation is one method on the Composite interface plus one implementation per subtype; the type checker confirms every subtype implements the operation, and operation bodies no longer branch on one-versus-many because the Composite handles the shape.
 
 **Trap:** A Composite applied to a distinction that is actually load-bearing context (e.g., when callers need to know cardinality to render differently) ends up restoring the `if (isMulti)` branches at the call site, just with `.isMultivalued()` instead of `Array.isArray`. The pattern pays when callers genuinely don't care which shape they have.
 

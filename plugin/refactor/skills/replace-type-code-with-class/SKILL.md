@@ -60,7 +60,7 @@ _Example source: Illustrative example written for this site, faithful to Kerievs
 
 **Tradeoff:** Value-object instances are reference-equality-checked in JavaScript; serialization round-trips require explicit handling. The agent must verify that deserialization produces the same canonical instances, not new equivalents, or `===` comparisons silently fail.
 
-**Relief:** Diff surface for adding a status is one new instance + tests. Static type-checking (in TypeScript / JSDoc) verifies consumers handle all statuses; per-method behaviour is locally readable.
+**Relief:** Adding a new status is one new subclass; the type checker confirms consumers handle every variant, and per-status behavior lives on the variant's class instead of in switch branches across every consumer.
 
 **Trap:** Value objects relying on reference equality across serialization boundaries (HTTP, persistence, message queues) require careful canonicalization; getting it wrong produces runtime equality bugs the agent cannot detect statically. The pattern is straightforward in pure-runtime code; thornier across persistence boundaries.
 

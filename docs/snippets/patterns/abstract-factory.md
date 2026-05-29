@@ -46,7 +46,7 @@ _Example source: Illustrative example written for this site in the spirit of Des
 
 **Tradeoff:** A new product method requires the agent to update every concrete factory in lockstep. The factory interface becomes a single mutation surface the agent must understand fully before any product edit; partial knowledge produces compile errors, but compile errors that surface late in the iteration cycle.
 
-**Relief:** Edits scoped to one factory implementation; type system enforces interface completeness; the agent reasons about one client call site (the one taking the factory) rather than every place that constructs widgets. Diff surface for a new theme is bounded and locally verifiable.
+**Relief:** Adding a new family of products is one new factory implementation; the type checker confirms every factory produces the full family, and client code reaches for the factory once at construction without per-product conditional branches.
 
 **Trap:** Factory interface bloat — over many edits the agent loses sight of which products are still in use. Dead factory methods accumulate because no client demands them but the interface contract still requires them; cleanup requires touching every concrete factory together, exactly the cross-cutting edit the pattern was supposed to eliminate.
 

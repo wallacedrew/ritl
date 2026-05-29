@@ -72,7 +72,7 @@ _Example source: Illustrative example written for this site, adapted from Keriev
 
 **Tradeoff:** Inheritance hides behaviour in the superclass that callers may not know to look for; the agent must traverse the class hierarchy to know what a sibling can do. Method resolution order issues complicate static reasoning when subclasses override partial behaviours.
 
-**Relief:** Diff surface for a collection-logic change collapses to one file. Sibling class files become short and locally readable; tests can target Composite behaviour without per-sibling duplication.
+**Relief:** Collection-handling logic lives at the Composite class at one file; sibling classes hold only their leaf-specific work; tests against the Composite cover the tree-walking logic without per-sibling duplication of the same setup.
 
 **Trap:** A bloated Composite forces the agent to load a large superclass before reading any sibling. If sibling behaviours diverge later, the agent must constantly cross-check superclass methods against per-sibling overrides — context cost migrates from duplication to inheritance traversal.
 

@@ -1,13 +1,13 @@
 ---
 name: pull-up-field
-description: Apply Pull Up Field when you see Duplicated Code. The field lives on the shared parent; the agent reasons about one declaration and one ownership story.
+description: Apply Pull Up Field when you see Duplicated Code. The field lives on the parent with one declaration; reading any subclass's storage resolves through inheritance to the parent's one field instead of paying the cost of loading every subclass to verify the declaration matches.
 ---
 
 # Apply: 63 — Pull Up Field
 
 **Symptom:** A field declared identically across multiple subclasses; the agent verifying changes to the field's shape must update every subclass consistently.
 
-**Goal:** The field lives on the shared parent; the agent reasons about one declaration and one ownership story.
+**Goal:** The field lives on the parent with one declaration; reading any subclass's storage resolves through inheritance to the parent's one field instead of paying the cost of loading every subclass to verify the declaration matches.
 
 ```js
 // Avoid:
@@ -24,8 +24,8 @@ class Engineer extends Employee {}
 
 **Tradeoff:** If subclasses use the field with different defaults, visibility, or semantic role, pulling up creates surprise behavior the agent must constantly disambiguate.
 
-**Relief:** One source of truth for the field's type and default; subclasses focus on what they actually specialize.
+**Relief:** Changes to the field's type or default land in one parent declaration; generated code that constructs any subclass inherits the field without the agent having to verify that N subclasses still agree on the declaration.
 
-**Trap:** Pulling up fields with divergent semantic roles creates a shared declaration that masks subclass-specific behavior the agent must constantly re-verify.
+**Trap:** Pulling up a field that subclasses use with different defaults or semantic roles creates one declaration the agent reads as shared; generated code that initializes the field at the parent level misses the subclass-specific values the original separate declarations carried.
 
 **Removes smells:** Duplicated Code

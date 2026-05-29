@@ -66,7 +66,7 @@ _Example source: Adapted from Joshua Kerievsky's third-party-library-version exa
 
 **Tradeoff:** Adapter extraction multiplies file count and may obscure the agent's static call-graph view of how data flows from host through to external API. Mocking adapters in host tests requires duplicating the adapter interface in the test setup.
 
-**Relief:** Host class tests stop loading external-library mocks; adapter tests load only the one external surface they wrap. Diff surface for a library upgrade is one adapter file; the agent's context cost on host edits drops linearly with variant count.
+**Relief:** Host class tests load the adapter's interface instead of the external library; adapter tests load the vendor surface in isolation; a library upgrade touches the one adapter file rather than every host call site.
 
 **Trap:** An adapter for a single, stable variant is dead weight — one extra file the agent must learn before reading the host. The pattern pays only when adapter count > 1 or when adapter-level test isolation buys verifiability the host couldn't achieve alone.
 

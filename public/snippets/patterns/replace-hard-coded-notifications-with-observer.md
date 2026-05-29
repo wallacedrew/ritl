@@ -77,7 +77,7 @@ _Example source: Illustrative example written for this site, faithful to Kerievs
 
 **Tradeoff:** Observer's dynamic dispatch defeats static call-graph analysis at the event boundary. The agent cannot statically determine which listeners fire on which events without reading the subscription wiring; ordering assumptions are invisible in the code.
 
-**Relief:** Diff surface for adding a consumer is one new file. Publisher tests don't load consumer mocks; consumer tests don't load the publisher. Static analysis of the publisher's surface is unburdened by downstream collaborators.
+**Relief:** Adding a consumer is one new observer class that subscribes to the publisher's protocol; publisher tests do not load consumer mocks, and the publisher's signature stays fixed across additions.
 
 **Trap:** Subscription wiring scattered across the composition root requires the agent to grep for `subscribe(` calls to enumerate the consumer set. Stale subscriptions (uncleaned references) cause hard-to-debug memory and behaviour leaks the agent cannot detect statically.
 

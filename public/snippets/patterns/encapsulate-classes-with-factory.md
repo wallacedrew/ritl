@@ -63,7 +63,7 @@ _Example source: Adapted from Joshua Kerievsky's Loan-hierarchy example in Refac
 
 **Tradeoff:** Factory methods are an extra indirection the agent must hop through to know what kind of object a call returns. Static call-graph analysis loses precision; the agent may need to read the factory body to determine which concrete type comes back from a given factory call.
 
-**Relief:** The factory is the single source of truth for the taxonomy. Adding a subclass touches one file; the agent verifies one new factory method instead of N construction sites. Hierarchy reshaping is locally observable.
+**Relief:** The factory holds the construction recipe for every variant at one file; adding a subclass touches the factory plus the new class, and existing callers do not move because they reach for the factory's named methods rather than constructors.
 
 **Trap:** A factory with one method per subclass and no other logic just renames `new` to `factory.new`. Context cost rises by one definition layer without proportional reasoning gain; the encapsulation pays only when the factory can hide non-trivial creation choices.
 

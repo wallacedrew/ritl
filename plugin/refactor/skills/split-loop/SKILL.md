@@ -27,7 +27,7 @@ const youngest    = Math.min(...people.map(p => p.age));
 
 **Tradeoff:** Two loops over the same collection cost more per iteration than one; for hot paths the runtime overhead matters and the agent verifying performance must measure.
 
-**Relief:** Each loop becomes an independently-replaceable unit (pipeline candidate); the agent's edit surface per concern shrinks.
+**Relief:** Each loop body holds one state machine the agent simulates without interleaving; an edit to one job no longer needs the other job's tokens loaded to predict the loop's output.
 
 **Trap:** Splitting loops whose concerns share per-iteration state — accumulator-of-running-difference, look-behind logic — fragments coupled state the agent must now re-derive in each split.
 

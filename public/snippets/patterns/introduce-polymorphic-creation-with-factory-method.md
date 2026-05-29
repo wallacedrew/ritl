@@ -64,7 +64,7 @@ _Example source: Illustrative example written for this site, adapted from Keriev
 
 **Tradeoff:** Factory Method spreads creation across the inheritance hierarchy; the agent must traverse subclasses to know which concrete type a base-class call produces. Static call-graph analysis loses precision on the return type of `createParser()`.
 
-**Relief:** Diff surface for a new variant is one subclass file. The base algorithm reads as polymorphic call-and-use; agent reasoning about the algorithm stays independent of the variant count.
+**Relief:** Adding a new variant is one new subclass that overrides the factory hook; the base algorithm reads one virtual call instead of branching on a type code, and the algorithm's body stays constant in size as variants are added.
 
 **Trap:** A hierarchy with one trivial Factory Method per subclass forces the agent to load the inheritance chain to know what a single base-class call returns. The pattern's context-cost gain materializes only when each Factory Method does non-trivial work — otherwise the indirection adds cost without proportional clarity.
 

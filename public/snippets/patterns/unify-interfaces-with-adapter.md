@@ -62,7 +62,7 @@ _Example source: Illustrative example written for this site, faithful to Kerievs
 
 **Tradeoff:** Adapter spreads the boundary across one extra class; the agent must trace from consumer through adapter to vendor to understand a single call's full path. Vendor-API changes ripple to the adapter — usually the right place — but the agent must remember to re-verify the adapter when the vendor updates.
 
-**Relief:** Static type-checking of the canonical interface enforces consumer-side uniformity. Diff surface for a new vendor variant is one new adapter file; consumers don't move. Tests for the adapter are isolated from consumer logic.
+**Relief:** Consumers reach for the canonical interface; a new vendor variant is one new adapter file, and existing consumer code does not change because the adapter's signature matches what the consumers already call.
 
 **Trap:** An adapter that smuggles non-trivial logic (validation, error remapping, retries) hides behaviour the agent might expect to see at the consumer or at the vendor — neither location is now authoritative. When the adapter is doing more than shape-conversion, its name should reflect that (Gateway, Anti-Corruption Layer).
 

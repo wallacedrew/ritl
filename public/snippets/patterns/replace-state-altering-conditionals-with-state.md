@@ -79,7 +79,7 @@ _Example source: Illustrative example written for this site, faithful to Kerievs
 
 **Tradeoff:** State pattern spreads the machine across N files; the agent traverses them to reconstruct the full transition graph. State assignments inside operations are imperative side effects that complicate static reasoning about which state comes next.
 
-**Relief:** Static analysis verifies every state implements every operation; diff surface for adding a state is one new file. Per-state behaviour is locally readable; transition assignments are the only places the agent must trace to recover the graph.
+**Relief:** Each state lives at one file the agent reads in isolation; adding a new state is one new class implementing the protocol, and the agent traces transitions by following the assignment sites rather than holding the full conditional in attention.
 
 **Trap:** A state machine with many states that mostly throw makes the agent load N files to discover that operation X is only legal in state Y. A state-transition table (data, not code) may be more economical for the agent to scan than N state classes.
 

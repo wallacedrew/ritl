@@ -2,9 +2,11 @@
 // Generates Claude-skill-shaped markdown snippets from the catalog JSON.
 //
 // Output layout:
-//   docs/snippets/refactoring-catalog.md             (single bulk reference)
+//   docs/snippets/ritl-skills-bundle.md              (single bulk reference of every SKILL.md)
+//   docs/snippets/refactoring-discipline.md          (AGENTS.md / CLAUDE.md drop-in directive)
 //   docs/snippets/refactorings/<slug>.md             (one valid SKILL.md per refactoring)
 //   docs/snippets/smells/<slug>.md                   (one valid SKILL.md per smell)
+//   docs/snippets/patterns/<slug>.md                 (one valid SKILL.md per pattern)
 //   public/snippets/*                                (identical, served by Next)
 //
 // Per-entity files are well-formed Claude skills: bare-scalar YAML
@@ -25,6 +27,11 @@ const refactorings = JSON.parse(
 const smells = JSON.parse(readFileSync(resolve(root, "src/smells/content/smells.json"), "utf-8"));
 const patterns = JSON.parse(
   readFileSync(resolve(root, "src/patterns/content/patterns.json"), "utf-8"),
+);
+
+const workflowSkillMd = readFileSync(
+  resolve(root, "plugin/refactor/skills/workflow/SKILL.md"),
+  "utf-8",
 );
 
 // Mirrors src/refactorings/lib/categories.ts. Duplicated here so the
@@ -328,18 +335,22 @@ function formatSmellSkill(s, index) {
 
 function renderCatalogFile() {
   const byName = new Map(refactorings.map((r) => [r.name, r]));
+  const kerievskyPatterns = patterns.filter((p) => p.book === "kerievsky");
+  const gofPatterns = patterns.filter((p) => p.book === "gof");
+  const totalSections =
+    1 + refactorings.length + smells.length + kerievskyPatterns.length + gofPatterns.length;
 
-  const header = `# Refactoring catalog
+  const header = `# RITL skills bundle
 
-Centralized view of the 92 catalog skills. Each section below is the
-full SKILL.md content of the matching per-entity download — the
-content is identical at the section level. Use this single paste when
-you want the whole vocabulary loaded; use the per-entity downloads
-when you want auto-invocable skills under \`~/.claude/skills/<slug>/SKILL.md\`.
+Centralized view of all ${totalSections} SKILL.md sections this plugin ships — 1 workflow orchestrator, ${refactorings.length} Fowler refactorings, ${smells.length} Fowler smells, ${kerievskyPatterns.length} Kerievsky composite refactorings, and ${gofPatterns.length} GoF design patterns. Each section below is the full SKILL.md content of the matching per-entity download; the content is identical at the section level.
+
+Use this single paste only when an agent cannot auto-load skills (no Claude Code, no per-file retrieval). Pasting all ${totalSections} sections into one context burns tokens and dilutes attention; paste only the sections relevant to the smell, refactoring, or pattern you're working on. For Claude Code users the plugin's auto-invoking skills are strictly better — each loads just-in-time on description match.
 
 `;
 
-  const parts = [header, "---", "", "## Refactorings", ""];
+  const parts = [header, "---", "", "## Workflow", "", workflowSkillMd, ""];
+
+  parts.push("---", "", "## Refactorings", "");
 
   for (const [category, names] of Object.entries(REFACTORING_CATEGORIES)) {
     parts.push(`### ${category}`);
@@ -351,20 +362,23 @@ when you want auto-invocable skills under \`~/.claude/skills/<slug>/SKILL.md\`.
     }
   }
 
-  parts.push("---");
-  parts.push("");
-  parts.push("## Code smells");
-  parts.push("");
+  parts.push("---", "", "## Code smells", "");
   smells.forEach((smell, index) => {
     parts.push(formatSmellSkill(smell, index));
   });
 
-  parts.push("---");
-  parts.push("");
-  parts.push("## Patterns (Kerievsky — Refactoring to Patterns)");
-  parts.push("");
+  parts.push("---", "", "## Patterns (Kerievsky — Refactoring to Patterns)", "");
   patterns.forEach((pattern, index) => {
-    parts.push(formatPatternSkill(pattern, index));
+    if (pattern.book === "kerievsky") {
+      parts.push(formatPatternSkill(pattern, index));
+    }
+  });
+
+  parts.push("---", "", "## Patterns (GoF — Design Patterns)", "");
+  patterns.forEach((pattern, index) => {
+    if (pattern.book === "gof") {
+      parts.push(formatPatternSkill(pattern, index));
+    }
   });
 
   return parts.join("\n");
@@ -403,18 +417,22 @@ Pick from Fowler's catalog — Extract Function, Inline Function, Extract Variab
 
 Run the full test suite after each refactoring. Red → revert, decompose further, retry. Never power through red.
 
+## 6. Recognize pattern destinations
+
+When a stack of refactorings climbs toward a known shape, name the destination. Kerievsky's *Refactoring to Patterns* gives 27 composite refactorings whose endpoints are GoF design patterns; the GoF *Design Patterns* book gives 23 structural shapes. Look these up at refactoringintheloop.com/reference. State the destination before applying the next move so the agent can verify each step is heading there. Refuse to invent ad-hoc pattern names; if nothing matches, say so.
+
 ## Tidy First
 
 Structural changes (refactoring) and behavioral changes (features, fixes) ship in separate commits. Subjects: \`refactor: <what>\` for structural; \`feat: <what>\` or \`fix: <what>\` for behavioral. Structural commits include a \`Before: / After: / Value:\` block in the body so the next reader can tell load-bearing tidying from drive-by churn.
 
 ## Source
 
-https://refactoring.com/catalog/ (Fowler 2e). For Claude Code users, install the auto-invoking plugin instead of pasting this file: \`/plugin marketplace add wallacedrew/ritl\` then \`/plugin install refactor@ritl\` — each per-smell skill loads just-in-time on description match.
+Fowler 2e (https://refactoring.com/catalog/), Kerievsky's *Refactoring to Patterns* (2004), and *Design Patterns* (Gamma/Helm/Johnson/Vlissides 1994). For Claude Code users, install the auto-invoking plugin instead of pasting this file: \`/plugin marketplace add wallacedrew/ritl\` then \`/plugin install refactor@ritl\` — each skill loads just-in-time on description match.
 `;
 
 for (const dest of ["docs/snippets", "public/snippets"]) {
   mkdirSync(resolve(root, dest), { recursive: true });
-  writeFileSync(resolve(root, `${dest}/refactoring-catalog.md`), catalogMd);
+  writeFileSync(resolve(root, `${dest}/ritl-skills-bundle.md`), catalogMd);
   writeFileSync(resolve(root, `${dest}/refactoring-discipline.md`), disciplineMd);
 
   mkdirSync(resolve(root, `${dest}/refactorings`), { recursive: true });
@@ -533,7 +551,7 @@ console.log("Generated skill-shaped snippets in docs/snippets/ and public/snippe
 console.log(`  ${refactorings.length} refactoring SKILL.md files`);
 console.log(`  ${smells.length} smell SKILL.md files`);
 console.log(`  ${patterns.length} pattern SKILL.md files`);
-console.log("  1 consolidated refactoring-catalog.md");
+console.log("  1 consolidated ritl-skills-bundle.md");
 console.log("  1 refactoring-discipline.md (AGENTS.md rules snippet)");
 console.log(`Generated plugin '${PLUGIN_NAME}' at plugin/${PLUGIN_NAME}/`);
 console.log(`  marketplace.json at .claude-plugin/marketplace.json`);

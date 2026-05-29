@@ -21,8 +21,8 @@ const area = height * width;
 
 **Tradeoff:** Renames invalidate cached associations — commit history, RAG snippets, embedding indexes, and prior conversation context all carry the old name until they refresh.
 
-**Relief:** Fewer context-lookup hops per reasoning step; planning loops run cheaper and resist drift.
+**Relief:** Per-occurrence reading cost drops to one token of name; reasoning steps that previously had to load surrounding scope to interpret the symbol now resolve from the name alone.
 
-**Trap:** Compulsive renaming generates spurious diffs that crowd the review surface and burn context the human reviewer has to skim past.
+**Trap:** Renaming variables whose current names another reviewer would have accepted invalidates cached associations (RAG indexes, prior conversation context, comments) without changing what the symbol represents.
 
 **Removes smells:** Mysterious Name

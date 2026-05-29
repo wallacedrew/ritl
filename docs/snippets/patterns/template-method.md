@@ -90,7 +90,7 @@ class GoBuilder extends Builder {
 
 _Example source: Illustrative example written for this site in the spirit of Design Patterns (Gamma, Helm, Johnson, Vlissides, Addison-Wesley, 1994), chapter 5. The book uses an Application/Document framework with skeletal initialization; this JavaScript adaptation uses a per-language build pipeline because the fixed-shape, variable-step structure is recognizable and the Pull Up Method savings show clearly._
 
-**Pressure:** Skeleton duplication blows up the agent's edit-blast-radius reasoning. Adding a pipeline step requires editing every subclass; one missed subclass is a structurally-invisible bug the test suite may not catch on a less-exercised variant.
+**Pressure:** Skeleton duplication forces every pipeline-step addition to edit N subclass bodies, with token cost scaling linearly in the subclass count; a missed subclass is a structurally-invisible bug that ships when the affected variant is the less-exercised one in the test suite.
 
 **Tradeoff:** Inheritance binds the agent to a vertical hierarchy: every edit to the base class implicitly affects every subclass, and the agent must verify cross-subclass invariants on every hook addition. Stack traces span base + subclass methods; investigating one runtime error often requires reading both.
 

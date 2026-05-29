@@ -26,7 +26,7 @@ function found(people, n) {
 
 **Tradeoff:** Swapping algorithms wholesale forfeits behavioral safety unless every input boundary is characterized first; the agent that substitutes without characterization tests ships silent regressions.
 
-**Relief:** The agent recognizes the algorithm by name and reasons about it via its standard properties; correctness arguments become reusable.
+**Relief:** The replacement algorithm has a known cost profile and known invariants the agent reads from one well-named function; verification against the new algorithm pays one read of its definition instead of simulating the original's behavior step by step.
 
 **Trap:** Substituting without characterization tests at every input boundary ships silent regressions where the original quietly handled edge cases the substitute handles differently.
 

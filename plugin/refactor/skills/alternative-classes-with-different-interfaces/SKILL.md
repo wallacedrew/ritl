@@ -23,7 +23,7 @@ class JSONExporter implements Exporter { write(rows) {} }
 
 **Tradeoff:** Aligning the interfaces forces renames across both classes and every consumer; the agent verifying the alignment must update every call site and confirm the new common contract holds for both.
 
-**Relief:** Polymorphic use becomes possible; new alternatives plug in without bespoke adapters; the agent reasons about the operation once.
+**Relief:** A shared interface lets the agent dispatch through one type signature instead of loading both class surfaces; new alternatives plug into the interface, and consumer code generalizes across them without per-class branching.
 
 **Trap:** Forcing two classes into a shared interface despite genuinely different contracts produces an abstraction the agent must constantly special-case — important distinctions hide behind a fake polymorphism.
 

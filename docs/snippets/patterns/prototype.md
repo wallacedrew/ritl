@@ -66,7 +66,7 @@ _Example source: Illustrative example written for this site in the spirit of Des
 
 **Tradeoff:** Shallow-clone aliasing bugs are the worst kind for the agent — symptoms appear far from the cause, in code that 'just reads a field'. Verifying clone semantics requires reasoning across the full clone graph; partial verification produces flaky-looking tests.
 
-**Relief:** The registry table is one place to read and edit; clone is a generic operation the agent verifies once; per-variant changes have a single-line diff surface. Test coverage for one variant becomes coverage-by-construction for every variant.
+**Relief:** Adding a new variant is one new entry in the prototype registry; the clone operation works against every variant through the shared interface, and the agent reads one prototype's configuration to predict any clone's initial state.
 
 **Trap:** Optional fields and conditional cloning logic accreting onto the prototype mask divergent variant shapes. The agent reading the registry sees a uniform table; the runtime sees branching behaviour that depends on which fields a prototype happens to have set. The structural promise the pattern made stops holding.
 

@@ -24,10 +24,14 @@ Pick from Fowler's catalog — Extract Function, Inline Function, Extract Variab
 
 Run the full test suite after each refactoring. Red → revert, decompose further, retry. Never power through red.
 
+## 6. Recognize pattern destinations
+
+When a stack of refactorings climbs toward a known shape, name the destination. Kerievsky's *Refactoring to Patterns* gives 27 composite refactorings whose endpoints are GoF design patterns; the GoF *Design Patterns* book gives 23 structural shapes. Look these up at refactoringintheloop.com/reference. State the destination before applying the next move so the agent can verify each step is heading there. Refuse to invent ad-hoc pattern names; if nothing matches, say so.
+
 ## Tidy First
 
 Structural changes (refactoring) and behavioral changes (features, fixes) ship in separate commits. Subjects: `refactor: <what>` for structural; `feat: <what>` or `fix: <what>` for behavioral. Structural commits include a `Before: / After: / Value:` block in the body so the next reader can tell load-bearing tidying from drive-by churn.
 
 ## Source
 
-https://refactoring.com/catalog/ (Fowler 2e). For Claude Code users, install the auto-invoking plugin instead of pasting this file: `/plugin marketplace add wallacedrew/ritl` then `/plugin install refactor@ritl` — each per-smell skill loads just-in-time on description match.
+Fowler 2e (https://refactoring.com/catalog/), Kerievsky's *Refactoring to Patterns* (2004), and *Design Patterns* (Gamma/Helm/Johnson/Vlissides 1994). For Claude Code users, install the auto-invoking plugin instead of pasting this file: `/plugin marketplace add wallacedrew/ritl` then `/plugin install refactor@ritl` — each skill loads just-in-time on description match.

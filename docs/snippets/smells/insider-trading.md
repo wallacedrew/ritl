@@ -27,7 +27,7 @@ class B { read(a) { return a.value(); } }
 
 **Tradeoff:** Defining a real public interface adds a contract the agent must respect at both ends; until the interface stabilizes, every change forces synchronized edits across both modules.
 
-**Relief:** Module boundaries become real seams the agent can reason about independently; tests exercise the public surface and refactoring stays local.
+**Relief:** Each module's public surface is the only contract callers depend on; the agent reads one module to predict behavior instead of loading both modules together to verify the unwritten coupling still holds.
 
 **Trap:** Erecting elaborate public APIs between modules that genuinely belong together creates a fake boundary the agent must navigate at every interaction with no isolation gain.
 

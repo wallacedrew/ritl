@@ -51,7 +51,7 @@ _Example source: Illustrative example written for this site in the spirit of Des
 
 **Tradeoff:** Singleton state survives across tests by default; the agent must remember per-test reset discipline that the test framework does not enforce. Coupling consumers to a static getter hides the dependency in a way linters cannot warn about — the agent's 'who depends on what' graph is structurally incomplete.
 
-**Relief:** Construction grep returns one site (the getter); 'who calls Config.getInstance' enumerates every consumer; reset semantics are localizable to the getter's reset method. Diff surface for changing the loading strategy is one class.
+**Relief:** The instance is constructed at one site (the getter); a grep for the getter returns every consumer; the loading strategy lives at one class the agent edits once to change how the instance is created.
 
 **Trap:** When tests rely on Config.getInstance() returning a real (live) instance, the agent's edits to Config silently break unrelated tests through the shared-state coupling. The pattern's convenience hides exactly the kind of cross-cutting dependency the agent needs structural visibility into.
 

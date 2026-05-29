@@ -1,13 +1,13 @@
 ---
 name: inline-singleton
-description: Apply Inline Singleton when you see Global Data, Inline Function, Remove Dead Code. Constructor signatures encode the dependency graph the agent can read statically.
+description: Apply Inline Singleton when you see Global Data, Inline Function, Remove Dead Code. Constructor signatures carry every dependency the class uses; the agent reads one signature to enumerate what the class touches instead of grepping for static accessor calls across the codebase.
 ---
 
 # Apply: 09 — Inline Singleton
 
 **Symptom:** Singleton accessors (`Class.getInstance()`) hide the agent's view of which classes depend on the collaborator. The agent must grep the codebase for every static-accessor call to know the real dependency graph; test setup requires resetting global state between cases.
 
-**Goal:** Constructor signatures encode the dependency graph the agent can read statically. Per-test construction makes setup/teardown explicit; the agent verifies one wiring at the composition root rather than chasing static accessors.
+**Goal:** Constructor signatures carry every dependency the class uses; the agent reads one signature to enumerate what the class touches instead of grepping for static accessor calls across the codebase.
 
 ```js
 // Before:
@@ -62,8 +62,8 @@ _Example source: Illustrative example written for this site, adapted from Keriev
 
 **Tradeoff:** Inlining pushes wiring code outward; the agent must reason about a composition root or DI container to verify production behaviour. Without one, the inlining may produce duplicated wiring across callers that the agent now has to verify match.
 
-**Relief:** Constructor parameters are statically visible dependencies the agent can verify without grepping. Per-test isolation makes test failures attributable to the test itself rather than to a stale global state.
+**Relief:** Every dependency the class uses appears in its constructor signature; the agent enumerates dependencies from one file load instead of grepping for static-accessor calls across the codebase.
 
-**Trap:** Inlining without a composition root forces the agent to scatter `new Logger()` calls across the codebase, each implicitly creating independent state. The agent then has to verify intent (one logger or many?) at every call site, which is harder than reading one global accessor.
+**Trap:** Inlining without first establishing a composition root produces `new Logger()` calls scattered across consumer files, each creating an independent instance; generated code that assumes a shared logger picks up an isolated one and the divergence ships.
 
 **Triggered by:** Global Data (smells), Inline Function (refactorings), Remove Dead Code (refactorings)

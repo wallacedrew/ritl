@@ -65,7 +65,7 @@ for (const item of ringBuffer) {
 
 _Example source: Illustrative example written for this site in the spirit of Design Patterns (Gamma, Helm, Johnson, Vlissides, Addison-Wesley, 1994), chapter 5. The book uses a List + ListIterator pair; this JavaScript adaptation uses the language's built-in Symbol.iterator protocol on a ring buffer because the encapsulation benefit (hiding modular arithmetic) reads more concretely than a generic List._
 
-**Pressure:** Per-consumer traversal logic blows up the agent's cross-cutting verification budget on every storage-layout change. The agent must enumerate every consumer to prove the change is safe; partial verification produces silent bugs that survive review.
+**Pressure:** Per-consumer traversal logic forces the agent to enumerate every consumer on every storage-layout change to prove the change is safe; the verification cost scales with the consumer count, and partial verification ships silent bugs that survive review.
 
 **Tradeoff:** Per-traversal iterator allocation and the closure semantics of [Symbol.iterator] hide performance characteristics from the agent's static read. Tight-loop performance bugs require the agent to look at the iterator implementation, which is hidden behind the protocol.
 

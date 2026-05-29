@@ -26,7 +26,7 @@ function alertIfOutOfRange(range, reading) { /* ... */ }
 
 **Tradeoff:** Constructing the object at every call adds an allocation and a name the agent must learn; if the clump appears in <3 places the wrapper is overhead.
 
-**Relief:** Operations on the clump (formatting, validation, equality) live with it; the agent reasons about one named concept instead of N coupled fields.
+**Relief:** The bundled parameter carries the values together as one typed object; the agent matches one field per name at each call site instead of N positional arguments where a mis-alignment passes the type checker.
 
 **Trap:** Wrapping coincidental field groups creates fake value objects the agent must construct and destructure with no comprehension gain.
 

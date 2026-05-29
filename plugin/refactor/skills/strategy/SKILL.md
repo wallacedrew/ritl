@@ -59,11 +59,11 @@ const cost = order.shippingCost(5, 200);
 
 _Example source: Illustrative example written for this site in the spirit of Design Patterns (Gamma, Helm, Johnson, Vlissides, Addison-Wesley, 1994), chapter 5. The book uses a Composition class with line-breaking strategies; this JavaScript adaptation uses shipping-cost algorithms to make the family-of-interchangeable-formulas shape concrete without overlapping with Kerievsky's loan-calculator example for the same pattern._
 
-**Pressure:** Type-tag dispatch inside the host blows up the agent's context budget on every algorithm-related edit. Tests for one algorithm pulling in the host's collaborator graph multiply the agent's setup cost per per-algorithm verification.
+**Pressure:** Type-tag dispatch inside the host forces every algorithm-related edit to load the full host file with all dispatch branches; the per-edit context covers the host plus the active branch instead of one strategy class. Tests for one algorithm pull in the host's collaborator graph, multiplying setup cost per per-algorithm verification.
 
 **Tradeoff:** N strategy classes is N files the agent navigates per algorithm-related task. Strategy interface design matters — extra optional methods bloat every implementation and force per-implementation no-op tests the agent must verify.
 
-**Relief:** Per-algorithm reasoning is one-file; tests are unit-sized; static analysis enumerates strategies by interface; the host class is a stable surface the agent reads once. Diff surface for a new algorithm is a new file + one construction-site edit.
+**Relief:** Each strategy lives at one file the agent reads in isolation; adding a new algorithm is one new class implementing the strategy interface plus one construction-site edit, and the host class stays unchanged.
 
 **Trap:** Strategy interfaces with optional methods (some algorithms implement calibrate(), others do not) blur the contract. The agent must verify per-implementation interface completeness rather than reading the interface as a structural promise. Define one focused interface, or split the family by capability.
 

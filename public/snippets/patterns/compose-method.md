@@ -42,7 +42,7 @@ _Example source: Illustrative example written for this site, not a quotation fro
 
 **Tradeoff:** Each helper inflates context-window cost by one definition the next reasoning step must load. Over-decomposing fragments a single procedure across many files.
 
-**Relief:** The composed method captures the algorithm in named steps; helpers are independently verifiable; refactoring orchestration is a localized change. Smaller diff surface per commit.
+**Relief:** The composed method captures the algorithm as a list of named steps the agent reads at one indent; each helper has one signature and one body the agent verifies independently, and edits to one step do not need the others loaded.
 
 **Trap:** A deeply-nested hierarchy of helpers where the agent must chase multiple definitions to understand a single original method — context cost multiplies and cross-helper invariants vanish from view.
 

@@ -29,7 +29,7 @@ function alertMiscreant(people) {
 
 **Tradeoff:** If the modification and query are genuinely atomic (find-and-remove, compare-and-swap), splitting them introduces a race window the agent must close at every call site.
 
-**Relief:** The agent reasons about side effects locally; queries compose cleanly; tests target each shape independently.
+**Relief:** Queries return values without mutating; the agent predicts each function's effect from its name alone, and code generated against a query never accidentally writes the state the query reads.
 
 **Trap:** Splitting atomic query-and-modify operations introduces race windows the agent must reason about at every call site — the cure becomes worse than the smell.
 

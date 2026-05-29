@@ -1,13 +1,13 @@
 ---
 name: combine-functions-into-transform
-description: Apply Combine Functions into Transform when you see Data Clumps, Mutable Data. One transform produces the enriched record; the agent reasons about derivations in one place and consumers read named fields.
+description: Apply Combine Functions into Transform when you see Data Clumps, Mutable Data. One transform produces the enriched record from the input; the agent reads one input-to-shape contract and consumers read named output fields without simulating the derivation.
 ---
 
 # Apply: 10 — Combine Functions into Transform
 
 **Symptom:** The agent encounters consumers each independently computing the same derived values from the same source; reasoning about consistency requires tracing every derivation.
 
-**Goal:** One transform produces the enriched record; the agent reasons about derivations in one place and consumers read named fields.
+**Goal:** One transform produces the enriched record from the input; the agent reads one input-to-shape contract and consumers read named output fields without simulating the derivation.
 
 ```js
 // Avoid:

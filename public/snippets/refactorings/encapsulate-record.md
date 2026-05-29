@@ -27,7 +27,7 @@ console.log(new Org(org).name());
 
 **Tradeoff:** Wrapping every record adds construction ceremony at every entry; for records without invariants or behavior to attract, the agent gains nothing for the per-call cost.
 
-**Relief:** Field renames stay internal; invariants enforce in one place; the agent reasons about the class as a real domain object.
+**Relief:** Field accesses run through named methods; a field rename touches one class definition without changing any caller, and invariants enforced in those methods catch invalid combinations the field-level access would otherwise let through.
 
 **Trap:** Wrapping records on principle without invariants or behavior to add creates classes the agent must instantiate everywhere with no encapsulation gain.
 

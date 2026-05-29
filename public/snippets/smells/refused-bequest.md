@@ -1,13 +1,13 @@
 ---
 name: refused-bequest
-description: Refuse Refused Bequest when a subclass overriding parent methods to no-ops, throwing 'unsupported', or quietly ignoring inherited behavior — the agent cannot trust polymorphic calls on parent-typed references. Apply Push Down Method, Push Down Field.
+description: Refuse Refused Bequest when a subclass overrides parent methods with no-ops or 'unsupported' throws; code generated against the parent's interface that calls the inherited method against this subclass produces a runtime failure the type checker accepted. Apply Push Down Method, Push Down Field.
 ---
 
 # Refuse: 23 — Refused Bequest
 
-**Symptom:** A subclass overriding parent methods to no-ops, throwing 'unsupported', or quietly ignoring inherited behavior — the agent cannot trust polymorphic calls on parent-typed references.
+**Symptom:** A subclass overrides parent methods with no-ops or 'unsupported' throws; code generated against the parent's interface that calls the inherited method against this subclass produces a runtime failure the type checker accepted.
 
-**Goal:** Sharing happens via composition (a held delegate) instead of forced inheritance; every reference type honors its contract.
+**Goal:** Behavior reuse runs through a held collaborator instead of through inheritance; generated code that calls a method on a reference type runs the method the type's signature promises.
 
 ```js
 // Smellier:
@@ -26,8 +26,8 @@ class Dog {
 
 **Tradeoff:** Composition is more verbose at construction; the agent loses syntactic polymorphism and must verify behavior through explicit delegation calls instead of relying on inheritance dispatch.
 
-**Relief:** Each class has only what it needs; the agent's polymorphic reasoning becomes trustworthy because every reference type honors its declared contract.
+**Relief:** Code generated against a reference type's interface executes the methods that type defines; calls dispatched against the type signature do not silently fall through to no-op overrides.
 
-**Trap:** Replacing every inheritance relationship with composition, including ones where Liskov genuinely holds, pays construction verbosity at every site without buying any safety the original inheritance didn't provide.
+**Trap:** Replacing inheritance with composition on hierarchies where every subclass honors the parent's contract adds forwarding methods at every site without changing what the agent's generated calls do; the tokens spent on the rewrite buy no behavioral guarantee the inheritance did not already provide.
 
 **Apply refactorings:** Push Down Method, Push Down Field, Replace Subclass with Delegate, Replace Superclass with Delegate

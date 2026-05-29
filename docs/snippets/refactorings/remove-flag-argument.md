@@ -25,7 +25,7 @@ function setWidth(value)  { /* ... */ }
 
 **Tradeoff:** If the branches share substantial body, splitting produces duplication the agent must keep in sync; pair this with Extract Function for shared internals.
 
-**Relief:** Call sites read fluently; the agent reasons about one function per concern.
+**Relief:** Each variant becomes its own function with one signature; call sites name the intent directly, and the agent does not track a flag value through the function body to predict which branch runs.
 
 **Trap:** Splitting flag-dispatched functions without extracting shared body creates N copies of the same logic the agent must keep in sync — the cure becomes the duplication smell.
 

@@ -22,7 +22,7 @@ function discount(order) { /* the real one */ }
 
 **Tradeoff:** Deletion is one-way under static analysis but reachability can hide in reflection, dynamic dispatch, external callers, or runtime config — the agent that deletes without checking risks a regression nothing catches.
 
-**Relief:** The agent's reasoning context shrinks; static analysis becomes ground truth; planning loops don't waste cycles on phantom paths.
+**Relief:** Dead tokens no longer load with the surrounding code; static analysis returns a complete picture because every branch in the window represents code that runs, and the agent edits against the reachable shape instead of paying tokens for paths that fire never.
 
 **Trap:** Aggressive deletion based purely on grep/static-analysis evidence misses reflection-reachable, plugin-loaded, or externally-referenced code — the cleanup ships a silent regression the agent's tests don't catch.
 

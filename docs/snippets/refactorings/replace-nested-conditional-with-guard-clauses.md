@@ -1,13 +1,13 @@
 ---
 name: replace-nested-conditional-with-guard-clauses
-description: Apply Replace Nested Conditional with Guard Clauses when you see Long Function, Comments. Edge cases bail out early; the main flow is unindented and reads linearly as the dominant story.
+description: Apply Replace Nested Conditional with Guard Clauses when you see Long Function, Comments. Edge cases exit at the top of the function; the happy path runs at the function's base indent level, and adding a precondition is one new guard at the top instead of a rewrite of the nested branches.
 ---
 
 # Apply: 23 — Replace Nested Conditional with Guard Clauses
 
 **Symptom:** A function with deeply nested if/else where the happy path is buried under indentation; the agent must trace through edge-case branches to find the main flow.
 
-**Goal:** Edge cases bail out early; the main flow is unindented and reads linearly as the dominant story.
+**Goal:** Edge cases exit at the top of the function; the happy path runs at the function's base indent level, and adding a precondition is one new guard at the top instead of a rewrite of the nested branches.
 
 ```js
 // Avoid:
@@ -35,7 +35,7 @@ function payAmount(employee) {
 
 **Tradeoff:** Early returns can duplicate work if multiple paths share follow-up logic; the agent inlining guards must verify the shared work is genuinely separable.
 
-**Relief:** The agent reads the happy path linearly with edge cases as exceptions; new edge cases land at the top without disturbing the main flow.
+**Relief:** Guards exit at the top of the function and the happy path runs at the function's base indent level; adding a precondition is one new guard prepended at the top instead of a rewrite of the nested branches.
 
 **Trap:** Inlining guards for every condition — including ones that shared follow-up work — fragments the shared logic across early-return branches the agent must keep consistent.
 

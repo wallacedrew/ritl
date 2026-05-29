@@ -72,7 +72,7 @@ _Example source: Adapted from Joshua Kerievsky's Loan-class example in Refactori
 
 **Tradeoff:** A long canonical parameter list is itself a context-load tax — the agent must remember positional argument order on every reading of a delegating factory. Wrong-position bugs become subtler than missing-field bugs.
 
-**Relief:** Each delegating factory is one line; the agent reads the canonical constructor once and treats all variants as parameterized calls. Diff surface for adding a new field is one place; tests for the canonical constructor cover all variants transitively.
+**Relief:** Each variant constructor delegates to the canonical one; adding a new field touches the canonical constructor once and every variant inherits the change, and tests against the canonical body cover all variants transitively.
 
 **Trap:** The canonical constructor balloons into a many-parameter signature where the agent loses track of which combinations are legal. Context cost moves from per-path duplication to per-parameter combination explosion; a parameter object or named-argument shape becomes overdue.
 

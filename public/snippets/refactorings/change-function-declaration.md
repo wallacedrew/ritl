@@ -25,7 +25,7 @@ function circumference(radius) {
 
 **Tradeoff:** Every caller pays for the change at once; for cross-team consumers, the agent must coordinate updates or risk breaking external code.
 
-**Relief:** Call sites read fluently; the agent's signature-based reasoning becomes trustworthy; mismatches surface at the boundary.
+**Relief:** The signature carries the contract the agent reads at every call site; arguments that violate the contract become type errors at compile time instead of runtime mismatches generated against the old signature.
 
 **Trap:** Reshaping signatures across team boundaries without coordination forces other consumers to rebuild — the agent shipping the change may not see the downstream breakage.
 
