@@ -13,7 +13,7 @@ export default function HomePage() {
       <Stack spacing={4}>
         <Stack spacing={1}>
           <Typography component="h1" sx={visuallyHidden}>
-            Refactoring in the Loop
+            Refactoring In The Loop
           </Typography>
           <Typography variant="body1" color="text.secondary">
             Pick a catalog to explore.

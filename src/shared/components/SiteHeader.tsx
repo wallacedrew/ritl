@@ -29,7 +29,7 @@ export default function SiteHeader() {
                 component="span"
                 sx={{ fontWeight: 700, letterSpacing: "-0.01em" }}
               >
-                Refactoring in the Loop
+                Refactoring In The Loop
               </Typography>
             </NextLink>
             <Typography variant="body2" color="text.secondary" sx={{ maxWidth: 680 }}>

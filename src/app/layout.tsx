@@ -8,7 +8,7 @@ import { AnalyticsProvider } from "@/shared/theme/AnalyticsProvider";
 import ThemeRegistry from "@/shared/theme/ThemeRegistry";
 
 export const metadata: Metadata = {
-  title: "Refactoring in the Loop",
+  title: "Refactoring In The Loop",
   description:
     "A catalog explorer for code smells, Fowler refactorings, Kerievsky's refactoring patterns, and the Gang of Four design patterns.",
 };

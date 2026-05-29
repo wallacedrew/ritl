@@ -17,7 +17,7 @@ export default function PluginPage() {
             Plugin
           </Typography>
           <Typography variant="body1" color="text.secondary">
-            Three ways to use Refactoring in the Loop with your coding agent — pick the highest
+            Three ways to use Refactoring In The Loop with your coding agent — pick the highest
             one your environment supports.
           </Typography>
         </Stack>
