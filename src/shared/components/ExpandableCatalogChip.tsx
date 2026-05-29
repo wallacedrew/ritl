@@ -17,7 +17,7 @@ interface Props {
   label: string;
   href: string;
   tone: CatalogEntryTone;
-  crossReferences: CrossReferences;
+  crossReferences?: CrossReferences;
 }
 
 export default function ExpandableCatalogChip({ label, href, tone, crossReferences }: Props) {
@@ -36,7 +36,7 @@ export default function ExpandableCatalogChip({ label, href, tone, crossReferenc
     if (target.closest("a")) closePanel();
   }
 
-  if (isEmptyCrossReferences(crossReferences)) {
+  if (!crossReferences || isEmptyCrossReferences(crossReferences)) {
     return <LinkedChip label={label} href={href} tone={tone} />;
   }
 
