@@ -33,7 +33,6 @@ export default function CrossBookBridgesList({ bridges, emptyMessage }: Props) {
             label={bridge.source.label}
             href={bridge.source.href}
             tone={bridge.source.tone}
-            crossReferences={bridge.source.crossReferences}
           />
           <Box sx={{ display: "flex", alignItems: "center", color: "text.secondary" }}>
             <ArrowForwardIcon fontSize="small" />
@@ -42,7 +41,6 @@ export default function CrossBookBridgesList({ bridges, emptyMessage }: Props) {
             label={bridge.destination.label}
             href={bridge.destination.href}
             tone={bridge.destination.tone}
-            crossReferences={bridge.destination.crossReferences}
           />
         </Stack>
       ))}

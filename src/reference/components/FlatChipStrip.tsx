@@ -16,7 +16,6 @@ export default function FlatChipStrip({ items }: FlatChipStripProps) {
           label={item.name}
           href={item.href}
           tone={item.tone}
-          crossReferences={item.crossReferences}
         />
       ))}
     </Stack>

@@ -22,12 +22,7 @@ export default function CatalogCard({ item }: CatalogCardProps) {
         <Stack spacing={1.5}>
           <Stack direction="row" spacing={1.5} sx={{ alignItems: "center", flexWrap: "wrap" }}>
             <CatalogNumber value={item.number} />
-            <ExpandableCatalogChip
-              label={item.name}
-              href={item.href}
-              tone={item.tone}
-              crossReferences={item.crossReferences}
-            />
+            <ExpandableCatalogChip label={item.name} href={item.href} tone={item.tone} />
           </Stack>
           <Typography variant="body2" color="text.secondary">
             {item.caption}

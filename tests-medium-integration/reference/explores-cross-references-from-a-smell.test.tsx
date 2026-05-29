@@ -2,12 +2,12 @@ import { describe, expect, it } from "vitest";
 import { screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
-import { renderWithTheme } from "../../tests-small-unit/_helpers/renderWithTheme";
+import { renderWithCatalogGraph } from "../../tests-small-unit/_helpers/renderWithCatalogGraph";
 import ReferencePage from "@/reference/ReferencePage";
 
 describe("user explores cross-references from a smell on the reference list page", () => {
   it("renders an inline chevron toggle next to every smell chip", () => {
-    renderWithTheme(<ReferencePage />);
+    renderWithCatalogGraph(<ReferencePage />);
 
     const longFunctionToggle = screen.getByRole("button", {
       name: /Long Function cross-references/i,
@@ -17,7 +17,7 @@ describe("user explores cross-references from a smell on the reference list page
 
   it("opens a popover of refactorings that address the smell when the chevron is clicked", async () => {
     const user = userEvent.setup();
-    renderWithTheme(<ReferencePage />);
+    renderWithCatalogGraph(<ReferencePage />);
 
     const longFunctionToggle = screen.getByRole("button", {
       name: /Long Function cross-references/i,
@@ -34,7 +34,7 @@ describe("user explores cross-references from a smell on the reference list page
 
   it("closes the popover when the chevron is clicked again", async () => {
     const user = userEvent.setup();
-    renderWithTheme(<ReferencePage />);
+    renderWithCatalogGraph(<ReferencePage />);
 
     const longFunctionToggle = screen.getByRole("button", {
       name: /Long Function cross-references/i,
@@ -48,7 +48,7 @@ describe("user explores cross-references from a smell on the reference list page
 
   it("lists patterns that reference the smell under 'Referenced by patterns'", async () => {
     const user = userEvent.setup();
-    renderWithTheme(<ReferencePage />);
+    renderWithCatalogGraph(<ReferencePage />);
 
     const longFunctionToggle = screen.getByRole("button", {
       name: /Long Function cross-references/i,
@@ -62,7 +62,7 @@ describe("user explores cross-references from a smell on the reference list page
 
   it("renders chevrons on the chips inside the popover so the user can keep drilling", async () => {
     const user = userEvent.setup();
-    renderWithTheme(<ReferencePage />);
+    renderWithCatalogGraph(<ReferencePage />);
 
     const longFunctionToggle = screen.getByRole("button", {
       name: /Long Function cross-references/i,

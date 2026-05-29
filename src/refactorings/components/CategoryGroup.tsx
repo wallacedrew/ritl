@@ -23,7 +23,6 @@ export default function CategoryGroup({ category, items }: CategoryGroupProps) {
             label={item.name}
             href={item.href}
             tone={item.tone}
-            crossReferences={item.crossReferences}
           />
         ))}
       </Stack>

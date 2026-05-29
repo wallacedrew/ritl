@@ -31,7 +31,6 @@ export default function RankedEntriesList({ entries, emptyMessage }: Props) {
             label={entry.chip.label}
             href={entry.chip.href}
             tone={entry.chip.tone}
-            crossReferences={entry.chip.crossReferences}
           />
           <Typography variant="body2" color="text.secondary">
             {entry.outboundCount} outbound · {entry.inboundCount} inbound

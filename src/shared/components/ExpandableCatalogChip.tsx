@@ -1,6 +1,6 @@
 "use client";
 
-import { type MouseEvent, useState } from "react";
+import { type MouseEvent, useMemo, useState } from "react";
 
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import Box from "@mui/material/Box";
@@ -10,22 +10,29 @@ import NextLink from "next/link";
 
 import LinkedChip from "@/shared/components/LinkedChip";
 import type { CatalogEntryTone } from "@/shared/lib/CatalogEntry";
+import { computeCrossReferencesForHref } from "@/shared/lib/CatalogGraph";
 import { badgePaletteKey, type BadgePaletteKey } from "@/shared/lib/catalogChipColor";
+import { useCatalogGraph } from "@/shared/hooks/useCatalogGraph";
 
-import { isEmptyCrossReferences, type CrossReferences } from "../lib/RelationshipGroup";
+import { isEmptyCrossReferences } from "../lib/RelationshipGroup";
 import CrossReferencePanel from "./CrossReferencePanel";
 
 interface Props {
   label: string;
   href: string;
   tone: CatalogEntryTone;
-  crossReferences?: CrossReferences;
 }
 
-export default function ExpandableCatalogChip({ label, href, tone, crossReferences }: Props) {
+export default function ExpandableCatalogChip({ label, href, tone }: Props) {
+  const graph = useCatalogGraph();
   const [anchorElement, setAnchorElement] = useState<HTMLDivElement | null>(null);
   const [isOpen, setIsOpen] = useState(false);
   const popoverLabel = `${label} cross-references`;
+
+  const crossReferences = useMemo(
+    () => (graph ? computeCrossReferencesForHref(href, graph) : null),
+    [graph, href],
+  );
 
   function closePanel() {
     setIsOpen(false);

@@ -26,7 +26,6 @@ export default function ChipsRow({ chips, emptyMessage }: Props) {
           label={chip.label}
           href={chip.href}
           tone={chip.tone}
-          crossReferences={chip.crossReferences}
         />
       ))}
     </Stack>

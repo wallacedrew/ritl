@@ -31,7 +31,6 @@ export default function LabeledChipRow({ label, chips }: Props) {
             label={chip.label}
             href={chip.href}
             tone={chip.tone}
-            crossReferences={chip.crossReferences}
           />
         ))}
       </Stack>

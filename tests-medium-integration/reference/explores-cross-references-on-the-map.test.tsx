@@ -2,12 +2,12 @@ import { describe, expect, it } from "vitest";
 import { screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
-import { renderWithTheme } from "../../tests-small-unit/_helpers/renderWithTheme";
+import { renderWithCatalogGraph } from "../../tests-small-unit/_helpers/renderWithCatalogGraph";
 import CatalogMapView from "@/reference/map/CatalogMapView";
 
 describe("user opens a cross-reference popover from a chip on the catalog map", () => {
   it("renders a chevron beside the Encapsulate Classes With Factory source chip", () => {
-    renderWithTheme(<CatalogMapView />);
+    renderWithCatalogGraph(<CatalogMapView />);
 
     const toggles = screen.getAllByRole("button", {
       name: /Encapsulate Classes With Factory cross-references/i,
@@ -17,7 +17,7 @@ describe("user opens a cross-reference popover from a chip on the catalog map", 
 
   it("opens a popover with the Destination group when the chevron is clicked", async () => {
     const user = userEvent.setup();
-    renderWithTheme(<CatalogMapView />);
+    renderWithCatalogGraph(<CatalogMapView />);
 
     const toggles = screen.getAllByRole("button", {
       name: /Encapsulate Classes With Factory cross-references/i,

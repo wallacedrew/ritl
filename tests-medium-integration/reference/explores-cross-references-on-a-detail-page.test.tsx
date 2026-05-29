@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { screen, within } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
-import { renderWithTheme } from "../../tests-small-unit/_helpers/renderWithTheme";
+import { renderWithCatalogGraph } from "../../tests-small-unit/_helpers/renderWithCatalogGraph";
 import SmellDetailPage from "@/smells/SmellDetailPage";
 
 describe("user explores cross-references from a chip on a detail page", () => {
@@ -10,7 +10,7 @@ describe("user explores cross-references from a chip on a detail page", () => {
     const ui = await SmellDetailPage({
       params: Promise.resolve({ slug: "long-function" }),
     });
-    renderWithTheme(ui);
+    renderWithCatalogGraph(ui);
 
     const toggles = screen.getAllByRole("button", {
       name: /Extract Function cross-references/i,
@@ -23,7 +23,7 @@ describe("user explores cross-references from a chip on a detail page", () => {
     const ui = await SmellDetailPage({
       params: Promise.resolve({ slug: "long-function" }),
     });
-    renderWithTheme(ui);
+    renderWithCatalogGraph(ui);
 
     const toggles = screen.getAllByRole("button", {
       name: /Extract Function cross-references/i,
