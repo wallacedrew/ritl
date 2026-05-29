@@ -59,4 +59,19 @@ describe("user explores cross-references from a smell on the reference list page
     expect(within(panel).getByText(/Referenced by patterns/i)).toBeInTheDocument();
     expect(within(panel).getByRole("link", { name: /Compose Method/i })).toBeInTheDocument();
   });
+
+  it("renders chevrons on the chips inside the popover so the user can keep drilling", async () => {
+    const user = userEvent.setup();
+    renderWithTheme(<ReferencePage />);
+
+    const longFunctionToggle = screen.getByRole("button", {
+      name: /Long Function cross-references/i,
+    });
+    await user.click(longFunctionToggle);
+
+    const panel = await screen.findByRole("dialog", { name: /Long Function cross-references/i });
+    expect(
+      within(panel).getByRole("button", { name: /Extract Function cross-references/i }),
+    ).toBeInTheDocument();
+  });
 });
