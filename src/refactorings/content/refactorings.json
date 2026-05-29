@@ -90,12 +90,12 @@
         "trap": "Inlining a variable whose name did carry domain meaning — collapsing `const annualRate = 0.05` to bare `0.05` strips the named constant the reader needed."
       },
       "agent": {
-        "symptom": "A local variable whose value is the same as its right-hand expression and whose name adds no semantic information beyond the expression itself.",
-        "goal": "Single-use variables that rename without semantic gain disappear; expressions speak for themselves.",
+        "symptom": "A local variable whose name says the same thing as the expression bound to it; reading the variable name and reading the expression resolve to the same understanding.",
+        "goal": "Expressions sit at their use sites without an intervening binding; the agent reads the expression once at the use site instead of reading the variable name plus the binding's definition.",
         "pressure": "The agent tracks an extra name in scope for no reasoning benefit; reference resolution becomes a tiny hop to a definition that adds nothing.",
         "tradeoff": "Inlining a variable that did carry domain meaning forces the agent to interpret the bare expression every time instead of reading the named concept.",
-        "relief": "Less local clutter in the agent's scope table; expressions read as themselves.",
-        "trap": "Inlining variables that named non-obvious intermediate values forces the agent to repeatedly parse the same expression across every reference site."
+        "relief": "One fewer name in scope to resolve at every read; the agent loads the expression once at its single use site instead of paying the lookup hop from the variable to its definition.",
+        "trap": "Inlining a variable whose name carried a non-obvious meaning (a domain term, an intermediate result) forces the agent to re-derive the meaning of the expression at every site it appears, multiplying token cost across uses."
       }
     }
   },
@@ -173,8 +173,8 @@
         "goal": "Variable names carry enough disambiguating information that the agent can reason about each symbol without a lookup hop.",
         "pressure": "Every reasoning pass re-derives meaning from surrounding context; chained edits compound the cost.",
         "tradeoff": "Renames invalidate cached associations — commit history, RAG snippets, embedding indexes, and prior conversation context all carry the old name until they refresh.",
-        "relief": "Fewer context-lookup hops per reasoning step; planning loops run cheaper and resist drift.",
-        "trap": "Compulsive renaming generates spurious diffs that crowd the review surface and burn context the human reviewer has to skim past."
+        "relief": "Per-occurrence reading cost drops to one token of name; reasoning steps that previously had to load surrounding scope to interpret the symbol now resolve from the name alone.",
+        "trap": "Renaming variables whose current names another reviewer would have accepted invalidates cached associations (RAG indexes, prior conversation context, comments) without changing what the symbol represents."
       }
     }
   },
@@ -320,10 +320,10 @@
       },
       "agent": {
         "symptom": "The agent finds a field on class A whose value is determined by data on class B; reasoning about the field's value requires loading B to verify the derivation.",
-        "goal": "Each field lives where its lifecycle is owned; the agent loads one class to reason about both the field and its determining data.",
+        "goal": "Each field lives in the class that determines its value; reading the field and reading the data that determines it happen in the same class file.",
         "pressure": "Every consumer must maintain the cross-class invariant; the agent verifying any change must coordinate updates across both classes.",
-        "tradeoff": "Every reader of the original class now reaches across the new boundary; coupling drops at the field's new home but reappears at each consumer the agent must follow.",
-        "relief": "Class boundaries align with data ownership; the agent reasons about mutations locally; refactoring becomes safer because the field's true owner is visible.",
+        "tradeoff": "Every previous reader of the field now loads the new owner class to read it; tokens that previously stayed in one file now span two, and the agent follows the new boundary at every read site.",
+        "relief": "Mutations to the field stay inside the class that determines its value; the agent reads one class file to predict both the field's value and the data that drives it.",
         "trap": "Moving fields purely on derivation grounds — without checking whether the original class's identity depends on the field's presence — breaks consumer expectations the agent didn't model."
       }
     }
@@ -469,12 +469,12 @@
         "trap": "Renaming a field without updating the persistence shadow — DB columns, JSON schema, API responses still use the old name and break serialization/deserialization silently."
       },
       "agent": {
-        "symptom": "A class field the agent must contextualize against surrounding code to interpret; reasoning about any read/write touches the field plus the class-shape context.",
-        "goal": "Field names carry domain meaning so the agent can interpret reads and writes without examining the class definition.",
-        "pressure": "The agent re-derives field meaning at every access site; ambiguity compounds with the number of consumers.",
+        "symptom": "A field whose name does not match its role in the domain; every read or write site forces the agent to load the class definition to recover what the field represents before reasoning about the access.",
+        "goal": "Field names carry the domain term; read or write sites resolve to one token of name without loading the class definition for context recovery.",
+        "pressure": "Every access site pays the cost of loading the class definition to recover what the field stores; tokens consumed scale with the number of consumers, and generated code that misinterprets the field's role ships against the wrong invariant.",
         "tradeoff": "Renaming a field invalidates more cached associations than a variable rename — persistence layers (DB columns, JSON schemas, API contracts) carry the old name until they update.",
         "relief": "The agent reasons about field access with the field's name as ground truth; consumer-side reasoning becomes self-documenting.",
-        "trap": "Renaming fields purely for cosmetic preference creates churn across persistence + API surfaces the agent must coordinate without comprehension gain."
+        "trap": "Renaming a field whose current name another reviewer would have accepted forces coordinated migrations across every external surface (database columns, JSON schemas, API contracts) without changing what the field stores."
       }
     }
   },
@@ -820,11 +820,11 @@
       },
       "agent": {
         "symptom": "Two or more subclasses implement the same method identically; the agent verifying behavior must check every subclass and confirm they actually agree.",
-        "goal": "The method lives on the shared superclass; the agent reasons about one implementation that all subclasses inherit.",
+        "goal": "The method lives on the parent with one implementation; queries about behavior across subclasses load one method body instead of paying the token cost of loading N near-identical bodies.",
         "pressure": "Bug fixes must land in every copy; the agent verifying consistency must update every subclass and risk drift.",
         "tradeoff": "If the methods only superficially resemble each other (same name, different semantics), pulling up creates a fake-shared abstraction the agent must constantly disambiguate.",
-        "relief": "One implementation; the agent reasons about one place for the shared behavior; subclasses focus on what's actually different.",
-        "trap": "Pulling up superficially-similar methods creates fake-shared behavior the agent must constantly verify means the same thing across subclasses."
+        "relief": "Edits to the shared behavior land in one parent method; the agent does not load N subclass bodies to verify they still agree, and generated code that calls the method from any subclass dispatches to the same implementation.",
+        "trap": "Pulling up methods that share a name but not behavior produces one parent method the agent reads as canonical; generated code that calls the method from any subclass runs the parent's behavior, dropping the subclass-specific work the original separate methods performed."
       }
     }
   },
@@ -844,12 +844,12 @@
         "trap": "Pushing down methods used occasionally in the parent for type checks or polymorphic calls — forces awkward downcasts back at the parent's consumers."
       },
       "agent": {
-        "symptom": "A method on the parent class used by only one subclass; the agent reading the parent's surface sees methods that don't apply to most instances.",
-        "goal": "The method lives on the subclass that uses it; the agent's reasoning about the parent's surface is accurate to what most instances support.",
+        "symptom": "A method declared on the parent that only one subclass overrides or invokes; the parent's interface includes a method that does not apply to most instances the agent reasons about.",
+        "goal": "The method lives on the subclass that uses it; reading the parent's interface returns only the methods every instance supports, dropping the irrelevant declaration from the agent's window.",
         "pressure": "The parent's interface is muddied with subclass-specific methods; the agent can't tell which methods apply to which subclass without inspecting usage.",
         "tradeoff": "If the parent occasionally consults the method for type checks or polymorphic dispatch, pushing it down forces awkward downcasts at every consumer the agent must verify.",
-        "relief": "The parent's surface shrinks; subclasses that don't need the method aren't burdened; the agent reasons about each subclass's contract accurately.",
-        "trap": "Pushing down methods the parent occasionally needs for dispatch forces downcasts at every consumer the agent must add and verify."
+        "relief": "The parent's interface shrinks by one method; queries about any subclass's behavior load fewer irrelevant declarations into the window, and code generated against the parent's interface no longer references a method most instances do not support.",
+        "trap": "Pushing down a method that callers reach through a parent-typed reference forces every such call site to downcast first; each downcast is a runtime type check the agent's generated code has to handle at every consumer."
       }
     }
   },
@@ -945,11 +945,11 @@
       },
       "agent": {
         "symptom": "A subclass that overrides several methods to implement variant behavior; the agent reasoning about polymorphic dispatch must enumerate variants across the hierarchy.",
-        "goal": "Variants live in delegate objects swappable at runtime; the agent reasons about composition with explicit delegation calls.",
+        "goal": "Variants live in delegate objects the host holds and forwards to; the agent reads one host class plus the held delegate's interface instead of climbing an inheritance chain to predict behavior.",
         "pressure": "Behavior can't change at runtime; combining variants requires multiple inheritance the agent must work around; Liskov violations hide in override behavior.",
         "tradeoff": "Composition is more verbose at construction sites; the agent loses syntactic polymorphism and must verify behavior through explicit delegation calls.",
-        "relief": "Variants can be combined or swapped at runtime; Liskov violations vanish; the agent reasons about explicit delegation.",
-        "trap": "Replacing every subclass — including ones where Liskov genuinely holds — pays construction-site verbosity without buying flexibility the agent will actually use."
+        "relief": "Behavior changes at runtime by swapping the delegate; the agent reasons against one host signature plus the delegate's interface, without loading the inheritance graph to verify which override applies to a given instance.",
+        "trap": "Replacing inheritance with delegation on hierarchies where every subclass honors the parent's contract adds construction-site setup and a forwarding method per parent method without changing what the agent's generated calls do."
       }
     }
   },
@@ -1070,10 +1070,10 @@
       },
       "agent": {
         "symptom": "The agent encounters a bare number or string whose meaning requires loading the surrounding context to interpret; refactoring the value means finding every occurrence by character match.",
-        "goal": "Domain-meaningful values have named constants the agent can reference by name; the constant's name documents what the value represents.",
+        "goal": "Each domain value has a named constant at one declaration site; every usage resolves through the constant's name, and the value's meaning loads with the name instead of being inferred from context at every literal occurrence.",
         "pressure": "The agent must trace context to interpret bare literals; changing a value requires text-search across the codebase with no semantic guarantee of completeness.",
-        "tradeoff": "Each new named constant is an import the agent must locate and resolve; over-naming creates a vocabulary the agent must learn for marginal disambiguation benefit.",
-        "relief": "The agent reasons about values by name with the type system enforcing valid uses; changing the value is one edit the type checker confirms.",
+        "tradeoff": "Each named constant adds an import the agent loads at every consumer; the cost is one file load per consumer file in exchange for one definition site for the value.",
+        "relief": "Changing the value happens at one constant declaration; the agent does not grep for every literal occurrence and verify each by hand, and generated code that references the constant by name picks up the new value at the next build.",
         "trap": "Naming every literal — including indices, loop bounds, and obvious status codes — bloats the agent's mental constant table without comprehension gain."
       }
     }
@@ -1545,10 +1545,10 @@
       },
       "agent": {
         "symptom": "Multiple subclass constructors initialize the same parent fields with the same logic; the agent verifying constructors must check every subclass for consistency.",
-        "goal": "The shared init lives in the parent's constructor and is called via super; the agent reasons about one initialization path.",
+        "goal": "Shared initialization lives in the parent's constructor and runs via super; subclass constructors hold only their specific setup, and the agent reads one canonical init for parent-state setup.",
         "pressure": "Bug fixes in init logic must land in every subclass; the agent must update each consistently or risk silent drift.",
-        "tradeoff": "If only some subclasses share the init logic, pulling it up forces the others to override or opt out; the agent verifying must check whether the shared init is genuinely common.",
-        "relief": "One canonical init; new subclasses inherit for free; the agent reasons about parent-state setup in one place.",
+        "tradeoff": "Subclasses that need different parent-state setup pay the cost of overriding the pulled-up init or passing flags through super; the agent reading those overrides loads both the parent's shared init and the subclass's override to predict what runs.",
+        "relief": "New subclasses inherit the parent's init without re-declaring it; edits to the shared setup land in one constructor and the agent loads one body to verify the change instead of N near-identical subclass constructors.",
         "trap": "Pulling up init logic only some subclasses need forces the others to override with awkward opt-outs the agent must reason about."
       }
     }
@@ -1570,11 +1570,11 @@
       },
       "agent": {
         "symptom": "A field declared identically across multiple subclasses; the agent verifying changes to the field's shape must update every subclass consistently.",
-        "goal": "The field lives on the shared parent; the agent reasons about one declaration and one ownership story.",
+        "goal": "The field lives on the parent with one declaration; reading any subclass's storage resolves through inheritance to the parent's one field instead of paying the cost of loading every subclass to verify the declaration matches.",
         "pressure": "Refactoring the field's type or default requires the agent to touch every subclass; consistency drift hides bugs.",
         "tradeoff": "If subclasses use the field with different defaults, visibility, or semantic role, pulling up creates surprise behavior the agent must constantly disambiguate.",
-        "relief": "One source of truth for the field's type and default; subclasses focus on what they actually specialize.",
-        "trap": "Pulling up fields with divergent semantic roles creates a shared declaration that masks subclass-specific behavior the agent must constantly re-verify."
+        "relief": "Changes to the field's type or default land in one parent declaration; generated code that constructs any subclass inherits the field without the agent having to verify that N subclasses still agree on the declaration.",
+        "trap": "Pulling up a field that subclasses use with different defaults or semantic roles creates one declaration the agent reads as shared; generated code that initializes the field at the parent level misses the subclass-specific values the original separate declarations carried."
       }
     }
   },
@@ -1594,12 +1594,12 @@
         "trap": "Pushing down fields the parent occasionally consults for type checks or polymorphic dispatch — forces awkward downcasts at the parent's consumers."
       },
       "agent": {
-        "symptom": "A field on the parent class used by only one subclass; the agent reading the parent's shape sees storage that doesn't apply to most instances.",
-        "goal": "The field lives on the subclass that uses it; the agent's reasoning about the parent matches what most instances actually carry.",
+        "symptom": "A field declared on the parent that only one subclass reads or writes; the parent's stored state includes a slot that does not apply to most instances the agent reasons about.",
+        "goal": "The field lives on the subclass that uses it; the parent's storage declaration carries only the fields every instance holds, dropping the irrelevant declaration from the agent's window.",
         "pressure": "The parent's storage carries dead weight; serialization includes ignored fields; the agent's reasoning about the parent's shape is muddied.",
         "tradeoff": "If the parent occasionally consults the field for type checks, pushing it down forces awkward downcasts the agent must add and verify at every consumer.",
-        "relief": "Other subclasses no longer carry ignored storage; the parent's surface shrinks; the agent reasons about each subclass's shape accurately.",
-        "trap": "Pushing down fields the parent occasionally consults for dispatch forces downcasts the agent must add at every consumer."
+        "relief": "Other subclasses no longer carry storage they never touch; queries about the parent or any sibling subclass load fewer irrelevant field declarations into the window.",
+        "trap": "Pushing down a field that callers reach through a parent-typed reference forces every read or write to downcast first; each downcast is a runtime type check the agent's generated code has to handle at every consumer."
       }
     }
   },
@@ -1645,11 +1645,11 @@
       },
       "agent": {
         "symptom": "A subclass that overrides parent methods to no-ops or 'unsupported'; the agent reasoning about polymorphic calls on parent-typed references cannot trust the contract.",
-        "goal": "Composition replaces inheritance; the agent reasons about explicit delegation with no Liskov ambiguity.",
+        "goal": "The former subclass holds a delegate of the former parent's role; the agent reads the new class's interface as the contract instead of loading the former parent to filter out methods the subclass refused.",
         "pressure": "Liskov violations break the agent's polymorphic reasoning; the agent must defensively check at every call site whether the subclass honors the parent's contract.",
         "tradeoff": "Composition adds a forwarding method on the former subclass for every parent method exposed; the agent loses syntactic polymorphism and pays ceremony for explicit delegation.",
-        "relief": "The misleading is-a relationship disappears; the agent's polymorphic reasoning becomes trustworthy because every reference type honors its declared contract.",
-        "trap": "Replacing every inheritance — including ones where Liskov genuinely holds — pays forwarding ceremony at every method without buying any contract safety the agent actually needed."
+        "relief": "References typed against the former subclass hold only the methods the class actually implements; generated code that calls a method on a reference no longer dispatches through inherited methods the subclass overrode to no-op or unsupported.",
+        "trap": "Replacing inheritance with delegation on hierarchies where the subclass uses every inherited method adds a forwarding method per parent method without changing what the agent's generated calls do."
       }
     }
   }
