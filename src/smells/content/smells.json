@@ -19,8 +19,8 @@
         "goal": "Identifiers carry enough disambiguating information that the agent can reason about each symbol without a lookup hop.",
         "pressure": "Every reasoning pass re-derives meaning from surrounding context; chained edits compound the cost and increase the chance of hallucinating a misread.",
         "tradeoff": "Renames invalidate cached associations — commit history, RAG snippets, embedding indexes, and prior conversation context all carry the old name until they refresh.",
-        "relief": "Fewer context-lookup hops per reasoning step; planning loops run cheaper and resist drift.",
-        "trap": "Compulsive renaming generates spurious diffs that crowd the review surface and burn context the human reviewer has to skim past."
+        "relief": "Every later read of the symbol resolves to one token of name instead of name plus a context lookup; per-occurrence reading cost drops by the size of the context the agent previously had to load to recover meaning.",
+        "trap": "Renaming every variable whose current name another reviewer would also accept invalidates cached associations across RAG indexes, prior conversation context, and code comments referencing the old name, without changing what the symbol stands for."
       }
     }
   },
@@ -634,12 +634,12 @@
         "trap": "Replacing every inheritance relationship with composition, including ones where the Liskov contract genuinely holds — pays construction-site verbosity for no real fit improvement."
       },
       "agent": {
-        "symptom": "A subclass overriding parent methods to no-ops, throwing 'unsupported', or quietly ignoring inherited behavior — the agent cannot trust polymorphic calls on parent-typed references.",
-        "goal": "Sharing happens via composition (a held delegate) instead of forced inheritance; every reference type honors its contract.",
+        "symptom": "A subclass overrides parent methods with no-ops or 'unsupported' throws; code generated against the parent's interface that calls the inherited method against this subclass produces a runtime failure the type checker accepted.",
+        "goal": "Behavior reuse runs through a held collaborator instead of through inheritance; generated code that calls a method on a reference type runs the method the type's signature promises.",
         "pressure": "Liskov violations: the agent cannot trust subclass instances to honor the parent contract, so polymorphism becomes a trap that the agent must defensively check at every call site.",
         "tradeoff": "Composition is more verbose at construction; the agent loses syntactic polymorphism and must verify behavior through explicit delegation calls instead of relying on inheritance dispatch.",
-        "relief": "Each class has only what it needs; the agent's polymorphic reasoning becomes trustworthy because every reference type honors its declared contract.",
-        "trap": "Replacing every inheritance relationship with composition, including ones where Liskov genuinely holds, pays construction verbosity at every site without buying any safety the original inheritance didn't provide."
+        "relief": "Code generated against a reference type's interface executes the methods that type defines; calls dispatched against the type signature do not silently fall through to no-op overrides.",
+        "trap": "Replacing inheritance with composition on hierarchies where every subclass honors the parent's contract adds forwarding methods at every site without changing what the agent's generated calls do; the tokens spent on the rewrite buy no behavioral guarantee the inheritance did not already provide."
       }
     }
   },
