@@ -75,7 +75,7 @@ export default function CatalogCompareDetail({
           <SnippetPreviewButton href={entry.name.toSnippetHref()} label="Preview markdown" />
         </Stack>
         <Typography
-          variant="body2"
+          variant="body1"
           color="text.secondary"
           sx={{ fontStyle: "italic", lineHeight: 1.55 }}
         >
