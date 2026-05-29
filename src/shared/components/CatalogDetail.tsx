@@ -58,19 +58,24 @@ export default function CatalogDetail({
           inboundPatterns={inboundPatterns}
           neighbors={neighbors}
         />
+        <CatalogToneLegend />
         <Stack
           direction="row"
-          sx={{ alignItems: "center", flexWrap: "wrap", columnGap: 2.5, rowGap: 1.5 }}
+          sx={{
+            alignItems: "center",
+            justifyContent: "space-between",
+            flexWrap: "wrap",
+            gap: 1.5,
+          }}
         >
+          <LensSwitcher
+            humanHref={entry.href()}
+            compareHref={entry.compareHref()}
+            agentHref={entry.agentHref()}
+            currentView={lens}
+          />
           <SnippetPreviewButton href={entry.name.toSnippetHref()} label="Preview markdown" />
-          <CatalogToneLegend />
         </Stack>
-        <LensSwitcher
-          humanHref={entry.href()}
-          compareHref={entry.compareHref()}
-          agentHref={entry.agentHref()}
-          currentView={lens}
-        />
         {entry.safetyNet && <CatalogSection label="Safety net" body={entry.safetyNet.toString()} />}
         <CatalogSection label="Symptom" body={forces.symptom} />
         <CatalogSection label="Goal" body={forces.goal} />
