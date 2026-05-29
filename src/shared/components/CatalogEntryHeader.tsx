@@ -7,10 +7,8 @@ import NextLink from "next/link";
 
 import LinkedChip from "@/shared/components/LinkedChip";
 import { MONOSPACE_FONT } from "@/shared/theme/monospace";
-import type { CatalogEntryTone } from "@/shared/lib/CatalogEntry";
 import type { CatalogEntryName } from "@/shared/lib/CatalogEntryName";
 import type { CatalogNeighbors } from "@/shared/lib/CatalogNeighbors";
-import { chipColorForTone } from "@/shared/lib/catalogChipColor";
 
 const NAV_ARROW_STYLE = {
   display: "inline-flex" as const,
@@ -18,25 +16,10 @@ const NAV_ARROW_STYLE = {
   justifyContent: "center" as const,
   width: 32,
   height: 32,
-  borderRadius: "50%",
+  borderRadius: 8,
+  border: "1px solid #e0e0e0",
   color: "#666",
   textDecoration: "none",
-};
-
-/**
- * Soft tone-tinted background + dark text for the catalog-number badge.
- * Hard-coded so the sx prop stays a plain object — required because this
- * component runs as a server component (sx callbacks serialize as
- * functions, which Next.js can't pass from server to client children).
- *
- * Colors match MUI's default success/error/warning/info palette: bg is
- * the `.main` hex at ~15% alpha, fg is the `.dark` hex.
- */
-const TONE_BADGE_STYLES: Record<CatalogEntryTone, { bg: string; fg: string }> = {
-  refactoring: { bg: "rgba(46, 125, 50, 0.15)", fg: "#1b5e20" },
-  smell: { bg: "rgba(211, 47, 47, 0.15)", fg: "#c62828" },
-  "kerievsky-pattern": { bg: "rgba(237, 108, 2, 0.15)", fg: "#e65100" },
-  "gof-pattern": { bg: "rgba(2, 136, 209, 0.15)", fg: "#01579b" },
 };
 
 interface CatalogEntryHeaderProps {
@@ -62,7 +45,7 @@ function LabeledChipRow({ label, chips }: { label: string; chips: readonly Catal
             key={chip.toCatalogHref()}
             label={chip.toString()}
             href={chip.toCatalogHref()}
-            color={chipColorForTone(chip.tone())}
+            tone={chip.tone()}
           />
         ))}
       </Stack>
@@ -125,15 +108,12 @@ export default function CatalogEntryHeader({
             aria-hidden="true"
             sx={{
               flexShrink: 0,
-              px: 1.25,
-              py: 0.5,
-              borderRadius: 1,
-              bgcolor: TONE_BADGE_STYLES[name.tone()].bg,
-              color: TONE_BADGE_STYLES[name.tone()].fg,
+              px: 1,
               fontFamily: MONOSPACE_FONT,
               fontVariantNumeric: "tabular-nums",
-              fontWeight: 700,
-              fontSize: "0.875rem",
+              fontWeight: 600,
+              fontSize: "0.9375rem",
+              color: "text.secondary",
               lineHeight: 1.5,
             }}
           >

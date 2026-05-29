@@ -6,6 +6,7 @@ import CatalogBreadcrumb from "@/shared/components/CatalogBreadcrumb";
 import CatalogEntryHeader from "@/shared/components/CatalogEntryHeader";
 import CatalogExampleSource from "@/shared/components/CatalogExampleSource";
 import CatalogSection from "@/shared/components/CatalogSection";
+import CatalogToneLegend from "@/shared/components/CatalogToneLegend";
 import LensSwitcher from "@/shared/components/LensSwitcher";
 import SnippetPreviewButton from "@/shared/components/SnippetPreviewButton";
 import type { CatalogEntry, Lens } from "@/shared/lib/CatalogEntry";
@@ -57,7 +58,13 @@ export default function CatalogDetail({
           inboundPatterns={inboundPatterns}
           neighbors={neighbors}
         />
-        <SnippetPreviewButton href={entry.name.toSnippetHref()} label="Preview markdown" />
+        <Stack
+          direction="row"
+          sx={{ alignItems: "center", flexWrap: "wrap", columnGap: 2.5, rowGap: 1.5 }}
+        >
+          <SnippetPreviewButton href={entry.name.toSnippetHref()} label="Preview markdown" />
+          <CatalogToneLegend />
+        </Stack>
         <LensSwitcher
           humanHref={entry.href()}
           compareHref={entry.compareHref()}
