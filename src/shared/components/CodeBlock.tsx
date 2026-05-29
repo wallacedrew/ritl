@@ -10,6 +10,7 @@ import { Highlight, themes } from "prism-react-renderer";
 import { useState } from "react";
 
 import { MONOSPACE_FONT } from "@/shared/theme/monospace";
+import { SURFACE_TINT } from "@/shared/theme/surfaces";
 
 type CodeBlockTone = "before" | "after" | "none";
 
@@ -57,7 +58,7 @@ export default function CodeBlock({ code, label, tone = "none" }: CodeBlockProps
             justifyContent: "space-between",
             px: 1.5,
             py: 0.75,
-            bgcolor: "#f1f1f3",
+            bgcolor: SURFACE_TINT,
             borderBottom: 1,
             borderColor: "divider",
           }}

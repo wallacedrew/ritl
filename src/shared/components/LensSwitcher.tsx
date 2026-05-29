@@ -8,6 +8,8 @@ import Stack from "@mui/material/Stack";
 import NextLink from "next/link";
 import type { ReactElement, ReactNode } from "react";
 
+import { SURFACE_TINT, SURFACE_TINT_HOVER } from "@/shared/theme/surfaces";
+
 export type LensView = "human" | "agent" | "compare";
 
 interface LensSwitcherProps {
@@ -22,8 +24,6 @@ interface LensButtonProps {
   href: string;
   children: ReactNode;
 }
-
-const INACTIVE_BG = "#f3eee4";
 
 const BUTTON_BASE_SX = {
   display: "inline-flex",
@@ -64,10 +64,10 @@ function LensButton({ isActive, href, children }: LensButtonProps) {
       href={href}
       sx={{
         ...BUTTON_BASE_SX,
-        bgcolor: INACTIVE_BG,
+        bgcolor: SURFACE_TINT,
         color: "text.primary",
         "&:hover": {
-          bgcolor: "#eae4d8",
+          bgcolor: SURFACE_TINT_HOVER,
         },
       }}
     >
