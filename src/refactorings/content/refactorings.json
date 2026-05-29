@@ -399,7 +399,7 @@
         "pressure": "The agent must trace the loop body step by step to verify behavior; off-by-one bugs hide where the agent's mental simulation diverges from runtime.",
         "tradeoff": "Pipeline form adds per-element call overhead and forces the agent to track intermediate collection types through the chain; for hot paths the runtime cost matters.",
         "relief": "Intent is readable; the agent reasons about each pipeline stage independently with type signatures documenting the transformation.",
-        "trap": "Forcing every loop into a pipeline — including ones with early-exit, side-effects, or sequential dependencies — produces twisted .reduce() bodies the agent has to untangle to understand."
+        "trap": "Forcing every loop into a pipeline, including ones with early-exit, side-effects, or sequential dependencies, produces .reduce() bodies whose accumulator state the agent has to simulate at every read; the simulation cost exceeds what the original loop's straight-line control flow required."
       }
     }
   },
