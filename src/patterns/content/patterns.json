@@ -371,11 +371,11 @@
       },
       "agent": {
         "symptom": "Singleton accessors (`Class.getInstance()`) hide the agent's view of which classes depend on the collaborator. The agent must grep the codebase for every static-accessor call to know the real dependency graph; test setup requires resetting global state between cases.",
-        "goal": "Constructor signatures encode the dependency graph the agent can read statically. Per-test construction makes setup/teardown explicit; the agent verifies one wiring at the composition root rather than chasing static accessors.",
+        "goal": "Constructor signatures carry every dependency the class uses; the agent reads one signature to enumerate what the class touches instead of grepping for static accessor calls across the codebase.",
         "pressure": "Static accessors defeat static call-graph analysis at the dependency level; the agent cannot infer from a class's interface what it actually uses. Test-order flakiness from shared static state is invisible to local reasoning and only surfaces under CI.",
         "tradeoff": "Inlining pushes wiring code outward; the agent must reason about a composition root or DI container to verify production behaviour. Without one, the inlining may produce duplicated wiring across callers that the agent now has to verify match.",
-        "relief": "Constructor parameters are statically visible dependencies the agent can verify without grepping. Per-test isolation makes test failures attributable to the test itself rather than to a stale global state.",
-        "trap": "Inlining without a composition root forces the agent to scatter `new Logger()` calls across the codebase, each implicitly creating independent state. The agent then has to verify intent (one logger or many?) at every call site, which is harder than reading one global accessor."
+        "relief": "Every dependency the class uses appears in its constructor signature; the agent enumerates dependencies from one file load instead of grepping for static-accessor calls across the codebase.",
+        "trap": "Inlining without first establishing a composition root produces `new Logger()` calls scattered across consumer files, each creating an independent instance; generated code that assumes a shared logger picks up an isolated one and the divergence ships."
       }
     }
   },
@@ -1142,11 +1142,11 @@
         "trap": "Forcing two genuinely-different operations onto the same name to satisfy the pattern produces silent behavioural drift — the names match but the semantics differ. Unify Interfaces is for accidental divergence; if the operations actually behave differently, they should keep different names."
       },
       "agent": {
-        "symptom": "Accidental name divergence across N classes the agent must remember when reading or editing code. Search results for one operation miss the variants under different names; refactoring tools can't unify the rename without manual mapping.",
-        "goal": "One canonical name per operation across the codebase; the agent's static reasoning about 'where is X called?' returns a complete answer. Per-class behaviour is verified once against the canonical interface.",
+        "symptom": "Operations with the same semantics carry different names across N classes; a grep for one name returns one class's call sites, missing the aliases; the agent enumerating consumers pays the cost of knowing the alias map for the operation.",
+        "goal": "Each operation has one name across every class that exposes it; a grep for the name returns every call site, and the agent enumerates consumers without paying for an alias map.",
         "pressure": "Inconsistent naming forces the agent to enumerate aliases on every cross-class change. The cost compounds — `find usages` returns partial results; semantic edits miss aliased variants; the agent's confidence in completeness drops.",
         "tradeoff": "Renames break external consumers who depend on the old names; the agent must verify the rename's blast radius before applying it. For library code with documented APIs, the rename cost may exceed the consistency gain.",
-        "relief": "Static analysis returns complete results; the agent's verification budget on cross-class edits drops to the unified surface. Diff surface for future variants is well-defined: implement the canonical names.",
+        "relief": "Edits to the operation's contract land against one name across every class; tooling that searches by name returns every call site, and the agent does not pay the alias-mapping cost on cross-class changes.",
         "trap": "Unifying names across two classes whose operations only superficially match silently misleads future readers. The agent reads `findById` on both and assumes equivalent behaviour; when one has implicit side effects the other doesn't, the trap is hard to detect statically. Verify behaviour matches before unifying names."
       }
     }
