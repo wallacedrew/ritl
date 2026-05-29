@@ -1,11 +1,10 @@
 import CatalogListPage from "@/shared/components/CatalogListPage";
-import { loadCatalogSnapshot } from "@/shared/lib/loadCatalogSnapshot";
 
+import { loadSmells } from "./lib/loadSmells";
 import { toSmellListItem } from "./lib/toSmellListItem";
 
 export default function SmellsPage() {
-  const snapshot = loadCatalogSnapshot();
-  const items = snapshot.smells.map((smell, index) => toSmellListItem(smell, index + 1, snapshot));
+  const items = loadSmells().map((smell, index) => toSmellListItem(smell, index + 1));
 
   return (
     <CatalogListPage

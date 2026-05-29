@@ -1,5 +1,3 @@
-import type { CrossReferences } from "@/shared/lib/RelationshipGroup";
-
 import type { CatalogEntryTone } from "./CatalogEntry";
 
 export interface CatalogListItem {
@@ -8,5 +6,4 @@ export interface CatalogListItem {
   name: string;
   tone: CatalogEntryTone;
   caption: string;
-  crossReferences?: CrossReferences;
 }

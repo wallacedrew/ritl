@@ -1,12 +1,10 @@
 import CatalogListPage from "@/shared/components/CatalogListPage";
 import { loadPatterns } from "@/patterns/lib/loadPatterns";
 import { toPatternListItem } from "@/patterns/lib/toPatternListItem";
-import { loadCatalogSnapshot } from "@/shared/lib/loadCatalogSnapshot";
 
 export default function KerievskyLandingPage() {
-  const snapshot = loadCatalogSnapshot();
   const items = loadPatterns("kerievsky").map((pattern, index) =>
-    toPatternListItem(pattern, index + 1, snapshot),
+    toPatternListItem(pattern, index + 1),
   );
 
   return (

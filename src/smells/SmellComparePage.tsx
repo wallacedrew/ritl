@@ -1,8 +1,8 @@
+import { loadPatterns } from "@/patterns/lib/loadPatterns";
 import CatalogCompareDetail from "@/shared/components/CatalogCompareDetail";
 import { findCatalogEntryBySlug } from "@/shared/lib/findCatalogEntryBySlug";
 import { findInboundPatterns } from "@/shared/lib/findInboundPatterns";
 import { generateCatalogStaticParams } from "@/shared/lib/generateCatalogStaticParams";
-import { loadCatalogSnapshot } from "@/shared/lib/loadCatalogSnapshot";
 
 import { getSmellNeighbors } from "./lib/getSmellNeighbors";
 import { loadSmells } from "./lib/loadSmells";
@@ -13,9 +13,8 @@ interface SmellComparePageProps {
 
 export default async function SmellComparePage({ params }: SmellComparePageProps) {
   const { slug: rawSlug } = await params;
-  const snapshot = loadCatalogSnapshot();
-  const { entry: smell, number } = findCatalogEntryBySlug(rawSlug, snapshot.smells);
-  const inboundPatterns = findInboundPatterns(smell.name, snapshot.patterns).map(
+  const { entry: smell, number } = findCatalogEntryBySlug(rawSlug, loadSmells());
+  const inboundPatterns = findInboundPatterns(smell.name, loadPatterns()).map(
     (pattern) => pattern.name,
   );
   return (
@@ -28,7 +27,6 @@ export default async function SmellComparePage({ params }: SmellComparePageProps
       afterLabel="Fresher version"
       neighbors={getSmellNeighbors(number)}
       inboundPatterns={inboundPatterns}
-      snapshot={snapshot}
     />
   );
 }

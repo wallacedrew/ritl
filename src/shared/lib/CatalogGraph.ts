@@ -1,5 +1,5 @@
 import type { CatalogEntryTone } from "@/shared/lib/CatalogEntry";
-import type { CatalogSnapshot } from "@/shared/lib/collectCrossReferences";
+import type { CatalogSnapshot } from "@/shared/lib/loadCatalogSnapshot";
 
 import {
   crossReferences,

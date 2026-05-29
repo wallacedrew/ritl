@@ -3,13 +3,11 @@ import Typography from "@mui/material/Typography";
 
 import ExpandableCatalogChip from "@/shared/components/ExpandableCatalogChip";
 import type { CatalogEntryTone } from "@/shared/lib/CatalogEntry";
-import type { CrossReferences } from "@/shared/lib/RelationshipGroup";
 
 export interface LabeledChipRowChip {
   label: string;
   href: string;
   tone: CatalogEntryTone;
-  crossReferences?: CrossReferences;
 }
 
 interface Props {

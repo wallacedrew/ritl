@@ -1,13 +1,9 @@
 import { loadPatterns } from "@/patterns/lib/loadPatterns";
 import { toPatternListItem } from "@/patterns/lib/toPatternListItem";
 import CatalogListPage from "@/shared/components/CatalogListPage";
-import { loadCatalogSnapshot } from "@/shared/lib/loadCatalogSnapshot";
 
 export default function GofLandingPage() {
-  const snapshot = loadCatalogSnapshot();
-  const items = loadPatterns("gof").map((pattern, index) =>
-    toPatternListItem(pattern, index + 1, snapshot),
-  );
+  const items = loadPatterns("gof").map((pattern, index) => toPatternListItem(pattern, index + 1));
 
   return (
     <CatalogListPage

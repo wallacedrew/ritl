@@ -7,7 +7,7 @@ import {
 } from "@/shared/lib/CatalogGraph";
 import { CatalogEntry, type CatalogEntryProps } from "@/shared/lib/CatalogEntry";
 import { CatalogEntryName } from "@/shared/lib/CatalogEntryName";
-import type { CatalogSnapshot } from "@/shared/lib/collectCrossReferences";
+import type { CatalogSnapshot } from "@/shared/lib/loadCatalogSnapshot";
 import { Forces } from "@/shared/lib/Forces";
 
 const fillerForces = Forces.from({
@@ -163,15 +163,5 @@ describe("computeCrossReferencesForHref", () => {
   it("returns empty cross-references for an href not in the graph", () => {
     const result = computeCrossReferencesForHref("/no/such/entry", graph);
     expect(result.groups).toEqual([]);
-  });
-
-  it("produces chips with no nested crossReferences (the consumer self-resolves the next level)", () => {
-    const result = computeCrossReferencesForHref("/refactoring/smells/long-function", graph);
-
-    for (const group of result.groups) {
-      for (const chip of group.chips) {
-        expect(chip.crossReferences).toBeUndefined();
-      }
-    }
   });
 });

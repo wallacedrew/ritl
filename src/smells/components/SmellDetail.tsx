@@ -1,7 +1,7 @@
+import { loadPatterns } from "@/patterns/lib/loadPatterns";
 import CatalogDetail from "@/shared/components/CatalogDetail";
 import type { CatalogEntry, Lens } from "@/shared/lib/CatalogEntry";
 import { findInboundPatterns } from "@/shared/lib/findInboundPatterns";
-import { loadCatalogSnapshot } from "@/shared/lib/loadCatalogSnapshot";
 
 import { getSmellNeighbors } from "../lib/getSmellNeighbors";
 
@@ -12,8 +12,7 @@ interface SmellDetailProps {
 }
 
 export default function SmellDetail({ smell, number, lens }: SmellDetailProps) {
-  const snapshot = loadCatalogSnapshot();
-  const inboundPatterns = findInboundPatterns(smell.name, snapshot.patterns).map(
+  const inboundPatterns = findInboundPatterns(smell.name, loadPatterns()).map(
     (pattern) => pattern.name,
   );
 
@@ -28,7 +27,6 @@ export default function SmellDetail({ smell, number, lens }: SmellDetailProps) {
       afterLabel="Fresher version"
       neighbors={getSmellNeighbors(number)}
       inboundPatterns={inboundPatterns}
-      snapshot={snapshot}
     />
   );
 }

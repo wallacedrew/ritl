@@ -21,13 +21,6 @@ export interface CrossReferenceChip {
   readonly label: string;
   readonly href: string;
   readonly tone: CatalogEntryTone;
-  /**
-   * Populated when this chip should render its own cross-reference chevron
-   * (i.e. when shown as a top-level chip on a render surface). Chips that
-   * live inside a cross-reference popover leave this undefined — the
-   * popover is itself an expansion and does not nest expansions.
-   */
-  readonly crossReferences?: CrossReferences;
 }
 
 export interface RelationshipGroup {

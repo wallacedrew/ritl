@@ -10,7 +10,6 @@ import LensSwitcher from "@/shared/components/LensSwitcher";
 import SnippetPreviewButton from "@/shared/components/SnippetPreviewButton";
 import type { CatalogEntry, Lens } from "@/shared/lib/CatalogEntry";
 import type { CatalogNeighbors } from "@/shared/lib/CatalogNeighbors";
-import type { CatalogSnapshot } from "@/shared/lib/collectCrossReferences";
 
 import type { CatalogEntryName } from "@/shared/lib/CatalogEntryName";
 
@@ -25,7 +24,6 @@ interface CatalogDetailProps {
   neighbors: CatalogNeighbors;
   incomingSources?: readonly CatalogEntryName[];
   inboundPatterns?: readonly CatalogEntryName[];
-  snapshot?: CatalogSnapshot;
 }
 
 export default function CatalogDetail({
@@ -39,7 +37,6 @@ export default function CatalogDetail({
   neighbors,
   incomingSources,
   inboundPatterns,
-  snapshot,
 }: CatalogDetailProps) {
   const forces = entry.forcesFor(lens);
 
@@ -59,7 +56,6 @@ export default function CatalogDetail({
           incomingSources={incomingSources}
           inboundPatterns={inboundPatterns}
           neighbors={neighbors}
-          snapshot={snapshot}
         />
         <Stack
           direction="row"

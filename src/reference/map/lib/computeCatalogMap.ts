@@ -1,4 +1,4 @@
-import { collectCrossReferences, type CatalogSnapshot } from "@/shared/lib/collectCrossReferences";
+import type { CatalogSnapshot } from "@/shared/lib/loadCatalogSnapshot";
 import type { CrossReferenceChip } from "@/shared/lib/RelationshipGroup";
 import type { CatalogEntry } from "@/shared/lib/CatalogEntry";
 import type { CatalogEntryName } from "@/shared/lib/CatalogEntryName";
@@ -26,71 +26,47 @@ const MOST_CONNECTED_LIMIT = 10;
 const SPARSEST_LIMIT = 5;
 
 export function computeCatalogMap(snapshot: CatalogSnapshot): CatalogMap {
-  const entriesByHref = indexEntriesByHref(snapshot);
-  const ranked = rankEntriesByConnections(snapshot, entriesByHref);
+  const ranked = rankEntriesByConnections(snapshot);
   return {
-    crossBookBridges: collectCrossBookBridges(snapshot, entriesByHref),
-    kerievskyWithoutDestination: collectKerievskyWithoutDestination(snapshot, entriesByHref),
+    crossBookBridges: collectCrossBookBridges(snapshot),
+    kerievskyWithoutDestination: collectKerievskyWithoutDestination(snapshot),
     mostConnectedEntries: ranked.slice(0, MOST_CONNECTED_LIMIT),
     sparsestEntries: takeSparsest(ranked, SPARSEST_LIMIT),
   };
 }
 
-function indexEntriesByHref(snapshot: CatalogSnapshot): ReadonlyMap<string, CatalogEntry> {
-  const lookup = new Map<string, CatalogEntry>();
-  for (const entry of [...snapshot.smells, ...snapshot.refactorings, ...snapshot.patterns]) {
-    lookup.set(entry.name.toCatalogHref(), entry);
-  }
-  return lookup;
-}
-
-function collectCrossBookBridges(
-  snapshot: CatalogSnapshot,
-  entriesByHref: ReadonlyMap<string, CatalogEntry>,
-): readonly CatalogMapBridge[] {
+function collectCrossBookBridges(snapshot: CatalogSnapshot): readonly CatalogMapBridge[] {
   return snapshot.patterns.flatMap((pattern) => {
     const destination = pattern.destinationPattern;
     if (destination === undefined) return [];
-    return [
-      {
-        source: chipWithCrossReferences(pattern.name, snapshot, entriesByHref),
-        destination: chipWithCrossReferences(destination, snapshot, entriesByHref),
-      },
-    ];
+    return [{ source: toChip(pattern.name), destination: toChip(destination) }];
   });
 }
 
 function collectKerievskyWithoutDestination(
   snapshot: CatalogSnapshot,
-  entriesByHref: ReadonlyMap<string, CatalogEntry>,
 ): readonly CrossReferenceChip[] {
   return snapshot.patterns
     .filter((pattern) => pattern.book === "kerievsky" && pattern.destinationPattern === undefined)
-    .map((pattern) => chipWithCrossReferences(pattern.name, snapshot, entriesByHref));
+    .map((pattern) => toChip(pattern.name));
 }
 
-function rankEntriesByConnections(
-  snapshot: CatalogSnapshot,
-  entriesByHref: ReadonlyMap<string, CatalogEntry>,
-): readonly RankedEntry[] {
+function rankEntriesByConnections(snapshot: CatalogSnapshot): readonly RankedEntry[] {
   const inboundCounts = countInbound(snapshot);
   const allEntries = [...snapshot.smells, ...snapshot.refactorings, ...snapshot.patterns];
   return allEntries
-    .map((entry) => toRankedEntry(entry, inboundCounts, snapshot, entriesByHref))
+    .map((entry) => toRankedEntry(entry, inboundCounts))
     .sort((first, second) => second.totalCount - first.totalCount);
 }
 
 function toRankedEntry(
   entry: CatalogEntry,
   inboundCounts: ReadonlyMap<string, number>,
-  snapshot: CatalogSnapshot,
-  entriesByHref: ReadonlyMap<string, CatalogEntry>,
 ): RankedEntry {
-  const chip = chipWithCrossReferences(entry.name, snapshot, entriesByHref);
   const outboundCount = entry.nemeses.length + (entry.destinationPattern ? 1 : 0);
   const inboundCount = inboundCounts.get(entry.name.toCatalogHref()) ?? 0;
   return {
-    chip,
+    chip: toChip(entry.name),
     outboundCount,
     inboundCount,
     totalCount: outboundCount + inboundCount,
@@ -118,16 +94,10 @@ function takeSparsest(ranked: readonly RankedEntry[], limit: number): readonly R
   return [...ranked].sort((first, second) => first.totalCount - second.totalCount).slice(0, limit);
 }
 
-function chipWithCrossReferences(
-  name: CatalogEntryName,
-  snapshot: CatalogSnapshot,
-  entriesByHref: ReadonlyMap<string, CatalogEntry>,
-): CrossReferenceChip {
-  const entry = entriesByHref.get(name.toCatalogHref());
+function toChip(name: CatalogEntryName): CrossReferenceChip {
   return {
     label: name.toString(),
     href: name.toCatalogHref(),
     tone: name.tone(),
-    crossReferences: entry ? collectCrossReferences(entry, snapshot) : undefined,
   };
 }
