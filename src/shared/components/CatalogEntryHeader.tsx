@@ -5,7 +5,7 @@ import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import NextLink from "next/link";
 
-import LinkedChip from "@/shared/components/LinkedChip";
+import LabeledChipRow from "@/shared/components/LabeledChipRow";
 import { MONOSPACE_FONT } from "@/shared/theme/monospace";
 import type { CatalogEntryName } from "@/shared/lib/CatalogEntryName";
 import type { CatalogNeighbors } from "@/shared/lib/CatalogNeighbors";
@@ -30,27 +30,6 @@ interface CatalogEntryHeaderProps {
   incomingSources?: readonly CatalogEntryName[];
   inboundPatterns?: readonly CatalogEntryName[];
   neighbors?: CatalogNeighbors;
-}
-
-function LabeledChipRow({ label, chips }: { label: string; chips: readonly CatalogEntryName[] }) {
-  if (chips.length === 0) return null;
-  return (
-    <Stack spacing={0.5}>
-      <Typography variant="overline" color="text.secondary" sx={{ lineHeight: 1.4 }}>
-        {label}
-      </Typography>
-      <Stack direction="row" sx={{ flexWrap: "wrap", gap: 1 }}>
-        {chips.map((chip) => (
-          <LinkedChip
-            key={chip.toCatalogHref()}
-            label={chip.toString()}
-            href={chip.toCatalogHref()}
-            tone={chip.tone()}
-          />
-        ))}
-      </Stack>
-    </Stack>
-  );
 }
 
 function nemesesLabel(name: CatalogEntryName): string {
