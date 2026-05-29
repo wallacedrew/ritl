@@ -1,5 +1,21 @@
 import type { CatalogKind } from "./CatalogEntry";
 
+/**
+ * URL-facing segment for each catalog. Decoupled from CatalogKind so the
+ * URL can read more naturally than the data-model identifier — e.g. the
+ * "refactorings" catalog is published under `/refactoring/canon` because
+ * "the canon" reads better than the repeated word.
+ */
+const CATALOG_URL_SEGMENT: Record<CatalogKind, string> = {
+  refactorings: "canon",
+  smells: "smells",
+  patterns: "patterns",
+};
+
+function urlSegmentFor(catalog: CatalogKind): string {
+  return CATALOG_URL_SEGMENT[catalog];
+}
+
 export interface SubSiteProps {
   slug: string;
   title: string;
@@ -45,13 +61,13 @@ export class SubSite {
 
   hrefForCatalog(catalog: CatalogKind): string {
     this.assertContains(catalog);
-    return this.hasMultipleCatalogs() ? `/${this.slug}/${catalog}` : `/${this.slug}`;
+    return this.hasMultipleCatalogs() ? `/${this.slug}/${urlSegmentFor(catalog)}` : `/${this.slug}`;
   }
 
   hrefForEntry(catalog: CatalogKind, entrySlug: string): string {
     this.assertContains(catalog);
     return this.hasMultipleCatalogs()
-      ? `/${this.slug}/${catalog}/${entrySlug}`
+      ? `/${this.slug}/${urlSegmentFor(catalog)}/${entrySlug}`
       : `/${this.slug}/${entrySlug}`;
   }
 

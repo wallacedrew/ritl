@@ -27,14 +27,14 @@ const items: CatalogItem[] = [
     tone: "refactoring",
     number: 1,
     name: "Extract Function",
-    href: "/refactoring/refactorings/extract-function",
+    href: "/refactoring/canon/extract-function",
   },
   {
     kind: "refactoring",
     tone: "refactoring",
     number: 12,
     name: "Extract Class",
-    href: "/refactoring/refactorings/extract-class",
+    href: "/refactoring/canon/extract-class",
   },
 ];
 
@@ -74,7 +74,7 @@ describe("user searches the catalog", () => {
 
     await user.click(screen.getByRole("option", { name: /Extract Function/ }));
 
-    expect(pushMock).toHaveBeenCalledWith("/refactoring/refactorings/extract-function");
+    expect(pushMock).toHaveBeenCalledWith("/refactoring/canon/extract-function");
   });
 
   it("fires search_selected with the picked entry's kind and slug", async () => {

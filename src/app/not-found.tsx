@@ -67,7 +67,7 @@ export default function NotFound() {
         </Stack>
 
         <Stack direction="row" spacing={1.5} sx={{ flexWrap: "wrap", gap: 1 }}>
-          <Button component={NextLink} href="/refactoring/refactorings" variant="contained">
+          <Button component={NextLink} href="/refactoring/canon" variant="contained">
             Browse refactorings
           </Button>
           <Button component={NextLink} href="/refactoring/smells" variant="outlined">

@@ -45,7 +45,7 @@ describe("user reads Replace Conditional Logic with Strategy", () => {
     });
     expect(polymorphismLink).toHaveAttribute(
       "href",
-      "/refactoring/refactorings/replace-conditional-with-polymorphism",
+      "/refactoring/canon/replace-conditional-with-polymorphism",
     );
 
     expect(screen.getByText(/Adapted from Joshua Kerievsky/i)).toBeInTheDocument();

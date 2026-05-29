@@ -50,7 +50,7 @@ describe("SubSite value object", () => {
       catalogs: ["refactorings", "smells"],
     });
 
-    expect(fowler.hrefForCatalog("refactorings")).toBe("/refactoring/refactorings");
+    expect(fowler.hrefForCatalog("refactorings")).toBe("/refactoring/canon");
     expect(fowler.hrefForCatalog("smells")).toBe("/refactoring/smells");
   });
 
@@ -72,7 +72,7 @@ describe("SubSite value object", () => {
     });
 
     expect(fowler.hrefForEntry("refactorings", "extract-function")).toBe(
-      "/refactoring/refactorings/extract-function",
+      "/refactoring/canon/extract-function",
     );
   });
 

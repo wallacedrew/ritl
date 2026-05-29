@@ -45,7 +45,7 @@ describe("CatalogEntryName", () => {
   it("renders refactoring URLs under the refactorings kind", () => {
     const name = CatalogEntryName.refactoring("Extract Function");
 
-    expect(name.toCatalogHref()).toBe("/refactoring/refactorings/extract-function");
+    expect(name.toCatalogHref()).toBe("/refactoring/canon/extract-function");
     expect(name.toSnippetHref()).toBe("/snippets/refactorings/extract-function.md");
   });
 

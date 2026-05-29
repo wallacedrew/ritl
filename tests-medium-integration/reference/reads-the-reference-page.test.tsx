@@ -23,10 +23,7 @@ describe("user reads the combined reference page at /reference", () => {
     ).toBeInTheDocument();
 
     const extractFunctionLinks = screen.getAllByRole("link", { name: "Extract Function" });
-    expect(extractFunctionLinks[0]).toHaveAttribute(
-      "href",
-      "/refactoring/refactorings/extract-function",
-    );
+    expect(extractFunctionLinks[0]).toHaveAttribute("href", "/refactoring/canon/extract-function");
   });
 
   it("groups Gang of Four patterns by Creational / Structural / Behavioral", () => {

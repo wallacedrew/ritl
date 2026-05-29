@@ -26,9 +26,9 @@ describe("user reads the compare view of a refactoring", () => {
 
     // Cross-lens nav: Human and Agent are links; Compare is plain text (current view)
     const toHuman = screen.getByRole("link", { name: "Human" });
-    expect(toHuman).toHaveAttribute("href", "/refactoring/refactorings/extract-function");
+    expect(toHuman).toHaveAttribute("href", "/refactoring/canon/extract-function");
 
     const toAgent = screen.getByRole("link", { name: "Agent" });
-    expect(toAgent).toHaveAttribute("href", "/refactoring/refactorings/extract-function/agent");
+    expect(toAgent).toHaveAttribute("href", "/refactoring/canon/extract-function/agent");
   });
 });

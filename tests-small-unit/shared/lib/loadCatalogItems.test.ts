@@ -44,6 +44,6 @@ describe("loadCatalogItems", () => {
     const extractFunction = items.find(
       (i) => i.name === "Extract Function" && i.kind === "refactoring",
     );
-    expect(extractFunction?.href).toBe("/refactoring/refactorings/extract-function");
+    expect(extractFunction?.href).toBe("/refactoring/canon/extract-function");
   });
 });

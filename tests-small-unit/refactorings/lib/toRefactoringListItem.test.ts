@@ -36,7 +36,7 @@ describe("toRefactoringListItem", () => {
   it("derives a slug-based href to the refactoring's detail page", () => {
     const item = toRefactoringListItem(baseRefactoring, 1);
 
-    expect(item.href).toBe("/refactoring/refactorings/extract-function");
+    expect(item.href).toBe("/refactoring/canon/extract-function");
   });
 
   it("projects name + nemeses and human-lens goal into the generic chips + caption shape", () => {

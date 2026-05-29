@@ -33,7 +33,7 @@ describe("user reads Abstract Factory via the GoF sub-site", () => {
     });
     expect(factoryFunctionLink).toHaveAttribute(
       "href",
-      "/refactoring/refactorings/replace-constructor-with-factory-function",
+      "/refactoring/canon/replace-constructor-with-factory-function",
     );
 
     const backLink = screen.getByRole("link", { name: /Patterns/i });

@@ -16,10 +16,10 @@ describe("getRefactoringNeighbors", () => {
 
     expect(prev?.number).toBe(4);
     expect(prev?.name).toBe("Inline Variable");
-    expect(prev?.href).toBe("/refactoring/refactorings/inline-variable");
+    expect(prev?.href).toBe("/refactoring/canon/inline-variable");
     expect(next?.number).toBe(6);
     expect(next?.name).toBe("Encapsulate Variable");
-    expect(next?.href).toBe("/refactoring/refactorings/encapsulate-variable");
+    expect(next?.href).toBe("/refactoring/canon/encapsulate-variable");
   });
 
   it("returns no next neighbor for the last entry", () => {

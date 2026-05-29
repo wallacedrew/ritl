@@ -34,10 +34,7 @@ describe("user reads Compose Method via the Kerievsky sub-site", () => {
     expect(screen.getByRole("heading", { name: "Compose Method", level: 1 })).toBeInTheDocument();
 
     const extractFunctionLink = screen.getByRole("link", { name: "Extract Function" });
-    expect(extractFunctionLink).toHaveAttribute(
-      "href",
-      "/refactoring/refactorings/extract-function",
-    );
+    expect(extractFunctionLink).toHaveAttribute("href", "/refactoring/canon/extract-function");
 
     const longFunctionLink = screen.getByRole("link", { name: "Long Function" });
     expect(longFunctionLink).toHaveAttribute("href", "/refactoring/smells/long-function");

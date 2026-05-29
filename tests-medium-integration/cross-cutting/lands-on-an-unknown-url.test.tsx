@@ -20,7 +20,7 @@ describe("user lands on an unknown URL", () => {
     const browseSmells = screen.getByRole("link", { name: /Browse smells/i });
     const browseReference = screen.getByRole("link", { name: /Reference/i });
 
-    expect(browseRefactorings).toHaveAttribute("href", "/refactoring/refactorings");
+    expect(browseRefactorings).toHaveAttribute("href", "/refactoring/canon");
     expect(browseSmells).toHaveAttribute("href", "/refactoring/smells");
     expect(browseReference).toHaveAttribute("href", "/reference");
   });
@@ -31,8 +31,8 @@ describe("user lands on an unknown URL", () => {
     const links = screen.getAllByRole("link");
     const hrefs = links.map((link) => link.getAttribute("href"));
 
-    expect(hrefs).toContain("/refactoring/refactorings/extract-function");
-    expect(hrefs).toContain("/refactoring/refactorings/rename-variable");
+    expect(hrefs).toContain("/refactoring/canon/extract-function");
+    expect(hrefs).toContain("/refactoring/canon/rename-variable");
     expect(hrefs).toContain("/refactoring/smells/long-function");
   });
 });

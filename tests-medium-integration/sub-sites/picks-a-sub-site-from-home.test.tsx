@@ -10,7 +10,7 @@ describe("user picks a sub-site from the home page picker", () => {
     renderWithTheme(<HomePage />);
 
     const fowlerCardLink = screen.getByRole("link", { name: "Refactoring" });
-    expect(fowlerCardLink).toHaveAttribute("href", "/refactoring/refactorings");
+    expect(fowlerCardLink).toHaveAttribute("href", "/refactoring/canon");
   });
 
   it("home page also offers a Refactoring to Patterns (Kerievsky) card linking to /refactoring-to-patterns", () => {
@@ -27,7 +27,7 @@ describe("user picks a sub-site from the home page picker", () => {
     expect(gofCardLink).toHaveAttribute("href", "/design-patterns");
   });
 
-  it("refactoring detail pages render at /refactoring/refactorings/:slug", async () => {
+  it("refactoring detail pages render at /refactoring/canon/:slug", async () => {
     const ui = await RefactoringDetailPage({
       params: Promise.resolve({ slug: "extract-function" }),
     });
@@ -36,12 +36,9 @@ describe("user picks a sub-site from the home page picker", () => {
     expect(screen.getByRole("heading", { name: "Extract Function", level: 1 })).toBeInTheDocument();
 
     const agentLink = screen.getByRole("link", { name: "Agent" });
-    expect(agentLink).toHaveAttribute("href", "/refactoring/refactorings/extract-function/agent");
+    expect(agentLink).toHaveAttribute("href", "/refactoring/canon/extract-function/agent");
 
     const compareLink = screen.getByRole("link", { name: "Compare" });
-    expect(compareLink).toHaveAttribute(
-      "href",
-      "/refactoring/refactorings/extract-function/compare",
-    );
+    expect(compareLink).toHaveAttribute("href", "/refactoring/canon/extract-function/compare");
   });
 });

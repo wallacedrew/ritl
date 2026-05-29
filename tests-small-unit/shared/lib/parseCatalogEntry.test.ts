@@ -43,8 +43,8 @@ describe("parseCatalogEntry", () => {
     expect(entry.catalog).toBe("smells");
     expect(entry.name.toString()).toBe("Long Function");
     expect(entry.nemeses.map((n) => n.toCatalogHref())).toEqual([
-      "/refactoring/refactorings/extract-function",
-      "/refactoring/refactorings/replace-temp-with-query",
+      "/refactoring/canon/extract-function",
+      "/refactoring/canon/replace-temp-with-query",
     ]);
     expect(entry.forces.human.symptom).toBe("S");
     expect(entry.forces.agent.trap).toBe("X");
@@ -96,7 +96,7 @@ describe("parseCatalogEntry", () => {
     expect(entry.name.toString()).toBe("Compose Method");
     expect(entry.book).toBe("kerievsky");
     expect(entry.nemeses.map((n) => n.toCatalogHref())).toEqual([
-      "/refactoring/refactorings/extract-function",
+      "/refactoring/canon/extract-function",
       "/refactoring/smells/long-function",
     ]);
   });

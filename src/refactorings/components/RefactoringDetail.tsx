@@ -21,7 +21,7 @@ export default function RefactoringDetail({ refactoring, number, lens }: Refacto
       entry={refactoring}
       number={number}
       lens={lens}
-      backLinkHref="/refactoring/refactorings"
+      backLinkHref="/refactoring/canon"
       backLinkLabel="Refactorings"
       beforeLabel="Before the refactoring"
       afterLabel="After the refactoring"

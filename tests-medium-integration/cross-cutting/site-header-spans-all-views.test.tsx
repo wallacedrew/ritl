@@ -26,7 +26,7 @@ describe("site header spans every catalog view", () => {
     expect(nav).toBeInTheDocument();
 
     const refactoringsLink = screen.getByRole("link", { name: /^Refactorings$/ });
-    expect(refactoringsLink).toHaveAttribute("href", "/refactoring/refactorings");
+    expect(refactoringsLink).toHaveAttribute("href", "/refactoring/canon");
 
     const smellsLink = screen.getByRole("link", { name: /^Smells$/ });
     expect(smellsLink).toHaveAttribute("href", "/refactoring/smells");
