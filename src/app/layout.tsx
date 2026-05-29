@@ -4,7 +4,10 @@ import "./globals.css";
 import Box from "@mui/material/Box";
 import SiteFooter from "@/shared/components/SiteFooter";
 import SiteHeader from "@/shared/components/SiteHeader";
+import { buildCatalogGraph } from "@/shared/lib/CatalogGraph";
+import { loadCatalogSnapshot } from "@/shared/lib/loadCatalogSnapshot";
 import { AnalyticsProvider } from "@/shared/theme/AnalyticsProvider";
+import { CatalogGraphProvider } from "@/shared/theme/CatalogGraphProvider";
 import ThemeRegistry from "@/shared/theme/ThemeRegistry";
 
 export const metadata: Metadata = {
@@ -14,19 +17,23 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
+  const catalogGraph = buildCatalogGraph(loadCatalogSnapshot());
+
   return (
     <html lang="en" suppressHydrationWarning>
       <body suppressHydrationWarning>
         <AnalyticsProvider>
-          <ThemeRegistry>
-            <Box sx={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
-              <SiteHeader />
-              <Box component="main" sx={{ flexGrow: 1 }}>
-                {children}
+          <CatalogGraphProvider graph={catalogGraph}>
+            <ThemeRegistry>
+              <Box sx={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
+                <SiteHeader />
+                <Box component="main" sx={{ flexGrow: 1 }}>
+                  {children}
+                </Box>
+                <SiteFooter />
               </Box>
-              <SiteFooter />
-            </Box>
-          </ThemeRegistry>
+            </ThemeRegistry>
+          </CatalogGraphProvider>
         </AnalyticsProvider>
         {/*
           Pageviews + Core Web Vitals are auto-injected by Cloudflare Pages
