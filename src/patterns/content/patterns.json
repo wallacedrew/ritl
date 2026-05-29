@@ -34,7 +34,7 @@
         "goal": "One construction path the agent reads to know what a fully-initialized object looks like; all other paths are one-line delegations the agent can skip past during reasoning. Field-set drift is impossible by construction.",
         "pressure": "N construction paths × M fields = N×M cells the agent must verify match on every field-related edit. Field additions cascade across all paths; per-path duplication consumes context budget that could be spent on the calling code.",
         "tradeoff": "A long canonical parameter list is itself a context-load tax — the agent must remember positional argument order on every reading of a delegating factory. Wrong-position bugs become subtler than missing-field bugs.",
-        "relief": "Each delegating factory is one line; the agent reads the canonical constructor once and treats all variants as parameterized calls. Diff surface for adding a new field is one place; tests for the canonical constructor cover all variants transitively.",
+        "relief": "Each variant constructor delegates to the canonical one; adding a new field touches the canonical constructor once and every variant inherits the change, and tests against the canonical body cover all variants transitively.",
         "trap": "The canonical constructor balloons into a many-parameter signature where the agent loses track of which combinations are legal. Context cost moves from per-path duplication to per-parameter combination explosion; a parameter object or named-argument shape becomes overdue."
       }
     }
@@ -74,7 +74,7 @@
         "goal": "The method reads as a sequence of named operations the agent can verify against without re-deriving the algorithm. Each helper is small enough to reason about in a single step.",
         "pressure": "Every edit re-loads the full method body to confirm behavior preservation. Chained orchestration changes compound context cost; reasoning about cross-step invariants gets harder as the method grows.",
         "tradeoff": "Each helper inflates context-window cost by one definition the next reasoning step must load. Over-decomposing fragments a single procedure across many files.",
-        "relief": "The composed method captures the algorithm in named steps; helpers are independently verifiable; refactoring orchestration is a localized change. Smaller diff surface per commit.",
+        "relief": "The composed method captures the algorithm as a list of named steps the agent reads at one indent; each helper has one signature and one body the agent verifies independently, and edits to one step do not need the others loaded.",
         "trap": "A deeply-nested hierarchy of helpers where the agent must chase multiple definitions to understand a single original method — context cost multiplies and cross-helper invariants vanish from view."
       }
     }
@@ -118,7 +118,7 @@
         "goal": "One factory module the agent verifies once; all construction sites read as named factory calls the agent can treat opaquely. Restructuring the hierarchy is a one-file diff verified locally.",
         "pressure": "Every client-side `new SubclassName(...)` couples the call site to the concrete identity. The agent must hold the subclass taxonomy in working context across many files just to verify construction sites are consistent with the hierarchy's current shape.",
         "tradeoff": "Factory methods are an extra indirection the agent must hop through to know what kind of object a call returns. Static call-graph analysis loses precision; the agent may need to read the factory body to determine which concrete type comes back from a given factory call.",
-        "relief": "The factory is the single source of truth for the taxonomy. Adding a subclass touches one file; the agent verifies one new factory method instead of N construction sites. Hierarchy reshaping is locally observable.",
+        "relief": "The factory holds the construction recipe for every variant at one file; adding a subclass touches the factory plus the new class, and existing callers do not move because they reach for the factory's named methods rather than constructors.",
         "trap": "A factory with one method per subclass and no other logic just renames `new` to `factory.new`. Context cost rises by one definition layer without proportional reasoning gain; the encapsulation pays only when the factory can hide non-trivial creation choices."
       }
     }
@@ -206,7 +206,7 @@
         "goal": "One adapter file per variant; the agent verifies each adapter independently against the external API. The host class becomes a thin delegator the agent reads once and trusts thereafter.",
         "pressure": "Mixed variant + host code consumes context budget on every host-class edit. The agent must hold all variant branches in working memory to verify that a host change doesn't break a variant code path; cross-variant invariants are easy to miss.",
         "tradeoff": "Adapter extraction multiplies file count and may obscure the agent's static call-graph view of how data flows from host through to external API. Mocking adapters in host tests requires duplicating the adapter interface in the test setup.",
-        "relief": "Host class tests stop loading external-library mocks; adapter tests load only the one external surface they wrap. Diff surface for a library upgrade is one adapter file; the agent's context cost on host edits drops linearly with variant count.",
+        "relief": "Host class tests load the adapter's interface instead of the external library; adapter tests load the vendor surface in isolation; a library upgrade touches the one adapter file rather than every host call site.",
         "trap": "An adapter for a single, stable variant is dead weight — one extra file the agent must learn before reading the host. The pattern pays only when adapter count > 1 or when adapter-level test isolation buys verifiability the host couldn't achieve alone."
       }
     }
@@ -250,7 +250,7 @@
         "goal": "One Composite superclass the agent reads once and trusts thereafter. Sibling classes are short enough to load entirely in context; the agent verifies only the distinctive surface.",
         "pressure": "Duplicated collection logic across N siblings × M methods = N×M cells the agent must hold to verify consistency. The agent's edit budget on a single collection-method change is N times what it would be with the Composite in place.",
         "tradeoff": "Inheritance hides behaviour in the superclass that callers may not know to look for; the agent must traverse the class hierarchy to know what a sibling can do. Method resolution order issues complicate static reasoning when subclasses override partial behaviours.",
-        "relief": "Diff surface for a collection-logic change collapses to one file. Sibling class files become short and locally readable; tests can target Composite behaviour without per-sibling duplication.",
+        "relief": "Collection-handling logic lives at the Composite class at one file; sibling classes hold only their leaf-specific work; tests against the Composite cover the tree-walking logic without per-sibling duplication of the same setup.",
         "trap": "A bloated Composite forces the agent to load a large superclass before reading any sibling. If sibling behaviours diverge later, the agent must constantly cross-check superclass methods against per-sibling overrides — context cost migrates from duplication to inheritance traversal."
       }
     }
@@ -290,7 +290,7 @@
         "goal": "One method the agent reads once; callers supply the varying value at the call site. Verification of behaviour reduces from N×assertion to 1×assertion + parameter coverage tests.",
         "pressure": "Per-method duplication multiplies the agent's edit cost on every shared-logic change. The agent's static reasoning cannot guarantee that N copies of a closure stayed identical without re-inspecting each.",
         "tradeoff": "A parameterized method obscures static call-graph analysis — the agent cannot tell from the call site alone which behaviour fires. Stringy parameters (`'author'`) defeat static type-checking; misspellings ship to runtime.",
-        "relief": "Diff surface for shared logic collapses to one method body. Per-parameter behaviour is covered by table-driven tests the agent can read and reason about in one block; new variants are one new test row.",
+        "relief": "Shared logic lives at one method body the agent reads once; the parameter holds the per-call variation, and tests cover the variants through a table the agent reads as one block instead of N near-identical test methods.",
         "trap": "Replacing N methods with a method that takes a stringy parameter pushes the type information out of the type system and into runtime. The agent must verify caller intent by tracing the literal across files, which costs more context than reading N distinct method names."
       }
     }
@@ -334,7 +334,7 @@
         "goal": "One template body the agent reads to know the algorithm; primitives are short, locally readable, individually verifiable. The agent's edit budget for an algorithmic change scales with template length, not with subclass count.",
         "pressure": "Algorithmic duplication across N subclasses × M steps = N×M cells the agent must hold in context to verify consistency. The agent cannot statically detect when one copy drifts from the others; the drift only surfaces when a subclass-specific test fails — assuming there is one.",
         "tradeoff": "Template Method splits behaviour across the superclass (algorithm) and subclasses (primitives); the agent must traverse the hierarchy to know what a single call produces. Method resolution order issues complicate static reasoning when intermediate subclasses partially override primitives.",
-        "relief": "Algorithmic diffs collapse to one method body. Per-subclass tests verify only the primitives; the algorithm is exercised by superclass tests once. Diff surface for adding a step is one new abstract primitive + N implementations — visible and bounded.",
+        "relief": "Algorithmic edits land at one parent method body the agent reads once; per-subclass tests target the primitive overrides without re-running the full algorithm, and adding a step is one new abstract primitive plus one override per subclass.",
         "trap": "A long Template Method with many fine-grained primitives forces the agent to read across many small methods to reconstruct what the algorithm does in any given subclass. Context cost migrates from inline duplication to hierarchy traversal; per-step debugging requires loading the relevant primitive override before the template makes sense."
       }
     }
@@ -458,7 +458,7 @@
         "goal": "Each subclass's Factory Method is locally verifiable; the base algorithm has no construction-conditional for the agent to load. The agent's per-edit budget on a variant addition is one new subclass, not N edits to construction sites.",
         "pressure": "Construction conditionals couple the base class to the full variant taxonomy; the agent must hold every variant in working memory to verify any edit to the base. Cross-variant invariants (e.g., that every parser implements `.parse`) are not statically enforceable when construction goes through type-code strings.",
         "tradeoff": "Factory Method spreads creation across the inheritance hierarchy; the agent must traverse subclasses to know which concrete type a base-class call produces. Static call-graph analysis loses precision on the return type of `createParser()`.",
-        "relief": "Diff surface for a new variant is one subclass file. The base algorithm reads as polymorphic call-and-use; agent reasoning about the algorithm stays independent of the variant count.",
+        "relief": "Adding a new variant is one new subclass that overrides the factory hook; the base algorithm reads one virtual call instead of branching on a type code, and the algorithm's body stays constant in size as variants are added.",
         "trap": "A hierarchy with one trivial Factory Method per subclass forces the agent to load the inheritance chain to know what a single base-class call returns. The pattern's context-cost gain materializes only when each Factory Method does non-trivial work — otherwise the indirection adds cost without proportional clarity."
       }
     }
@@ -583,10 +583,10 @@
       },
       "agent": {
         "symptom": "An operation's logic the agent must trace across N node classes to reconstruct what happens on a recursive call. The structure's source files are large because each one carries every operation; adding an operation requires the agent to coordinate edits across the full type hierarchy.",
-        "goal": "One file per operation; the agent verifies a Visitor in isolation. Node classes shrink to data + one accept method; the structure's complexity drops to its actual shape rather than the cumulative weight of every operation it has accumulated.",
+        "goal": "One file per operation; the agent verifies a Visitor against its declared interface in isolation. Node classes hold data plus one accept method, dropping the per-operation surface area the agent loads when reading any node type.",
         "pressure": "Each operation × N node classes = N×M cells the agent must verify match for the operation to behave consistently across the structure. Cross-node invariants (every node implements compute, every node's compute is consistent with its print) are not statically enforceable.",
         "tradeoff": "Visitor splits a single conceptual operation across two layers (accept + visit); the agent must follow the double dispatch to trace what runs for a given node + operation pair. Adding a node type requires the agent to edit every visitor — Shotgun Surgery shifts from operations to nodes.",
-        "relief": "Per-operation diff surface is one file the agent reads end-to-end. Static-analysis tools can verify each Visitor implements every visitX method (whereas the inline-method version had no such guarantee). Tests target Visitor classes directly.",
+        "relief": "Each operation lives at one Visitor file the agent reads end-to-end; the type checker confirms each Visitor implements every visit method, and adding an operation does not edit any node class.",
         "trap": "A visitor hierarchy applied to an unstable node set forces the agent to chase a Shotgun Surgery across visitor files every time a node is added. Per-edit context cost goes up linearly with operation count when nodes change — the inverse of the pattern's intended cost shape."
       }
     }
@@ -630,7 +630,7 @@
         "goal": "One factory file the agent reads as the construction contract; callers are short delegations the agent treats opaquely. Per-edit budget for a recipe change collapses to one file.",
         "pressure": "Recipe duplication × N callers × M recipe steps inflates the agent's context cost on every assembly-related edit. Subtle inconsistencies between caller-side recipes are invisible until they manifest as bugs; static reasoning cannot enforce 'every caller applies the discount'.",
         "tradeoff": "A factory hides construction details from the call site; the agent must read the factory to know what the returned object actually carries. Static type information at the call site narrows to the return type, with construction-level invariants pushed inside the factory.",
-        "relief": "Diff surface for a recipe change is one file. Tests cover the factory's contract once; per-call-site behaviour reduces to verifying the intent, not the assembly. Recipe drift across callers becomes statically impossible.",
+        "relief": "The recipe lives at one factory the agent edits once; callers reach for the factory's named methods, and the recipe cannot drift across callers because callers do not hold a copy of the assembly steps.",
         "trap": "A factory whose recipe is itself a long sequence of conditional steps can become as opaque as the duplicated callers were — the agent must trace the factory body line-by-line to know what came out. The pattern's gain materializes when the factory's recipe is itself decomposed into named build steps."
       }
     }
@@ -674,7 +674,7 @@
         "goal": "One file per behaviour the agent reads in isolation; the core class is short and verifiable on its own. Composition order is statically observable at the construction site; the agent can reason about wrapper effects sequentially.",
         "pressure": "The combinatorial flag-space defeats static reasoning — the agent cannot enumerate which combinations have been tested or which are reachable. Per-feature behaviour change requires editing the core class, which the agent then has to re-verify against all flag combinations.",
         "tradeoff": "Decorator chains spread the call-path across multiple files; the agent must traverse the chain to know what a single method call does. Wrapping-order is not statically declared anywhere; the agent must read the construction site to recover the intent.",
-        "relief": "Diff surface for adding or removing a feature is one decorator file or one chain edit at the construction site. Per-feature tests are isolated; static analysis of the core class is unburdened by optional-behaviour conditionals.",
+        "relief": "Adding or removing an embellishment is one decorator file or one wiring edit at the construction site; the core class holds the base behavior without optional-feature conditionals, and per-feature tests load one decorator instead of every combination.",
         "trap": "Five-deep decorator chains require the agent to load five definitions before reading the call. Stack traces obscure where in the chain a failure occurred; the agent's debugging cost goes up with depth. A composition-style API that names the intended capability set can be more legible than the raw chain."
       }
     }
@@ -714,11 +714,11 @@
         "trap": "A Command class per trivial action becomes ceremony tax — `class FooCommand { execute(x) { return foo(x); } }`. The pattern earns its keep when commands carry state (captured arguments, undo info), when there are many of them, or when cross-cutting concerns benefit from the uniform interface."
       },
       "agent": {
-        "symptom": "A dispatcher conditional + N inline handler methods the agent must scan together to know what runs for a given command. Adding a command requires the agent to edit two places (dispatcher + host class); the diff surface scales linearly with handler complexity.",
-        "goal": "One file per command the agent reads in isolation; the dispatcher is short and command-set-agnostic. Per-command diff surface collapses to one Command class + one registry entry.",
+        "symptom": "A dispatcher conditional plus N inline handler methods the agent must scan together to know what runs for a given command. Adding a command edits two places (dispatcher plus host class), and the host file grows by one handler body for every new command added.",
+        "goal": "One file per command the agent reads in isolation; the dispatcher reads a registry of commands instead of a switch over IDs, and adding a command is one new class plus one registry entry rather than an edit across every dispatcher branch.",
         "pressure": "Cross-command invariants (e.g., 'every command logs') cannot be statically enforced when handlers are loose methods on the dispatcher. The agent must hold the full handler set in context to verify any cross-command concern; refactoring one handler risks unintended impact on neighbouring branches that share helpers.",
         "tradeoff": "Command spreads handler logic across N files; the agent must traverse the registry to know which class handles a given command name. Stringy registry keys defeat static type analysis — typo-driven bugs slip past the type system.",
-        "relief": "Diff surface for a new command is one file. Static analysis can verify every Command implements `execute`; the dispatcher's behaviour is statically uniform. Cross-cutting concerns can live as a wrapping decorator on the registry rather than duplicated per handler.",
+        "relief": "Adding a new command is one new class plus one registry entry; the type checker confirms every Command implements execute, and cross-cutting concerns wrap the registry once instead of being duplicated per dispatch branch.",
         "trap": "Many trivial Commands (`class XCommand { execute() { return X(); } }`) raise context cost without buying anything — the agent loads one definition per command name to verify what it does. The pattern's gain materializes when commands carry meaningful state or when cross-cutting concerns reuse the uniform interface."
       }
     }
@@ -802,7 +802,7 @@
         "goal": "Each static creation method has a clear, statically-typed signature. The agent verifies the canonical constructor's invariants once; per-creation-method behaviour is one named entry point with one return type.",
         "pressure": "Argument-sniffing constructors defeat the agent's ability to statically classify call sites by intent. Per-call-site verification requires reading the receiver's constructor body and reproducing the sniffing logic; cross-call invariants are nearly impossible to enforce statically.",
         "tradeoff": "Multiple creation methods expand the class's static API surface; the agent must learn them all to know which to call for a given intent. For agents working from a SKILL or doc rather than full source, the proliferation is a real cost.",
-        "relief": "Static analysis identifies creation-method usage by name; intent at the call site is statically visible. Diff surface for adding an intent is one new method; the canonical constructor stays narrow.",
+        "relief": "Each construction path has a named method the agent reads at the call site to predict intent; adding a new intent is one new creation method on the class without changing the canonical constructor.",
         "trap": "A wall of nearly-identical static creation methods that differ only in defaults can become harder to scan than one constructor with documented defaults. The pattern's clarity gain depends on each method representing a genuinely distinct intention."
       }
     }
@@ -846,7 +846,7 @@
         "goal": "The publisher is short and consumer-agnostic; the agent reads it once and trusts it. Each consumer is one file with one event-handling concern; the agent verifies each consumer in isolation.",
         "pressure": "Hard-coded notifications couple the publisher to the full consumer surface. The agent's per-publisher-edit verification cost scales with consumer count; static analysis cannot enforce that the publisher's events fully describe its state changes.",
         "tradeoff": "Observer's dynamic dispatch defeats static call-graph analysis at the event boundary. The agent cannot statically determine which listeners fire on which events without reading the subscription wiring; ordering assumptions are invisible in the code.",
-        "relief": "Diff surface for adding a consumer is one new file. Publisher tests don't load consumer mocks; consumer tests don't load the publisher. Static analysis of the publisher's surface is unburdened by downstream collaborators.",
+        "relief": "Adding a consumer is one new observer class that subscribes to the publisher's protocol; publisher tests do not load consumer mocks, and the publisher's signature stays fixed across additions.",
         "trap": "Subscription wiring scattered across the composition root requires the agent to grep for `subscribe(` calls to enumerate the consumer set. Stale subscriptions (uncleaned references) cause hard-to-debug memory and behaviour leaks the agent cannot detect statically."
       }
     }
@@ -890,7 +890,7 @@
         "goal": "Each grammar node is one class the agent verifies independently. The composed expression tree is a statically-typed data structure the agent reads structurally; per-node tests pin per-node behaviour.",
         "pressure": "Implicit DSLs defeat static analysis at the string boundary — the agent's verification cost spans both parser and evaluator. Adding a syntactic form requires the agent to coordinate parser, evaluator, and tests; misalignments between the three are silent and ship to runtime.",
         "tradeoff": "Interpreter spreads a single conceptual query across multiple class files; the agent traverses the tree to know what an expression does. Static call-graph analysis loses precision on polymorphic `matches` calls — the agent must enumerate concrete node types.",
-        "relief": "Diff surface for a new operator is one class. The grammar's surface is the type hierarchy — the agent can enumerate operators by inspecting the class declarations. Parser and evaluator concerns separate cleanly; tests target evaluation only.",
+        "relief": "Adding a new operator is one new class in the grammar hierarchy; the agent enumerates operators by listing the classes that implement the interface, and tests target evaluation against the typed AST instead of raw string parsing.",
         "trap": "A grammar with many nodes representing fine-grained syntactic variations forces the agent to load a large hierarchy to reason about any expression. Per-node specialization (NumericEquals vs. StringEquals vs. DateEquals) can multiply file count without proportional reasoning gain."
       }
     }
@@ -934,7 +934,7 @@
         "goal": "A concrete Composite the agent reads as a typed recursive structure. Static analysis can verify that traversal methods cover all node types; tree-shape invariants live in the constructor.",
         "pressure": "Filtering-based traversals consume context budget proportional to record count, not tree depth. The agent cannot statically distinguish a malformed flat representation (cycles, missing parents) from a valid one without simulating the parent-pointer resolution.",
         "tradeoff": "Composite construction is itself a translation step the agent must verify against the flat form. Persistence boundaries require the agent to keep two representations in mind — the in-memory tree and the on-disk flat form. Serialization round-trips are a new bug surface.",
-        "relief": "Traversal code shrinks to one-line recursive calls; static analysis verifies node-type coverage; per-method tests target tree behaviour without record-soup setup. Diff surface for tree operations is the Composite class itself.",
+        "relief": "Traversal runs through one-line recursive calls on the Composite interface; the type checker confirms every node type implements the traversal contract, and tree-operation tests construct one typed tree instead of reconstructing the shape from raw records.",
         "trap": "If the on-disk form remains the flat record set, the agent has to verify the in-memory tree stays consistent with it across edits. The pattern's gain materializes when the tree owns the canonical form; when it's a transient view over a relational store, the implicit form may stay authoritative."
       }
     }
@@ -978,7 +978,7 @@
         "goal": "Polymorphic dispatch on the value's type; the agent verifies each subtype's implementation in isolation. Per-operation analysis no longer requires holding 'what shape is this value?' in working memory.",
         "pressure": "One-vs-many branch checks duplicate across every consumer; the agent's per-edit verification cost scales with operation count. Static type information is shallow when JavaScript allows both shapes to flow through the same variable.",
         "tradeoff": "Composite spreads behaviour across a type hierarchy; the agent must traverse subtypes to know what a method does for a given value. Subtype construction at boundaries is itself a place the agent must verify the one-vs-many decision lands correctly.",
-        "relief": "Diff surface for a new operation is one method per subtype. Static analysis verifies subtype coverage; per-subtype tests exercise their implementations independently. The shape decision moves out of operation bodies and into the construction boundary.",
+        "relief": "Adding a new operation is one method on the Composite interface plus one implementation per subtype; the type checker confirms every subtype implements the operation, and operation bodies no longer branch on one-versus-many because the Composite handles the shape.",
         "trap": "A Composite applied to a distinction that is actually load-bearing context (e.g., when callers need to know cardinality to render differently) ends up restoring the `if (isMulti)` branches at the call site, just with `.isMultivalued()` instead of `Array.isArray`. The pattern pays when callers genuinely don't care which shape they have."
       }
     }
@@ -1022,7 +1022,7 @@
         "goal": "Per-state class the agent reads as the full operation surface for that state. The transition graph is recoverable by inspecting state-assignment statements; per-state tests pin per-state behaviour.",
         "pressure": "N states × M operations = N×M cells the agent must verify match the expected transition graph. Cross-state invariants (every state implements every operation; transitions only go forward) cannot be statically enforced from the conditional form.",
         "tradeoff": "State pattern spreads the machine across N files; the agent traverses them to reconstruct the full transition graph. State assignments inside operations are imperative side effects that complicate static reasoning about which state comes next.",
-        "relief": "Static analysis verifies every state implements every operation; diff surface for adding a state is one new file. Per-state behaviour is locally readable; transition assignments are the only places the agent must trace to recover the graph.",
+        "relief": "Each state lives at one file the agent reads in isolation; adding a new state is one new class implementing the protocol, and the agent traces transitions by following the assignment sites rather than holding the full conditional in attention.",
         "trap": "A state machine with many states that mostly throw makes the agent load N files to discover that operation X is only legal in state Y. A state-transition table (data, not code) may be more economical for the agent to scan than N state classes."
       }
     }
@@ -1062,7 +1062,7 @@
         "goal": "Static type-checking enforces that comparisons are only against the named instances. The agent verifies consumers by class membership; per-status behaviour is locally readable as methods on the class.",
         "pressure": "Magic literals defeat static analysis at every comparison site. The agent's verification cost on a new status × M consumers scales with consumer count; cross-consumer consistency requires holistic test coverage that may not exist.",
         "tradeoff": "Value-object instances are reference-equality-checked in JavaScript; serialization round-trips require explicit handling. The agent must verify that deserialization produces the same canonical instances, not new equivalents, or `===` comparisons silently fail.",
-        "relief": "Diff surface for adding a status is one new instance + tests. Static type-checking (in TypeScript / JSDoc) verifies consumers handle all statuses; per-method behaviour is locally readable.",
+        "relief": "Adding a new status is one new subclass; the type checker confirms consumers handle every variant, and per-status behavior lives on the variant's class instead of in switch branches across every consumer.",
         "trap": "Value objects relying on reference equality across serialization boundaries (HTTP, persistence, message queues) require careful canonicalization; getting it wrong produces runtime equality bugs the agent cannot detect statically. The pattern is straightforward in pure-runtime code; thornier across persistence boundaries."
       }
     }
@@ -1106,7 +1106,7 @@
         "goal": "One adapter file the agent verifies once; consumers are uniform calls against a single interface. Translation rules are centralized; consumer-side code is generic over the adapted type.",
         "pressure": "Per-consumer translation defeats static typing — the consumer's interface contract is implicit in the branches rather than declared. Adding a third variant means another branch at every consumer site (Shotgun Surgery scales with consumer × variant count).",
         "tradeoff": "Adapter spreads the boundary across one extra class; the agent must trace from consumer through adapter to vendor to understand a single call's full path. Vendor-API changes ripple to the adapter — usually the right place — but the agent must remember to re-verify the adapter when the vendor updates.",
-        "relief": "Static type-checking of the canonical interface enforces consumer-side uniformity. Diff surface for a new vendor variant is one new adapter file; consumers don't move. Tests for the adapter are isolated from consumer logic.",
+        "relief": "Consumers reach for the canonical interface; a new vendor variant is one new adapter file, and existing consumer code does not change because the adapter's signature matches what the consumers already call.",
         "trap": "An adapter that smuggles non-trivial logic (validation, error remapping, retries) hides behaviour the agent might expect to see at the consumer or at the vendor — neither location is now authoritative. When the adapter is doing more than shape-conversion, its name should reflect that (Gateway, Anti-Corruption Layer)."
       }
     }
@@ -1186,7 +1186,7 @@
         "goal": "The agent reads one factory interface to know what products exist; concrete factories are short and exhaustive; client code is one factory pointer away from the right family. Cross-call-site family consistency becomes structurally guaranteed, not inspection-required.",
         "pressure": "N call sites × M theme branches = N×M cells the agent must verify on every theme-related edit. Adding a theme requires the agent to find every switch and prove no branch was missed — high context cost, high verification load, and the proof is fragile because nothing structural anchors it.",
         "tradeoff": "A new product method requires the agent to update every concrete factory in lockstep. The factory interface becomes a single mutation surface the agent must understand fully before any product edit; partial knowledge produces compile errors, but compile errors that surface late in the iteration cycle.",
-        "relief": "Edits scoped to one factory implementation; type system enforces interface completeness; the agent reasons about one client call site (the one taking the factory) rather than every place that constructs widgets. Diff surface for a new theme is bounded and locally verifiable.",
+        "relief": "Adding a new family of products is one new factory implementation; the type checker confirms every factory produces the full family, and client code reaches for the factory once at construction without per-product conditional branches.",
         "trap": "Factory interface bloat — over many edits the agent loses sight of which products are still in use. Dead factory methods accumulate because no client demands them but the interface contract still requires them; cleanup requires touching every concrete factory together, exactly the cross-cutting edit the pattern was supposed to eliminate."
       }
     }
@@ -1266,7 +1266,7 @@
         "goal": "Structural completeness via the type system: every subclass of the creator must implement the factory method, so missing-variant bugs surface as construction-time errors the agent can see during static reading. The creator's workflow becomes a stable surface the agent never re-reads as products multiply.",
         "pressure": "The agent's verification budget on creator edits scales linearly with the number of variants in the switch. Every variant must be checked for consistent treatment; partial updates produce type-compatible silent bugs the test suite may not exercise. Context cost climbs faster than feature value.",
         "tradeoff": "A parallel hierarchy doubles the file count the agent must navigate to understand the system. 'Which Document am I dealing with?' becomes an additional step in every reasoning trace, and refactoring across the hierarchy requires editing N files in lockstep — exactly the cross-cutting pattern the agent struggles with most.",
-        "relief": "Per-variant edits scope to one subclass; the creator's workflow is read-once. Tests for the creator cover all variants transitively; tests for each variant cover one method. Diff surface for a new variant is a single new file the agent generates by mirroring an existing sibling.",
+        "relief": "Adding a new variant is one new subclass that overrides the factory method; the creator's body stays constant in size, and the agent generates the new subclass by reading one sibling instead of editing dispatch logic across the codebase.",
         "trap": "Subclasses that override more than the factory method (extra hooks, extra state, extra invariants) reintroduce the cross-cutting verification problem in a different shape — now the agent must verify N subclasses each implement M hooks consistently. The parallel hierarchy becomes the same N×M cell-check problem the switch had, only spread across more files."
       }
     }
@@ -1306,7 +1306,7 @@
         "goal": "One prototype-registry table the agent reads once to enumerate every variant and its defaults. Cloning is a structural operation: the agent verifies clone() once, then trusts every per-variant change is data-only.",
         "pressure": "Field additions cascade across every create method; the agent's edit cost grows linearly with variant count. The shared-by-convention shape is invisible to static analysis; the agent must compare methods pairwise to be sure they stay in sync.",
         "tradeoff": "Shallow-clone aliasing bugs are the worst kind for the agent — symptoms appear far from the cause, in code that 'just reads a field'. Verifying clone semantics requires reasoning across the full clone graph; partial verification produces flaky-looking tests.",
-        "relief": "The registry table is one place to read and edit; clone is a generic operation the agent verifies once; per-variant changes have a single-line diff surface. Test coverage for one variant becomes coverage-by-construction for every variant.",
+        "relief": "Adding a new variant is one new entry in the prototype registry; the clone operation works against every variant through the shared interface, and the agent reads one prototype's configuration to predict any clone's initial state.",
         "trap": "Optional fields and conditional cloning logic accreting onto the prototype mask divergent variant shapes. The agent reading the registry sees a uniform table; the runtime sees branching behaviour that depends on which fields a prototype happens to have set. The structural promise the pattern made stops holding."
       }
     }
@@ -1346,7 +1346,7 @@
         "goal": "A single getInstance() access point the agent can grep for to enumerate every consumer. Construction is structurally one-shot; the agent's reasoning about 'who owns this state' has exactly one answer; tests against shared state are explicit about reset.",
         "pressure": "Per-consumer copies multiply the agent's state-graph reasoning by consumer count. Cross-module bugs caused by stale copies are nearly impossible to localize statically — the agent must trace runtime construction order, which is invisible in the source.",
         "tradeoff": "Singleton state survives across tests by default; the agent must remember per-test reset discipline that the test framework does not enforce. Coupling consumers to a static getter hides the dependency in a way linters cannot warn about — the agent's 'who depends on what' graph is structurally incomplete.",
-        "relief": "Construction grep returns one site (the getter); 'who calls Config.getInstance' enumerates every consumer; reset semantics are localizable to the getter's reset method. Diff surface for changing the loading strategy is one class.",
+        "relief": "The instance is constructed at one site (the getter); a grep for the getter returns every consumer; the loading strategy lives at one class the agent edits once to change how the instance is created.",
         "trap": "When tests rely on Config.getInstance() returning a real (live) instance, the agent's edits to Config silently break unrelated tests through the shared-state coupling. The pattern's convenience hides exactly the kind of cross-cutting dependency the agent needs structural visibility into."
       }
     }
@@ -1423,7 +1423,7 @@
       },
       "agent": {
         "symptom": "Cross-product class hierarchies the agent must reason about as N×M cells. Editing one method's contract requires updating every cell; missing cells produce silent type-compatible inconsistencies the test suite may not catch until a customer hits an unexercised combination.",
-        "goal": "Two independent surfaces the agent reads separately. The abstraction's contract is one file; each implementation is one file; composition is structurally typed and verifiable by the type system. Diff surface for adding an axis value is one file.",
+        "goal": "Two independent surfaces the agent reads separately. The abstraction's contract lives at one file; each implementation lives at one file; composition is structurally typed, and adding a new axis value is one new file the agent generates against the abstraction's interface.",
         "pressure": "N×M cell verification on every cross-axis edit. The agent's reasoning load grows multiplicatively with both axes; static analysis of 'is this shape×renderer combination supported' requires enumerating the full cross-product, which is expensive in context budget.",
         "tradeoff": "Two-surface comprehension cost is higher per-read than a single hierarchy. The agent must hold the abstraction's expected interface and the implementation's actual interface in mind simultaneously; mismatches surface as runtime errors at the delegation site, not at compile time in older type systems.",
         "relief": "Per-axis edits scope to one file; the type system enforces the contract; combination behaviour is testable as 'this shape × this renderer' without needing a new class. The agent's edit/verify cycle on adding an axis value is bounded and local.",
@@ -1666,7 +1666,7 @@
         "goal": "N small handler classes the agent reads one at a time. Edits to a concern scope to one file; chain ordering is one expression at the construction site; the agent's verification budget on a concern-specific change drops from full-function-scan to one-file-scan.",
         "pressure": "A long sequential handler function is O(concerns) read cost per edit and O(concerns²) verification cost for concern interactions. The agent's working memory is consumed by the full concern set rather than the change's actual scope.",
         "tradeoff": "Chain composition is implicit in the construction expression's nesting order. The agent investigating a runtime issue must trace through N handlers; stack traces span N frames; concern interactions (handler-A short-circuits before handler-B logs the failure) require explicit chain-aware reasoning the type system cannot enforce.",
-        "relief": "Per-concern edits scope to one handler class; tests for each handler are unit-sized; chain composition tests cover ordering exhaustively at one construction site. Diff surface for adding a concern is a new file + a one-line edit to the chain.",
+        "relief": "Adding a new concern is one new handler class plus one wiring entry in the chain; per-handler tests load one class instead of the full chain, and the chain's composition lives at one construction site the agent reads to predict ordering.",
         "trap": "Handlers that peek at chain neighbors or skip ahead by mutating the request reintroduce cross-handler coupling. The agent reading one handler can no longer reason about its behaviour in isolation; chain-aware verification becomes mandatory on every handler edit, defeating the per-handler isolation the pattern promised."
       }
     }
@@ -1866,7 +1866,7 @@
         "goal": "One save / restore pair the agent reads inside the editor class. Cross-client correctness is structurally guaranteed by treating Memento as opaque; the agent verifies one location for clone depth and one location for restore field-set completeness.",
         "pressure": "Per-client snapshot/restore code is N×M cells (N consumers × M state fields) the agent verifies on every state-shape change. Adding a new field requires editing every snapshot site; one missed site silently produces a partial undo that survives review.",
         "tradeoff": "Opaque Memento means the agent investigating a runtime issue (e.g., 'why did this undo restore the wrong selection?') cannot inspect the Memento in stack traces. Debugging requires save/restore-aware instrumentation; without it, mementos look like black boxes the agent must trust.",
-        "relief": "Edits scope to save() and restore() inside the editor; consumers pass tokens around; the agent verifies clone-depth and field-set once per editor type. Diff surface for a new field is two lines in one file.",
+        "relief": "Save and restore live on the editor in two methods; adding a new field is one assignment in save plus one in restore, and consumers pass the memento as an opaque token without reading its field set.",
         "trap": "Clients that read memento.snapshot directly defeat the encapsulation and create new Insider Trading on the editor's representation. The agent reading client code trusts the Memento contract; the runtime coupling contradicts that trust silently. Lint or document the opacity invariant or it will erode commit-by-commit."
       }
     }
@@ -1946,7 +1946,7 @@
         "goal": "One class per state, each owning its operation set exhaustively. The agent reads one state file to understand its full behaviour; static analysis returns complete answers about 'what does X mean in state Y'; type system enforces operation-set completeness on every state class.",
         "pressure": "State-as-primitive is invisible to the type system as a set; the agent cannot prove from static read that every method handles every state. Adding a state requires editing every method; verification is N×M cells the agent must trace one at a time.",
         "tradeoff": "N state classes is N files the agent navigates to understand the system. Stack traces show 'ShippedState.cancel' but resolving 'what is cancel here' requires reading the State class hierarchy. The cost is paid on every state-related investigation.",
-        "relief": "Per-state edits scope to one file; per-method edits scope to N small additions across state files (mechanical); the type system catches missing operations at compile time. Diff surface for a new state is one new file + a few initial-transition fixes.",
+        "relief": "Each state lives at one file the agent reads in isolation; adding a new state is one new class implementing the protocol, and the type checker confirms every state handles every operation defined on the protocol.",
         "trap": "Shared behaviour across states (every cancel logs an audit event) repeated across state files re-creates Duplicated Code at the new layer. The agent reading the State class hierarchy must verify the shared logic per state; without a common policy or superclass, the agent loses confidence in cross-state consistency on every edit."
       }
     }
@@ -1986,7 +1986,7 @@
         "goal": "One strategy interface and N small implementations the agent reads independently. Per-algorithm verification is one-file-scoped; strategy selection is one expression at the construction site; the host's relevant method is a one-line delegation.",
         "pressure": "Type-tag dispatch inside the host forces every algorithm-related edit to load the full host file with all dispatch branches; the per-edit context covers the host plus the active branch instead of one strategy class. Tests for one algorithm pull in the host's collaborator graph, multiplying setup cost per per-algorithm verification.",
         "tradeoff": "N strategy classes is N files the agent navigates per algorithm-related task. Strategy interface design matters — extra optional methods bloat every implementation and force per-implementation no-op tests the agent must verify.",
-        "relief": "Per-algorithm reasoning is one-file; tests are unit-sized; static analysis enumerates strategies by interface; the host class is a stable surface the agent reads once. Diff surface for a new algorithm is a new file + one construction-site edit.",
+        "relief": "Each strategy lives at one file the agent reads in isolation; adding a new algorithm is one new class implementing the strategy interface plus one construction-site edit, and the host class stays unchanged.",
         "trap": "Strategy interfaces with optional methods (some algorithms implement calibrate(), others do not) blur the contract. The agent must verify per-implementation interface completeness rather than reading the interface as a structural promise. Define one focused interface, or split the family by capability."
       }
     }

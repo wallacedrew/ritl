@@ -57,6 +57,35 @@ const BANNED_PATTERNS: readonly BannedPattern[] = [
     pattern: /\bspurious diff/i,
     reason: "value-laden noun ('spurious diff'); describe what the diff actually contains",
   },
+  {
+    pattern: /\bdiff surface\b/i,
+    reason:
+      "boilerplate ('diff surface'); name the concrete edit scope (files, methods, call sites)",
+  },
+  {
+    pattern: /\bsource of truth\b/i,
+    reason: "cliché ('source of truth'); name what the agent actually reads",
+  },
+  {
+    pattern: /\bground truth\b/i,
+    reason: "cliché ('ground truth'); name what the agent actually reads",
+  },
+  {
+    pattern: /\bcode is the documentation\b/i,
+    reason: "platitude ('code is the documentation'); name the specific cost dropped",
+  },
+  {
+    pattern: /\bbecomes mechanical\b/i,
+    reason: "generic verb ('becomes mechanical'); name the specific cost",
+  },
+  {
+    pattern: /\bbecomes readable\b/i,
+    reason: "generic verb ('becomes readable'); name the specific cost",
+  },
+  {
+    pattern: /\bjumps off the page\b/i,
+    reason: "narrative cliché ('jumps off the page'); name what the agent reads concretely",
+  },
 ];
 
 interface Hit {
