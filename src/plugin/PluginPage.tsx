@@ -4,7 +4,6 @@ import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 
 import AgentsMdSnippetSection from "./components/AgentsMdSnippetSection";
-import CatalogPasteSection from "./components/CatalogPasteSection";
 import PluginInstallSection from "./components/PluginInstallSection";
 import { visuallyHidden } from "@mui/utils";
 
@@ -17,15 +16,13 @@ export default function PluginPage() {
             Plugin
           </Typography>
           <Typography variant="body1" color="text.secondary">
-            Three ways to use Refactoring In The Loop with your coding agent — pick the highest
-            one your environment supports.
+            Two ways to use Refactoring In The Loop with your coding agent — pick the higher one
+            your environment supports.
           </Typography>
         </Stack>
         <PluginInstallSection />
         <Divider />
         <AgentsMdSnippetSection />
-        <Divider />
-        <CatalogPasteSection />
       </Stack>
     </Container>
   );
