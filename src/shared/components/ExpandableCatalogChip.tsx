@@ -90,11 +90,12 @@ function splitChipContainerSx(paletteKey: BadgePaletteKey): SxProps<Theme> {
   return (theme) => ({
     display: "inline-flex",
     alignItems: "stretch",
-    height: 24,
+    minHeight: 24,
     borderRadius: 12,
     border: `1px solid ${alpha(theme.palette[paletteKey].main, 0.5)}`,
     backgroundColor: "transparent",
     overflow: "hidden",
+    maxWidth: "100%",
   });
 }
 
@@ -104,11 +105,14 @@ function splitChipLabelSx(paletteKey: BadgePaletteKey): SxProps<Theme> {
     alignItems: "center",
     paddingLeft: "10px",
     paddingRight: "8px",
+    paddingTop: "3px",
+    paddingBottom: "3px",
     color: theme.palette[paletteKey].dark,
     fontSize: "0.8125rem",
     fontWeight: 500,
     textDecoration: "none",
-    lineHeight: 1,
+    lineHeight: 1.25,
+    wordBreak: "break-word",
     transition: "background-color 120ms",
     "&:hover": {
       backgroundColor: alpha(theme.palette[paletteKey].main, 0.08),
@@ -123,9 +127,10 @@ function splitChipLabelSx(paletteKey: BadgePaletteKey): SxProps<Theme> {
 function splitChipDividerSx(paletteKey: BadgePaletteKey): SxProps<Theme> {
   return (theme) => ({
     width: "1px",
-    alignSelf: "center",
-    height: "65%",
+    alignSelf: "stretch",
+    marginY: "4px",
     backgroundColor: alpha(theme.palette[paletteKey].main, 0.4),
+    flexShrink: 0,
   });
 }
 
@@ -140,6 +145,7 @@ function splitChipChevronSx(paletteKey: BadgePaletteKey): SxProps<Theme> {
     border: "none",
     color: theme.palette[paletteKey].dark,
     cursor: "pointer",
+    flexShrink: 0,
     transition: "background-color 120ms",
     "&:hover": {
       backgroundColor: alpha(theme.palette[paletteKey].main, 0.08),
