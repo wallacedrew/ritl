@@ -1,6 +1,5 @@
 import type { CatalogEntryName } from "./CatalogEntryName";
 import type { Forces } from "./Forces";
-import type { SafetyNet } from "@/refactorings/lib/SafetyNet";
 
 export type CatalogKind = "smells" | "refactorings" | "patterns";
 export type Lens = "human" | "agent";
@@ -23,7 +22,6 @@ export type CatalogEntryProps = {
   before: string;
   after: string;
   forces: { human: Forces; agent: Forces };
-  safetyNet?: SafetyNet;
   exampleSource?: string;
   book?: PatternBook;
   destinationPattern?: CatalogEntryName;
@@ -38,7 +36,6 @@ export class CatalogEntry {
     readonly before: string,
     readonly after: string,
     readonly forces: { human: Forces; agent: Forces },
-    readonly safetyNet?: SafetyNet,
     readonly exampleSource?: string,
     readonly book?: PatternBook,
     readonly destinationPattern?: CatalogEntryName,
@@ -76,7 +73,6 @@ export class CatalogEntry {
       props.before,
       props.after,
       props.forces,
-      props.safetyNet,
       props.exampleSource,
       props.book,
       props.destinationPattern,

@@ -1,5 +1,3 @@
-import { SafetyNet } from "@/refactorings/lib/SafetyNet";
-
 import {
   CatalogEntry,
   LEGAL_CATALOGS,
@@ -118,17 +116,6 @@ function readForces(record: Record<string, unknown>): { human: Forces; agent: Fo
   };
 }
 
-function readOptionalSafetyNet(record: Record<string, unknown>): SafetyNet | undefined {
-  const raw = record.safetyNet;
-  if (raw === undefined) {
-    return undefined;
-  }
-  if (typeof raw !== "string") {
-    throw new Error('parseCatalogEntry: field "safetyNet" must be a string when present');
-  }
-  return SafetyNet.from(raw);
-}
-
 function readOptionalExampleSource(record: Record<string, unknown>): string | undefined {
   const raw = record.exampleSource;
   if (raw === undefined) {
@@ -233,7 +220,6 @@ export function parseCatalogEntry(raw: unknown): CatalogEntry {
     before: readStringField(record, "before"),
     after: readStringField(record, "after"),
     forces: readForces(record),
-    safetyNet: readOptionalSafetyNet(record),
     exampleSource: readOptionalExampleSource(record),
     book,
     destinationPattern: readDestinationPattern(record, catalog, book),

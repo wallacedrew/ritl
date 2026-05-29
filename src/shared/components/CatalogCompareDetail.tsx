@@ -82,7 +82,6 @@ export default function CatalogCompareDetail({
           {entry.compareDifferential ??
             "Humans pay in attention; agents pay in tokens — same target, different failure modes."}
         </Typography>
-        {entry.safetyNet && <CatalogSection label="Safety net" body={entry.safetyNet.toString()} />}
         <CatalogSectionCompare label="Symptom" human={human.symptom} agent={agent.symptom} />
         <CatalogSectionCompare label="Goal" human={human.goal} agent={agent.goal} />
         <BeforeAfterCodeBlocks

@@ -37,6 +37,8 @@ Before anything else. This is the wedge.
    - Implemented as a `SafetyNet` value object (`src/refactorings/lib/SafetyNet.ts`) per the project's "no domain concept without a value object" rule.
    - Tidy First sequence: structural commit (optional field + parser + render-when-present) ships green with no visible change; classifications follow as one-line behavior commits, batched.
 
+   _Removed (2026-05-29)._ Section pulled from the detail and compare views; field + value object + JSON data + tests all deleted. The label was noisy on the page and never carried the differential load the rest of the card carries — readers seeing "types/compiler" or "unit test" got no signal they couldn't infer from the refactoring itself.
+
 5. **Rename Savings → Trade where the move carries a real cost.** Audit all 66. Pure-win moves (Remove Dead Code, Replace Magic Literal) keep `Savings`. Real-cost moves get `Trade` with both sides written honestly.
 
    _Reframed (2026-05-16): rename `risk` → `tradeoff`._ First-pass reframe added an optional `tradeoff?: string` alongside `risk` (rendered as "Note"). Audit showed the existing 66 `risk` strings were already mostly tradeoff-flavored, so the second field would have duplicated ~80% of the content with only label-renaming value. Final shape: rename the data field `risk` → `tradeoff` (still required), rename the rendered label "Note" → "Tradeoff", drop the just-scaffolded optional field. Content audit then rewrites any `tradeoff` value that's still mechanical-only (e.g. Rename Variable's "ensure your tooling catches every reference") to lead with honest cost. Snippet generator's `**Pitfall:**` label moves to `**Tradeoff:**` to stay consistent with the site.
@@ -123,7 +125,7 @@ Before anything else. This is the wedge.
 - "Why this matters" line per card — already exists as the outcome description under each card name
 - Smells-addressed / technique-type filters — already exist via the smell↔refactoring index and /reference grouping
 - Search box — defer; ctrl-F works on a single page of ~55 cards post-consolidation
-- Separate difficulty / risk-level tag — Safety net already encodes the gradient
+- Separate difficulty / risk-level tag — not earning its weight; the gradient never read as load-bearing in practice
 - Business-impact notes on every card — turns the catalog into a McKinsey deck; build it once as a separate page if needed
 - Visual flow diagrams on recipes — SVG is a tar pit; ship prose first
 - AI judgment platform, advisor, entropy score, design pressure analyzer — goes to the other product

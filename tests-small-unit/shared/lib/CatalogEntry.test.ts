@@ -3,7 +3,6 @@ import { describe, expect, it } from "vitest";
 import { CatalogEntry } from "@/shared/lib/CatalogEntry";
 import { CatalogEntryName } from "@/shared/lib/CatalogEntryName";
 import { Forces } from "@/shared/lib/Forces";
-import { SafetyNet } from "@/refactorings/lib/SafetyNet";
 
 const validForcesRecord = {
   symptom: "S",
@@ -71,15 +70,6 @@ describe("CatalogEntry", () => {
 
   it("compareHref appends /compare to the href", () => {
     expect(makeEntry().compareHref()).toBe("/refactoring/smells/long-function/compare");
-  });
-
-  it("optional safetyNet is undefined when not provided", () => {
-    expect(makeEntry().safetyNet).toBeUndefined();
-  });
-
-  it("optional safetyNet is exposed when provided", () => {
-    const entry = makeEntry({ safetyNet: SafetyNet.from("types/compiler") });
-    expect(entry.safetyNet?.toString()).toBe("types/compiler");
   });
 
   it("treats entries with same catalog + name as equal", () => {

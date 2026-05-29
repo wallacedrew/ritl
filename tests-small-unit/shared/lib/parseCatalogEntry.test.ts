@@ -29,7 +29,6 @@ const validRefactoring = {
   nemeses: ["Long Function", "Duplicated Code"],
   before: "code A",
   after: "code B",
-  safetyNet: "unit test",
   forces: {
     human: validForcesRecord,
     agent: validForcesRecord,
@@ -48,10 +47,9 @@ describe("parseCatalogEntry", () => {
     ]);
     expect(entry.forces.human.symptom).toBe("S");
     expect(entry.forces.agent.trap).toBe("X");
-    expect(entry.safetyNet).toBeUndefined();
   });
 
-  it("parses a refactoring with nemeses wrapped as smell names + safetyNet", () => {
+  it("parses a refactoring with nemeses wrapped as smell names", () => {
     const entry = parseCatalogEntry(validRefactoring);
 
     expect(entry.catalog).toBe("refactorings");
@@ -60,7 +58,6 @@ describe("parseCatalogEntry", () => {
       "/refactoring/smells/long-function",
       "/refactoring/smells/duplicated-code",
     ]);
-    expect(entry.safetyNet?.toString()).toBe("unit test");
   });
 
   it("rejects null, undefined, primitives, and arrays", () => {
@@ -268,12 +265,6 @@ describe("parseCatalogEntry", () => {
     expect(() =>
       parseCatalogEntry({ ...validSmell, forces: { human: empty, agent: validForcesRecord } }),
     ).toThrow(/relief.*cannot be empty/i);
-  });
-
-  it("rejects an unknown safetyNet value", () => {
-    expect(() => parseCatalogEntry({ ...validRefactoring, safetyNet: "integration test" })).toThrow(
-      /unknown safety net/i,
-    );
   });
 
   it("parses an optional exampleSource attribution when present", () => {

@@ -74,7 +74,6 @@ export default function CatalogDetail({
           />
           <SnippetPreviewButton href={entry.name.toSnippetHref()} label="Preview markdown" />
         </Stack>
-        {entry.safetyNet && <CatalogSection label="Safety net" body={entry.safetyNet.toString()} />}
         <CatalogSection label="Symptom" body={forces.symptom} />
         <CatalogSection label="Goal" body={forces.goal} />
         <BeforeAfterCodeBlocks

@@ -5,7 +5,6 @@
     "nemeses": ["Long Function", "Duplicated Code", "Comments"],
     "before": "function invoiceTotal(invoice) {\n  let total = 0;\n  for (const line of invoice.lines) {\n    total += line.qty * line.unitPrice;\n    if (line.qty >= 100) total -= line.qty * line.unitPrice * 0.05;\n  }\n  total += total * invoice.taxRate;\n  return Math.round(total * 100) / 100;\n}",
     "after": "function invoiceTotal(invoice) {\n  const subtotal = subtotalAfterBulkDiscount(invoice);\n  const withTax  = subtotal * (1 + invoice.taxRate);\n  return roundToCents(withTax);\n}",
-    "safetyNet": "unit test",
     "forces": {
       "human": {
         "symptom": "A function body that needs a mental outline before you can read it — multiple concerns interleaved, or chunks of statements that share a single domain purpose without a name.",
@@ -32,7 +31,6 @@
     "nemeses": ["Lazy Element", "Speculative Generality"],
     "before": "function moreThanFive(n) {\n  return n > 5;\n}\nfunction rating(driver) {\n  return moreThanFive(driver.numberOfLateDeliveries) ? 2 : 1;\n}",
     "after": "function rating(driver) {\n  return driver.numberOfLateDeliveries > 5 ? 2 : 1;\n}",
-    "safetyNet": "unit test",
     "forces": {
       "human": {
         "symptom": "A function whose name is no clearer than its body — wrappers that add no semantic value (`moreThanFive(n) { return n > 5 }`), pass-through functions called only once, or thin abstractions over trivial expressions.",
@@ -59,7 +57,6 @@
     "nemeses": ["Mysterious Name", "Comments"],
     "before": "if (order.qty * order.price - Math.max(0, order.qty - 500) * order.price * 0.05 > 1000) { /* ... */ }",
     "after": "const basePrice    = order.qty * order.price;\nconst bulkDiscount = Math.max(0, order.qty - 500) * order.price * 0.05;\nif (basePrice - bulkDiscount > 1000) { /* ... */ }",
-    "safetyNet": "types/compiler",
     "forces": {
       "human": {
         "symptom": "A long expression in a conditional, return statement, or method argument that the reader must mentally parse — multiple operations on multiple inputs producing one value.",
@@ -86,7 +83,6 @@
     "nemeses": ["Lazy Element"],
     "before": "const basePrice = order.basePrice;\nreturn basePrice > 1000;",
     "after": "return order.basePrice > 1000;",
-    "safetyNet": "types/compiler",
     "forces": {
       "human": {
         "symptom": "A local variable that's just a rename of its right-hand side — `const basePrice = order.basePrice;` — adding no domain meaning the original expression didn't already carry.",
@@ -117,7 +113,6 @@
     ],
     "before": "function circum(radius) {\n  return 2 * Math.PI * radius;\n}",
     "after": "function circumference(radius) {\n  return 2 * Math.PI * radius;\n}",
-    "safetyNet": "types/compiler",
     "forces": {
       "human": {
         "symptom": "A function whose name doesn't match what it does, or whose parameter list carries unused/awkwardly-ordered arguments — readers must inspect the body to understand the call.",
@@ -144,7 +139,6 @@
     "nemeses": ["Global Data", "Mutable Data"],
     "before": "let defaultOwner = { firstName: 'Martin', lastName: 'Fowler' };",
     "after": "let _defaultOwner = { firstName: 'Martin', lastName: 'Fowler' };\nfunction defaultOwner() { return _defaultOwner; }\nfunction setDefaultOwner(o) { _defaultOwner = o; }",
-    "safetyNet": "unit test",
     "forces": {
       "human": {
         "symptom": "A module-level variable or shared mutable state read and written directly from any consumer — no central audit point for changes.",
@@ -171,7 +165,6 @@
     "nemeses": ["Mysterious Name"],
     "before": "const a = height * width;",
     "after": "const area = height * width;",
-    "safetyNet": "types/compiler",
     "forces": {
       "human": {
         "symptom": "A variable named `t`, `temp`, `data`, `result`, or any other identifier that requires the reader to inspect its assignment to know what it holds.",
@@ -198,7 +191,6 @@
     "nemeses": ["Long Parameter List", "Data Clumps"],
     "before": "function recordTemperature(low, high, value) { /* ... */ }\nfunction alertIfOutOfRange(low, high, reading) { /* ... */ }",
     "after": "class NumberRange {\n  constructor(low, high) { this.low = low; this.high = high; }\n}\nfunction recordTemperature(range, value)   { /* ... */ }\nfunction alertIfOutOfRange(range, reading) { /* ... */ }",
-    "safetyNet": "types/compiler",
     "forces": {
       "human": {
         "symptom": "The same group of fields (low, high; firstName, lastName; street, city, zip) appears as parameters across multiple functions — a clump traveling together with no name.",
@@ -225,7 +217,6 @@
     "nemeses": ["Data Clumps", "Primitive Obsession"],
     "before": "function baseCharge(reading) {\n  return reading.kwh * reading.tariff.baseRate;\n}\nfunction taxableCharge(reading) {\n  return baseCharge(reading) + reading.kwh * reading.tariff.taxRate;\n}",
     "after": "class Reading {\n  constructor({ kwh, tariff }) { this.kwh = kwh; this.tariff = tariff; }\n  baseCharge()    { return this.kwh * this.tariff.baseRate; }\n  taxableCharge() { return this.baseCharge() + this.kwh * this.tariff.taxRate; }\n}",
-    "safetyNet": "unit test",
     "forces": {
       "human": {
         "symptom": "Two or more functions all take the same data shape as their first parameter and operate on its fields — passive data being acted on from outside.",
@@ -252,7 +243,6 @@
     "nemeses": ["Data Clumps", "Mutable Data"],
     "before": "function baseCharge(reading)    { return reading.kwh * reading.tariff.baseRate; }\nfunction taxableCharge(reading) { return reading.kwh * reading.tariff.taxRate; }\n// every consumer recomputes:\nconst monthly  = baseCharge(reading) + taxableCharge(reading);\nconst discount = baseCharge(reading) * 0.95;",
     "after": "function enrich(reading) {\n  return {\n    ...reading,\n    baseCharge:    reading.kwh * reading.tariff.baseRate,\n    taxableCharge: reading.kwh * reading.tariff.taxRate,\n  };\n}\nconst r = enrich(reading);\nconst monthly  = r.baseCharge + r.taxableCharge;\nconst discount = r.baseCharge * 0.95;",
-    "safetyNet": "unit test",
     "forces": {
       "human": {
         "symptom": "Multiple consumers compute the same derived values from the same source data, each independently re-deriving the result.",
@@ -279,7 +269,6 @@
     "nemeses": ["Divergent Change", "Long Function"],
     "before": "function priceAndRender(input) {\n  let total = 0;\n  for (const item of input.items) total += item.qty * item.price;\n  if (input.member) total *= 0.95;\n  return `<p>Total: ${(total / 100).toFixed(2)} for ${input.items.length} items</p>`;\n}",
     "after": "function pricing(input) {\n  let total = 0;\n  for (const item of input.items) total += item.qty * item.price;\n  if (input.member) total *= 0.95;\n  return { items: input.items, totalCents: total };\n}\nfunction render({ items, totalCents }) {\n  return `<p>Total: ${(totalCents / 100).toFixed(2)} for ${items.length} items</p>`;\n}",
-    "safetyNet": "unit test",
     "forces": {
       "human": {
         "symptom": "A function that mixes two clearly different concerns — pricing AND rendering, parsing AND validating, fetching AND transforming — interleaved through shared locals.",
@@ -306,7 +295,6 @@
     "nemeses": ["Feature Envy", "Shotgun Surgery", "Insider Trading", "Divergent Change"],
     "before": "class Order {\n  account;\n  isVip() {\n    return this.account.tier === 'gold' && this.account.yearsActive >= 3;\n  }\n}",
     "after": "class Account {\n  tier; yearsActive;\n  isVip() { return this.tier === 'gold' && this.yearsActive >= 3; }\n}\nclass Order { account; }\norder.account.isVip();",
-    "safetyNet": "types/compiler",
     "forces": {
       "human": {
         "symptom": "A function on class A that reads only data on class B — A.method() reaches through getters on B to compute something B should compute.",
@@ -333,7 +321,6 @@
     "nemeses": ["Shotgun Surgery", "Insider Trading"],
     "before": "class Customer {\n  plan;\n  discountRate;\n}\n// every customer in a given plan gets the same rate:\ncustomers.forEach(c => c.discountRate = c.plan.kind === 'gold' ? 0.15 : 0.05);",
     "after": "class Plan {\n  kind;\n  discountRate;\n}\nclass Customer { plan; }\ncustomer.plan.discountRate;",
-    "safetyNet": "types/compiler",
     "forces": {
       "human": {
         "symptom": "A field on class A whose value is determined by data on class B (`customer.discountRate` set from `customer.plan.kind`) — the field belongs with the data it's derived from.",
@@ -360,7 +347,6 @@
     "nemeses": ["Long Function", "Comments"],
     "before": "const basePrice = qty * itemPrice;\nlogPriceCalc(basePrice);\nconst tax = basePrice * 0.1;\nlogTaxCalc(tax);",
     "after": "const basePrice = qty * itemPrice;\nconst tax = basePrice * 0.1;\nlogPriceCalc(basePrice);\nlogTaxCalc(tax);",
-    "safetyNet": "unit test",
     "forces": {
       "human": {
         "symptom": "A function where related statements are scattered with interleaved unrelated work — assignments to logically-coupled variables separated by lines that don't share their concern.",
@@ -387,7 +373,6 @@
     "nemeses": ["Long Function", "Loops"],
     "before": "let totalSalary = 0;\nlet youngest = Infinity;\nfor (const p of people) {\n  if (p.age < youngest) youngest = p.age;\n  totalSalary += p.salary;\n}",
     "after": "const totalSalary = people.reduce((s, p) => s + p.salary, 0);\nconst youngest    = Math.min(...people.map(p => p.age));",
-    "safetyNet": "unit test",
     "forces": {
       "human": {
         "symptom": "A single loop iterating one collection but doing multiple unrelated jobs — accumulating a sum, finding a minimum, building a derived list, all interwoven in the loop body.",
@@ -414,7 +399,6 @@
     "nemeses": ["Loops"],
     "before": "const seniors = [];\nfor (const u of users) {\n  if (u.age >= 65) seniors.push(u.name);\n}",
     "after": "const seniors = users\n  .filter(u => u.age >= 65)\n  .map(u => u.name);",
-    "safetyNet": "unit test",
     "forces": {
       "human": {
         "symptom": "Imperative for/while loops where filter, map, and reduce concerns are mixed by hand — the reader must mentally execute the body to learn what's being produced.",
@@ -441,7 +425,6 @@
     "nemeses": ["Speculative Generality", "Comments"],
     "before": "function legacyDiscount(order) { /* unused since 2018 */ }\nfunction modernDiscount(order) { /* the real one */ }",
     "after": "function discount(order) { /* the real one */ }",
-    "safetyNet": "types/compiler",
     "forces": {
       "human": {
         "symptom": "Functions, branches, fields, or imports that no static analysis or human reader can reach — last commented out, last touched years ago, or referenced only by code that itself was removed.",
@@ -468,7 +451,6 @@
     "nemeses": ["Mysterious Name", "Mutable Data"],
     "before": "let temp = 2 * (height + width);\nconsole.log(temp);\ntemp = height * width;\nconsole.log(temp);",
     "after": "const perimeter = 2 * (height + width);\nconsole.log(perimeter);\nconst area = height * width;\nconsole.log(area);",
-    "safetyNet": "types/compiler",
     "forces": {
       "human": {
         "symptom": "A single variable (often named `temp`, `result`, `value`) reassigned multiple times to hold conceptually distinct values — perimeter, then area; current iteration result, then accumulator.",
@@ -495,7 +477,6 @@
     "nemeses": ["Mysterious Name"],
     "before": "class Position {\n  name;          // role name? or person's name?\n  hiringManager;\n}\nconsole.log(position.name);  // ambiguous",
     "after": "class Position {\n  title;\n  hiringManager;\n}\nconsole.log(position.title);  // clearly the role",
-    "safetyNet": "types/compiler",
     "forces": {
       "human": {
         "symptom": "A class field whose name is ambiguous (`name` on a Position class — role name or person?), shadowed by language keywords, or describes implementation type rather than domain role.",
@@ -522,7 +503,6 @@
     "nemeses": ["Mutable Data"],
     "before": "class Order {\n  items;\n  total;\n  add(item) { this.items.push(item); this.total += item.price; }\n}",
     "after": "class Order {\n  items;\n  add(item)  { this.items.push(item); }\n  total()    { return this.items.reduce((s, i) => s + i.price, 0); }\n}",
-    "safetyNet": "unit test",
     "forces": {
       "human": {
         "symptom": "A field that mirrors values computed from other fields, updated by hand at multiple write sites — `total` updated every time `items` changes.",
@@ -549,7 +529,6 @@
     "nemeses": ["Long Function", "Comments"],
     "before": "if (date < SUMMER_START || date > SUMMER_END) {\n  charge = qty * winterRate + winterFee;\n} else {\n  charge = qty * summerRate;\n}",
     "after": "charge = isSummer(date)\n  ? summerCharge(qty)\n  : winterCharge(qty);",
-    "safetyNet": "unit test",
     "forces": {
       "human": {
         "symptom": "Multi-clause conditionals whose meaning isn't obvious from the expression — `if (date.getMonth() >= 5 && date.getMonth() <= 8)` instead of `if (isSummer(date))`.",
@@ -576,7 +555,6 @@
     "nemeses": ["Duplicated Code"],
     "before": "if (employee.seniority < 2)        return 0;\nif (employee.monthsDisabled > 12)  return 0;\nif (employee.isPartTime)           return 0;",
     "after": "if (isIneligibleForBonus(employee)) return 0;",
-    "safetyNet": "unit test",
     "forces": {
       "human": {
         "symptom": "Multiple conditions in sequence (or chained) leading to the same action — three guard clauses each returning 0, or three branches each running the same handler.",
@@ -603,7 +581,6 @@
     "nemeses": ["Long Function", "Comments"],
     "before": "function payAmount(employee) {\n  if (employee.isSeparated) {\n    return separationPay(employee);\n  } else {\n    if (employee.isRetired) {\n      return retirementPay(employee);\n    } else {\n      return regularPay(employee);\n    }\n  }\n}",
     "after": "function payAmount(employee) {\n  if (employee.isSeparated) return separationPay(employee);\n  if (employee.isRetired)   return retirementPay(employee);\n  return regularPay(employee);\n}",
-    "safetyNet": "unit test",
     "forces": {
       "human": {
         "symptom": "Functions with deeply nested if/else where the happy path is buried inside multiple levels of indentation, and edge cases are conditionals around the main flow.",
@@ -630,7 +607,6 @@
     "nemeses": ["Repeated Switches", "Primitive Obsession"],
     "before": "switch (event.kind) {\n  case 'click': return onClick(event);\n  case 'key':   return onKey(event);\n}",
     "after": "event.handle(); // ClickEvent and KeyEvent each implement handle()",
-    "safetyNet": "characterization test",
     "forces": {
       "human": {
         "symptom": "The same switch (or if/else chain) over a type code appears in multiple places — adding a new case means hunting them all down.",
@@ -657,7 +633,6 @@
     "nemeses": ["Repeated Switches", "Comments"],
     "before": "const name = customer === 'unknown' ? 'occupant' : customer.name;",
     "after": "const name = customer.name; // UnknownCustomer.name returns 'occupant'",
-    "safetyNet": "characterization test",
     "forces": {
       "human": {
         "symptom": "The same null-or-special check repeats across multiple consumers — `customer === 'unknown' ? 'occupant' : customer.name` scattered across files.",
@@ -684,7 +659,6 @@
     "nemeses": ["Comments", "Mutable Data"],
     "before": "// rate must be positive\nconst tax = base * rate;",
     "after": "if (rate <= 0) throw new Error('rate must be positive');\nconst tax = base * rate;",
-    "safetyNet": "unit test",
     "forces": {
       "human": {
         "symptom": "Code that depends on unwritten invariants — `const tax = base * rate;` that assumes rate > 0, with no enforcement and only a stale comment if any.",
@@ -711,7 +685,6 @@
     "nemeses": ["Mutable Data"],
     "before": "function findMiscreant(people) {\n  for (const p of people) {\n    if (p.isMiscreant) { alert(p); return p; }\n  }\n}",
     "after": "function findMiscreant(people) { return people.find(p => p.isMiscreant); }\nfunction alertMiscreant(people) {\n  const m = findMiscreant(people);\n  if (m) alert(m);\n}",
-    "safetyNet": "types/compiler",
     "forces": {
       "human": {
         "symptom": "A function that both returns a value AND mutates state — `findMiscreant(people)` that returns the miscreant AND alerts them.",
@@ -738,7 +711,6 @@
     "nemeses": ["Duplicated Code"],
     "before": "function tenPercentRaise(person)  { person.salary *= 1.10; }\nfunction fivePercentRaise(person) { person.salary *= 1.05; }",
     "after": "function raise(person, factor) { person.salary *= 1 + factor; }",
-    "safetyNet": "types/compiler",
     "forces": {
       "human": {
         "symptom": "Two or more near-identical functions that differ only in literal values — `tenPercentRaise(person)` and `fivePercentRaise(person)` differ only in 1.10 vs 1.05.",
@@ -765,7 +737,6 @@
     "nemeses": ["Long Parameter List"],
     "before": "function setDimension(name, value) {\n  if (name === 'height') /* ... */\n  else if (name === 'width') /* ... */\n}",
     "after": "function setHeight(value) { /* ... */ }\nfunction setWidth(value)  { /* ... */ }",
-    "safetyNet": "types/compiler",
     "forces": {
       "human": {
         "symptom": "A function with a boolean (or enum) flag parameter that dispatches to different internal behaviors — `setDimension('height', value)` vs `setDimension('width', value)`.",
@@ -792,7 +763,6 @@
     "nemeses": ["Long Parameter List", "Data Clumps"],
     "before": "if (room.lowTemp < range.low || room.highTemp > range.high) { /* ... */ }",
     "after": "if (range.includes(room)) { /* ... */ }",
-    "safetyNet": "types/compiler",
     "forces": {
       "human": {
         "symptom": "A function call that pulls several fields out of an object to pass them in — `f(room.lowTemp, room.highTemp, room.humidity)` instead of `f(room)`.",
@@ -819,7 +789,6 @@
     "nemeses": ["Long Parameter List"],
     "before": "const basePrice = order.qty * order.itemPrice;\nconst level = discountLevel(order);\nconst final = discounted(order, basePrice, level);",
     "after": "const final = discounted(order); // computes basePrice and level itself",
-    "safetyNet": "unit test",
     "forces": {
       "human": {
         "symptom": "A function that takes a parameter the caller computed from data already available to the function — `discounted(order, basePrice, level)` where the function can compute basePrice and level itself.",
@@ -846,7 +815,6 @@
     "nemeses": ["Primitive Obsession", "Speculative Generality"],
     "before": "const employee = new Employee(name, 'engineer', salary);",
     "after": "function createEngineer(name, salary) {\n  return new Employee(name, 'engineer', salary);\n}\nconst employee = createEngineer(name, salary);",
-    "safetyNet": "types/compiler",
     "forces": {
       "human": {
         "symptom": "Object creation directly via `new Class(...)` where the construction logic needs validation, subclass selection, or instance caching but the constructor can't express any of it.",
@@ -873,7 +841,6 @@
     "nemeses": ["Duplicated Code", "Alternative Classes with Different Interfaces"],
     "before": "class Manager  extends Employee { name() { return this._name; } }\nclass Engineer extends Employee { name() { return this._name; } }",
     "after": "class Employee { name() { return this._name; } }\nclass Manager  extends Employee {}\nclass Engineer extends Employee {}",
-    "safetyNet": "types/compiler",
     "forces": {
       "human": {
         "symptom": "Two or more subclasses implement the same method identically — `Manager.name()` and `Engineer.name()` both return `this._name` with no variation.",
@@ -900,7 +867,6 @@
     "nemeses": ["Refused Bequest", "Large Class"],
     "before": "class Employee {\n  quota() { /* used only by Salesperson */ }\n}",
     "after": "class Salesperson extends Employee {\n  quota() { /* ... */ }\n}",
-    "safetyNet": "types/compiler",
     "forces": {
       "human": {
         "symptom": "A method on the parent class used by only one subclass — `Employee.quota()` used only by `Salesperson`.",
@@ -927,7 +893,6 @@
     "nemeses": ["Repeated Switches", "Primitive Obsession"],
     "before": "class Employee {\n  type; // 'engineer' | 'manager'\n  bonus() {\n    switch (this.type) {\n      case 'engineer': return this.salary * 0.10;\n      case 'manager':  return this.salary * 0.15 + this.reports.length * 100;\n    }\n  }\n}",
     "after": "class Employee {}\nclass Engineer extends Employee {\n  bonus() { return this.salary * 0.10; }\n}\nclass Manager extends Employee {\n  bonus() { return this.salary * 0.15 + this.reports.length * 100; }\n}",
-    "safetyNet": "characterization test",
     "forces": {
       "human": {
         "symptom": "A class with a `kind` or `type` field (string or enum) plus methods that switch on it — `Employee` carrying a `type` field used to dispatch `bonus()` to different formulas.",
@@ -954,7 +919,6 @@
     "nemeses": ["Duplicated Code", "Alternative Classes with Different Interfaces"],
     "before": "class Employee   { name; id; salary; }\nclass Department { name; id; budget; }",
     "after": "class Party       { name; id; }\nclass Employee   extends Party { salary; }\nclass Department extends Party { budget; }",
-    "safetyNet": "unit test",
     "forces": {
       "human": {
         "symptom": "Two classes with substantial shared structure — `Employee` and `Department` both carrying `name`, `id`, and similar id-management methods.",
@@ -981,7 +945,6 @@
     "nemeses": ["Lazy Element", "Speculative Generality"],
     "before": "class Employee {}\nclass FullTimeEmployee extends Employee {}",
     "after": "class Employee {}",
-    "safetyNet": "types/compiler",
     "forces": {
       "human": {
         "symptom": "A subclass that no longer differs meaningfully from its parent — an empty subclass, or one that overrides nothing the parent didn't already do.",
@@ -1008,7 +971,6 @@
     "nemeses": ["Refused Bequest", "Insider Trading"],
     "before": "class Booking { /* ... */ }\nclass PremiumBooking extends Booking {\n  /* overrides several methods */\n}",
     "after": "class Booking {\n  type; // 'standard' | premium delegate\n  charge() { return this.type.charge(this); }\n}",
-    "safetyNet": "characterization test",
     "forces": {
       "human": {
         "symptom": "A subclass that overrides several methods to implement variant behavior — `PremiumBooking extends Booking` overriding `charge()`, `discount()`, `notify()` with premium variants.",
@@ -1035,7 +997,6 @@
     "nemeses": ["Data Clumps", "Temporary Field", "Large Class", "Primitive Obsession"],
     "before": "class Person {\n  name;\n  officeAreaCode;\n  officeNumber;\n  telephoneNumber() { return `(${this.officeAreaCode}) ${this.officeNumber}`; }\n}",
     "after": "class Phone {\n  areaCode;\n  number;\n  toString() { return `(${this.areaCode}) ${this.number}`; }\n}\nclass Person { name; phone; }",
-    "safetyNet": "unit test",
     "forces": {
       "human": {
         "symptom": "A class with multiple cohesive sub-concepts inside it — Person carrying officeAreaCode + officeNumber + telephoneNumber() method, where Phone is hiding.",
@@ -1062,7 +1023,6 @@
     "nemeses": ["Primitive Obsession"],
     "before": "function priceFor(cents, currency) {\n  // ...\n}",
     "after": "class Money { /* amount + currency, with arithmetic */ }\nfunction priceFor(money) {\n  // ...\n}",
-    "safetyNet": "types/compiler",
     "forces": {
       "human": {
         "symptom": "Domain concepts (Money, PhoneNumber, OrderId, Currency) represented as raw strings, numbers, or booleans — the type system can't tell two domains apart.",
@@ -1089,7 +1049,6 @@
     "nemeses": ["Message Chains"],
     "before": "const street = order.customer.address.street;",
     "after": "// inside Order: customerStreet() { return this.customer.address.street; }\nconst street = order.customerStreet();",
-    "safetyNet": "types/compiler",
     "forces": {
       "human": {
         "symptom": "Callers use long dotted access paths to walk through one object to reach another's data — `order.customer.address.street` exposes every intermediate boundary.",
@@ -1116,7 +1075,6 @@
     "nemeses": ["Middle Man"],
     "before": "class Manager {\n  reports() { return this.team.members(); }\n}",
     "after": "// Expose team directly when the wrapper adds nothing.\nmanager.team.members();",
-    "safetyNet": "types/compiler",
     "forces": {
       "human": {
         "symptom": "A class whose methods are nearly all delegations to one collaborator object — no decisions, no transformations, just passthrough.",
@@ -1143,7 +1101,6 @@
     "nemeses": ["Mysterious Name", "Comments"],
     "before": "function trip(distance) {\n  return distance * 1.609;\n}",
     "after": "const KM_PER_MILE = 1.609;\nfunction trip(distance) {\n  return distance * KM_PER_MILE;\n}",
-    "safetyNet": "types/compiler",
     "forces": {
       "human": {
         "symptom": "Numbers (1.609, 86400, 0.05) and strings ('admin', 'USD') inline in code where the value carries domain meaning that the literal alone can't express.",
@@ -1170,7 +1127,6 @@
     "nemeses": ["Duplicated Code"],
     "before": "log('start fetch');\nconst data  = fetch(url);\nlog('start fetch');\nconst data2 = fetch(url2);",
     "after": "function fetchLogged(url) {\n  log('start fetch');\n  return fetch(url);\n}",
-    "safetyNet": "unit test",
     "forces": {
       "human": {
         "symptom": "The same setup (logging, validation, metric tick) or follow-up code appears around every call to a function — repeated boilerplate at every call site.",
@@ -1197,7 +1153,6 @@
     "nemeses": ["Divergent Change"],
     "before": "function emit(line) {\n  log.write(line);\n  metrics.tick();\n}",
     "after": "function emit(line) { log.write(line); }\nemit('startup');\nmetrics.tick();",
-    "safetyNet": "unit test",
     "forces": {
       "human": {
         "symptom": "A function whose body mixes its core responsibility with statements that genuinely vary per caller — different logging contexts, different post-processing, different metric labels.",
@@ -1224,7 +1179,6 @@
     "nemeses": ["Duplicated Code"],
     "before": "const inRange = candidate >= low && candidate <= high;",
     "after": "const inRange = between(candidate, low, high);",
-    "safetyNet": "types/compiler",
     "forces": {
       "human": {
         "symptom": "Inline code that reproduces what a named function in the codebase already does — a boolean check `candidate >= low && candidate <= high` when `between(value, low, high)` exists.",
@@ -1251,7 +1205,6 @@
     "nemeses": ["Long Function", "Mutable Data"],
     "before": "function bill() {\n  const basePrice = qty * itemPrice;\n  if (basePrice > 1000) return basePrice * 0.95;\n  return basePrice;\n}",
     "after": "function bill() {\n  if (basePrice() > 1000) return basePrice() * 0.95;\n  return basePrice();\n}\nfunction basePrice() { return qty * itemPrice; }",
-    "safetyNet": "unit test",
     "forces": {
       "human": {
         "symptom": "A local variable assigned once from a computation, then referenced one or more times within the same function — `const basePrice = qty * itemPrice;` used multiple times in the body.",
@@ -1278,7 +1231,6 @@
     "nemeses": ["Long Function"],
     "before": "function score(candidate) {\n  let total = candidate.experience * 10;\n  if (candidate.hasCertifications) total += 25;\n  total -= candidate.gaps * 5;\n  total += candidate.referrals * 8;\n  return total;\n}",
     "after": "class Scorer {\n  constructor(candidate) { this.candidate = candidate; }\n  execute() {\n    return this.base() + this.bonus() - this.penalty();\n  }\n  base()    { return this.candidate.experience * 10 + (this.candidate.hasCertifications ? 25 : 0); }\n  bonus()   { return this.candidate.referrals * 8; }\n  penalty() { return this.candidate.gaps * 5; }\n}\nnew Scorer(candidate).execute();",
-    "safetyNet": "characterization test",
     "forces": {
       "human": {
         "symptom": "A long function with many local variables and conceptually distinct sub-steps that all share state — the function body reads as a multi-stage algorithm coordinating temps.",
@@ -1305,7 +1257,6 @@
     "nemeses": ["Speculative Generality", "Lazy Element"],
     "before": "class ChargeCalculator {\n  constructor(c, o) { this.c = c; this.o = o; }\n  execute() { return this.c.base + this.o.tax; }\n}\nnew ChargeCalculator(c, o).execute();",
     "after": "function charge(c, o) { return c.base + o.tax; }\ncharge(c, o);",
-    "safetyNet": "characterization test",
     "forces": {
       "human": {
         "symptom": "A command class whose execute() method does everything in one shot — fields and methods exist but no real sub-step structure justifies the class.",
@@ -1332,7 +1283,6 @@
     "nemeses": ["Mutable Data"],
     "before": "function addTax(order) {\n  order.total *= 1.1;\n}\naddTax(order);",
     "after": "function withTax(order) {\n  return { ...order, total: order.total * 1.1 };\n}\norder = withTax(order);",
-    "safetyNet": "types/compiler",
     "forces": {
       "human": {
         "symptom": "A function that mutates one of its parameters in place and returns nothing — `addTax(order)` modifies `order.total` directly.",
@@ -1359,7 +1309,6 @@
     "nemeses": ["Long Function", "Loops"],
     "before": "function found(people, n) {\n  for (const p of people) if (p.name === n) return p;\n  return null;\n}",
     "after": "function found(people, n) {\n  return people.find(p => p.name === n) ?? null;\n}",
-    "safetyNet": "characterization test",
     "forces": {
       "human": {
         "symptom": "An opaque, convoluted, or hand-rolled algorithm where a clearer and well-known pattern (often library-provided) produces the same outputs.",
@@ -1386,7 +1335,6 @@
     "nemeses": ["Mutable Data", "Insider Trading"],
     "before": "class Person {\n  courses;\n  getCourses() { return this.courses; }\n}",
     "after": "class Person {\n  #courses = [];\n  courses()       { return [...this.#courses]; }\n  enroll(course)  { this.#courses.push(course); }\n  drop(course)    { this.#courses = this.#courses.filter(c => c !== course); }\n}",
-    "safetyNet": "characterization test",
     "forces": {
       "human": {
         "symptom": "A class exposes a collection field directly (getter returning the internal array, public field, etc.) — callers can mutate the collection from outside.",
@@ -1413,7 +1361,6 @@
     "nemeses": ["Data Class", "Primitive Obsession"],
     "before": "const org = { name: 'Acme', country: 'US' };\nconsole.log(org.name);",
     "after": "class Org {\n  constructor({ name, country }) { this._name = name; this._country = country; }\n  name()    { return this._name; }\n  country() { return this._country; }\n}\nconsole.log(new Org(org).name());",
-    "safetyNet": "unit test",
     "forces": {
       "human": {
         "symptom": "A plain object passed around the codebase whose fields are read and written by anyone — `org.name = '...'` from any consumer.",
@@ -1440,7 +1387,6 @@
     "nemeses": ["Mutable Data", "Data Class"],
     "before": "class Person {\n  setName(n) { this._name = n; }\n}",
     "after": "class Person {\n  constructor(name) { this._name = name; }\n  name() { return this._name; }\n}",
-    "safetyNet": "types/compiler",
     "forces": {
       "human": {
         "symptom": "A class with setters whose values should only be set at construction — every late-mutation site is using the setter for what should be a one-shot assignment.",
@@ -1467,7 +1413,6 @@
     "nemeses": ["Lazy Element", "Speculative Generality"],
     "before": "class TrackingInformation {\n  shippingCompany;\n  trackingNumber;\n  display() { return `${this.shippingCompany}: ${this.trackingNumber}`; }\n}\nclass Shipment { tracking; }",
     "after": "class Shipment {\n  shippingCompany;\n  trackingNumber;\n  display() { return `${this.shippingCompany}: ${this.trackingNumber}`; }\n}",
-    "safetyNet": "types/compiler",
     "forces": {
       "human": {
         "symptom": "A class with too few responsibilities to deserve its own file — one or two trivial methods that the absorbing class would naturally own.",
@@ -1494,7 +1439,6 @@
     "nemeses": ["Mutable Data"],
     "before": "class Phone {\n  constructor() { this.area = null; this.number = null; }\n}\nphone.area = '617';",
     "after": "class Phone {\n  constructor(area, number) { this._area = area; this._number = number; }\n  area()         { return this._area; }\n  number()       { return this._number; }\n  withArea(area) { return new Phone(area, this._number); }\n}",
-    "safetyNet": "characterization test",
     "forces": {
       "human": {
         "symptom": "A class treated as a sharable record (with public mutable fields or setters) used by many consumers — mutating it in one place affects every reader.",
@@ -1521,7 +1465,6 @@
     "nemeses": ["Duplicated Code"],
     "before": "// every order carries its own Customer copy\norders.forEach(o => o.customer = { name: 'Acme' });",
     "after": "const acme = customerRepository.find('Acme');\norders.forEach(o => o.customer = acme);",
-    "safetyNet": "characterization test",
     "forces": {
       "human": {
         "symptom": "Duplicate copies of a logically-single entity scattered across the codebase — every order carries its own Customer copy that should be the shared customer.",
@@ -1548,7 +1491,6 @@
     "nemeses": ["Loops", "Long Function"],
     "before": "let found = false;\nfor (const p of people) {\n  if (!found && p.name === target) {\n    matched = p;\n    found = true;\n  }\n}",
     "after": "for (const p of people) {\n  if (p.name === target) {\n    matched = p;\n    break;\n  }\n}",
-    "safetyNet": "unit test",
     "forces": {
       "human": {
         "symptom": "A loop maintaining a boolean flag to decide when to stop — `let found = false; for (...) { if (!found && ...) { ...; found = true; } }`.",
@@ -1575,7 +1517,6 @@
     "nemeses": ["Mutable Data", "Insider Trading"],
     "before": "function rebate(order) {\n  return order.total * currency().rate;\n}",
     "after": "function rebate(order, rate) {\n  return order.total * rate;\n}",
-    "safetyNet": "types/compiler",
     "forces": {
       "human": {
         "symptom": "A function that internally reads from a query — global state, singleton, instance field — instead of receiving the value as a parameter.",
@@ -1602,7 +1543,6 @@
     "nemeses": ["Comments"],
     "before": "function withdraw(amount) {\n  if (amount > balance) return -1;\n  balance -= amount;\n  return 0;\n}",
     "after": "function withdraw(amount) {\n  if (amount > balance) throw new InsufficientFunds();\n  balance -= amount;\n}",
-    "safetyNet": "characterization test",
     "forces": {
       "human": {
         "symptom": "Functions returning numeric or string codes for failure — `withdraw(amount)` returning -1 for insufficient funds — relying on callers to check and propagate.",
@@ -1629,7 +1569,6 @@
     "nemeses": ["Comments"],
     "before": "try {\n  return amounts[i] / 100;\n} catch (e) {\n  return 0;\n}",
     "after": "if (i >= amounts.length) return 0;\nreturn amounts[i] / 100;",
-    "safetyNet": "characterization test",
     "forces": {
       "human": {
         "symptom": "Code that uses try/catch for conditions the caller could check directly — `try { amounts[i] / 100 } catch { return 0 }` where checking bounds is mechanical.",
@@ -1656,7 +1595,6 @@
     "nemeses": ["Duplicated Code"],
     "before": "class Manager  extends Employee { constructor(n, s) { this.name = n; this.salary = s; } }\nclass Engineer extends Employee { constructor(n, s) { this.name = n; this.salary = s; } }",
     "after": "class Employee {\n  constructor(name, salary) { this.name = name; this.salary = salary; }\n}\nclass Manager  extends Employee {}\nclass Engineer extends Employee {}",
-    "safetyNet": "types/compiler",
     "forces": {
       "human": {
         "symptom": "Multiple subclass constructors initialize the same parent fields with the same logic — every `extends Employee` constructor sets `this.name` and `this.salary` identically.",
@@ -1683,7 +1621,6 @@
     "nemeses": ["Duplicated Code"],
     "before": "class Manager  extends Employee { _name; }\nclass Engineer extends Employee { _name; }",
     "after": "class Employee { _name; }\nclass Manager  extends Employee {}\nclass Engineer extends Employee {}",
-    "safetyNet": "types/compiler",
     "forces": {
       "human": {
         "symptom": "A field declared identically in two or more subclasses — every subclass has `_name` with the same type, default, and visibility.",
@@ -1710,7 +1647,6 @@
     "nemeses": ["Refused Bequest", "Large Class"],
     "before": "class Employee {\n  quota; // only Salesperson uses this\n}",
     "after": "class Employee {}\nclass Salesperson extends Employee { quota; }",
-    "safetyNet": "types/compiler",
     "forces": {
       "human": {
         "symptom": "A field on the parent class used by only one subclass — `Employee.quota` used only by `Salesperson`, ignored by everyone else.",
@@ -1737,7 +1673,6 @@
     "nemeses": ["Lazy Element", "Speculative Generality"],
     "before": "class Person {}\nclass Female extends Person {}\nclass Male   extends Person {}",
     "after": "class Person {\n  constructor(gender) { this.gender = gender; }\n}",
-    "safetyNet": "types/compiler",
     "forces": {
       "human": {
         "symptom": "Empty subclasses that exist only to encode a type code — `class Female extends Person {}` and `class Male extends Person {}` with no overridden behavior.",
@@ -1764,7 +1699,6 @@
     "nemeses": ["Refused Bequest", "Insider Trading"],
     "before": "class CategoryItem extends Scroll {\n  // uses some Scroll methods, refuses others\n}",
     "after": "class CategoryItem {\n  constructor() { this.scroll = new Scroll(); }\n  date() { return this.scroll.date(); }\n}",
-    "safetyNet": "characterization test",
     "forces": {
       "human": {
         "symptom": "A subclass that inherits from a parent that doesn't quite fit — overriding methods to no-ops, throwing 'unsupported', or using only some of the parent's surface (refused-bequest pattern).",
