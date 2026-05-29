@@ -32,7 +32,7 @@ describe("site header spans every catalog view", () => {
     expect(smellsLink).toHaveAttribute("href", "/refactoring/smells");
 
     const referenceLink = screen.getByRole("link", { name: /^Reference$/ });
-    expect(referenceLink).toHaveAttribute("href", "/refactoring");
+    expect(referenceLink).toHaveAttribute("href", "/reference");
   });
 
   it("fires nav_clicked with the link name when the user clicks a catalog nav link", async () => {

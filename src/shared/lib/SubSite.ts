@@ -31,6 +31,18 @@ export class SubSite {
     return `/${this.slug}`;
   }
 
+  primaryCatalog(): CatalogKind {
+    const first = this.catalogs[0];
+    if (first === undefined) {
+      throw new Error(`SubSite "${this.slug}" has no catalogs`);
+    }
+    return first;
+  }
+
+  primaryLandingHref(): string {
+    return this.hrefForCatalog(this.primaryCatalog());
+  }
+
   hrefForCatalog(catalog: CatalogKind): string {
     this.assertContains(catalog);
     return this.hasMultipleCatalogs() ? `/${this.slug}/${catalog}` : `/${this.slug}`;

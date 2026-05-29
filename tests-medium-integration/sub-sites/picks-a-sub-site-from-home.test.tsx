@@ -3,15 +3,14 @@ import { screen } from "@testing-library/react";
 
 import { renderWithTheme } from "../../tests-small-unit/_helpers/renderWithTheme";
 import HomePage from "@/home/HomePage";
-import FowlerLandingPage from "@/refactoring/FowlerLandingPage";
 import RefactoringDetailPage from "@/refactorings/RefactoringDetailPage";
 
 describe("user picks a sub-site from the home page picker", () => {
-  it("home page offers a Refactoring (Fowler) card linking to /refactoring", () => {
+  it("home page offers a Refactoring (Fowler) card linking to the refactorings list", () => {
     renderWithTheme(<HomePage />);
 
     const fowlerCardLink = screen.getByRole("link", { name: "Refactoring" });
-    expect(fowlerCardLink).toHaveAttribute("href", "/refactoring");
+    expect(fowlerCardLink).toHaveAttribute("href", "/refactoring/refactorings");
   });
 
   it("home page also offers a Refactoring to Patterns (Kerievsky) card linking to /refactoring-to-patterns", () => {
@@ -21,16 +20,11 @@ describe("user picks a sub-site from the home page picker", () => {
     expect(kerievskyCardLink).toHaveAttribute("href", "/refactoring-to-patterns");
   });
 
-  it("Fowler landing shows chapter groupings and links into catalog list pages", () => {
-    renderWithTheme(<FowlerLandingPage />);
+  it("home page offers a Design Patterns (GoF) card linking to /design-patterns", () => {
+    renderWithTheme(<HomePage />);
 
-    expect(screen.getByRole("heading", { name: /Composing Methods/i })).toBeInTheDocument();
-
-    const refactoringsLink = screen.getByRole("link", { name: /browse all refactorings/i });
-    expect(refactoringsLink).toHaveAttribute("href", "/refactoring/refactorings");
-
-    const smellsLink = screen.getByRole("link", { name: /browse all smells/i });
-    expect(smellsLink).toHaveAttribute("href", "/refactoring/smells");
+    const gofCardLink = screen.getByRole("link", { name: "Design Patterns" });
+    expect(gofCardLink).toHaveAttribute("href", "/design-patterns");
   });
 
   it("refactoring detail pages render at /refactoring/refactorings/:slug", async () => {

@@ -27,7 +27,7 @@ const NAV_LINKS: readonly NavLink[] = [
   { view: "patterns", label: "Patterns", href: "/refactoring-to-patterns" },
   { view: "design-patterns", label: "Design Patterns", href: "/design-patterns" },
   { view: "plugin", label: "Plugin", href: "/plugin" },
-  { view: "reference", label: "Reference", href: "/refactoring" },
+  { view: "reference", label: "Reference", href: "/reference" },
 ];
 
 function deriveActiveView(pathname: string): CatalogView {
@@ -36,7 +36,7 @@ function deriveActiveView(pathname: string): CatalogView {
   if (pathname.startsWith("/refactoring/smells")) return "smells";
   if (pathname.startsWith("/refactoring/refactorings")) return "refactorings";
   if (pathname.startsWith("/plugin")) return "plugin";
-  // "/refactoring" (Fowler landing) maps to the reference tab.
+  // "/reference" is the meta reference page; default for any unmatched URL.
   return "reference";
 }
 

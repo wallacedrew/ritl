@@ -22,7 +22,7 @@ describe("user lands on an unknown URL", () => {
 
     expect(browseRefactorings).toHaveAttribute("href", "/refactoring/refactorings");
     expect(browseSmells).toHaveAttribute("href", "/refactoring/smells");
-    expect(browseReference).toHaveAttribute("href", "/refactoring");
+    expect(browseReference).toHaveAttribute("href", "/reference");
   });
 
   it("suggests three starter catalog entries with working detail links", () => {
