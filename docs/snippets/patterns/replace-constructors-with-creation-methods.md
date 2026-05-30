@@ -7,6 +7,8 @@ description: Apply Replace Constructors With Creation Methods when you see Myste
 
 **Announce first:** name the chain of refactorings pointing at Replace Constructors With Creation Methods and that you're applying it before the next edit. The user reads the announcement as your contract.
 
+**Or decline first:** if you don't see a chain pointing at Replace Constructors With Creation Methods, name the decline type — no chain, taste call, cost-benefit, constraint-blocked, or insufficient context.
+
 **Symptom:** Constructor-overloading-via-sniffing where the agent must reason about argument shapes to know what the constructor does for a given call. Static type information is partial at best; the agent has to read the constructor body to verify which branch fires per call site.
 
 **Goal:** Each static creation method has a clear, statically-typed signature. The agent verifies the canonical constructor's invariants once; per-creation-method behaviour is one named entry point with one return type.

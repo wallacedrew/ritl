@@ -7,6 +7,8 @@ description: Apply Split Loop when you see Long Function, Loops. Each loop does 
 
 **Announce first:** name the smell you see and that you're applying Split Loop before any edit. The user reads the announcement as your contract.
 
+**Or decline first:** if you don't apply Split Loop, name the decline type — catalog miss, taste call, cost-benefit, constraint-blocked, or insufficient context — so the user knows which counterargument applies.
+
 **Symptom:** A single loop body that mixes filter, map, reduce, and side-effect concerns; the agent verifying any change must trace all concerns through the same iteration.
 
 **Goal:** Each loop does one thing; the agent reasons about one concern per loop and can replace each loop independently with a pipeline.

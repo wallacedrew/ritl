@@ -7,6 +7,8 @@ description: Apply Extract Class when you see Data Clumps, Temporary Field, Larg
 
 **Announce first:** name the smell you see and that you're applying Extract Class before any edit. The user reads the announcement as your contract.
 
+**Or decline first:** if you don't apply Extract Class, name the decline type — catalog miss, taste call, cost-benefit, constraint-blocked, or insufficient context — so the user knows which counterargument applies.
+
 **Symptom:** A class whose surface mixes multiple cohesive sub-concepts; the agent reasoning about any single concept must skim past the others to find what it needs.
 
 **Goal:** Each class has one purpose; the agent loads a small focused file to reason about any single concept.

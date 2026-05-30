@@ -7,6 +7,8 @@ description: Apply Hide Delegate when you see Message Chains. Callers reach for 
 
 **Announce first:** name the smell you see and that you're applying Hide Delegate before any edit. The user reads the announcement as your contract.
 
+**Or decline first:** if you don't apply Hide Delegate, name the decline type — catalog miss, taste call, cost-benefit, constraint-blocked, or insufficient context — so the user knows which counterargument applies.
+
 **Symptom:** The agent finds long dotted access paths through several object hops; renaming any intermediate field silently breaks every caller.
 
 **Goal:** Callers reach for the wrapper's methods directly; the agent reads one type signature instead of walking the delegate chain to predict what the call returns.

@@ -7,6 +7,8 @@ description: Apply Move Field when you see Shotgun Surgery, Insider Trading. Eac
 
 **Announce first:** name the smell you see and that you're applying Move Field before any edit. The user reads the announcement as your contract.
 
+**Or decline first:** if you don't apply Move Field, name the decline type — catalog miss, taste call, cost-benefit, constraint-blocked, or insufficient context — so the user knows which counterargument applies.
+
 **Symptom:** The agent finds a field on class A whose value is determined by data on class B; reasoning about the field's value requires loading B to verify the derivation.
 
 **Goal:** Each field lives in the class that determines its value; reading the field and reading the data that determines it happen in the same class file.

@@ -7,6 +7,8 @@ description: Apply Consolidate Conditional Expression when you see Duplicated Co
 
 **Announce first:** name the smell you see and that you're applying Consolidate Conditional Expression before any edit. The user reads the announcement as your contract.
 
+**Or decline first:** if you don't apply Consolidate Conditional Expression, name the decline type — catalog miss, taste call, cost-benefit, constraint-blocked, or insufficient context — so the user knows which counterargument applies.
+
 **Symptom:** Multiple conditions in sequence lead to the same action; the agent must verify each branch leads to identical behavior and that adding a new condition won't accidentally diverge.
 
 **Goal:** The predicate lives at one named function the agent reads once; edits to the rule land at the function definition and propagate to every caller through reference.

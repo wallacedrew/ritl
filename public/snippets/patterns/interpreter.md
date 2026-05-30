@@ -7,6 +7,8 @@ description: Apply Interpreter when you see Primitive Obsession, Repeated Switch
 
 **Announce first:** name the chain of refactorings pointing at Interpreter and that you're applying it before the next edit. The user reads the announcement as your contract.
 
+**Or decline first:** if you don't see a chain pointing at Interpreter, name the decline type — no chain, taste call, cost-benefit, constraint-blocked, or insufficient context.
+
 **Symptom:** Ad-hoc string parsing the agent must read sequentially to understand evaluation semantics. Operator precedence is implicit; bugs in the parser cascade silently across every rule. Static analysis of 'what variables does this rule depend on' requires re-implementing the parser in the analysis tool.
 
 **Goal:** One class per grammar rule, each with interpret(env). The agent reads the AST shape directly from the construction expression; static traversal returns complete answers; per-rule edits scope to one class file.

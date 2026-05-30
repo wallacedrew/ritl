@@ -7,6 +7,8 @@ description: Apply Mediator when you see Insider Trading, Shotgun Surgery, Move 
 
 **Announce first:** name the chain of refactorings pointing at Mediator and that you're applying it before the next edit. The user reads the announcement as your contract.
 
+**Or decline first:** if you don't see a chain pointing at Mediator, name the decline type — no chain, taste call, cost-benefit, constraint-blocked, or insufficient context.
+
 **Symptom:** N collaborators × M relationship rules = N×M cells the agent verifies on every relationship change. Cross-collaborator constructor coupling means refactoring one widget's interface ripples to every collaborator; the agent's edit-blast-radius reasoning is fragile.
 
 **Goal:** One Mediator the agent reads to understand all relationships. Per-collaborator edits scope to one file; the Mediator's relationship logic is one switch the agent verifies against the rule set. Static enumeration of 'who collaborates with whom' returns a complete answer.

@@ -7,6 +7,8 @@ description: Refuse Lazy Element when a class, function, or namespace whose body
 
 **Announce first:** name this as Lazy Element and which refactoring you'll apply (Inline Function or Inline Class) before any edit. The user reads the announcement as your contract.
 
+**Or decline first:** if you don't flag this as Lazy Element, name the decline type — catalog miss, taste call, cost-benefit, constraint-blocked, or insufficient context.
+
 **Symptom:** A class, function, or namespace whose body the agent traces through only to find no decisions or transformations — every hop is pure overhead in reasoning context.
 
 **Goal:** Trivial wrappers disappear; the call site reads exactly as what's happening and the agent skips the indirection.

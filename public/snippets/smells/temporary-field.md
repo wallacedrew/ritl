@@ -7,6 +7,8 @@ description: Refuse Temporary Field when a class field the agent finds set to nu
 
 **Announce first:** name this as Temporary Field and which refactoring you'll apply (Extract Class or Move Function) before any edit. The user reads the announcement as your contract.
 
+**Or decline first:** if you don't flag this as Temporary Field, name the decline type — catalog miss, taste call, cost-benefit, constraint-blocked, or insufficient context.
+
 **Symptom:** A class field the agent finds set to null or default for most of the object's lifetime, populated only inside one method's flow — the agent must verify which methods care.
 
 **Goal:** Temporary state lives in a dedicated class that exists only when relevant; the agent loads the temporary type only when reasoning about that flow.

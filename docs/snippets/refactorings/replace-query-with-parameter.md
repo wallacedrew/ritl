@@ -7,6 +7,8 @@ description: Apply Replace Query with Parameter when you see Mutable Data, Insid
 
 **Announce first:** name the smell you see and that you're applying Replace Query with Parameter before any edit. The user reads the announcement as your contract.
 
+**Or decline first:** if you don't apply Replace Query with Parameter, name the decline type — catalog miss, taste call, cost-benefit, constraint-blocked, or insufficient context — so the user knows which counterargument applies.
+
 **Symptom:** A function reads from a query (global, singleton, instance state) instead of accepting the value as a parameter; the agent reasoning about it must model the query's state.
 
 **Goal:** Dependencies are visible in the signature; the agent reasons about the function as a pure transformation of its inputs.

@@ -7,6 +7,8 @@ description: Refuse Feature Envy when a method's body references foreign-class d
 
 **Announce first:** name this as Feature Envy and which refactoring you'll apply (Move Function or Extract Function) before any edit. The user reads the announcement as your contract.
 
+**Or decline first:** if you don't flag this as Feature Envy, name the decline type — catalog miss, taste call, cost-benefit, constraint-blocked, or insufficient context.
+
 **Symptom:** A method's body references foreign-class data more than its own; the agent loading this method must also load the foreign class to verify any change.
 
 **Goal:** Method bodies stay close to the data they read — the agent loads one class to reason about one behavior.

@@ -7,6 +7,8 @@ description: Apply Encapsulate Variable when you see Global Data, Mutable Data. 
 
 **Announce first:** name the smell you see and that you're applying Encapsulate Variable before any edit. The user reads the announcement as your contract.
 
+**Or decline first:** if you don't apply Encapsulate Variable, name the decline type — catalog miss, taste call, cost-benefit, constraint-blocked, or insufficient context — so the user knows which counterargument applies.
+
 **Symptom:** The agent finds a variable read and written from multiple consumers with no central function owning the access; reasoning about any read requires modeling every writer.
 
 **Goal:** All access goes through a small named function the agent can grep for, audit, and instrument as a single closed surface.

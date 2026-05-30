@@ -7,6 +7,8 @@ description: Apply State when you see Repeated Switches, Primitive Obsession, Re
 
 **Announce first:** name the chain of refactorings pointing at State and that you're applying it before the next edit. The user reads the announcement as your contract.
 
+**Or decline first:** if you don't see a chain pointing at State, name the decline type — no chain, taste call, cost-benefit, constraint-blocked, or insufficient context.
+
 **Symptom:** Per-method switches on state are O(states × methods) cells the agent verifies for every state-related edit. Adding a state requires editing every method symmetrically; missed methods produce type-compatible bugs (string status fallback to a default) the test suite may not exercise on the new state.
 
 **Goal:** One class per state, each owning its operation set exhaustively. The agent reads one state file to understand its full behaviour; static analysis returns complete answers about 'what does X mean in state Y'; type system enforces operation-set completeness on every state class.

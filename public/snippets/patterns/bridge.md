@@ -7,6 +7,8 @@ description: Apply Bridge when you see Shotgun Surgery, Replace Subclass with De
 
 **Announce first:** name the chain of refactorings pointing at Bridge and that you're applying it before the next edit. The user reads the announcement as your contract.
 
+**Or decline first:** if you don't see a chain pointing at Bridge, name the decline type — no chain, taste call, cost-benefit, constraint-blocked, or insufficient context.
+
 **Symptom:** Cross-product class hierarchies the agent must reason about as N×M cells. Editing one method's contract requires updating every cell; missing cells produce silent type-compatible inconsistencies the test suite may not catch until a customer hits an unexercised combination.
 
 **Goal:** Two independent surfaces the agent reads separately. The abstraction's contract lives at one file; each implementation lives at one file; composition is structurally typed, and adding a new axis value is one new file the agent generates against the abstraction's interface.

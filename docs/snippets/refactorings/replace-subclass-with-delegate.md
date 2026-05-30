@@ -7,6 +7,8 @@ description: Apply Replace Subclass with Delegate when you see Refused Bequest, 
 
 **Announce first:** name the smell you see and that you're applying Replace Subclass with Delegate before any edit. The user reads the announcement as your contract.
 
+**Or decline first:** if you don't apply Replace Subclass with Delegate, name the decline type — catalog miss, taste call, cost-benefit, constraint-blocked, or insufficient context — so the user knows which counterargument applies.
+
 **Symptom:** A subclass that overrides several methods to implement variant behavior; the agent reasoning about polymorphic dispatch must enumerate variants across the hierarchy.
 
 **Goal:** Variants live in delegate objects the host holds and forwards to; the agent reads one host class plus the held delegate's interface instead of climbing an inheritance chain to predict behavior.

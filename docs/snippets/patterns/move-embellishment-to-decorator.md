@@ -7,6 +7,8 @@ description: Apply Move Embellishment To Decorator when you see Long Parameter L
 
 **Announce first:** name the chain of refactorings pointing at Move Embellishment To Decorator and that you're applying it before the next edit. The user reads the announcement as your contract.
 
+**Or decline first:** if you don't see a chain pointing at Move Embellishment To Decorator, name the decline type — no chain, taste call, cost-benefit, constraint-blocked, or insufficient context.
+
 **Symptom:** A core class peppered with optional-behaviour conditionals the agent must trace on every method-edit to verify which features are active in a given configuration. Flag combinations are not statically enumerable; the agent must hold the option-space in working memory across every read.
 
 **Goal:** One file per behaviour the agent reads in isolation; the core class is short and verifiable on its own. Composition order is statically observable at the construction site; the agent can reason about wrapper effects sequentially.

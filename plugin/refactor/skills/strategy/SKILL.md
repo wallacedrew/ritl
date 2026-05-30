@@ -7,6 +7,8 @@ description: Apply Strategy when you see Repeated Switches, Replace Conditional 
 
 **Announce first:** name the chain of refactorings pointing at Strategy and that you're applying it before the next edit. The user reads the announcement as your contract.
 
+**Or decline first:** if you don't see a chain pointing at Strategy, name the decline type — no chain, taste call, cost-benefit, constraint-blocked, or insufficient context.
+
 **Symptom:** Algorithm-specific code lives inside a host class with type-tag dispatch the agent must read to understand variant behaviour. Adding an algorithm requires the agent to edit the host; the diff blast radius is unpredictable; per-algorithm tests require constructing the host's full graph.
 
 **Goal:** One strategy interface and N small implementations the agent reads independently. Per-algorithm verification is one-file-scoped; strategy selection is one expression at the construction site; the host's relevant method is a one-line delegation.

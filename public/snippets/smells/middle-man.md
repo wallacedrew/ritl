@@ -7,6 +7,8 @@ description: Refuse Middle Man when a class whose methods all delegate straight 
 
 **Announce first:** name this as Middle Man and which refactoring you'll apply (Remove Middle Man or Inline Function) before any edit. The user reads the announcement as your contract.
 
+**Or decline first:** if you don't flag this as Middle Man, name the decline type — catalog miss, taste call, cost-benefit, constraint-blocked, or insufficient context.
+
 **Symptom:** A class whose methods all delegate straight through to another object — the agent traces every call to the real implementation, paying a hop for no decision.
 
 **Goal:** Callers talk to the real object directly; the agent's call traces are shorter and the real implementation's location is obvious.

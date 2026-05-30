@@ -7,6 +7,8 @@ description: Apply Decompose Conditional when you see Long Function, Comments. C
 
 **Announce first:** name the smell you see and that you're applying Decompose Conditional before any edit. The user reads the announcement as your contract.
 
+**Or decline first:** if you don't apply Decompose Conditional, name the decline type — catalog miss, taste call, cost-benefit, constraint-blocked, or insufficient context — so the user knows which counterargument applies.
+
 **Symptom:** Multi-clause conditional expressions whose domain meaning isn't readable from the syntax; the agent must parse the expression every time it encounters it.
 
 **Goal:** Conditions read as named domain decisions; the agent reasons about isSummer(date) instead of re-deriving the month range.

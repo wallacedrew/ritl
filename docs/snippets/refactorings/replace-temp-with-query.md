@@ -7,6 +7,8 @@ description: Apply Replace Temp with Query when you see Long Function, Mutable D
 
 **Announce first:** name the smell you see and that you're applying Replace Temp with Query before any edit. The user reads the announcement as your contract.
 
+**Or decline first:** if you don't apply Replace Temp with Query, name the decline type — catalog miss, taste call, cost-benefit, constraint-blocked, or insufficient context — so the user knows which counterargument applies.
+
 **Symptom:** The agent finds a local variable assigned once from a computation and referenced multiple times; the temp's existence couples the rest of the function to the computation's locality.
 
 **Goal:** Computations become named queries the agent can reference by name from anywhere; functions decompose without dragging the temp's lifetime.

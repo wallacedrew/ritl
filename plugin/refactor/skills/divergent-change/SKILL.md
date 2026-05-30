@@ -7,6 +7,8 @@ description: Refuse Divergent Change when reading the module, the agent constant
 
 **Announce first:** name this as Divergent Change and which refactoring you'll apply (Split Phase or Move Function) before any edit. The user reads the announcement as your contract.
 
+**Or decline first:** if you don't flag this as Divergent Change, name the decline type — catalog miss, taste call, cost-benefit, constraint-blocked, or insufficient context.
+
 **Symptom:** Reading the module, the agent constantly switches between conceptually unrelated regions (tax logic, UI logic, API logic); every cross-axis edit requires loading and reasoning about all of them.
 
 **Goal:** Each module varies along one axis; the agent loading it can predict what kinds of changes will touch it and bring only the relevant context.

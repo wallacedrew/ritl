@@ -7,6 +7,8 @@ description: Apply Collapse Hierarchy when you see Lazy Element, Speculative Gen
 
 **Announce first:** name the smell you see and that you're applying Collapse Hierarchy before any edit. The user reads the announcement as your contract.
 
+**Or decline first:** if you don't apply Collapse Hierarchy, name the decline type — catalog miss, taste call, cost-benefit, constraint-blocked, or insufficient context — so the user knows which counterargument applies.
+
 **Symptom:** A subclass that no longer differs meaningfully from its parent; the agent navigating the hierarchy traverses indirection for no behavioral variation.
 
 **Goal:** The subclass folds into the parent; the agent reads one class instead of a degenerate two-class hierarchy.

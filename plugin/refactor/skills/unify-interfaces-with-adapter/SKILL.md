@@ -7,6 +7,8 @@ description: Apply Unify Interfaces With Adapter when you see Alternative Classe
 
 **Announce first:** name the chain of refactorings pointing at Unify Interfaces With Adapter and that you're applying it before the next edit. The user reads the announcement as your contract.
 
+**Or decline first:** if you don't see a chain pointing at Unify Interfaces With Adapter, name the decline type — no chain, taste call, cost-benefit, constraint-blocked, or insufficient context.
+
 **Symptom:** `instanceof` branches at every consumer site the agent must verify match consistently. Per-consumer translation logic is duplicated; the agent's per-edit cost on a translation-rule change is proportional to consumer count.
 
 **Goal:** One adapter file the agent verifies once; consumers are uniform calls against a single interface. Translation rules are centralized; consumer-side code is generic over the adapted type.

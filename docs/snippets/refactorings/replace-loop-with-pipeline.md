@@ -7,6 +7,8 @@ description: Apply Replace Loop with Pipeline when you see Loops. Transformation
 
 **Announce first:** name the smell you see and that you're applying Replace Loop with Pipeline before any edit. The user reads the announcement as your contract.
 
+**Or decline first:** if you don't apply Replace Loop with Pipeline, name the decline type — catalog miss, taste call, cost-benefit, constraint-blocked, or insufficient context — so the user knows which counterargument applies.
+
 **Symptom:** Imperative for/while loops where the agent must mentally execute the body to learn the result; the loop's purpose isn't readable from its shape.
 
 **Goal:** Transformations read as named operation sequences (filter, map, reduce); the agent recognizes the shape without simulating the loop.

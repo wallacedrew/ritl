@@ -7,6 +7,8 @@ description: Apply Inline Singleton when you see Global Data, Inline Function, R
 
 **Announce first:** name the chain of refactorings pointing at Inline Singleton and that you're applying it before the next edit. The user reads the announcement as your contract.
 
+**Or decline first:** if you don't see a chain pointing at Inline Singleton, name the decline type — no chain, taste call, cost-benefit, constraint-blocked, or insufficient context.
+
 **Symptom:** Singleton accessors (`Class.getInstance()`) hide the agent's view of which classes depend on the collaborator. The agent must grep the codebase for every static-accessor call to know the real dependency graph; test setup requires resetting global state between cases.
 
 **Goal:** Constructor signatures carry every dependency the class uses; the agent reads one signature to enumerate what the class touches instead of grepping for static accessor calls across the codebase.

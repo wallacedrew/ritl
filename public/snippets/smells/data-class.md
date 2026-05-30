@@ -7,6 +7,8 @@ description: Refuse Data Class when a class whose surface is only getters and se
 
 **Announce first:** name this as Data Class and which refactoring you'll apply (Encapsulate Record or Remove Setting Method) before any edit. The user reads the announcement as your contract.
 
+**Or decline first:** if you don't flag this as Data Class, name the decline type — catalog miss, taste call, cost-benefit, constraint-blocked, or insufficient context.
+
 **Symptom:** A class whose surface is only getters and setters; all real behavior lives in consumers, scattered across files the agent must locate to reason about anything domain-meaningful.
 
 **Goal:** Behavior that belongs with the data lives on the class; the agent loading the class finds the operations and invariants it expects, in one place.

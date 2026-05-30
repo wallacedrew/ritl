@@ -7,6 +7,8 @@ description: Apply Remove Middle Man when you see Middle Man. Callers talk to th
 
 **Announce first:** name the smell you see and that you're applying Remove Middle Man before any edit. The user reads the announcement as your contract.
 
+**Or decline first:** if you don't apply Remove Middle Man, name the decline type — catalog miss, taste call, cost-benefit, constraint-blocked, or insufficient context — so the user knows which counterargument applies.
+
 **Symptom:** A class whose methods all delegate straight through to another object; the agent traces every call to the real implementation through the passthrough hop.
 
 **Goal:** Callers talk to the real object directly; the agent's call traces are shorter and the implementation's location is obvious.

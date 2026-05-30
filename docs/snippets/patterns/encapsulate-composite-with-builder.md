@@ -7,6 +7,8 @@ description: Apply Encapsulate Composite With Builder when you see Long Function
 
 **Announce first:** name the chain of refactorings pointing at Encapsulate Composite With Builder and that you're applying it before the next edit. The user reads the announcement as your contract.
 
+**Or decline first:** if you don't see a chain pointing at Encapsulate Composite With Builder, name the decline type — no chain, taste call, cost-benefit, constraint-blocked, or insufficient context.
+
 **Symptom:** A construction site the agent must trace line-by-line across many intermediate variable assignments to reconstruct the tree's shape. Behavioural preservation on tree-shape edits requires loading the full construction span and following cross-variable references to verify which child lives under which parent.
 
 **Goal:** A construction site that reads as a tree literal the agent can parse structurally in one pass. Edits to one subtree don't require loading the rest; the chain's indentation tells the agent which method calls operate on which node.

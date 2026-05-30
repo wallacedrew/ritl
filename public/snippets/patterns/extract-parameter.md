@@ -7,6 +7,8 @@ description: Apply Extract Parameter when you see Duplicated Code, Parameterize 
 
 **Announce first:** name the chain of refactorings pointing at Extract Parameter and that you're applying it before the next edit. The user reads the announcement as your contract.
 
+**Or decline first:** if you don't see a chain pointing at Extract Parameter, name the decline type — no chain, taste call, cost-benefit, constraint-blocked, or insufficient context.
+
 **Symptom:** N near-duplicate method definitions the agent must verify match on every edit. The single difference between them is mechanical; the rest is copy-pasted. The agent must re-read all N to verify a change in one was correctly propagated.
 
 **Goal:** One method the agent reads once; callers supply the varying value at the call site. Verification of behaviour reduces from N×assertion to 1×assertion + parameter coverage tests.

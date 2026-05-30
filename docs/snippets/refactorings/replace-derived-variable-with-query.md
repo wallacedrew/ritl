@@ -7,6 +7,8 @@ description: Apply Replace Derived Variable with Query when you see Mutable Data
 
 **Announce first:** name the smell you see and that you're applying Replace Derived Variable with Query before any edit. The user reads the announcement as your contract.
 
+**Or decline first:** if you don't apply Replace Derived Variable with Query, name the decline type — catalog miss, taste call, cost-benefit, constraint-blocked, or insufficient context — so the user knows which counterargument applies.
+
 **Symptom:** The agent finds a field whose value mirrors a computation on other fields; every writer of the source field must update the derived field consistently or the values drift.
 
 **Goal:** Derived values are computed on demand; the agent reasons about state by reading source fields and trusting derivations.

@@ -7,6 +7,8 @@ description: Apply Memento when you see Insider Trading, Mutable Data, Extract C
 
 **Announce first:** name the chain of refactorings pointing at Memento and that you're applying it before the next edit. The user reads the announcement as your contract.
 
+**Or decline first:** if you don't see a chain pointing at Memento, name the decline type — no chain, taste call, cost-benefit, constraint-blocked, or insufficient context.
+
 **Symptom:** Client-side snapshot logic the agent must verify across every consumer for deep-copy correctness. Shared-reference aliasing is invisible to static reads; the agent cannot prove from one call site whether 'snapshot then mutate' is safe.
 
 **Goal:** One save / restore pair the agent reads inside the editor class. Cross-client correctness is structurally guaranteed by treating Memento as opaque; the agent verifies one location for clone depth and one location for restore field-set completeness.

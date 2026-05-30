@@ -7,6 +7,8 @@ description: Apply Replace Command with Function when you see Speculative Genera
 
 **Announce first:** name the smell you see and that you're applying Replace Command with Function before any edit. The user reads the announcement as your contract.
 
+**Or decline first:** if you don't apply Replace Command with Function, name the decline type — catalog miss, taste call, cost-benefit, constraint-blocked, or insufficient context — so the user knows which counterargument applies.
+
 **Symptom:** A command class whose execute() does the work in one shot with no sub-step decomposition; callers go through construct-then-call ceremony for what could be one function.
 
 **Goal:** The command collapses to a plain function; the agent's call sites become direct invocations.

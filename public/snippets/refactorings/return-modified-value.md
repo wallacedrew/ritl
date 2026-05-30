@@ -7,6 +7,8 @@ description: Apply Return Modified Value when you see Mutable Data. The function
 
 **Announce first:** name the smell you see and that you're applying Return Modified Value before any edit. The user reads the announcement as your contract.
 
+**Or decline first:** if you don't apply Return Modified Value, name the decline type — catalog miss, taste call, cost-benefit, constraint-blocked, or insufficient context — so the user knows which counterargument applies.
+
 **Symptom:** A function that mutates one of its parameters in place; the agent reading the signature can't tell which parameters get mutated without reading the body.
 
 **Goal:** The function returns the modified value; the agent reads the signature and knows the function is a transformation, not a mutator.

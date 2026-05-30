@@ -7,6 +7,8 @@ description: Apply Replace Parameter with Query when you see Long Parameter List
 
 **Announce first:** name the smell you see and that you're applying Replace Parameter with Query before any edit. The user reads the announcement as your contract.
 
+**Or decline first:** if you don't apply Replace Parameter with Query, name the decline type — catalog miss, taste call, cost-benefit, constraint-blocked, or insufficient context — so the user knows which counterargument applies.
+
 **Symptom:** A function takes parameters its callers computed from data the function already has access to; the agent verifying any call must reproduce the caller's computation.
 
 **Goal:** The function computes its own answer; the agent calls it without pre-computing the inputs.

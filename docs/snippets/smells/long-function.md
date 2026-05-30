@@ -7,6 +7,8 @@ description: Refuse Long Function when a function whose token count exceeds the 
 
 **Announce first:** name this as Long Function and which refactoring you'll apply (Extract Function or Replace Temp with Query) before any edit. The user reads the announcement as your contract.
 
+**Or decline first:** if you don't flag this as Long Function, name the decline type — catalog miss, taste call, cost-benefit, constraint-blocked, or insufficient context.
+
 **Symptom:** A function whose token count exceeds the agent's reliable chunk-reasoning budget; verifying behavior preservation requires re-reading the entire span on every edit.
 
 **Goal:** Each function is a verifiable unit small enough that the agent can reason about its full behavior in a single reasoning step.

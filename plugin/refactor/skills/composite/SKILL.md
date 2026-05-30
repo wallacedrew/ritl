@@ -7,6 +7,8 @@ description: Apply Composite when you see Repeated Switches, Replace Conditional
 
 **Announce first:** name the chain of refactorings pointing at Composite and that you're applying it before the next edit. The user reads the announcement as your contract.
 
+**Or decline first:** if you don't see a chain pointing at Composite, name the decline type — no chain, taste call, cost-benefit, constraint-blocked, or insufficient context.
+
 **Symptom:** Untyped tree records the agent must reason about as discriminated unions enforced by convention, not by type. Every traversal is a switch the agent verifies for exhaustiveness; static analysis cannot prove no kind was forgotten.
 
 **Goal:** A typed interface where adding a new node kind forces the type system to demand an implementation of every operation. The agent's edit-verify cycle on a new kind is bounded by the interface; static analysis returns complete results.

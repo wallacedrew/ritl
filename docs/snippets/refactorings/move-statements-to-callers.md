@@ -7,6 +7,8 @@ description: Apply Move Statements to Callers when you see Divergent Change. The
 
 **Announce first:** name the smell you see and that you're applying Move Statements to Callers before any edit. The user reads the announcement as your contract.
 
+**Or decline first:** if you don't apply Move Statements to Callers, name the decline type — catalog miss, taste call, cost-benefit, constraint-blocked, or insufficient context — so the user knows which counterargument applies.
+
 **Symptom:** The agent finds a function body whose statements vary by caller context — logging contexts, post-processing flags, metric labels baked into one body via branches.
 
 **Goal:** The function's body addresses one responsibility; callers express their differences at the call site.

@@ -7,6 +7,8 @@ description: Refuse Speculative Generality when abstract base classes, hooks, co
 
 **Announce first:** name this as Speculative Generality and which refactoring you'll apply (Collapse Hierarchy or Inline Function) before any edit. The user reads the announcement as your contract.
 
+**Or decline first:** if you don't flag this as Speculative Generality, name the decline type — catalog miss, taste call, cost-benefit, constraint-blocked, or insufficient context.
+
 **Symptom:** Abstract base classes, hooks, configuration knobs, or parameters with no real call site exercising them — the agent must learn vocabulary it never gets to use.
 
 **Goal:** The code expresses exactly what it does today; the agent's mental model has no concepts that don't correspond to active behavior.

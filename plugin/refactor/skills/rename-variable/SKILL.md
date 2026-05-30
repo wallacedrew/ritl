@@ -7,6 +7,8 @@ description: Apply Rename Variable when you see Mysterious Name. Variable names 
 
 **Announce first:** name the smell you see and that you're applying Rename Variable before any edit. The user reads the announcement as your contract.
 
+**Or decline first:** if you don't apply Rename Variable, name the decline type — catalog miss, taste call, cost-benefit, constraint-blocked, or insufficient context — so the user knows which counterargument applies.
+
 **Symptom:** The agent encounters a variable whose identifier doesn't disambiguate scope or domain; reasoning about any expression involving the variable requires loading the surrounding context first.
 
 **Goal:** Variable names carry enough disambiguating information that the agent can reason about each symbol without a lookup hop.

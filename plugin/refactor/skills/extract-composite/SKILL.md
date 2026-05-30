@@ -7,6 +7,8 @@ description: Apply Extract Composite when you see Duplicated Code, Extract Super
 
 **Announce first:** name the chain of refactorings pointing at Extract Composite and that you're applying it before the next edit. The user reads the announcement as your contract.
 
+**Or decline first:** if you don't see a chain pointing at Extract Composite, name the decline type — no chain, taste call, cost-benefit, constraint-blocked, or insufficient context.
+
 **Symptom:** N copies of identical collection-management methods the agent must verify match on every edit. A bug fix in one copy must be ported to all others; the agent has no static guarantee the copies stayed consistent.
 
 **Goal:** One Composite superclass the agent reads once and trusts thereafter. Sibling classes are short enough to load entirely in context; the agent verifies only the distinctive surface.

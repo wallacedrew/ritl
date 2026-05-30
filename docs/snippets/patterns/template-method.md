@@ -7,6 +7,8 @@ description: Apply Template Method when you see Duplicated Code, Shotgun Surgery
 
 **Announce first:** name the chain of refactorings pointing at Template Method and that you're applying it before the next edit. The user reads the announcement as your contract.
 
+**Or decline first:** if you don't see a chain pointing at Template Method, name the decline type — no chain, taste call, cost-benefit, constraint-blocked, or insufficient context.
+
 **Symptom:** Duplicated algorithm skeletons across N classes the agent must verify in lockstep on every shape edit. The shared structure is invisible to static analysis; the agent cannot prove that all N implementations follow the same shape from source alone.
 
 **Goal:** One template method in a base class the agent reads to understand the algorithm shape. Per-subclass reasoning collapses to 'which hooks does this subclass override'; cross-subclass verification of skeleton consistency is structural.

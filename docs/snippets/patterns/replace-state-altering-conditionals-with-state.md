@@ -7,6 +7,8 @@ description: Apply Replace State-Altering Conditionals with State when you see R
 
 **Announce first:** name the chain of refactorings pointing at Replace State-Altering Conditionals with State and that you're applying it before the next edit. The user reads the announcement as your contract.
 
+**Or decline first:** if you don't see a chain pointing at Replace State-Altering Conditionals with State, name the decline type — no chain, taste call, cost-benefit, constraint-blocked, or insufficient context.
+
 **Symptom:** Per-operation state branches the agent must verify cover every state × operation combination consistently. The state machine's transition graph is invisible from any single method body; the agent has to read all operations to reconstruct legal transitions.
 
 **Goal:** Per-state class the agent reads as the full operation surface for that state. The transition graph is recoverable by inspecting state-assignment statements; per-state tests pin per-state behaviour.

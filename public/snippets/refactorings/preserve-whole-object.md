@@ -7,6 +7,8 @@ description: Apply Preserve Whole Object when you see Long Parameter List, Data 
 
 **Announce first:** name the smell you see and that you're applying Preserve Whole Object before any edit. The user reads the announcement as your contract.
 
+**Or decline first:** if you don't apply Preserve Whole Object, name the decline type — catalog miss, taste call, cost-benefit, constraint-blocked, or insufficient context — so the user knows which counterargument applies.
+
 **Symptom:** The agent sees call sites unpacking multiple fields from an object to pass to a function; adding any field the function later needs touches every call site.
 
 **Goal:** The function takes the object; the agent updates one place when the function needs new fields.

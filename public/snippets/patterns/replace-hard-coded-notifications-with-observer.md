@@ -7,6 +7,8 @@ description: Apply Replace Hard-Coded Notifications With Observer when you see I
 
 **Announce first:** name the chain of refactorings pointing at Replace Hard-Coded Notifications With Observer and that you're applying it before the next edit. The user reads the announcement as your contract.
 
+**Or decline first:** if you don't see a chain pointing at Replace Hard-Coded Notifications With Observer, name the decline type — no chain, taste call, cost-benefit, constraint-blocked, or insufficient context.
+
 **Symptom:** Publisher methods the agent must trace through to know what side effects occur. Adding a new consumer requires editing the publisher; per-edit context cost grows with consumer count; tests for the publisher load every consumer's mock.
 
 **Goal:** The publisher is short and consumer-agnostic; the agent reads it once and trusts it. Each consumer is one file with one event-handling concern; the agent verifies each consumer in isolation.

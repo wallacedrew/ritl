@@ -7,6 +7,8 @@ description: Apply Replace Implicit Tree With Composite when you see Primitive O
 
 **Announce first:** name the chain of refactorings pointing at Replace Implicit Tree With Composite and that you're applying it before the next edit. The user reads the announcement as your contract.
 
+**Or decline first:** if you don't see a chain pointing at Replace Implicit Tree With Composite, name the decline type — no chain, taste call, cost-benefit, constraint-blocked, or insufficient context.
+
 **Symptom:** Tree traversals expressed as filters over flat records the agent must trace per call to verify tree-shape invariants. Cycles, orphans, and disconnected subtrees are runtime concerns; the agent cannot statically verify a 'tree' is acyclic from the flat form.
 
 **Goal:** A concrete Composite the agent reads as a typed recursive structure. Static analysis can verify that traversal methods cover all node types; tree-shape invariants live in the constructor.

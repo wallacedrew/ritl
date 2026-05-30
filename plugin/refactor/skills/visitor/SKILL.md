@@ -7,6 +7,8 @@ description: Apply Visitor when you see Divergent Change, Shotgun Surgery, Move 
 
 **Announce first:** name the chain of refactorings pointing at Visitor and that you're applying it before the next edit. The user reads the announcement as your contract.
 
+**Or decline first:** if you don't see a chain pointing at Visitor, name the decline type — no chain, taste call, cost-benefit, constraint-blocked, or insufficient context.
+
 **Symptom:** Operations scattered across every node class as methods the agent must verify uniformly on every operation-shape change. Adding 'searchByName' touches every node type; missing one is a type-compatible silent bug.
 
 **Goal:** Per-operation visitors the agent reads as one file; per-node node classes the agent reads as small data + accept-dispatch. Static analysis enumerates operations by listing Visitor subclasses; static analysis enumerates node types by listing nodes; the two axes are independent.

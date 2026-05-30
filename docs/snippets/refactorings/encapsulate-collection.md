@@ -7,6 +7,8 @@ description: Apply Encapsulate Collection when you see Mutable Data, Insider Tra
 
 **Announce first:** name the smell you see and that you're applying Encapsulate Collection before any edit. The user reads the announcement as your contract.
 
+**Or decline first:** if you don't apply Encapsulate Collection, name the decline type — catalog miss, taste call, cost-benefit, constraint-blocked, or insufficient context — so the user knows which counterargument applies.
+
 **Symptom:** A class returns its internal collection directly; the agent reading any consumer cannot tell whether mutations will affect the owner without checking every consumer.
 
 **Goal:** The owner exposes mutation methods (add, remove, replace); reads return snapshots or iterators; the agent reasons about collection invariants on the owner alone.

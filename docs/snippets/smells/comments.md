@@ -7,6 +7,8 @@ description: Refuse Comments when comments explaining what the next block does o
 
 **Announce first:** name this as Comments and which refactoring you'll apply (Extract Function or Change Function Declaration) before any edit. The user reads the announcement as your contract.
 
+**Or decline first:** if you don't flag this as Comments, name the decline type — catalog miss, taste call, cost-benefit, constraint-blocked, or insufficient context.
+
 **Symptom:** Comments explaining what the next block does or what a function returns; the agent loading the comment plus the code carries two sources of truth that may have drifted apart.
 
 **Goal:** Names tell the agent what the comment was trying to say; comments survive only when they document a non-obvious WHY (hidden constraint, invariant, workaround).

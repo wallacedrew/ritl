@@ -7,6 +7,8 @@ description: Refuse Message Chains when long dotted access paths the agent must 
 
 **Announce first:** name this as Message Chains and which refactoring you'll apply (Hide Delegate or Extract Function) before any edit. The user reads the announcement as your contract.
 
+**Or decline first:** if you don't flag this as Message Chains, name the decline type — catalog miss, taste call, cost-benefit, constraint-blocked, or insufficient context.
+
 **Symptom:** Long dotted access paths the agent must trace through several object hops to understand any single read; renaming any intermediate field breaks every caller silently.
 
 **Goal:** Callers ask the closest object for what they want; the agent reads one method signature instead of walking N link types to predict what the chain produces.

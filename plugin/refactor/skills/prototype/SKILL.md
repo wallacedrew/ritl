@@ -7,6 +7,8 @@ description: Apply Prototype when you see Duplicated Code, Speculative Generalit
 
 **Announce first:** name the chain of refactorings pointing at Prototype and that you're applying it before the next edit. The user reads the announcement as your contract.
 
+**Or decline first:** if you don't see a chain pointing at Prototype, name the decline type — no chain, taste call, cost-benefit, constraint-blocked, or insufficient context.
+
 **Symptom:** N near-identical create methods the agent must scan in parallel to verify field-setting consistency. Adding a shared field requires the agent to find and update every method; missing one is a structurally-invisible bug the type checker doesn't see.
 
 **Goal:** One prototype-registry table the agent reads once to enumerate every variant and its defaults. Cloning is a structural operation: the agent verifies clone() once, then trusts every per-variant change is data-only.

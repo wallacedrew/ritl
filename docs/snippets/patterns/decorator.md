@@ -7,6 +7,8 @@ description: Apply Decorator when you see Large Class, Divergent Change, Replace
 
 **Announce first:** name the chain of refactorings pointing at Decorator and that you're applying it before the next edit. The user reads the announcement as your contract.
 
+**Or decline first:** if you don't see a chain pointing at Decorator, name the decline type — no chain, taste call, cost-benefit, constraint-blocked, or insufficient context.
+
 **Symptom:** Combinatorial subclass explosion or feature-flag-laden monoliths the agent must verify exhaustively on every behavioural change. 2^N combinations means N×(N-1) feature-interaction cells the agent reasons about; feature flags inside one class make the class's behaviour parametric on flag combinations.
 
 **Goal:** N small wrapper classes the agent reads one at a time. Feature composition is explicit in the construction expression; each wrapper's behaviour is its own one-file unit; tests cover each wrapper × wrappee combination compositionally.

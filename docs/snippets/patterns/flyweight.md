@@ -7,6 +7,8 @@ description: Apply Flyweight when you see Duplicated Code, Large Class, Extract 
 
 **Announce first:** name the chain of refactorings pointing at Flyweight and that you're applying it before the next edit. The user reads the announcement as your contract.
 
+**Or decline first:** if you don't see a chain pointing at Flyweight, name the decline type — no chain, taste call, cost-benefit, constraint-blocked, or insufficient context.
+
 **Symptom:** Instances of the same kind hold identical bytes for kind-shared fields. The agent reading the Tree class sees a constructor doing expensive work (loadTexture, loadMesh) per instance and must verify the duplication is intentional or a bug; static reads cannot distinguish 'cached lookup' from 'fresh load' without per-call instrumentation.
 
 **Goal:** A structural separation between kind-shared data (TreeType) and per-instance data (Tree). The agent verifies expensive setup is in TreeType.constructor (runs once per species); per-instance construction is cheap and obvious. Memory characteristics are statically derivable.

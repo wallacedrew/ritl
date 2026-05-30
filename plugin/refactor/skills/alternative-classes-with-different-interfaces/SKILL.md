@@ -7,6 +7,8 @@ description: Refuse Alternative Classes with Different Interfaces when two class
 
 **Announce first:** name this as Alternative Classes with Different Interfaces and which refactoring you'll apply (Change Function Declaration or Move Function) before any edit. The user reads the announcement as your contract.
 
+**Or decline first:** if you don't flag this as Alternative Classes with Different Interfaces, name the decline type — catalog miss, taste call, cost-benefit, constraint-blocked, or insufficient context.
+
 **Symptom:** Two classes the agent recognizes as doing similar things but with mismatched method names and signatures; the agent must learn both vocabularies and translate between them.
 
 **Goal:** Equivalent operations have equivalent signatures; the agent uses one mental model and the type system enforces substitutability.

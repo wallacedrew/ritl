@@ -7,6 +7,8 @@ description: Apply Limit Instantiation With Singleton when you see Mutable Data,
 
 **Announce first:** name the chain of refactorings pointing at Limit Instantiation With Singleton and that you're applying it before the next edit. The user reads the announcement as your contract.
 
+**Or decline first:** if you don't see a chain pointing at Limit Instantiation With Singleton, name the decline type — no chain, taste call, cost-benefit, constraint-blocked, or insufficient context.
+
 **Symptom:** Multiple instances of a class that should be unique appear at construction sites the agent must trace to confirm state coherence. State-fragmentation bugs are invisible to local reasoning — each instance looks correct, but their sum is wrong.
 
 **Goal:** One static accessor the agent verifies once; all references resolve to the same identity. The agent can statically reason about 'same instance' rather than tracking which constructor produced which instance.

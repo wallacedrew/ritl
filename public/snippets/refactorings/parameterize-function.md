@@ -7,6 +7,8 @@ description: Apply Parameterize Function when you see Duplicated Code. One canon
 
 **Announce first:** name the smell you see and that you're applying Parameterize Function before any edit. The user reads the announcement as your contract.
 
+**Or decline first:** if you don't apply Parameterize Function, name the decline type — catalog miss, taste call, cost-benefit, constraint-blocked, or insufficient context — so the user knows which counterargument applies.
+
 **Symptom:** The agent finds near-identical functions differing only in literal values; consistency depends on every variant staying in sync.
 
 **Goal:** One canonical function with a parameter; the agent reasons about one body and verifies parameter values at call sites.

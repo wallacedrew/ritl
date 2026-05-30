@@ -7,6 +7,8 @@ description: Apply Command when you see Repeated Switches, Primitive Obsession, 
 
 **Announce first:** name the chain of refactorings pointing at Command and that you're applying it before the next edit. The user reads the announcement as your contract.
 
+**Or decline first:** if you don't see a chain pointing at Command, name the decline type — no chain, taste call, cost-benefit, constraint-blocked, or insufficient context.
+
 **Symptom:** Operations are scattered methods the agent must enumerate by reading the receiver class. Adding a cross-cutting feature (undo, audit, replay) forces the agent to touch every method symmetrically — the verification problem grows linearly with operation count.
 
 **Goal:** One Command interface (execute + undo) the agent reads as the structural commitment. Each operation is a one-class file; cross-cutting features attach to the interface, not the methods. Static analysis of 'what operations exist' returns a complete list (subclasses of Command).

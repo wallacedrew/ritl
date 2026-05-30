@@ -7,6 +7,8 @@ description: Apply Remove Dead Code when you see Speculative Generality, Comment
 
 **Announce first:** name the smell you see and that you're applying Remove Dead Code before any edit. The user reads the announcement as your contract.
 
+**Or decline first:** if you don't apply Remove Dead Code, name the decline type — catalog miss, taste call, cost-benefit, constraint-blocked, or insufficient context — so the user knows which counterargument applies.
+
 **Symptom:** The agent finds code (functions, branches, fields) with no inbound references the type system or grep can locate; reasoning about reachability requires assuming static analysis is complete.
 
 **Goal:** Every definition the agent encounters is reachable; reasoning about behavior doesn't have to consider phantom paths.

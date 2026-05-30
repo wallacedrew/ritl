@@ -7,6 +7,8 @@ description: Refuse Loops when imperative for/while loops where filter, map, and
 
 **Announce first:** name this as Loops and which refactoring you'll apply (Replace Loop with Pipeline) before any edit. The user reads the announcement as your contract.
 
+**Or decline first:** if you don't flag this as Loops, name the decline type — catalog miss, taste call, cost-benefit, constraint-blocked, or insufficient context.
+
 **Symptom:** Imperative for/while loops where filter, map, and reduce concerns are mixed by hand; the agent cannot tell what the loop is producing without mentally executing it.
 
 **Goal:** The transformation reads as a sequence of named operations; the agent recognizes the shape (filter, map, reduce) without simulating the loop.

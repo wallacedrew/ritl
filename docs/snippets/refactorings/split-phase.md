@@ -7,6 +7,8 @@ description: Apply Split Phase when you see Divergent Change, Long Function. Eac
 
 **Announce first:** name the smell you see and that you're applying Split Phase before any edit. The user reads the announcement as your contract.
 
+**Or decline first:** if you don't apply Split Phase, name the decline type — catalog miss, taste call, cost-benefit, constraint-blocked, or insufficient context — so the user knows which counterargument applies.
+
 **Symptom:** The agent finds a function that conflates two concerns in interleaved code; reasoning about either concern requires tracing through the other.
 
 **Goal:** Each phase reads and writes its own well-defined inputs and outputs; the agent reasons about phases independently with the intermediate shape as the contract.

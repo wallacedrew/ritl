@@ -7,6 +7,8 @@ description: Apply Remove Setting Method when you see Mutable Data, Data Class. 
 
 **Announce first:** name the smell you see and that you're applying Remove Setting Method before any edit. The user reads the announcement as your contract.
 
+**Or decline first:** if you don't apply Remove Setting Method, name the decline type — catalog miss, taste call, cost-benefit, constraint-blocked, or insufficient context — so the user knows which counterargument applies.
+
 **Symptom:** The agent finds setters on a class whose values should only be set at construction; every late-mutation site is using setters for one-shot assignment.
 
 **Goal:** Construction is the only path to setting these fields; the agent reasons about the object as immutable-after-construction.

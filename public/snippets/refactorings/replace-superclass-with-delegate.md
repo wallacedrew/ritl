@@ -7,6 +7,8 @@ description: Apply Replace Superclass with Delegate when you see Refused Bequest
 
 **Announce first:** name the smell you see and that you're applying Replace Superclass with Delegate before any edit. The user reads the announcement as your contract.
 
+**Or decline first:** if you don't apply Replace Superclass with Delegate, name the decline type — catalog miss, taste call, cost-benefit, constraint-blocked, or insufficient context — so the user knows which counterargument applies.
+
 **Symptom:** A subclass that overrides parent methods to no-ops or 'unsupported'; the agent reasoning about polymorphic calls on parent-typed references cannot trust the contract.
 
 **Goal:** The former subclass holds a delegate of the former parent's role; the agent reads the new class's interface as the contract instead of loading the former parent to filter out methods the subclass refused.

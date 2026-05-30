@@ -7,6 +7,8 @@ description: Refuse Global Data when a module-level variable mutated from anywhe
 
 **Announce first:** name this as Global Data and which refactoring you'll apply (Encapsulate Variable) before any edit. The user reads the announcement as your contract.
 
+**Or decline first:** if you don't flag this as Global Data, name the decline type — catalog miss, taste call, cost-benefit, constraint-blocked, or insufficient context.
+
 **Symptom:** A module-level variable mutated from anywhere — the agent reading any single call site cannot bound its impact without scanning every consumer.
 
 **Goal:** All reads and writes go through a named function the agent can grep for, find every consumer of, and reason about as a closed surface.

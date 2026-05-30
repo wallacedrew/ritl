@@ -7,6 +7,8 @@ description: Apply Introduce Assertion when you see Comments, Mutable Data. Inva
 
 **Announce first:** name the smell you see and that you're applying Introduce Assertion before any edit. The user reads the announcement as your contract.
 
+**Or decline first:** if you don't apply Introduce Assertion, name the decline type — catalog miss, taste call, cost-benefit, constraint-blocked, or insufficient context — so the user knows which counterargument applies.
+
 **Symptom:** Code that depends on unwritten invariants the agent must reconstruct from context; bugs that violate the invariant surface far from the source.
 
 **Goal:** Invariants live in code as runtime checks; the agent reads the assertion as a typed constraint that downstream code can take as a precondition without re-deriving it from caller context.

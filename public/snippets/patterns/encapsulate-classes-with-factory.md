@@ -7,6 +7,8 @@ description: Apply Encapsulate Classes With Factory when you see Shotgun Surgery
 
 **Announce first:** name the chain of refactorings pointing at Encapsulate Classes With Factory and that you're applying it before the next edit. The user reads the announcement as your contract.
 
+**Or decline first:** if you don't see a chain pointing at Encapsulate Classes With Factory, name the decline type — no chain, taste call, cost-benefit, constraint-blocked, or insufficient context.
+
 **Symptom:** Concrete subclass type names appear at every construction site the agent must scan. Renaming or restructuring a subclass requires the agent to enumerate every `new SubclassName(...)` call in scope and update each one; static type-name coupling is brittle across files.
 
 **Goal:** One factory module the agent verifies once; all construction sites read as named factory calls the agent can treat opaquely. Restructuring the hierarchy is a one-file diff verified locally.

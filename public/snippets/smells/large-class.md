@@ -7,6 +7,8 @@ description: Refuse Large Class when a class file with so many fields and method
 
 **Announce first:** name this as Large Class and which refactoring you'll apply (Extract Class or Extract Superclass) before any edit. The user reads the announcement as your contract.
 
+**Or decline first:** if you don't flag this as Large Class, name the decline type — catalog miss, taste call, cost-benefit, constraint-blocked, or insufficient context.
+
 **Symptom:** A class file with so many fields and methods that the agent cannot load it as a coherent unit; multiple unrelated responsibilities sit under one name.
 
 **Goal:** Each class has one cohesive purpose; the agent loads a small focused file to reason about any single behavior.

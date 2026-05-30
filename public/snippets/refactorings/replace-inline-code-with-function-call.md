@@ -7,6 +7,8 @@ description: Apply Replace Inline Code with Function Call when you see Duplicate
 
 **Announce first:** name the smell you see and that you're applying Replace Inline Code with Function Call before any edit. The user reads the announcement as your contract.
 
+**Or decline first:** if you don't apply Replace Inline Code with Function Call, name the decline type — catalog miss, taste call, cost-benefit, constraint-blocked, or insufficient context — so the user knows which counterargument applies.
+
 **Symptom:** The agent finds inline code that reproduces the body of a named function elsewhere in the codebase; consistency depends on both implementations staying in sync.
 
 **Goal:** One canonical implementation the agent loads once and references everywhere; the name labels the intent at every call site.

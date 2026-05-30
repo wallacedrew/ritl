@@ -7,6 +7,8 @@ description: Refuse Primitive Obsession when function signatures use raw strings
 
 **Announce first:** name this as Primitive Obsession and which refactoring you'll apply (Replace Primitive with Object or Replace Type Code with Subclasses) before any edit. The user reads the announcement as your contract.
 
+**Or decline first:** if you don't flag this as Primitive Obsession, name the decline type — catalog miss, taste call, cost-benefit, constraint-blocked, or insufficient context.
+
 **Symptom:** Function signatures use raw strings and numbers where domain concepts hide; the agent cannot tell from the type whether an argument is the right kind of thing.
 
 **Goal:** Each domain concept has its own typed wrapper; the agent's type checker catches wrong-primitive-in-wrong-slot mistakes before runtime.

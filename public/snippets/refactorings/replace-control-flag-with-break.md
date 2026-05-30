@@ -7,6 +7,8 @@ description: Apply Replace Control Flag with Break when you see Loops, Long Func
 
 **Announce first:** name the smell you see and that you're applying Replace Control Flag with Break before any edit. The user reads the announcement as your contract.
 
+**Or decline first:** if you don't apply Replace Control Flag with Break, name the decline type — catalog miss, taste call, cost-benefit, constraint-blocked, or insufficient context — so the user knows which counterargument applies.
+
 **Symptom:** A loop maintaining a boolean flag to decide when to stop; the agent reasoning about termination must track the flag's state through every iteration.
 
 **Goal:** The exit happens at the moment it's decided via break/return/continue; the agent reads the loop's termination as a direct statement.

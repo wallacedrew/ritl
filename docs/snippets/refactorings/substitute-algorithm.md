@@ -7,6 +7,8 @@ description: Apply Substitute Algorithm when you see Long Function, Loops. The c
 
 **Announce first:** name the smell you see and that you're applying Substitute Algorithm before any edit. The user reads the announcement as your contract.
 
+**Or decline first:** if you don't apply Substitute Algorithm, name the decline type — catalog miss, taste call, cost-benefit, constraint-blocked, or insufficient context — so the user knows which counterargument applies.
+
 **Symptom:** The agent encounters a convoluted or hand-rolled algorithm where a well-known pattern produces the same outputs; reasoning about the bespoke version is expensive per read.
 
 **Goal:** The clearer algorithm replaces the bespoke; the agent reasons about a recognized pattern instead of reverse-engineering the original.

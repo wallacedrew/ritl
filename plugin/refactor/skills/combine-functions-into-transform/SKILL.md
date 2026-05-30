@@ -7,6 +7,8 @@ description: Apply Combine Functions into Transform when you see Data Clumps, Mu
 
 **Announce first:** name the smell you see and that you're applying Combine Functions into Transform before any edit. The user reads the announcement as your contract.
 
+**Or decline first:** if you don't apply Combine Functions into Transform, name the decline type — catalog miss, taste call, cost-benefit, constraint-blocked, or insufficient context — so the user knows which counterargument applies.
+
 **Symptom:** The agent encounters consumers each independently computing the same derived values from the same source; reasoning about consistency requires tracing every derivation.
 
 **Goal:** One transform produces the enriched record from the input; the agent reads one input-to-shape contract and consumers read named output fields without simulating the derivation.

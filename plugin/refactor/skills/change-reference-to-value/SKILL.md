@@ -7,6 +7,8 @@ description: Apply Change Reference to Value when you see Mutable Data. The obje
 
 **Announce first:** name the smell you see and that you're applying Change Reference to Value before any edit. The user reads the announcement as your contract.
 
+**Or decline first:** if you don't apply Change Reference to Value, name the decline type — catalog miss, taste call, cost-benefit, constraint-blocked, or insufficient context — so the user knows which counterargument applies.
+
 **Symptom:** A class with public mutable fields used by many consumers; the agent reasoning about any read must consider every other writer.
 
 **Goal:** The object is immutable + equal-by-content; the agent reasons about value semantics without modeling write timing.

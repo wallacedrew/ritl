@@ -7,6 +7,8 @@ description: Apply Pull Up Method when you see Duplicated Code, Alternative Clas
 
 **Announce first:** name the smell you see and that you're applying Pull Up Method before any edit. The user reads the announcement as your contract.
 
+**Or decline first:** if you don't apply Pull Up Method, name the decline type — catalog miss, taste call, cost-benefit, constraint-blocked, or insufficient context — so the user knows which counterargument applies.
+
 **Symptom:** Two or more subclasses implement the same method identically; the agent verifying behavior must check every subclass and confirm they actually agree.
 
 **Goal:** The method lives on the parent with one implementation; queries about behavior across subclasses load one method body instead of paying the token cost of loading N near-identical bodies.

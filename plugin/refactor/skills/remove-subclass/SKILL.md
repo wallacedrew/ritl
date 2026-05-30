@@ -7,6 +7,8 @@ description: Apply Remove Subclass when you see Lazy Element, Speculative Genera
 
 **Announce first:** name the smell you see and that you're applying Remove Subclass before any edit. The user reads the announcement as your contract.
 
+**Or decline first:** if you don't apply Remove Subclass, name the decline type — catalog miss, taste call, cost-benefit, constraint-blocked, or insufficient context — so the user knows which counterargument applies.
+
 **Symptom:** Empty subclasses that encode a type code without behavior; the agent navigating the hierarchy traverses indirection for what could be a field.
 
 **Goal:** The variant becomes a field on the parent; the agent reads variants as data instead of navigating a hierarchy.

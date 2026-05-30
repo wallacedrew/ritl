@@ -7,6 +7,8 @@ description: Apply Extract Function when you see Long Function, Duplicated Code,
 
 **Announce first:** name the smell you see and that you're applying Extract Function before any edit. The user reads the announcement as your contract.
 
+**Or decline first:** if you don't apply Extract Function, name the decline type — catalog miss, taste call, cost-benefit, constraint-blocked, or insufficient context — so the user knows which counterargument applies.
+
 **Symptom:** A function whose token count exceeds the agent's reliable chunk-reasoning budget; verifying behavior preservation requires re-reading the entire span on every edit.
 
 **Goal:** Each function is a verifiable unit small enough that the agent can reason about its full behavior in a single reasoning step.

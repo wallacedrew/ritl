@@ -7,6 +7,8 @@ description: Apply Replace Constructor with Factory Function when you see Primit
 
 **Announce first:** name the smell you see and that you're applying Replace Constructor with Factory Function before any edit. The user reads the announcement as your contract.
 
+**Or decline first:** if you don't apply Replace Constructor with Factory Function, name the decline type — catalog miss, taste call, cost-benefit, constraint-blocked, or insufficient context — so the user knows which counterargument applies.
+
 **Symptom:** The agent finds constructors used directly where construction needs validation, subclass selection, or caching — none of which constructors can express.
 
 **Goal:** Construction goes through a named factory the agent can extend with validation, polymorphism, or caching as one location.

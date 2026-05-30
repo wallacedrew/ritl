@@ -7,6 +7,8 @@ description: Apply Change Function Declaration when you see Mysterious Name, Lon
 
 **Announce first:** name the smell you see and that you're applying Change Function Declaration before any edit. The user reads the announcement as your contract.
 
+**Or decline first:** if you don't apply Change Function Declaration, name the decline type — catalog miss, taste call, cost-benefit, constraint-blocked, or insufficient context — so the user knows which counterargument applies.
+
 **Symptom:** A function whose name or signature doesn't match its behavior; the agent inferring intent from the call site gets misled and must read the body to verify.
 
 **Goal:** Names and signatures express what the function does; the agent reasons about call sites from the signature alone.

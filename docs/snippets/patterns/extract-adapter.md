@@ -7,6 +7,8 @@ description: Apply Extract Adapter when you see Divergent Change, Extract Class,
 
 **Announce first:** name the chain of refactorings pointing at Extract Adapter and that you're applying it before the next edit. The user reads the announcement as your contract.
 
+**Or decline first:** if you don't see a chain pointing at Extract Adapter, name the decline type — no chain, taste call, cost-benefit, constraint-blocked, or insufficient context.
+
 **Symptom:** Host class methods the agent must scan twice — once for the host logic, once for each variant branch — to determine what executes in a given environment. Library-version edits ripple to host class methods even when host behaviour is unchanged.
 
 **Goal:** One adapter file per variant; the agent verifies each adapter independently against the external API. The host class becomes a thin delegator the agent reads once and trusts thereafter.

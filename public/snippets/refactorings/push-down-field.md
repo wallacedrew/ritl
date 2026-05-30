@@ -7,6 +7,8 @@ description: Apply Push Down Field when you see Refused Bequest, Large Class. Th
 
 **Announce first:** name the smell you see and that you're applying Push Down Field before any edit. The user reads the announcement as your contract.
 
+**Or decline first:** if you don't apply Push Down Field, name the decline type — catalog miss, taste call, cost-benefit, constraint-blocked, or insufficient context — so the user knows which counterargument applies.
+
 **Symptom:** A field declared on the parent that only one subclass reads or writes; the parent's stored state includes a slot that does not apply to most instances the agent reasons about.
 
 **Goal:** The field lives on the subclass that uses it; the parent's storage declaration carries only the fields every instance holds, dropping the irrelevant declaration from the agent's window.

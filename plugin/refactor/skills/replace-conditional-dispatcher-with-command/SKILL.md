@@ -7,6 +7,8 @@ description: Apply Replace Conditional Dispatcher With Command when you see Repe
 
 **Announce first:** name the chain of refactorings pointing at Replace Conditional Dispatcher With Command and that you're applying it before the next edit. The user reads the announcement as your contract.
 
+**Or decline first:** if you don't see a chain pointing at Replace Conditional Dispatcher With Command, name the decline type — no chain, taste call, cost-benefit, constraint-blocked, or insufficient context.
+
 **Symptom:** A dispatcher conditional plus N inline handler methods the agent must scan together to know what runs for a given command. Adding a command edits two places (dispatcher plus host class), and the host file grows by one handler body for every new command added.
 
 **Goal:** One file per command the agent reads in isolation; the dispatcher reads a registry of commands instead of a switch over IDs, and adding a command is one new class plus one registry entry rather than an edit across every dispatcher branch.

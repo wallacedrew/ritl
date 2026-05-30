@@ -7,6 +7,8 @@ description: Apply Inline Class when you see Lazy Element, Speculative Generalit
 
 **Announce first:** name the smell you see and that you're applying Inline Class before any edit. The user reads the announcement as your contract.
 
+**Or decline first:** if you don't apply Inline Class, name the decline type — catalog miss, taste call, cost-benefit, constraint-blocked, or insufficient context — so the user knows which counterargument applies.
+
 **Symptom:** A class with too few responsibilities for its own file; the agent loads the class to reason about behavior that would naturally live with the absorber.
 
 **Goal:** The class folds into its primary collaborator; the agent loads one file for what was two.

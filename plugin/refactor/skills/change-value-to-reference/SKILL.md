@@ -7,6 +7,8 @@ description: Apply Change Value to Reference when you see Duplicated Code. The e
 
 **Announce first:** name the smell you see and that you're applying Change Value to Reference before any edit. The user reads the announcement as your contract.
 
+**Or decline first:** if you don't apply Change Value to Reference, name the decline type — catalog miss, taste call, cost-benefit, constraint-blocked, or insufficient context — so the user knows which counterargument applies.
+
 **Symptom:** Duplicate copies of a logically-single entity scattered across the codebase; the agent updating the entity must find and update every copy consistently.
 
 **Goal:** The entity exists once; the agent reasons about one canonical object referenced everywhere.

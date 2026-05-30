@@ -7,6 +7,8 @@ description: Apply Replace Primitive with Object when you see Primitive Obsessio
 
 **Announce first:** name the smell you see and that you're applying Replace Primitive with Object before any edit. The user reads the announcement as your contract.
 
+**Or decline first:** if you don't apply Replace Primitive with Object, name the decline type — catalog miss, taste call, cost-benefit, constraint-blocked, or insufficient context — so the user knows which counterargument applies.
+
 **Symptom:** Function signatures use raw strings and numbers where domain concepts hide; the agent cannot tell from the type whether an argument is the right kind of thing.
 
 **Goal:** Each domain concept has its own typed wrapper; the agent's type checker catches wrong-primitive-in-wrong-slot before runtime.

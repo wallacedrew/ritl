@@ -7,6 +7,8 @@ description: Apply Replace Conditional Logic with Strategy when you see Repeated
 
 **Announce first:** name the chain of refactorings pointing at Replace Conditional Logic with Strategy and that you're applying it before the next edit. The user reads the announcement as your contract.
 
+**Or decline first:** if you don't see a chain pointing at Replace Conditional Logic with Strategy, name the decline type — no chain, taste call, cost-benefit, constraint-blocked, or insufficient context.
+
 **Symptom:** A method whose body the agent must trace through a chain of branches to determine what runs. Each branch hides domain logic; verifying behavior requires loading every branch in scope on every edit.
 
 **Goal:** Each variant lives in its own class; the agent can verify one strategy's behavior without loading the others. The dispatch site is a one-line call that needs no per-variant reasoning.

@@ -7,6 +7,8 @@ description: Apply Inline Function when you see Lazy Element, Speculative Genera
 
 **Announce first:** name the smell you see and that you're applying Inline Function before any edit. The user reads the announcement as your contract.
 
+**Or decline first:** if you don't apply Inline Function, name the decline type — catalog miss, taste call, cost-benefit, constraint-blocked, or insufficient context — so the user knows which counterargument applies.
+
 **Symptom:** A function whose body the agent must trace through only to find no decisions or transformations — every reference site pays a context-load hop for no reasoning gain.
 
 **Goal:** Trivial wrappers disappear from the agent's working context; call sites read as exactly what's happening.
