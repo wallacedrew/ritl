@@ -18,7 +18,7 @@ export default function SiteHeader() {
         bgcolor: "background.paper",
       }}
     >
-      <Container maxWidth="lg" sx={{ py: { xs: 3, md: 4 } }}>
+      <Container maxWidth="lg" sx={{ pt: { xs: 3, md: 4 } }}>
         <Stack spacing={3}>
           <Stack spacing={1.25}>
             <NextLink href="/" style={{ color: "inherit", textDecoration: "none" }}>
