@@ -35,21 +35,6 @@ describe("user installs the plugin from /plugin", () => {
     ).toBeInTheDocument();
   });
 
-  it("shows a provenance line citing the canon and linking the ADR + GitHub repo", () => {
-    renderWithTheme(<PluginPage />);
-
-    expect(screen.getByText(/Built by Wallace Drew/i)).toBeInTheDocument();
-
-    const adrLink = screen.getByRole("link", { name: "ADR-0006" });
-    expect(adrLink).toHaveAttribute(
-      "href",
-      "https://github.com/wallacedrew/ritl/blob/main/docs/architecture/0006-agent-forces-carry-the-contrast.md",
-    );
-
-    const githubLink = screen.getByRole("link", { name: "github.com/wallacedrew/ritl" });
-    expect(githubLink).toHaveAttribute("href", "https://github.com/wallacedrew/ritl");
-  });
-
   it("embeds the Extract Function SKILL.md with description and agent forces", () => {
     renderWithTheme(<PluginPage />);
 

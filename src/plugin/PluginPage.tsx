@@ -9,7 +9,6 @@ import AgentsMdSnippetSection from "./components/AgentsMdSnippetSection";
 import ClaudeMdCompanionSection from "./components/ClaudeMdCompanionSection";
 import EmbeddedSkillPreview from "./components/EmbeddedSkillPreview";
 import PluginInstallSection from "./components/PluginInstallSection";
-import ProvenanceLine from "./components/ProvenanceLine";
 import WhenNotToInstallSection from "./components/WhenNotToInstallSection";
 import { visuallyHidden } from "@mui/utils";
 
@@ -31,7 +30,6 @@ export default function PluginPage() {
             Two ways to install: the Claude Code plugin (auto-invoking skills) or an AGENTS.md
             drop-in for other agents. Pick the higher one your environment supports.
           </Typography>
-          <ProvenanceLine />
         </Stack>
         <PluginInstallSection />
         <ClaudeMdCompanionSection />
