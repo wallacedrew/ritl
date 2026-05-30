@@ -89,6 +89,28 @@ describe("user installs the plugin from /plugin", () => {
     expect(document.body.textContent).toContain("let total = 0");
   });
 
+  it("offers a rendered/raw toggle on the SKILL anatomy embed, defaulting to rendered", () => {
+    renderWithTheme(<PluginPage />);
+
+    const renderedButton = screen.getByRole("button", { name: /Rendered view/i });
+    const rawButton = screen.getByRole("button", { name: /Raw markdown/i });
+
+    expect(renderedButton).toBeInTheDocument();
+    expect(rawButton).toBeInTheDocument();
+    expect(renderedButton).toHaveAttribute("aria-pressed", "true");
+    expect(rawButton).toHaveAttribute("aria-pressed", "false");
+  });
+
+  it("surfaces the literal SKILL.md bytes when the user flips to raw", async () => {
+    const user = userEvent.setup();
+    renderWithTheme(<PluginPage />);
+
+    await user.click(screen.getByRole("button", { name: /Raw markdown/i }));
+
+    expect(document.body.textContent).toContain("name: extract-function");
+    expect(document.body.textContent).toContain("# Apply: 01 — Extract Function");
+  });
+
   it("fires plugin_install_copied when the user clicks the install-command copy button", async () => {
     const analytics = new RecordingAnalyticsTracker();
     const user = userEvent.setup();

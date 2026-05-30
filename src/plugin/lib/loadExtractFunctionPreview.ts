@@ -8,6 +8,7 @@ import { findCatalogEntryBySlug } from "@/shared/lib/findCatalogEntryBySlug";
 export interface ExtractFunctionSkillPreview {
   description: string;
   entry: CatalogEntry;
+  rawMarkdown: string;
 }
 
 const EXTRACT_FUNCTION_SLUG = "extract-function";
@@ -15,14 +16,10 @@ const SNIPPET_RELATIVE_PATH = ["public", "snippets", "refactorings", "extract-fu
 
 export function loadExtractFunctionPreview(): ExtractFunctionSkillPreview {
   const { entry } = findCatalogEntryBySlug(EXTRACT_FUNCTION_SLUG, loadRefactorings());
-  const description = readDescriptionFromSnippet();
-  return { description, entry };
-}
-
-function readDescriptionFromSnippet(): string {
   const snippetPath = path.join(process.cwd(), ...SNIPPET_RELATIVE_PATH);
-  const raw = readFileSync(snippetPath, "utf8");
-  return parseFrontmatterDescription(raw);
+  const rawMarkdown = readFileSync(snippetPath, "utf8");
+  const description = parseFrontmatterDescription(rawMarkdown);
+  return { description, entry, rawMarkdown };
 }
 
 function parseFrontmatterDescription(raw: string): string {

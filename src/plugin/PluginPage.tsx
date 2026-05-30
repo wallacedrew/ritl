@@ -15,7 +15,7 @@ import WhenNotToInstallSection from "./components/WhenNotToInstallSection";
 import { visuallyHidden } from "@mui/utils";
 
 export default function PluginPage() {
-  const { entry, description } = loadExtractFunctionPreview();
+  const { entry, description, rawMarkdown } = loadExtractFunctionPreview();
 
   return (
     <Container maxWidth="lg" sx={{ py: 4 }}>
@@ -39,7 +39,7 @@ export default function PluginPage() {
         <Divider />
         <SixStepDisciplineSection />
         <Divider />
-        <EmbeddedSkillPreview entry={entry} description={description} />
+        <EmbeddedSkillPreview entry={entry} description={description} rawMarkdown={rawMarkdown} />
         <Divider />
         <AgentsMdSnippetSection />
         <Divider />
