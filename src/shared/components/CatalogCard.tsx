@@ -20,7 +20,7 @@ export default function CatalogCard({ item }: CatalogCardProps) {
     >
       <CardContent>
         <Stack spacing={1.5}>
-          <Stack direction="row" spacing={1.5} sx={{ alignItems: "center", flexWrap: "wrap" }}>
+          <Stack direction="row" spacing={1.5} sx={{ alignItems: "center" }}>
             <CatalogNumber value={item.number} />
             <ExpandableCatalogChip label={item.name} href={item.href} tone={item.tone} />
           </Stack>

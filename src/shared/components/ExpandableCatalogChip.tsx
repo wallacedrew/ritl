@@ -95,6 +95,7 @@ function splitChipContainerSx(paletteKey: BadgePaletteKey): SxProps<Theme> {
     border: `1px solid ${alpha(theme.palette[paletteKey].main, 0.5)}`,
     backgroundColor: "transparent",
     overflow: "hidden",
+    minWidth: 0,
     maxWidth: "100%",
   });
 }
