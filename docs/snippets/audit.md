@@ -1,11 +1,11 @@
 ---
-name: workflow
-description: Run the full refactoring cycle — sense the smell, locate its source, lay down safety-net tests, then apply the matching refactorings via the per-entity skills in this plugin. Trigger when the user says "refactoring", "ritl", "smell", "code-smell", "refactor this", "fix this smell", "clean this up", "this looks off", "what's wrong with this", or describes code that feels tangled, duplicated, mysteriously named, or otherwise unhealthy. Use the 24 per-entity smell skills (long-function, mysterious-name, duplicated-code, etc.) to identify which smell applies, then read that smell skill's apply-refactorings list to pick the refactoring skill (extract-function, inline-function, etc.) to follow next. Keep tests green throughout; revert if anything goes red.
+name: audit
+description: Run the refactoring audit — sense the smell, locate its source, lay down safety-net tests, then apply the matching refactorings via the per-entity skills in this plugin. Trigger when the user says "audit this", "refactoring", "ritl", "ritl this", "smell", "smell check", "code-smell", "refactor this", "fix this smell", "clean this up", "tidy this up", "this looks off", "what's wrong with this", "is this clean", "give this a once-over", or describes code that feels tangled, duplicated, mysteriously named, or otherwise unhealthy. Use the 24 per-entity smell skills (long-function, mysterious-name, duplicated-code, etc.) to identify which smell applies, then read that smell skill's apply-refactorings list to pick the refactoring skill (extract-function, inline-function, etc.) to follow next. Keep tests green throughout; revert if anything goes red.
 ---
 
-# Workflow — sense smell → safety net → apply refactoring
+# Audit — sense smell → safety net → apply refactoring
 
-The full refactoring cycle, end to end. Follow the five steps in order; each step has to land before the next.
+The full refactoring audit, end to end. Follow the five steps in order; each step has to land before the next.
 
 ## 1. Sense the smell
 

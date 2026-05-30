@@ -124,7 +124,7 @@ describe("user installs the plugin from /plugin", () => {
     expect(
       screen.getByText("You already know the named refactoring you want."),
     ).toBeInTheDocument();
-    expect(screen.getByText("/refactor:workflow")).toBeInTheDocument();
+    expect(screen.getByText("/refactor:audit")).toBeInTheDocument();
     expect(screen.getByText("/refactor:<skill-slug>")).toBeInTheDocument();
   });
 

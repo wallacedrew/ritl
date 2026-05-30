@@ -3,7 +3,7 @@
 //
 // Output layout:
 //   docs/snippets/refactoring-discipline.md          (AGENTS.md / CLAUDE.md drop-in directive)
-//   docs/snippets/workflow.md                        (orchestrator SKILL.md mirror)
+//   docs/snippets/audit.md                           (orchestrator SKILL.md mirror)
 //   docs/snippets/refactorings/<slug>.md             (one valid SKILL.md per refactoring)
 //   docs/snippets/smells/<slug>.md                   (one valid SKILL.md per smell)
 //   docs/snippets/patterns/<slug>.md                 (one valid SKILL.md per pattern)
@@ -29,10 +29,7 @@ const patterns = JSON.parse(
   readFileSync(resolve(root, "src/patterns/content/patterns.json"), "utf-8"),
 );
 
-const workflowSkillMd = readFileSync(
-  resolve(root, "plugin/refactor/skills/workflow/SKILL.md"),
-  "utf-8",
-);
+const auditSkillMd = readFileSync(resolve(root, "plugin/refactor/skills/audit/SKILL.md"), "utf-8");
 
 // Mirrors src/refactorings/lib/categories.ts. Duplicated here so the
 // generator can run as a plain Node script without TS tooling; keep in
@@ -405,7 +402,7 @@ Fowler 2e (https://refactoring.com/catalog/), Kerievsky's *Refactoring to Patter
 for (const dest of ["docs/snippets", "public/snippets"]) {
   mkdirSync(resolve(root, dest), { recursive: true });
   writeFileSync(resolve(root, `${dest}/refactoring-discipline.md`), disciplineMd);
-  writeFileSync(resolve(root, `${dest}/workflow.md`), workflowSkillMd);
+  writeFileSync(resolve(root, `${dest}/audit.md`), auditSkillMd);
 
   mkdirSync(resolve(root, `${dest}/refactorings`), { recursive: true });
   for (const r of refactorings) {
@@ -442,14 +439,14 @@ for (const dest of ["docs/snippets", "public/snippets"]) {
 const PLUGIN_NAME = "refactor";
 const MARKETPLACE_NAME = "ritl";
 const PLUGIN_DESCRIPTION =
-  "141 SKILL.md skills — 1 workflow orchestrator + 66 refactorings + 24 smells + 50 patterns (27 Kerievsky + 23 GoF). Apply Fowler refactorings when their preconditions appear; refuse known code smells; apply Kerievsky composite refactorings whose destination is a pattern; recognize GoF design patterns as destination shapes. Sources: https://refactoring.com/catalog/, Refactoring to Patterns (Kerievsky 2004), and Design Patterns (Gamma/Helm/Johnson/Vlissides 1994).";
+  "141 SKILL.md skills — 1 audit orchestrator + 66 refactorings + 24 smells + 50 patterns (27 Kerievsky + 23 GoF). Apply Fowler refactorings when their preconditions appear; refuse known code smells; apply Kerievsky composite refactorings whose destination is a pattern; recognize GoF design patterns as destination shapes. Sources: https://refactoring.com/catalog/, Refactoring to Patterns (Kerievsky 2004), and Design Patterns (Gamma/Helm/Johnson/Vlissides 1994).";
 
 const pluginRoot = resolve(root, `plugin/${PLUGIN_NAME}`);
 const pluginSkillsRoot = resolve(pluginRoot, "skills");
 const marketplaceDir = resolve(root, ".claude-plugin");
 
 // Scope the wipe to catalog-derived slugs only. Hand-authored skills
-// in this folder (like `workflow/`) live outside the catalog and must
+// in this folder (like `audit/`) live outside the catalog and must
 // survive every regen.
 const expectedCatalogSlugs = new Set([
   ...refactorings.map((r) => slugify(r.name)),
@@ -524,7 +521,7 @@ console.log(`  ${refactorings.length} refactoring SKILL.md files`);
 console.log(`  ${smells.length} smell SKILL.md files`);
 console.log(`  ${patterns.length} pattern SKILL.md files`);
 console.log("  1 refactoring-discipline.md (AGENTS.md rules snippet)");
-console.log("  1 workflow.md (orchestrator SKILL.md mirror)");
+console.log("  1 audit.md (orchestrator SKILL.md mirror)");
 console.log(`Generated plugin '${PLUGIN_NAME}' at plugin/${PLUGIN_NAME}/`);
 console.log(`  marketplace.json at .claude-plugin/marketplace.json`);
 console.log(
