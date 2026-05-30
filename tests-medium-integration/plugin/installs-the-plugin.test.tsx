@@ -134,13 +134,14 @@ describe("user installs the plugin from /plugin", () => {
     expect(screen.getByText(/\/plugin uninstall refactor@ritl/)).toBeInTheDocument();
   });
 
-  it("names a scenario where the plugin is the wrong choice", () => {
+  it("names a scenario where the plugin is the wrong choice and how to disable it", () => {
     renderWithTheme(<PluginPage />);
 
     expect(
       screen.getByRole("heading", { level: 2, name: /When not to install/i }),
     ).toBeInTheDocument();
-    expect(screen.getByText(/Throwaway prototype code\? Skip the plugin/i)).toBeInTheDocument();
+    expect(screen.getByText(/wrong choice in a hot debugging loop/i)).toBeInTheDocument();
+    expect(screen.getByText(/\/plugin disable refactor@ritl/)).toBeInTheDocument();
   });
 
   it("fires claude_md_companion_copied when the user clicks the CLAUDE.md directive copy button", async () => {
