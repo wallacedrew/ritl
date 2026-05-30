@@ -8,6 +8,7 @@ import { loadExtractFunctionPreview } from "./lib/loadExtractFunctionPreview";
 import AgentsMdSnippetSection from "./components/AgentsMdSnippetSection";
 import EmbeddedSkillPreview from "./components/EmbeddedSkillPreview";
 import PluginInstallSection from "./components/PluginInstallSection";
+import ProvenanceLine from "./components/ProvenanceLine";
 import SixStepDisciplineSection from "./components/SixStepDisciplineSection";
 import { visuallyHidden } from "@mui/utils";
 
@@ -29,6 +30,7 @@ export default function PluginPage() {
             Two ways to install: the Claude Code plugin (auto-invoking skills) or an AGENTS.md
             drop-in for other agents. Pick the higher one your environment supports.
           </Typography>
+          <ProvenanceLine />
         </Stack>
         <EmbeddedSkillPreview entry={entry} description={description} />
         <Divider />
