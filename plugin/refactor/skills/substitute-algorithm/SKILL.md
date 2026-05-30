@@ -5,6 +5,8 @@ description: Apply Substitute Algorithm when you see Long Function, Loops. The c
 
 # Apply: 51 — Substitute Algorithm
 
+**Announce first:** name the smell you see and that you're applying Substitute Algorithm before any edit. The user reads the announcement as your contract.
+
 **Symptom:** The agent encounters a convoluted or hand-rolled algorithm where a well-known pattern produces the same outputs; reasoning about the bespoke version is expensive per read.
 
 **Goal:** The clearer algorithm replaces the bespoke; the agent reasons about a recognized pattern instead of reverse-engineering the original.

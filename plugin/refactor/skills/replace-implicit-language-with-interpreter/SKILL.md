@@ -5,6 +5,8 @@ description: Apply Replace Implicit Language With Interpreter when you see Primi
 
 # Apply: 21 — Replace Implicit Language With Interpreter
 
+**Announce first:** name the chain of refactorings pointing at Replace Implicit Language With Interpreter and that you're applying it before the next edit. The user reads the announcement as your contract.
+
 **Symptom:** String-DSL parsing and dispatch entangled in one method body the agent must trace per call. The grammar is implicit in regex patterns and conditionals; the agent cannot statically enumerate valid expressions or verify that all paths handle malformed input.
 
 **Goal:** Each grammar node is one class the agent verifies independently. The composed expression tree is a statically-typed data structure the agent reads structurally; per-node tests pin per-node behaviour.

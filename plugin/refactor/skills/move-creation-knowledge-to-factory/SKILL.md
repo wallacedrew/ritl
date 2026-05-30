@@ -5,6 +5,8 @@ description: Apply Move Creation Knowledge To Factory when you see Long Function
 
 # Apply: 15 — Move Creation Knowledge To Factory
 
+**Announce first:** name the chain of refactorings pointing at Move Creation Knowledge To Factory and that you're applying it before the next edit. The user reads the announcement as your contract.
+
 **Symptom:** Construction recipes duplicated across N caller sites the agent must verify match on every recipe change. Each call site assembles the object with its own subset of defaults; the agent cannot statically guarantee the assemblies stay consistent.
 
 **Goal:** One factory file the agent reads as the construction contract; callers are short delegations the agent treats opaquely. Per-edit budget for a recipe change collapses to one file.

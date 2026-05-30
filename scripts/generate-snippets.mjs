@@ -207,6 +207,8 @@ function formatRefactoringBody(r) {
   return [
     `# Apply: ${num} — ${r.name}`,
     "",
+    `**Announce first:** name the smell you see and that you're applying ${r.name} before any edit. The user reads the announcement as your contract.`,
+    "",
     `**Symptom:** ${forces.symptom}`,
     "",
     `**Goal:** ${forces.goal}`,
@@ -245,6 +247,8 @@ function formatPatternBody(p, index) {
   const triggers = p.nemeses.map((n) => `${n.name} (${n.catalog})`).join(", ");
   const lines = [
     `# Apply: ${num} — ${p.name}`,
+    "",
+    `**Announce first:** name the chain of refactorings pointing at ${p.name} and that you're applying it before the next edit. The user reads the announcement as your contract.`,
     "",
     `**Symptom:** ${forces.symptom}`,
     "",
@@ -287,8 +291,11 @@ function formatPatternSkill(p, index) {
 function formatSmellBody(s, index) {
   const num = String(index + 1).padStart(2, "0");
   const forces = agentLensForces(s);
+  const applies = s.nemeses.slice(0, 2).join(" or ");
   return [
     `# Refuse: ${num} — ${s.name}`,
+    "",
+    `**Announce first:** name this as ${s.name} and which refactoring you'll apply (${applies}) before any edit. The user reads the announcement as your contract.`,
     "",
     `**Symptom:** ${forces.symptom}`,
     "",

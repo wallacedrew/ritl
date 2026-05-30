@@ -5,6 +5,8 @@ description: Apply Replace Conditional with Polymorphism when you see Repeated S
 
 # Apply: 24 — Replace Conditional with Polymorphism
 
+**Announce first:** name the smell you see and that you're applying Replace Conditional with Polymorphism before any edit. The user reads the announcement as your contract.
+
 **Symptom:** A switch on a type code that appears in multiple files; the agent adding a new case must grep for every site and update each consistently or risk silent inconsistency.
 
 **Goal:** Each case is a class implementing a shared interface; the agent adds a new case by adding one class, and the type system tells it what's still missing.

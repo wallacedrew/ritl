@@ -5,6 +5,8 @@ description: Apply Pull Up Field when you see Duplicated Code. The field lives o
 
 # Apply: 63 — Pull Up Field
 
+**Announce first:** name the smell you see and that you're applying Pull Up Field before any edit. The user reads the announcement as your contract.
+
 **Symptom:** A field declared identically across multiple subclasses; the agent verifying changes to the field's shape must update every subclass consistently.
 
 **Goal:** The field lives on the parent with one declaration; reading any subclass's storage resolves through inheritance to the parent's one field instead of paying the cost of loading every subclass to verify the declaration matches.

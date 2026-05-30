@@ -5,6 +5,8 @@ description: Apply Move Accumulation To Visitor when you see Divergent Change, E
 
 # Apply: 14 — Move Accumulation To Visitor
 
+**Announce first:** name the chain of refactorings pointing at Move Accumulation To Visitor and that you're applying it before the next edit. The user reads the announcement as your contract.
+
 **Symptom:** An operation's logic the agent must trace across N node classes to reconstruct what happens on a recursive call. The structure's source files are large because each one carries every operation; adding an operation requires the agent to coordinate edits across the full type hierarchy.
 
 **Goal:** One file per operation; the agent verifies a Visitor against its declared interface in isolation. Node classes hold data plus one accept method, dropping the per-operation surface area the agent loads when reading any node type.

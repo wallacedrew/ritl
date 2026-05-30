@@ -5,6 +5,8 @@ description: Refuse Refused Bequest when a subclass overrides parent methods wit
 
 # Refuse: 23 — Refused Bequest
 
+**Announce first:** name this as Refused Bequest and which refactoring you'll apply (Push Down Method or Push Down Field) before any edit. The user reads the announcement as your contract.
+
 **Symptom:** A subclass overrides parent methods with no-ops or 'unsupported' throws; code generated against the parent's interface that calls the inherited method against this subclass produces a runtime failure the type checker accepted.
 
 **Goal:** Behavior reuse runs through a held collaborator instead of through inheritance; generated code that calls a method on a reference type runs the method the type's signature promises.

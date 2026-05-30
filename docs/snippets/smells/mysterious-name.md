@@ -5,6 +5,8 @@ description: Refuse Mysterious Name when token-level identifiers don't disambigu
 
 # Refuse: 01 — Mysterious Name
 
+**Announce first:** name this as Mysterious Name and which refactoring you'll apply (Change Function Declaration or Rename Variable) before any edit. The user reads the announcement as your contract.
+
 **Symptom:** Token-level identifiers don't disambiguate scope or domain — the agent must load surrounding context to answer 'what does this variable hold?' before any reasoning step succeeds.
 
 **Goal:** Identifiers carry enough disambiguating information that the agent can reason about each symbol without a lookup hop.

@@ -5,6 +5,8 @@ description: Apply Hide Delegate when you see Message Chains. Callers reach for 
 
 # Apply: 41 — Hide Delegate
 
+**Announce first:** name the smell you see and that you're applying Hide Delegate before any edit. The user reads the announcement as your contract.
+
 **Symptom:** The agent finds long dotted access paths through several object hops; renaming any intermediate field silently breaks every caller.
 
 **Goal:** Callers reach for the wrapper's methods directly; the agent reads one type signature instead of walking the delegate chain to predict what the call returns.

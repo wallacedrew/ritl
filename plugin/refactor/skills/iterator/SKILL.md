@@ -5,6 +5,8 @@ description: Apply Iterator when you see Insider Trading, Message Chains, Encaps
 
 # Apply: 43 — Iterator
 
+**Announce first:** name the chain of refactorings pointing at Iterator and that you're applying it before the next edit. The user reads the announcement as your contract.
+
 **Symptom:** Per-traversal duplication of representation-specific logic the agent must verify uniformly on every collection-internals change. Insider Trading on collection internals couples every consumer to the collection's private fields; refactoring the collection's storage is N-files-in-lockstep.
 
 **Goal:** One iterator protocol the agent reads to understand traversal semantics. Consumer code is uniform `for (const x of coll)` — the agent's reasoning about traversal collapses to one shape; representation changes inside the collection scope to one file.

@@ -5,6 +5,8 @@ description: Apply Inline Class when you see Lazy Element, Speculative Generalit
 
 # Apply: 55 — Inline Class
 
+**Announce first:** name the smell you see and that you're applying Inline Class before any edit. The user reads the announcement as your contract.
+
 **Symptom:** A class with too few responsibilities for its own file; the agent loads the class to reason about behavior that would naturally live with the absorber.
 
 **Goal:** The class folds into its primary collaborator; the agent loads one file for what was two.

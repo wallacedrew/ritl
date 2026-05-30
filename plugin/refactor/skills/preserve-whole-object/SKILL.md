@@ -5,6 +5,8 @@ description: Apply Preserve Whole Object when you see Long Parameter List, Data 
 
 # Apply: 30 — Preserve Whole Object
 
+**Announce first:** name the smell you see and that you're applying Preserve Whole Object before any edit. The user reads the announcement as your contract.
+
 **Symptom:** The agent sees call sites unpacking multiple fields from an object to pass to a function; adding any field the function later needs touches every call site.
 
 **Goal:** The function takes the object; the agent updates one place when the function needs new fields.

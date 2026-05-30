@@ -5,6 +5,8 @@ description: Apply Change Reference to Value when you see Mutable Data. The obje
 
 # Apply: 56 — Change Reference to Value
 
+**Announce first:** name the smell you see and that you're applying Change Reference to Value before any edit. The user reads the announcement as your contract.
+
 **Symptom:** A class with public mutable fields used by many consumers; the agent reasoning about any read must consider every other writer.
 
 **Goal:** The object is immutable + equal-by-content; the agent reasons about value semantics without modeling write timing.

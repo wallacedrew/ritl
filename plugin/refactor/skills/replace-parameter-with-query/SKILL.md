@@ -5,6 +5,8 @@ description: Apply Replace Parameter with Query when you see Long Parameter List
 
 # Apply: 31 — Replace Parameter with Query
 
+**Announce first:** name the smell you see and that you're applying Replace Parameter with Query before any edit. The user reads the announcement as your contract.
+
 **Symptom:** A function takes parameters its callers computed from data the function already has access to; the agent verifying any call must reproduce the caller's computation.
 
 **Goal:** The function computes its own answer; the agent calls it without pre-computing the inputs.

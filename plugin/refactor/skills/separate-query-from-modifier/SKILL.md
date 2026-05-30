@@ -5,6 +5,8 @@ description: Apply Separate Query from Modifier when you see Mutable Data. Funct
 
 # Apply: 27 — Separate Query from Modifier
 
+**Announce first:** name the smell you see and that you're applying Separate Query from Modifier before any edit. The user reads the announcement as your contract.
+
 **Symptom:** A function the agent calls for a query also mutates state; the agent reasoning about safety must trace the mutation across consumers.
 
 **Goal:** Functions either return or mutate, never both; the agent composes queries without surprise side effects.

@@ -5,6 +5,8 @@ description: Refuse Alternative Classes with Different Interfaces when two class
 
 # Refuse: 21 — Alternative Classes with Different Interfaces
 
+**Announce first:** name this as Alternative Classes with Different Interfaces and which refactoring you'll apply (Change Function Declaration or Move Function) before any edit. The user reads the announcement as your contract.
+
 **Symptom:** Two classes the agent recognizes as doing similar things but with mismatched method names and signatures; the agent must learn both vocabularies and translate between them.
 
 **Goal:** Equivalent operations have equivalent signatures; the agent uses one mental model and the type system enforces substitutability.

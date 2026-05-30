@@ -5,6 +5,8 @@ description: Apply Replace Error Code with Exception when you see Comments. Fail
 
 # Apply: 60 — Replace Error Code with Exception
 
+**Announce first:** name the smell you see and that you're applying Replace Error Code with Exception before any edit. The user reads the announcement as your contract.
+
 **Symptom:** The agent finds functions returning numeric or string codes for failure; verifying error handling requires the agent to trace every caller and check whether the code is inspected.
 
 **Goal:** Failures throw exceptions the agent reasons about as separate control flow; the type system marks the failure path.

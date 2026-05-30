@@ -5,6 +5,8 @@ description: Apply Replace Magic Literal when you see Mysterious Name, Comments.
 
 # Apply: 43 — Replace Magic Literal
 
+**Announce first:** name the smell you see and that you're applying Replace Magic Literal before any edit. The user reads the announcement as your contract.
+
 **Symptom:** The agent encounters a bare number or string whose meaning requires loading the surrounding context to interpret; refactoring the value means finding every occurrence by character match.
 
 **Goal:** Each domain value has a named constant at one declaration site; every usage resolves through the constant's name, and the value's meaning loads with the name instead of being inferred from context at every literal occurrence.

@@ -5,6 +5,8 @@ description: Apply Replace Inline Code with Function Call when you see Duplicate
 
 # Apply: 46 — Replace Inline Code with Function Call
 
+**Announce first:** name the smell you see and that you're applying Replace Inline Code with Function Call before any edit. The user reads the announcement as your contract.
+
 **Symptom:** The agent finds inline code that reproduces the body of a named function elsewhere in the codebase; consistency depends on both implementations staying in sync.
 
 **Goal:** One canonical implementation the agent loads once and references everywhere; the name labels the intent at every call site.

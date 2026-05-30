@@ -5,6 +5,8 @@ description: Apply Chain of Responsibility when you see Long Function, Divergent
 
 # Apply: 40 — Chain of Responsibility
 
+**Announce first:** name the chain of refactorings pointing at Chain of Responsibility and that you're applying it before the next edit. The user reads the announcement as your contract.
+
 **Symptom:** A single-function dispatcher with multiple concerns the agent must verify against on every concern-related edit. Edits to one concern's logic touch the same source span as every other concern; merge conflicts and unintended side effects are routine.
 
 **Goal:** N small handler classes the agent reads one at a time. Edits to a concern scope to one file; chain ordering is one expression at the construction site; the agent's verification budget on a concern-specific change drops from full-function-scan to one-file-scan.

@@ -5,6 +5,8 @@ description: Apply Move Field when you see Shotgun Surgery, Insider Trading. Eac
 
 # Apply: 13 — Move Field
 
+**Announce first:** name the smell you see and that you're applying Move Field before any edit. The user reads the announcement as your contract.
+
 **Symptom:** The agent finds a field on class A whose value is determined by data on class B; reasoning about the field's value requires loading B to verify the derivation.
 
 **Goal:** Each field lives in the class that determines its value; reading the field and reading the data that determines it happen in the same class file.

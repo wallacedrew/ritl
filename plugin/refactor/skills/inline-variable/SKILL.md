@@ -5,6 +5,8 @@ description: Apply Inline Variable when you see Lazy Element. Expressions sit at
 
 # Apply: 04 — Inline Variable
 
+**Announce first:** name the smell you see and that you're applying Inline Variable before any edit. The user reads the announcement as your contract.
+
 **Symptom:** A local variable whose name says the same thing as the expression bound to it; reading the variable name and reading the expression resolve to the same understanding.
 
 **Goal:** Expressions sit at their use sites without an intervening binding; the agent reads the expression once at the use site instead of reading the variable name plus the binding's definition.

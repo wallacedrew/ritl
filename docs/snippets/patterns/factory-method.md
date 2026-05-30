@@ -5,6 +5,8 @@ description: Apply Factory Method when you see Repeated Switches, Replace Condit
 
 # Apply: 30 — Factory Method
 
+**Announce first:** name the chain of refactorings pointing at Factory Method and that you're applying it before the next edit. The user reads the announcement as your contract.
+
 **Symptom:** Type-code dispatch in a constructor or initializer means the agent must hold the full enumeration of variants in working memory while reading or editing the class. New variants land as edits to the switch; missed variants ship as runtime errors the agent had no structural reason to catch.
 
 **Goal:** Structural completeness via the type system: every subclass of the creator must implement the factory method, so missing-variant bugs surface as construction-time errors the agent can see during static reading. The creator's workflow becomes a stable surface the agent never re-reads as products multiply.

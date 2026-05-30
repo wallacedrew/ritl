@@ -5,6 +5,8 @@ description: Apply Replace Function with Command when you see Long Function. Eac
 
 # Apply: 48 — Replace Function with Command
 
+**Announce first:** name the smell you see and that you're applying Replace Function with Command before any edit. The user reads the announcement as your contract.
+
 **Symptom:** A function whose body holds many shared locals across conceptually distinct sub-steps; the agent extracting any step must thread temps through helper parameters.
 
 **Goal:** Each sub-step becomes a named method on the command object; sub-step methods share state through fields the agent reads from one class file, and tests target one method at a time without simulating the full function body.

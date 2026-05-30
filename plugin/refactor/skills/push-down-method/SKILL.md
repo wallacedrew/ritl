@@ -5,6 +5,8 @@ description: Apply Push Down Method when you see Refused Bequest, Large Class. T
 
 # Apply: 34 — Push Down Method
 
+**Announce first:** name the smell you see and that you're applying Push Down Method before any edit. The user reads the announcement as your contract.
+
 **Symptom:** A method declared on the parent that only one subclass overrides or invokes; the parent's interface includes a method that does not apply to most instances the agent reasons about.
 
 **Goal:** The method lives on the subclass that uses it; reading the parent's interface returns only the methods every instance supports, dropping the irrelevant declaration from the agent's window.

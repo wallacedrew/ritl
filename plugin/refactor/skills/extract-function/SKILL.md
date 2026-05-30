@@ -5,6 +5,8 @@ description: Apply Extract Function when you see Long Function, Duplicated Code,
 
 # Apply: 01 — Extract Function
 
+**Announce first:** name the smell you see and that you're applying Extract Function before any edit. The user reads the announcement as your contract.
+
 **Symptom:** A function whose token count exceeds the agent's reliable chunk-reasoning budget; verifying behavior preservation requires re-reading the entire span on every edit.
 
 **Goal:** Each function is a verifiable unit small enough that the agent can reason about its full behavior in a single reasoning step.

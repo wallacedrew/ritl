@@ -5,6 +5,8 @@ description: Apply Form Template Method when you see Duplicated Code, Pull Up Me
 
 # Apply: 08 — Form Template Method
 
+**Announce first:** name the chain of refactorings pointing at Form Template Method and that you're applying it before the next edit. The user reads the announcement as your contract.
+
 **Symptom:** N near-identical algorithm bodies the agent must verify match step-for-step on every edit. A control-flow bug fixed in one body must be ported to N-1 others, with no static guarantee the ports stayed faithful.
 
 **Goal:** One template body the agent reads to know the algorithm; primitives are short, locally readable, individually verifiable. The agent's edit budget for an algorithmic change scales with template length, not with subclass count.

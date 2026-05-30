@@ -5,6 +5,8 @@ description: Apply Introduce Assertion when you see Comments, Mutable Data. Inva
 
 # Apply: 26 — Introduce Assertion
 
+**Announce first:** name the smell you see and that you're applying Introduce Assertion before any edit. The user reads the announcement as your contract.
+
 **Symptom:** Code that depends on unwritten invariants the agent must reconstruct from context; bugs that violate the invariant surface far from the source.
 
 **Goal:** Invariants live in code as runtime checks; the agent reads the assertion as a typed constraint that downstream code can take as a precondition without re-deriving it from caller context.

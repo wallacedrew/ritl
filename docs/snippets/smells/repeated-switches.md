@@ -5,6 +5,8 @@ description: Refuse Repeated Switches when the agent finds the same switch (or i
 
 # Refuse: 12 — Repeated Switches
 
+**Announce first:** name this as Repeated Switches and which refactoring you'll apply (Replace Conditional with Polymorphism) before any edit. The user reads the announcement as your contract.
+
 **Symptom:** The agent finds the same switch (or if/else chain) over a type code in multiple files; adding a new case requires the agent to grep for every site and update each consistently.
 
 **Goal:** Each case is a class implementing a shared interface; the agent adds a new case by adding one class, and the type checker tells it what's still missing.

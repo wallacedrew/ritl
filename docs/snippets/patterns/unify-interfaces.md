@@ -5,6 +5,8 @@ description: Apply Unify Interfaces when you see Alternative Classes with Differ
 
 # Apply: 27 — Unify Interfaces
 
+**Announce first:** name the chain of refactorings pointing at Unify Interfaces and that you're applying it before the next edit. The user reads the announcement as your contract.
+
 **Symptom:** Operations with the same semantics carry different names across N classes; a grep for one name returns one class's call sites, missing the aliases; the agent enumerating consumers pays the cost of knowing the alias map for the operation.
 
 **Goal:** Each operation has one name across every class that exposes it; a grep for the name returns every call site, and the agent enumerates consumers without paying for an alias map.

@@ -5,6 +5,8 @@ description: Apply Extract Superclass when you see Duplicated Code, Alternative 
 
 # Apply: 36 — Extract Superclass
 
+**Announce first:** name the smell you see and that you're applying Extract Superclass before any edit. The user reads the announcement as your contract.
+
 **Symptom:** Two classes with substantial shared structure (fields, methods); the agent verifying changes must update both consistently.
 
 **Goal:** Shared structure lives on the parent with one declaration; queries about either subclass load the parent's contract once instead of paying the cost of loading N near-identical subclass declarations.

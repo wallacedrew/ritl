@@ -5,6 +5,8 @@ description: Apply Replace One/Many Distinctions With Composite when you see Rep
 
 # Apply: 23 — Replace One/Many Distinctions With Composite
 
+**Announce first:** name the chain of refactorings pointing at Replace One/Many Distinctions With Composite and that you're applying it before the next edit. The user reads the announcement as your contract.
+
 **Symptom:** Per-operation `Array.isArray` branches the agent must verify match across N operations. The agent cannot statically guarantee that every operation handles both shapes consistently; subtle inconsistencies surface only when a one-only operation receives a many value.
 
 **Goal:** Polymorphic dispatch on the value's type; the agent verifies each subtype's implementation in isolation. Per-operation analysis no longer requires holding 'what shape is this value?' in working memory.

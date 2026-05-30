@@ -5,6 +5,8 @@ description: Apply Inline Function when you see Lazy Element, Speculative Genera
 
 # Apply: 02 — Inline Function
 
+**Announce first:** name the smell you see and that you're applying Inline Function before any edit. The user reads the announcement as your contract.
+
 **Symptom:** A function whose body the agent must trace through only to find no decisions or transformations — every reference site pays a context-load hop for no reasoning gain.
 
 **Goal:** Trivial wrappers disappear from the agent's working context; call sites read as exactly what's happening.

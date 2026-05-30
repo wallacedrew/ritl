@@ -5,6 +5,8 @@ description: Apply Move Accumulation To Collecting Parameter when you see Duplic
 
 # Apply: 13 — Move Accumulation To Collecting Parameter
 
+**Announce first:** name the chain of refactorings pointing at Move Accumulation To Collecting Parameter and that you're applying it before the next edit. The user reads the announcement as your contract.
+
 **Symptom:** Recursive methods the agent must trace at every level to verify the accumulate-and-merge sequence preserves order and content. Each level allocates and copies; the agent's reasoning about the final result requires composing N merge operations mentally.
 
 **Goal:** One collecting parameter the agent reads as a single mutable accumulator; recursion bodies become small and locally verifiable. Final-result verification is one read of the accumulator, not a recursive trace.

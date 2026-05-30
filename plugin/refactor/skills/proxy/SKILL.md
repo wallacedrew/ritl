@@ -5,6 +5,8 @@ description: Apply Proxy when you see Insider Trading, Encapsulate Variable, Rep
 
 # Apply: 39 — Proxy
 
+**Announce first:** name the chain of refactorings pointing at Proxy and that you're applying it before the next edit. The user reads the announcement as your contract.
+
 **Symptom:** Scattered per-client policy checks (auth, init, cache) the agent must verify uniformly on every change. Eager construction of expensive resources the agent must trace through the constructor at every reading to understand load semantics.
 
 **Goal:** One Proxy class the agent reads to know the policy. Clients are uniform calls to the interface; the agent's verification budget on access policy collapses to one file. Load and access semantics are statically derivable from the Proxy's implementation.

@@ -5,6 +5,8 @@ description: Apply Move Function when you see Feature Envy, Shotgun Surgery, Ins
 
 # Apply: 12 — Move Function
 
+**Announce first:** name the smell you see and that you're applying Move Function before any edit. The user reads the announcement as your contract.
+
 **Symptom:** A function's body references foreign-class data more than its own; the agent loading the function must also load the foreign class to verify any change.
 
 **Goal:** Each function lives where its data lives; the agent loads one class to reason about one behavior.

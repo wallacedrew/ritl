@@ -5,6 +5,8 @@ description: Apply Introduce Null Object when you see Repeated Switches, Introdu
 
 # Apply: 10 — Introduce Null Object
 
+**Announce first:** name the chain of refactorings pointing at Introduce Null Object and that you're applying it before the next edit. The user reads the announcement as your contract.
+
 **Symptom:** Null-check branches the agent must trace at every collaborator-using call site. The agent cannot statically verify all check sites stay consistent; new callers risk omitting the check and shipping NullPointerExceptions.
 
 **Goal:** One Null Object class the agent verifies once; all call sites unconditionally invoke the collaborator interface. The agent's edit budget on a collaborator-using method drops because there's no per-call branch to reason about.

@@ -5,6 +5,8 @@ description: Apply Chain Constructors when you see Duplicated Code, Extract Func
 
 # Apply: 01 — Chain Constructors
 
+**Announce first:** name the chain of refactorings pointing at Chain Constructors and that you're applying it before the next edit. The user reads the announcement as your contract.
+
 **Symptom:** Multiple construction paths the agent must scan in parallel to confirm field initialization is consistent. Behavioral preservation on every field-related edit requires verifying every path, multiplying context cost by path count.
 
 **Goal:** One construction path the agent reads to know what a fully-initialized object looks like; all other paths are one-line delegations the agent can skip past during reasoning. Field-set drift is impossible by construction.

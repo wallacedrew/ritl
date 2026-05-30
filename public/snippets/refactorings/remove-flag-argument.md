@@ -5,6 +5,8 @@ description: Apply Remove Flag Argument when you see Long Parameter List. Each f
 
 # Apply: 29 — Remove Flag Argument
 
+**Announce first:** name the smell you see and that you're applying Remove Flag Argument before any edit. The user reads the announcement as your contract.
+
 **Symptom:** A function with a flag parameter that dispatches to different internal behaviors; the agent must trace the flag's value through the body to verify which branch any call exercises.
 
 **Goal:** Each flag value becomes a named function; the agent reads call sites as direct invocations of the intended behavior.

@@ -5,6 +5,8 @@ description: Apply Move Statements to Callers when you see Divergent Change. The
 
 # Apply: 45 — Move Statements to Callers
 
+**Announce first:** name the smell you see and that you're applying Move Statements to Callers before any edit. The user reads the announcement as your contract.
+
 **Symptom:** The agent finds a function body whose statements vary by caller context — logging contexts, post-processing flags, metric labels baked into one body via branches.
 
 **Goal:** The function's body addresses one responsibility; callers express their differences at the call site.

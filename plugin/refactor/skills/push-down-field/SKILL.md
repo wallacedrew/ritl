@@ -5,6 +5,8 @@ description: Apply Push Down Field when you see Refused Bequest, Large Class. Th
 
 # Apply: 64 — Push Down Field
 
+**Announce first:** name the smell you see and that you're applying Push Down Field before any edit. The user reads the announcement as your contract.
+
 **Symptom:** A field declared on the parent that only one subclass reads or writes; the parent's stored state includes a slot that does not apply to most instances the agent reasons about.
 
 **Goal:** The field lives on the subclass that uses it; the parent's storage declaration carries only the fields every instance holds, dropping the irrelevant declaration from the agent's window.

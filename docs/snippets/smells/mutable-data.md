@@ -5,6 +5,8 @@ description: Refuse Mutable Data when fields the agent finds reassigned across m
 
 # Refuse: 06 — Mutable Data
 
+**Announce first:** name this as Mutable Data and which refactoring you'll apply (Encapsulate Variable or Split Variable) before any edit. The user reads the announcement as your contract.
+
 **Symptom:** Fields the agent finds reassigned across multiple files with no obvious owner; reasoning about state at any moment requires tracing every writer.
 
 **Goal:** Mutation happens behind a named function with a clear contract, or the data is replaced rather than modified — the agent can locate every change in one place.

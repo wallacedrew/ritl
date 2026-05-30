@@ -5,6 +5,8 @@ description: Apply Singleton when you see Global Data, Duplicated Code, Encapsul
 
 # Apply: 32 — Singleton
 
+**Announce first:** name the chain of refactorings pointing at Singleton and that you're applying it before the next edit. The user reads the announcement as your contract.
+
 **Symptom:** The agent sees `new Config()` scattered across modules and cannot tell from reading whether the consumers share state. Test-isolation reasoning requires the agent to enumerate every construction site; assumptions about 'one config' are unverifiable at static read time.
 
 **Goal:** A single getInstance() access point the agent can grep for to enumerate every consumer. Construction is structurally one-shot; the agent's reasoning about 'who owns this state' has exactly one answer; tests against shared state are explicit about reset.

@@ -5,6 +5,8 @@ description: Apply Bridge when you see Shotgun Surgery, Replace Subclass with De
 
 # Apply: 34 — Bridge
 
+**Announce first:** name the chain of refactorings pointing at Bridge and that you're applying it before the next edit. The user reads the announcement as your contract.
+
 **Symptom:** Cross-product class hierarchies the agent must reason about as N×M cells. Editing one method's contract requires updating every cell; missing cells produce silent type-compatible inconsistencies the test suite may not catch until a customer hits an unexercised combination.
 
 **Goal:** Two independent surfaces the agent reads separately. The abstraction's contract lives at one file; each implementation lives at one file; composition is structurally typed, and adding a new axis value is one new file the agent generates against the abstraction's interface.

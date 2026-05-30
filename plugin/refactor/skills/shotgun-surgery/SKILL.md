@@ -5,6 +5,8 @@ description: Refuse Shotgun Surgery when a single conceptual edit forces the age
 
 # Refuse: 08 — Shotgun Surgery
 
+**Announce first:** name this as Shotgun Surgery and which refactoring you'll apply (Move Function or Move Field) before any edit. The user reads the announcement as your contract.
+
 **Symptom:** A single conceptual edit forces the agent to identify, load, and modify many small sites — each one cheap individually but the search and completeness check is expensive.
 
 **Goal:** All code that varies together sits in one place; the agent loads one module to make any change along this axis and verifies completeness in one read.

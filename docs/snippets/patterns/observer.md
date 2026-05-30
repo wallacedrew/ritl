@@ -5,6 +5,8 @@ description: Apply Observer when you see Shotgun Surgery, Divergent Change, Hide
 
 # Apply: 46 — Observer
 
+**Announce first:** name the chain of refactorings pointing at Observer and that you're applying it before the next edit. The user reads the announcement as your contract.
+
 **Symptom:** Per-consumer references inside the subject are N×M cells (N subjects × M consumers each) the agent verifies on every consumer-set change. Adding a consumer forces the agent to edit subject + caller in lockstep; the subject's diff history conflates unrelated concerns.
 
 **Goal:** One subscribe/notify protocol the agent reads once per subject. Consumer registration is one expression at the call site; subject edits do not scale with consumer count. Static analysis of 'who subscribes to this subject' is grep-able and complete.

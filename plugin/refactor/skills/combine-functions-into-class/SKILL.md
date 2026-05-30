@@ -5,6 +5,8 @@ description: Apply Combine Functions into Class when you see Data Clumps, Primit
 
 # Apply: 09 — Combine Functions into Class
 
+**Announce first:** name the smell you see and that you're applying Combine Functions into Class before any edit. The user reads the announcement as your contract.
+
 **Symptom:** The agent finds multiple functions that all take the same data shape; reasoning about the data requires loading every operation that touches it scattered across files.
 
 **Goal:** Operations live with the data they act on; the agent loads one class to reason about both shape and behavior.

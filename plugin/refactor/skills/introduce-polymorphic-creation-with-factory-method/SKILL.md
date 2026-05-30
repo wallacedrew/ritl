@@ -5,6 +5,8 @@ description: Apply Introduce Polymorphic Creation With Factory Method when you s
 
 # Apply: 11 — Introduce Polymorphic Creation With Factory Method
 
+**Announce first:** name the chain of refactorings pointing at Introduce Polymorphic Creation With Factory Method and that you're applying it before the next edit. The user reads the announcement as your contract.
+
 **Symptom:** A conditional construction block the agent must scan to know which collaborator gets built for a given type code. Adding a variant requires the agent to enumerate every such construction site in scope and add a branch — Shotgun Surgery in static reasoning.
 
 **Goal:** Each subclass's Factory Method is locally verifiable; the base algorithm has no construction-conditional for the agent to load. The agent's per-edit budget on a variant addition is one new subclass, not N edits to construction sites.

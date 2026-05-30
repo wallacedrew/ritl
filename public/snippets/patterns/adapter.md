@@ -5,6 +5,8 @@ description: Apply Adapter when you see Alternative Classes with Different Inter
 
 # Apply: 33 — Adapter
 
+**Announce first:** name the chain of refactorings pointing at Adapter and that you're applying it before the next edit. The user reads the announcement as your contract.
+
 **Symptom:** Inline conversion code scattered across call sites means the agent must spot the convention mismatch at every consumer and verify the conversion is consistent. Unit-of-measure bugs (cents vs dollars, ms vs seconds) are type-compatible — the compiler will not catch them — but they produce wrong-by-100x outputs.
 
 **Goal:** The canonical interface is the agent's single anchor for reasoning about how the system uses payments; the adapter is a thin file the agent reads once to understand the translation rules. Conversion bugs surface as adapter-test failures, not as scattered consumer-side errors.

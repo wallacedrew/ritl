@@ -5,6 +5,8 @@ description: Apply Introduce Parameter Object when you see Long Parameter List, 
 
 # Apply: 08 — Introduce Parameter Object
 
+**Announce first:** name the smell you see and that you're applying Introduce Parameter Object before any edit. The user reads the announcement as your contract.
+
 **Symptom:** The agent sees the same field group appearing across multiple signatures; every site re-parses the same shape and verifies the same ordering.
 
 **Goal:** The clump becomes a named value object the agent passes through as a single token; structure validation happens once at construction.

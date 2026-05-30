@@ -5,6 +5,8 @@ description: Refuse Insider Trading when module A reaches into module B's privat
 
 # Refuse: 19 — Insider Trading
 
+**Announce first:** name this as Insider Trading and which refactoring you'll apply (Move Function or Move Field) before any edit. The user reads the announcement as your contract.
+
 **Symptom:** Module A reaches into module B's private fields or undocumented behavior; the agent reasoning about A must also load B's internals to make any change.
 
 **Goal:** Cooperation flows through a narrow named interface the agent can read once; A's reasoning context excludes B's implementation details.

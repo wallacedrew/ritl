@@ -5,6 +5,8 @@ description: Apply Replace Type Code With Class when you see Primitive Obsession
 
 # Apply: 25 — Replace Type Code With Class
 
+**Announce first:** name the chain of refactorings pointing at Replace Type Code With Class and that you're applying it before the next edit. The user reads the announcement as your contract.
+
 **Symptom:** Magic-literal comparisons across N consumers the agent must verify match a documented (or undocumented) set of valid values. The type system cannot enforce membership; typos and stale literals ship silently to runtime.
 
 **Goal:** Static type-checking enforces that comparisons are only against the named instances. The agent verifies consumers by class membership; per-status behaviour is locally readable as methods on the class.

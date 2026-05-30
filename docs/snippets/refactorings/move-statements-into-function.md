@@ -5,6 +5,8 @@ description: Apply Move Statements into Function when you see Duplicated Code. T
 
 # Apply: 44 — Move Statements into Function
 
+**Announce first:** name the smell you see and that you're applying Move Statements into Function before any edit. The user reads the announcement as your contract.
+
 **Symptom:** The agent finds the same setup or follow-up code around every call to a function; consistency depends on every caller remembering the pattern.
 
 **Goal:** The function owns its setup and follow-up; the agent verifies behavior at the function definition instead of auditing every call site.

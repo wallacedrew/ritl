@@ -5,6 +5,8 @@ description: Apply Builder when you see Long Parameter List, Primitive Obsession
 
 # Apply: 29 — Builder
 
+**Announce first:** name the chain of refactorings pointing at Builder and that you're applying it before the next edit. The user reads the announcement as your contract.
+
 **Symptom:** The agent reads a multi-parameter constructor call and must consult the constructor signature (often elsewhere in the codebase) to know which positional slot means what. Editing the call site requires keeping the positional alignment manually correct on every parameter change.
 
 **Goal:** Self-describing construction the agent can read top-to-bottom without cross-file lookup. Each chained method names what it sets; the build() terminator marks the point where the product is verified. Static analysis can enumerate what the spec contains by listing the builder's chainable methods.

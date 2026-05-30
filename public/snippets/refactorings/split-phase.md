@@ -5,6 +5,8 @@ description: Apply Split Phase when you see Divergent Change, Long Function. Eac
 
 # Apply: 11 — Split Phase
 
+**Announce first:** name the smell you see and that you're applying Split Phase before any edit. The user reads the announcement as your contract.
+
 **Symptom:** The agent finds a function that conflates two concerns in interleaved code; reasoning about either concern requires tracing through the other.
 
 **Goal:** Each phase reads and writes its own well-defined inputs and outputs; the agent reasons about phases independently with the intermediate shape as the contract.

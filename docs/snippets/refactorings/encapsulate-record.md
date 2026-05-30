@@ -5,6 +5,8 @@ description: Apply Encapsulate Record when you see Data Class, Primitive Obsessi
 
 # Apply: 53 — Encapsulate Record
 
+**Announce first:** name the smell you see and that you're applying Encapsulate Record before any edit. The user reads the announcement as your contract.
+
 **Symptom:** A plain object passed across the codebase; the agent reading any consumer must inspect every other consumer to learn what shape the record actually has.
 
 **Goal:** The record is a class with accessors; the agent reasons about its shape, invariants, and behavior in one definition.

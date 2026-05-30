@@ -5,6 +5,8 @@ description: Apply Replace Type Code with Subclasses when you see Repeated Switc
 
 # Apply: 35 — Replace Type Code with Subclasses
 
+**Announce first:** name the smell you see and that you're applying Replace Type Code with Subclasses before any edit. The user reads the announcement as your contract.
+
 **Symptom:** A class with a kind field plus methods that switch on it; the agent adding a new kind must find every switch and update each consistently.
 
 **Goal:** Each kind is a subclass; the agent adds a new kind by adding one class, and the type system tells it what's still missing.

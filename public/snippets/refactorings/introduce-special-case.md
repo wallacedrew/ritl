@@ -5,6 +5,8 @@ description: Apply Introduce Special Case when you see Repeated Switches, Commen
 
 # Apply: 25 — Introduce Special Case
 
+**Announce first:** name the smell you see and that you're applying Introduce Special Case before any edit. The user reads the announcement as your contract.
+
 **Symptom:** The agent finds the same null-or-special check repeating across multiple consumers; consistency depends on every consumer remembering the pattern.
 
 **Goal:** The special case responds to the same interface as the real case; the agent reasons without branching at every call site.

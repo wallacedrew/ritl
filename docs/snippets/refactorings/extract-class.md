@@ -5,6 +5,8 @@ description: Apply Extract Class when you see Data Clumps, Temporary Field, Larg
 
 # Apply: 39 — Extract Class
 
+**Announce first:** name the smell you see and that you're applying Extract Class before any edit. The user reads the announcement as your contract.
+
 **Symptom:** A class whose surface mixes multiple cohesive sub-concepts; the agent reasoning about any single concept must skim past the others to find what it needs.
 
 **Goal:** Each class has one purpose; the agent loads a small focused file to reason about any single concept.

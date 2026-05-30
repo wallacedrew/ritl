@@ -5,6 +5,8 @@ description: Apply Replace Query with Parameter when you see Mutable Data, Insid
 
 # Apply: 59 — Replace Query with Parameter
 
+**Announce first:** name the smell you see and that you're applying Replace Query with Parameter before any edit. The user reads the announcement as your contract.
+
 **Symptom:** A function reads from a query (global, singleton, instance state) instead of accepting the value as a parameter; the agent reasoning about it must model the query's state.
 
 **Goal:** Dependencies are visible in the signature; the agent reasons about the function as a pure transformation of its inputs.

@@ -5,6 +5,8 @@ description: Apply Pull Up Constructor Body when you see Duplicated Code. Shared
 
 # Apply: 62 — Pull Up Constructor Body
 
+**Announce first:** name the smell you see and that you're applying Pull Up Constructor Body before any edit. The user reads the announcement as your contract.
+
 **Symptom:** Multiple subclass constructors initialize the same parent fields with the same logic; the agent verifying constructors must check every subclass for consistency.
 
 **Goal:** Shared initialization lives in the parent's constructor and runs via super; subclass constructors hold only their specific setup, and the agent reads one canonical init for parent-state setup.

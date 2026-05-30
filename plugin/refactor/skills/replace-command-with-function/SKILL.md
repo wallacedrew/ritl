@@ -5,6 +5,8 @@ description: Apply Replace Command with Function when you see Speculative Genera
 
 # Apply: 49 — Replace Command with Function
 
+**Announce first:** name the smell you see and that you're applying Replace Command with Function before any edit. The user reads the announcement as your contract.
+
 **Symptom:** A command class whose execute() does the work in one shot with no sub-step decomposition; callers go through construct-then-call ceremony for what could be one function.
 
 **Goal:** The command collapses to a plain function; the agent's call sites become direct invocations.

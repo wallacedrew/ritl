@@ -5,6 +5,8 @@ description: Apply Facade when you see Message Chains, Insider Trading, Hide Del
 
 # Apply: 37 — Facade
 
+**Announce first:** name the chain of refactorings pointing at Facade and that you're applying it before the next edit. The user reads the announcement as your contract.
+
 **Symptom:** Multi-subsystem orchestration scattered across consumers means the agent must reason about subsystem ordering, error handling, and failure recovery at every call site. Verifying 'do all consumers correctly release inventory on payment-fail' requires enumerating every consumer; static analysis cannot prove uniformity.
 
 **Goal:** One Facade method the agent reads end-to-end to understand the full choreography. Per-consumer reasoning collapses to 'this consumer calls submitOrder(cart, customer)' — the agent does not re-verify orchestration at each consumer site.

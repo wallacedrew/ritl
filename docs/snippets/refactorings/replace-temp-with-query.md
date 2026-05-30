@@ -5,6 +5,8 @@ description: Apply Replace Temp with Query when you see Long Function, Mutable D
 
 # Apply: 47 — Replace Temp with Query
 
+**Announce first:** name the smell you see and that you're applying Replace Temp with Query before any edit. The user reads the announcement as your contract.
+
 **Symptom:** The agent finds a local variable assigned once from a computation and referenced multiple times; the temp's existence couples the rest of the function to the computation's locality.
 
 **Goal:** Computations become named queries the agent can reference by name from anywhere; functions decompose without dragging the temp's lifetime.

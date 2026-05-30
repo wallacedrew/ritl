@@ -5,6 +5,8 @@ description: Apply Slide Statements when you see Long Function, Comments. Relate
 
 # Apply: 14 — Slide Statements
 
+**Announce first:** name the smell you see and that you're applying Slide Statements before any edit. The user reads the announcement as your contract.
+
 **Symptom:** A function whose related statements are interleaved with unrelated work; the agent reasoning about any sub-step must track state across non-adjacent lines.
 
 **Goal:** Related statements sit next to each other; the agent reads the function as a sequence of cohesive blocks ready for extraction.

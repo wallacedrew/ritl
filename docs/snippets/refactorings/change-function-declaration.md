@@ -5,6 +5,8 @@ description: Apply Change Function Declaration when you see Mysterious Name, Lon
 
 # Apply: 05 — Change Function Declaration
 
+**Announce first:** name the smell you see and that you're applying Change Function Declaration before any edit. The user reads the announcement as your contract.
+
 **Symptom:** A function whose name or signature doesn't match its behavior; the agent inferring intent from the call site gets misled and must read the body to verify.
 
 **Goal:** Names and signatures express what the function does; the agent reasons about call sites from the signature alone.

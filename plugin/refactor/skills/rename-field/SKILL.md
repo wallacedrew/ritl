@@ -5,6 +5,8 @@ description: Apply Rename Field when you see Mysterious Name. Field names carry 
 
 # Apply: 19 — Rename Field
 
+**Announce first:** name the smell you see and that you're applying Rename Field before any edit. The user reads the announcement as your contract.
+
 **Symptom:** A field whose name does not match its role in the domain; every read or write site forces the agent to load the class definition to recover what the field represents before reasoning about the access.
 
 **Goal:** Field names carry the domain term; read or write sites resolve to one token of name without loading the class definition for context recovery.

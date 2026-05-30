@@ -5,6 +5,8 @@ description: Apply Consolidate Conditional Expression when you see Duplicated Co
 
 # Apply: 22 — Consolidate Conditional Expression
 
+**Announce first:** name the smell you see and that you're applying Consolidate Conditional Expression before any edit. The user reads the announcement as your contract.
+
 **Symptom:** Multiple conditions in sequence lead to the same action; the agent must verify each branch leads to identical behavior and that adding a new condition won't accidentally diverge.
 
 **Goal:** The predicate lives at one named function the agent reads once; edits to the rule land at the function definition and propagate to every caller through reference.

@@ -5,6 +5,8 @@ description: Apply Encapsulate Collection when you see Mutable Data, Insider Tra
 
 # Apply: 52 — Encapsulate Collection
 
+**Announce first:** name the smell you see and that you're applying Encapsulate Collection before any edit. The user reads the announcement as your contract.
+
 **Symptom:** A class returns its internal collection directly; the agent reading any consumer cannot tell whether mutations will affect the owner without checking every consumer.
 
 **Goal:** The owner exposes mutation methods (add, remove, replace); reads return snapshots or iterators; the agent reasons about collection invariants on the owner alone.

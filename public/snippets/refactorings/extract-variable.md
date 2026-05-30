@@ -5,6 +5,8 @@ description: Apply Extract Variable when you see Mysterious Name, Comments. Inte
 
 # Apply: 03 — Extract Variable
 
+**Announce first:** name the smell you see and that you're applying Extract Variable before any edit. The user reads the announcement as your contract.
+
 **Symptom:** An expression complex enough that the agent must parse it sub-step by sub-step to interpret; subsequent reasoning about the value requires re-parsing the full expression.
 
 **Goal:** Intermediate values carry domain names; subsequent reads resolve to one token of name instead of re-evaluating the expression at every use.

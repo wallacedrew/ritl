@@ -5,6 +5,8 @@ description: Apply Change Value to Reference when you see Duplicated Code. The e
 
 # Apply: 57 — Change Value to Reference
 
+**Announce first:** name the smell you see and that you're applying Change Value to Reference before any edit. The user reads the announcement as your contract.
+
 **Symptom:** Duplicate copies of a logically-single entity scattered across the codebase; the agent updating the entity must find and update every copy consistently.
 
 **Goal:** The entity exists once; the agent reasons about one canonical object referenced everywhere.

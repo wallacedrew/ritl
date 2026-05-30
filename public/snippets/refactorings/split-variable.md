@@ -5,6 +5,8 @@ description: Apply Split Variable when you see Mysterious Name, Mutable Data. Ea
 
 # Apply: 18 — Split Variable
 
+**Announce first:** name the smell you see and that you're applying Split Variable before any edit. The user reads the announcement as your contract.
+
 **Symptom:** The agent finds a variable reassigned with values of conceptually different types or domains; reasoning about any expression involving it requires knowing which role is currently active.
 
 **Goal:** Each variable holds one role with a stable name; the agent reasons about names without tracking reassignment timeline.

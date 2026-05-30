@@ -5,6 +5,8 @@ description: Apply Abstract Factory when you see Shotgun Surgery, Repeated Switc
 
 # Apply: 28 — Abstract Factory
 
+**Announce first:** name the chain of refactorings pointing at Abstract Factory and that you're applying it before the next edit. The user reads the announcement as your contract.
+
 **Symptom:** The agent must scan multiple call sites to verify theme consistency on any UI-construction edit. Type-tag dispatch on theme is structurally invisible — from one call site the agent cannot tell whether all sibling sites have been kept in sync, so verification balloons to the full file set.
 
 **Goal:** The agent reads one factory interface to know what products exist; concrete factories are short and exhaustive; client code is one factory pointer away from the right family. Cross-call-site family consistency becomes structurally guaranteed, not inspection-required.

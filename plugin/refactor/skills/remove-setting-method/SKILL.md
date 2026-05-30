@@ -5,6 +5,8 @@ description: Apply Remove Setting Method when you see Mutable Data, Data Class. 
 
 # Apply: 54 — Remove Setting Method
 
+**Announce first:** name the smell you see and that you're applying Remove Setting Method before any edit. The user reads the announcement as your contract.
+
 **Symptom:** The agent finds setters on a class whose values should only be set at construction; every late-mutation site is using setters for one-shot assignment.
 
 **Goal:** Construction is the only path to setting these fields; the agent reasons about the object as immutable-after-construction.

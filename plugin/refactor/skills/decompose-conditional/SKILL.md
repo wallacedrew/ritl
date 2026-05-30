@@ -5,6 +5,8 @@ description: Apply Decompose Conditional when you see Long Function, Comments. C
 
 # Apply: 21 — Decompose Conditional
 
+**Announce first:** name the smell you see and that you're applying Decompose Conditional before any edit. The user reads the announcement as your contract.
+
 **Symptom:** Multi-clause conditional expressions whose domain meaning isn't readable from the syntax; the agent must parse the expression every time it encounters it.
 
 **Goal:** Conditions read as named domain decisions; the agent reasons about isSummer(date) instead of re-deriving the month range.

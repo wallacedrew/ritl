@@ -5,6 +5,8 @@ description: Apply Encapsulate Variable when you see Global Data, Mutable Data. 
 
 # Apply: 06 — Encapsulate Variable
 
+**Announce first:** name the smell you see and that you're applying Encapsulate Variable before any edit. The user reads the announcement as your contract.
+
 **Symptom:** The agent finds a variable read and written from multiple consumers with no central function owning the access; reasoning about any read requires modeling every writer.
 
 **Goal:** All access goes through a small named function the agent can grep for, audit, and instrument as a single closed surface.

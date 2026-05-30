@@ -5,6 +5,8 @@ description: Apply Split Loop when you see Long Function, Loops. Each loop does 
 
 # Apply: 15 — Split Loop
 
+**Announce first:** name the smell you see and that you're applying Split Loop before any edit. The user reads the announcement as your contract.
+
 **Symptom:** A single loop body that mixes filter, map, reduce, and side-effect concerns; the agent verifying any change must trace all concerns through the same iteration.
 
 **Goal:** Each loop does one thing; the agent reasons about one concern per loop and can replace each loop independently with a pipeline.

@@ -5,6 +5,8 @@ description: Apply Replace Exception with Precheck when you see Comments. The pr
 
 # Apply: 61 — Replace Exception with Precheck
 
+**Announce first:** name the smell you see and that you're applying Replace Exception with Precheck before any edit. The user reads the announcement as your contract.
+
 **Symptom:** The agent finds try/catch for conditions the caller could check directly; control flow via exceptions obscures the rule.
 
 **Goal:** The precheck appears at the point of decision; the agent reads the code top-to-bottom as the rule, with exceptions reserved for truly exceptional cases.

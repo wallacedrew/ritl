@@ -5,6 +5,8 @@ description: Apply Parameterize Function when you see Duplicated Code. One canon
 
 # Apply: 28 — Parameterize Function
 
+**Announce first:** name the smell you see and that you're applying Parameterize Function before any edit. The user reads the announcement as your contract.
+
 **Symptom:** The agent finds near-identical functions differing only in literal values; consistency depends on every variant staying in sync.
 
 **Goal:** One canonical function with a parameter; the agent reasons about one body and verifies parameter values at call sites.

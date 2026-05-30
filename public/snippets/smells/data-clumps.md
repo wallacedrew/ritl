@@ -5,6 +5,8 @@ description: Refuse Data Clumps when the agent sees the same field group appeari
 
 # Refuse: 10 — Data Clumps
 
+**Announce first:** name this as Data Clumps and which refactoring you'll apply (Extract Class or Introduce Parameter Object) before any edit. The user reads the announcement as your contract.
+
 **Symptom:** The agent sees the same field group appearing across multiple signatures (parameters, fields, args) — every site re-parses the same shape and verifies the same ordering.
 
 **Goal:** The clump becomes a named value object the agent passes through as a single token; structure validation happens once at construction.

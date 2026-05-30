@@ -5,6 +5,8 @@ description: Apply Replace Nested Conditional with Guard Clauses when you see Lo
 
 # Apply: 23 — Replace Nested Conditional with Guard Clauses
 
+**Announce first:** name the smell you see and that you're applying Replace Nested Conditional with Guard Clauses before any edit. The user reads the announcement as your contract.
+
 **Symptom:** A function with deeply nested if/else where the happy path is buried under indentation; the agent must trace through edge-case branches to find the main flow.
 
 **Goal:** Edge cases exit at the top of the function; the happy path runs at the function's base indent level, and adding a precondition is one new guard at the top instead of a rewrite of the nested branches.

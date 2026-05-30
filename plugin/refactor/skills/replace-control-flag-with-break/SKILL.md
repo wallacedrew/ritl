@@ -5,6 +5,8 @@ description: Apply Replace Control Flag with Break when you see Loops, Long Func
 
 # Apply: 58 — Replace Control Flag with Break
 
+**Announce first:** name the smell you see and that you're applying Replace Control Flag with Break before any edit. The user reads the announcement as your contract.
+
 **Symptom:** A loop maintaining a boolean flag to decide when to stop; the agent reasoning about termination must track the flag's state through every iteration.
 
 **Goal:** The exit happens at the moment it's decided via break/return/continue; the agent reads the loop's termination as a direct statement.

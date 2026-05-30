@@ -5,6 +5,8 @@ description: Apply Compose Method when you see Long Function, Extract Function, 
 
 # Apply: 02 — Compose Method
 
+**Announce first:** name the chain of refactorings pointing at Compose Method and that you're applying it before the next edit. The user reads the announcement as your contract.
+
 **Symptom:** A method whose body the agent must trace line-by-line to understand the algorithm; the high-level shape is obscured by interleaved details. Verifying behavior preservation requires re-reading the entire span on every edit.
 
 **Goal:** The method reads as a sequence of named operations the agent can verify against without re-deriving the algorithm. Each helper is small enough to reason about in a single step.
