@@ -30,9 +30,9 @@ export default function PluginInstallSection() {
         Claude Code plugin
       </Typography>
       <Typography variant="body2" color="text.secondary">
-        Only the skill matching what you&apos;re working on enters context — the other 140 cost
-        nothing per query. Coverage spans 66 refactorings, 24 smells, and 50 patterns (27 Kerievsky
-        composites + 23 GoF), plus the workflow orchestrator that decides which one applies.
+        Only the skill matching what you&apos;re working on enters context — the other 139 in the
+        catalog cost nothing per query. Coverage spans 66 refactorings, 24 smells, 27 Kerievsky
+        composites, and 23 GoF patterns. A workflow orchestrator picks which one applies.
       </Typography>
       <Box
         sx={{
