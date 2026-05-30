@@ -20,6 +20,18 @@ Before any structural change, the current behavior needs tests. If they don't ex
 
 Pick from Fowler's catalog — Extract Function, Inline Function, Extract Variable, Replace Primitive with Object, Decompose Conditional, Replace Conditional with Polymorphism, Replace Loop with Pipeline, etc. State which one you're applying and why. One refactoring per commit.
 
+## 4a. When you decline
+
+If you decide **not** to apply a refactoring, name which kind of decline:
+
+- **Catalog miss** — no Fowler smell matches; refuse to invent an ad-hoc name.
+- **Taste call** — match exists, but judged not worth doing now. Arguable.
+- **Cost-benefit** — match exists, but estimated cost > value. Name both estimates.
+- **Constraint-blocked** — applying would break a non-negotiable contract (public API, perf budget).
+- **Insufficient context** — can't decide without more information. Ask first.
+
+Silent inaction hides which counterargument applies.
+
 ## 5. Stay green
 
 Run the full test suite after each refactoring. Red → revert, decompose further, retry. Never power through red.
