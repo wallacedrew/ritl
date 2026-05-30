@@ -29,10 +29,9 @@ export default function PluginInstallSection() {
         Claude Code plugin
       </Typography>
       <Typography variant="body2" color="text.secondary">
-        141 auto-invoking skills — 1 workflow orchestrator, 66 refactorings, 24 smells, 50 patterns
-        (27 Kerievsky composites + 23 GoF design patterns). Each loads just-in-time when its
-        description matches what you&apos;re working on, so the model only pays attention to the
-        smell, refactoring, or pattern that&apos;s actually in play.
+        Only the skill matching what you&apos;re working on enters context — the other 140 cost
+        nothing per query. Coverage spans 66 refactorings, 24 smells, and 50 patterns (27 Kerievsky
+        composites + 23 GoF), plus the workflow orchestrator that decides which one applies.
       </Typography>
       <Box
         sx={{
