@@ -3,6 +3,7 @@
 import ContentCopyIcon from "@mui/icons-material/ContentCopy";
 import Box from "@mui/material/Box";
 import IconButton from "@mui/material/IconButton";
+import Link from "@mui/material/Link";
 import Stack from "@mui/material/Stack";
 import Tooltip from "@mui/material/Tooltip";
 import Typography from "@mui/material/Typography";
@@ -67,6 +68,25 @@ export default function PluginInstallSection() {
           </IconButton>
         </Tooltip>
       </Box>
+      <Typography variant="caption" color="text.secondary">
+        Browse before installing:{" "}
+        <Link href="/refactoring/canon" color="inherit" underline="hover">
+          66 refactorings
+        </Link>{" "}
+        ·{" "}
+        <Link href="/refactoring/smells" color="inherit" underline="hover">
+          24 smells
+        </Link>{" "}
+        ·{" "}
+        <Link href="/refactoring-to-patterns" color="inherit" underline="hover">
+          27 Kerievsky composites
+        </Link>{" "}
+        ·{" "}
+        <Link href="/design-patterns" color="inherit" underline="hover">
+          23 GoF patterns
+        </Link>
+        . Each has a detail page with Before/After and the human-vs-agent comparison.
+      </Typography>
     </Stack>
   );
 }

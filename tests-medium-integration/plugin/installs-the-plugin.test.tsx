@@ -95,6 +95,27 @@ describe("user installs the plugin from /plugin", () => {
     expect(analytics.calls).toEqual([{ event: "plugin_install_copied" }]);
   });
 
+  it("links out to each catalog list so visitors can browse before installing", () => {
+    renderWithTheme(<PluginPage />);
+
+    expect(screen.getByRole("link", { name: "66 refactorings" })).toHaveAttribute(
+      "href",
+      "/refactoring/canon",
+    );
+    expect(screen.getByRole("link", { name: "24 smells" })).toHaveAttribute(
+      "href",
+      "/refactoring/smells",
+    );
+    expect(screen.getByRole("link", { name: "27 Kerievsky composites" })).toHaveAttribute(
+      "href",
+      "/refactoring-to-patterns",
+    );
+    expect(screen.getByRole("link", { name: "23 GoF patterns" })).toHaveAttribute(
+      "href",
+      "/design-patterns",
+    );
+  });
+
   it("offers a CLAUDE.md companion directive with the verified uninstall command", () => {
     renderWithTheme(<PluginPage />);
 
