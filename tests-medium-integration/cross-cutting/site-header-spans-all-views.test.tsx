@@ -12,11 +12,11 @@ vi.mock("next/navigation", () => ({
 }));
 
 describe("site header spans every catalog view", () => {
-  it("shows the app title and subtitle as a persistent banner", () => {
+  it("shows the app title and search as a persistent banner", () => {
     renderWithTheme(<SiteHeader />);
 
     expect(screen.getByText("Refactoring In The Loop")).toBeInTheDocument();
-    expect(screen.getByText(/catalog explorer/i)).toBeInTheDocument();
+    expect(screen.getByRole("combobox")).toBeInTheDocument();
   });
 
   it("renders the catalog navigation as a semantic nav with one link per view", () => {

@@ -20,22 +20,24 @@ export default function SiteHeader() {
     >
       <Container maxWidth="lg" sx={{ pt: { xs: 3, md: 4 } }}>
         <Stack spacing={3}>
-          <Stack spacing={1.25}>
+          <Stack
+            direction={{ xs: "column", md: "row" }}
+            spacing={{ xs: 2, md: 3 }}
+            sx={{ alignItems: { xs: "stretch", md: "center" } }}
+          >
             <NextLink href="/" style={{ color: "inherit", textDecoration: "none" }}>
               <Typography
                 variant="h5"
                 component="span"
-                sx={{ fontWeight: 700, letterSpacing: "-0.01em" }}
+                sx={{ fontWeight: 700, letterSpacing: "-0.01em", whiteSpace: "nowrap" }}
               >
                 Refactoring In The Loop
               </Typography>
             </NextLink>
-            <Typography variant="body2" color="text.secondary" sx={{ maxWidth: 680 }}>
-              A catalog explorer inspired by Martin Fowler&rsquo;s refactorings and code smells,
-              Joshua Kerievsky&rsquo;s refactoring patterns, and the Gang of Four design patterns.
-            </Typography>
+            <Box sx={{ flex: 1, maxWidth: { md: 480 }, width: "100%" }}>
+              <CatalogSearch items={items} />
+            </Box>
           </Stack>
-          <CatalogSearch items={items} />
           <CatalogToolbar />
         </Stack>
       </Container>
