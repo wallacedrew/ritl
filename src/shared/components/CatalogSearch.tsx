@@ -85,16 +85,16 @@ export default function CatalogSearch({ items }: CatalogSearchProps) {
             sx={{
               "& .MuiAutocomplete-inputRoot.MuiOutlinedInput-root.MuiInputBase-adornedStart": {
                 paddingLeft: "9px",
-                borderRadius: 2,
+                borderRadius: 1,
               },
               "& .MuiOutlinedInput-notchedOutline": {
-                borderColor: "success.main",
+                borderColor: "common.black",
               },
               "&:hover .MuiOutlinedInput-notchedOutline": {
-                borderColor: "success.main",
+                borderColor: "common.black",
               },
               "& .Mui-focused .MuiOutlinedInput-notchedOutline": {
-                borderColor: "success.main",
+                borderColor: "common.black",
               },
               "& .MuiInputAdornment-positionStart": {
                 marginLeft: 0,
