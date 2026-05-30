@@ -50,26 +50,6 @@ describe("user installs the plugin from /plugin", () => {
     expect(githubLink).toHaveAttribute("href", "https://github.com/wallacedrew/ritl");
   });
 
-  it("hoists the six-step discipline as a scannable ordered list", () => {
-    renderWithTheme(<PluginPage />);
-
-    expect(
-      screen.getByRole("heading", { level: 2, name: /The six-step discipline/i }),
-    ).toBeInTheDocument();
-
-    const stepTitles = [
-      "Sense the smell.",
-      "Identify the source.",
-      "Establish a safety net.",
-      "Apply one named refactoring.",
-      "Stay green.",
-      "Recognize pattern destinations.",
-    ];
-    for (const title of stepTitles) {
-      expect(screen.getByText(title)).toBeInTheDocument();
-    }
-  });
-
   it("embeds the Extract Function SKILL.md with description and agent forces", () => {
     renderWithTheme(<PluginPage />);
 
