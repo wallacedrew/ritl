@@ -34,7 +34,7 @@ export default function SiteHeader() {
                 Refactoring In The Loop
               </Typography>
             </NextLink>
-            <Box sx={{ flex: 1, maxWidth: { md: 480 }, width: "100%" }}>
+            <Box sx={{ flex: 1, width: "100%" }}>
               <CatalogSearch items={items} />
             </Box>
           </Stack>

@@ -87,6 +87,15 @@ export default function CatalogSearch({ items }: CatalogSearchProps) {
                 paddingLeft: "9px",
                 borderRadius: 2,
               },
+              "& .MuiOutlinedInput-notchedOutline": {
+                borderColor: "success.main",
+              },
+              "&:hover .MuiOutlinedInput-notchedOutline": {
+                borderColor: "success.main",
+              },
+              "& .Mui-focused .MuiOutlinedInput-notchedOutline": {
+                borderColor: "success.main",
+              },
               "& .MuiInputAdornment-positionStart": {
                 marginLeft: 0,
                 marginRight: "8px",
