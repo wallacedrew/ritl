@@ -34,12 +34,12 @@ export default function PluginPage() {
           </Typography>
           <ProvenanceLine />
         </Stack>
+        <PluginInstallSection />
+        <ClaudeMdCompanionSection />
+        <Divider />
         <EmbeddedSkillPreview entry={entry} description={description} />
         <Divider />
         <SixStepDisciplineSection />
-        <Divider />
-        <PluginInstallSection />
-        <ClaudeMdCompanionSection />
         <Divider />
         <AgentsMdSnippetSection />
         <Divider />
