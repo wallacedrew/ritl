@@ -3,11 +3,16 @@ import Divider from "@mui/material/Divider";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 
+import { loadExtractFunctionPreview } from "./lib/loadExtractFunctionPreview";
+
 import AgentsMdSnippetSection from "./components/AgentsMdSnippetSection";
+import EmbeddedSkillPreview from "./components/EmbeddedSkillPreview";
 import PluginInstallSection from "./components/PluginInstallSection";
 import { visuallyHidden } from "@mui/utils";
 
 export default function PluginPage() {
+  const { entry, description } = loadExtractFunctionPreview();
+
   return (
     <Container maxWidth="lg" sx={{ py: 4 }}>
       <Stack spacing={4}>
@@ -20,6 +25,8 @@ export default function PluginPage() {
             your environment supports.
           </Typography>
         </Stack>
+        <EmbeddedSkillPreview entry={entry} description={description} />
+        <Divider />
         <PluginInstallSection />
         <Divider />
         <AgentsMdSnippetSection />

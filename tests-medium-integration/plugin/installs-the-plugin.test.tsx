@@ -29,6 +29,25 @@ describe("user installs the plugin from /plugin", () => {
     ).toBeInTheDocument();
   });
 
+  it("embeds the Extract Function SKILL.md with description and agent forces", () => {
+    renderWithTheme(<PluginPage />);
+
+    expect(
+      screen.getByRole("heading", { level: 2, name: /What a skill looks like: Extract Function/i }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        /Apply Extract Function when you see Long Function, Duplicated Code, Comments/i,
+      ),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        /A function whose token count exceeds the agent's reliable chunk-reasoning budget/i,
+      ),
+    ).toBeInTheDocument();
+    expect(document.body.textContent).toContain("let total = 0");
+  });
+
   it("fires plugin_install_copied when the user clicks the install-command copy button", async () => {
     const analytics = new RecordingAnalyticsTracker();
     const user = userEvent.setup();
