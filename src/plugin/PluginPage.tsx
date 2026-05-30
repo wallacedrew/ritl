@@ -11,6 +11,7 @@ import EmbeddedSkillPreview from "./components/EmbeddedSkillPreview";
 import PluginInstallSection from "./components/PluginInstallSection";
 import ProvenanceLine from "./components/ProvenanceLine";
 import SixStepDisciplineSection from "./components/SixStepDisciplineSection";
+import WhenNotToInstallSection from "./components/WhenNotToInstallSection";
 import { visuallyHidden } from "@mui/utils";
 
 export default function PluginPage() {
@@ -41,6 +42,8 @@ export default function PluginPage() {
         <ClaudeMdCompanionSection />
         <Divider />
         <AgentsMdSnippetSection />
+        <Divider />
+        <WhenNotToInstallSection />
       </Stack>
     </Container>
   );
