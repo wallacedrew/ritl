@@ -15,8 +15,6 @@ export default function SiteHeader() {
     <Box
       component="header"
       sx={{
-        borderBottom: 1,
-        borderColor: "divider",
         bgcolor: "background.paper",
       }}
     >
