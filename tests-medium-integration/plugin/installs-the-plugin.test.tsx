@@ -125,6 +125,9 @@ describe("user installs the plugin from /plugin", () => {
     expect(
       screen.getByText("Watch for the destination pattern when refactorings stack."),
     ).toBeInTheDocument();
+    expect(
+      screen.getByText("Watch the decline vocabulary when the agent doesn't refactor."),
+    ).toBeInTheDocument();
   });
 
   it("names a scenario where the plugin is the wrong choice and how to disable it", () => {

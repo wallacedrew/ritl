@@ -28,6 +28,11 @@ const USAGE_STEPS: readonly UsageStep[] = [
     summary:
       "When the agent says \"this chain of Extract Method + Replace Conditional with Polymorphism is heading toward Strategy\", that's where the catalog earns its weight versus a vocabulary-less agent. Let it name the destination before the next move.",
   },
+  {
+    title: "Watch the decline vocabulary when the agent doesn't refactor",
+    summary:
+      "When the agent decides not to apply a refactoring, it should name which kind of decline — catalog miss (checkable), taste call (arguable), cost-benefit (arguable cost or value), constraint-blocked (non-negotiable), or insufficient context (asking before deciding). Silent non-action is the smell — name which.",
+  },
 ];
 
 export default function HowToUseSection() {
