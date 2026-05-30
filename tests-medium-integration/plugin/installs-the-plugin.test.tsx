@@ -12,7 +12,10 @@ describe("user installs the plugin from /plugin", () => {
 
     expect(screen.getByRole("heading", { level: 1, name: "Plugin" })).toBeInTheDocument();
     expect(
-      screen.getByRole("heading", { level: 2, name: /Claude Code plugin/i }),
+      screen.getByRole("heading", {
+        level: 2,
+        name: /If you have Claude Code: install the plugin/i,
+      }),
     ).toBeInTheDocument();
     expect(screen.getByText(/plugin marketplace add wallacedrew\/ritl/)).toBeInTheDocument();
     expect(screen.getByText(/plugin install refactor@ritl/)).toBeInTheDocument();
@@ -22,7 +25,10 @@ describe("user installs the plugin from /plugin", () => {
     renderWithTheme(<PluginPage />);
 
     expect(
-      screen.getByRole("heading", { level: 2, name: /AGENTS\.md drop-in/i }),
+      screen.getByRole("heading", {
+        level: 2,
+        name: /If you don['’]t have Claude Code: paste this AGENTS\.md drop-in instead/i,
+      }),
     ).toBeInTheDocument();
     expect(
       screen.getByRole("button", { name: /refactoring-discipline\.md/i }),
@@ -120,7 +126,7 @@ describe("user installs the plugin from /plugin", () => {
     renderWithTheme(<PluginPage />);
 
     expect(
-      screen.getByRole("heading", { level: 2, name: /Drop into your CLAUDE\.md/i }),
+      screen.getByRole("heading", { level: 2, name: /add one line to your CLAUDE\.md/i }),
     ).toBeInTheDocument();
     expect(
       screen.getByText(/name the Fowler smell and the named refactoring before applying it/i),

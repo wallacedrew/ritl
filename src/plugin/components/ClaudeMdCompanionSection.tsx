@@ -26,11 +26,11 @@ export default function ClaudeMdCompanionSection() {
     <Stack spacing={1.5}>
       <Stack spacing={0.5}>
         <Typography component="h2" variant="h6" sx={{ fontWeight: 600 }}>
-          Drop into your CLAUDE.md
+          And add one line to your CLAUDE.md
         </Typography>
         <Typography variant="body2" color="text.secondary">
-          One line so the agent knows the plugin is there and names what it&apos;s applying before
-          the matching skill auto-loads.
+          The plugin installs the skills. This directive makes their use visible — the agent names
+          the smell and the named refactoring before the matching skill auto-loads.
         </Typography>
       </Stack>
       <Box

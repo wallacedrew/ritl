@@ -26,14 +26,16 @@ export default function PluginInstallSection() {
 
   return (
     <Stack spacing={1.5}>
-      <Typography component="h2" variant="h6" sx={{ fontWeight: 600 }}>
-        Claude Code plugin
-      </Typography>
-      <Typography variant="body2" color="text.secondary">
-        Only the skill matching what you&apos;re working on enters context — the other 139 in the
-        catalog cost nothing per query. Coverage spans 66 refactorings, 24 smells, 27 Kerievsky
-        composites, and 23 GoF patterns. A workflow orchestrator picks which one applies.
-      </Typography>
+      <Stack spacing={0.5}>
+        <Typography component="h2" variant="h6" sx={{ fontWeight: 600 }}>
+          If you have Claude Code: install the plugin
+        </Typography>
+        <Typography variant="body2" color="text.secondary">
+          Only the skill matching what you&apos;re working on enters context — the other 139 in the
+          catalog cost nothing per query. Coverage spans 66 refactorings, 24 smells, 27 Kerievsky
+          composites, and 23 GoF patterns. A workflow orchestrator picks which one applies.
+        </Typography>
+      </Stack>
       <Box
         sx={{
           position: "relative",
