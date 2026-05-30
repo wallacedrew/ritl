@@ -7,6 +7,7 @@ import { loadExtractFunctionPreview } from "./lib/loadExtractFunctionPreview";
 
 import AgentsMdSnippetSection from "./components/AgentsMdSnippetSection";
 import EmbeddedSkillPreview from "./components/EmbeddedSkillPreview";
+import HowToUseSection from "./components/HowToUseSection";
 import PluginInstallSection from "./components/PluginInstallSection";
 import WhenNotToInstallSection from "./components/WhenNotToInstallSection";
 import { visuallyHidden } from "@mui/utils";
@@ -31,6 +32,8 @@ export default function PluginPage() {
           </Typography>
         </Stack>
         <PluginInstallSection />
+        <Divider />
+        <HowToUseSection />
         <Divider />
         <EmbeddedSkillPreview entry={entry} description={description} rawMarkdown={rawMarkdown} />
         <Divider />

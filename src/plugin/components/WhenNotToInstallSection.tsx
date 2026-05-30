@@ -11,9 +11,9 @@ export default function WhenNotToInstallSection() {
         When not to install
       </Typography>
       <Typography variant="body2" color="text.secondary">
-        The plugin is the wrong choice in a hot debugging loop. The discipline&apos;s safety-net
-        step writes characterization tests before any structural change, and that test-writing
-        latency compounds when you&apos;re chasing a fault iteration to iteration. Disable it with{" "}
+        The plugin is the wrong choice when you&apos;re chasing a live bug. The discipline&apos;s
+        safety-net step writes characterization tests before any structural change, and that
+        test-writing latency compounds when you&apos;re iterating fast on the fault. Disable it with{" "}
         <Box
           component="code"
           sx={{ fontFamily: MONOSPACE_FONT, bgcolor: "#f4f4f5", px: 0.5, borderRadius: 0.5 }}

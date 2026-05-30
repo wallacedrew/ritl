@@ -109,13 +109,31 @@ describe("user installs the plugin from /plugin", () => {
     );
   });
 
+  it("walks the user through how to use the plugin once installed", () => {
+    renderWithTheme(<PluginPage />);
+
+    expect(
+      screen.getByRole("heading", { level: 2, name: /How to use the plugin/i }),
+    ).toBeInTheDocument();
+    expect(screen.getByText("Describe the problem in plain English.")).toBeInTheDocument();
+    expect(
+      screen.getByText("Watch for the agent naming the smell and the refactoring."),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText("Click through when you don't recognise the named skill."),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText("Watch for the destination pattern when refactorings stack."),
+    ).toBeInTheDocument();
+  });
+
   it("names a scenario where the plugin is the wrong choice and how to disable it", () => {
     renderWithTheme(<PluginPage />);
 
     expect(
       screen.getByRole("heading", { level: 2, name: /When not to install/i }),
     ).toBeInTheDocument();
-    expect(screen.getByText(/wrong choice in a hot debugging loop/i)).toBeInTheDocument();
+    expect(screen.getByText(/wrong choice when you're chasing a live bug/i)).toBeInTheDocument();
     expect(screen.getByText(/\/plugin disable refactor@ritl/)).toBeInTheDocument();
   });
 
