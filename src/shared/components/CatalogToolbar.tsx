@@ -88,9 +88,9 @@ export default function CatalogToolbar() {
                   aria-hidden="true"
                   sx={{
                     width: "1px",
+                    height: 20,
                     bgcolor: "divider",
-                    my: 1,
-                    alignSelf: "stretch",
+                    alignSelf: "center",
                   }}
                 />
               )}
