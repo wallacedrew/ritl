@@ -89,6 +89,16 @@ describe("user installs the plugin from /plugin", () => {
     expect(document.body.textContent).toContain("let total = 0");
   });
 
+  it("displays the characterization test that proves both Before and After preserve behavior", () => {
+    renderWithTheme(<PluginPage />);
+
+    expect(screen.getByText("Characterization test")).toBeInTheDocument();
+    expect(
+      screen.getByText(/Same assertion is green against both Before and After/i),
+    ).toBeInTheDocument();
+    expect(document.body.textContent).toContain("expect(invoiceTotal(invoice)).toBe(1787.5)");
+  });
+
   it("fires plugin_install_copied when the user clicks the install-command copy button", async () => {
     const analytics = new RecordingAnalyticsTracker();
     const user = userEvent.setup();
