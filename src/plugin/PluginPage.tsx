@@ -7,6 +7,7 @@ import { loadExtractFunctionPreview } from "./lib/loadExtractFunctionPreview";
 
 import AgentsMdSnippetSection from "./components/AgentsMdSnippetSection";
 import EmbeddedSkillPreview from "./components/EmbeddedSkillPreview";
+import HowToInvokeSection from "./components/HowToInvokeSection";
 import HowToUseSection from "./components/HowToUseSection";
 import PluginInstallSection from "./components/PluginInstallSection";
 import WhenNotToInstallSection from "./components/WhenNotToInstallSection";
@@ -32,6 +33,8 @@ export default function PluginPage() {
           </Typography>
         </Stack>
         <PluginInstallSection />
+        <Divider />
+        <HowToInvokeSection />
         <Divider />
         <HowToUseSection />
         <Divider />

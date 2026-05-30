@@ -109,6 +109,25 @@ describe("user installs the plugin from /plugin", () => {
     );
   });
 
+  it("maps each invocation scenario to a slash command on the page", () => {
+    renderWithTheme(<PluginPage />);
+
+    expect(
+      screen.getByRole("heading", { level: 2, name: /How to invoke the plugin/i }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText("Something feels off and you can't name it."),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText("You want to refactor a block but don't know which named move."),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText("You already know the named refactoring you want."),
+    ).toBeInTheDocument();
+    expect(screen.getByText("/refactor:workflow")).toBeInTheDocument();
+    expect(screen.getByText("/refactor:<skill-slug>")).toBeInTheDocument();
+  });
+
   it("walks the user through how to use the plugin once installed", () => {
     renderWithTheme(<PluginPage />);
 
