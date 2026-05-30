@@ -33,6 +33,7 @@ interface PagesFunctionContext {
 // no runtime path that imports across the boundary.
 const ALLOWED_EVENT_NAMES = new Set([
   "plugin_install_copied",
+  "claude_md_companion_copied",
   "snippet_preview_opened",
   "snippet_copied",
   "snippet_downloaded",

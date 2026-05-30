@@ -1,5 +1,6 @@
 export type AnalyticsEvent =
   | { event: "plugin_install_copied"; properties?: never }
+  | { event: "claude_md_companion_copied"; properties?: never }
   | { event: "snippet_preview_opened"; properties: { snippet: string } }
   | { event: "snippet_copied"; properties: { snippet: string } }
   | { event: "snippet_downloaded"; properties: { snippet: string } }

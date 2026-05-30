@@ -94,4 +94,28 @@ describe("user installs the plugin from /plugin", () => {
 
     expect(analytics.calls).toEqual([{ event: "plugin_install_copied" }]);
   });
+
+  it("offers a CLAUDE.md companion directive with the verified uninstall command", () => {
+    renderWithTheme(<PluginPage />);
+
+    expect(
+      screen.getByRole("heading", { level: 2, name: /Drop into your CLAUDE\.md/i }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(/name the Fowler smell and the named refactoring before applying it/i),
+    ).toBeInTheDocument();
+    expect(screen.getByText(/\/plugin uninstall refactor@ritl/)).toBeInTheDocument();
+  });
+
+  it("fires claude_md_companion_copied when the user clicks the CLAUDE.md directive copy button", async () => {
+    const analytics = new RecordingAnalyticsTracker();
+    const user = userEvent.setup();
+
+    renderWithTheme(<PluginPage />, { analytics });
+
+    const copyButton = screen.getByRole("button", { name: /copy CLAUDE\.md directive/i });
+    await user.click(copyButton);
+
+    expect(analytics.calls).toEqual([{ event: "claude_md_companion_copied" }]);
+  });
 });
