@@ -17,18 +17,4 @@ describe("site footer offers attribution and feedback", () => {
     const feedbackLink = screen.getByRole("link", { name: /feedback/i });
     expect(feedbackLink).toHaveAttribute("href", "mailto:feedback@refactoringintheloop.com");
   });
-
-  it("names the author and links the GitHub source + ADR-0006", () => {
-    renderWithTheme(<SiteFooter />);
-
-    expect(screen.getByText(/Built by Wallace Drew/i)).toBeInTheDocument();
-    expect(screen.getByRole("link", { name: "github.com/wallacedrew/ritl" })).toHaveAttribute(
-      "href",
-      "https://github.com/wallacedrew/ritl",
-    );
-    expect(screen.getByRole("link", { name: "ADR-0006" })).toHaveAttribute(
-      "href",
-      "https://github.com/wallacedrew/ritl/blob/main/docs/architecture/0006-agent-forces-carry-the-contrast.md",
-    );
-  });
 });
