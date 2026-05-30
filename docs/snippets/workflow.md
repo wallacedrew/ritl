@@ -37,6 +37,18 @@ Each refactoring skill in this plugin has the same shape — a target state, a w
 
 Apply one refactoring at a time. Don't chain three together in one commit; each is its own micro-step. Run the test suite after each.
 
+## 4a. When you decline
+
+If you decide **not** to apply a refactoring, do not just stay silent — name which kind of decline you're doing. Silent non-action loses the user's ability to argue. Pick one:
+
+- **Catalog miss** — checked the 24 smells; nothing matches. Will not invent an ad-hoc name. *Example:* "I checked the 24 smells; this doesn't match any of them. I won't invent a refactoring name for an unnamed shape."
+- **Taste call** — match exists, but you judge it not worth doing right now. *Open to argument.* *Example:* "There's a Long Function here, but I judge this isn't worth doing right now. Argue if I'm wrong."
+- **Cost-benefit** — match exists, but you estimate cost > value. Name the cost and the value as you see them so the user can dispute either. *Example:* "Extract Function applies, but the refactoring spans 6 files and the only benefit is a 12-line collapse. Argue with the cost or the value."
+- **Constraint-blocked** — match exists, but applying would break a non-negotiable external constraint (public API contract, perf budget, contract). *Example:* "Inline Function applies, but the inlined call is public API. Choose a different move."
+- **Insufficient context** — you can't decide without more information. *Example:* "Before deciding, I'd need to know whether this method is called from outside the package. Asking before applying."
+
+The taxonomy matters because each decline is arguable in a different way: catalog miss is a checkable claim, taste calls are open to argument, cost-benefit names two estimates the user can challenge separately, constraint-blocked points at the constraint to dispute, and insufficient context asks before deciding. Conflating them all into "I'm not refactoring this" hides which counterargument the user could make.
+
 ## 5. Stay green
 
 After the refactoring, run the full test suite. Three outcomes:
