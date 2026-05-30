@@ -8,6 +8,7 @@ import { loadExtractFunctionPreview } from "./lib/loadExtractFunctionPreview";
 import AgentsMdSnippetSection from "./components/AgentsMdSnippetSection";
 import EmbeddedSkillPreview from "./components/EmbeddedSkillPreview";
 import PluginInstallSection from "./components/PluginInstallSection";
+import SixStepDisciplineSection from "./components/SixStepDisciplineSection";
 import { visuallyHidden } from "@mui/utils";
 
 export default function PluginPage() {
@@ -30,6 +31,8 @@ export default function PluginPage() {
           </Typography>
         </Stack>
         <EmbeddedSkillPreview entry={entry} description={description} />
+        <Divider />
+        <SixStepDisciplineSection />
         <Divider />
         <PluginInstallSection />
         <Divider />

@@ -11,12 +11,9 @@ export default function AgentsMdSnippetSection() {
       </Typography>
       <Typography variant="body2" color="text.secondary">
         ~30-line directive snippet for non-Claude-Code agents (Codex, Aider, Cursor, etc.). Drop
-        into your AGENTS.md or CLAUDE.md so any coding agent gets the same six-step discipline
-        — sense the smell, identify the source, lay down a safety net, apply one named
-        refactoring, stay green, and recognize when a stack of refactorings climbs toward a
-        Kerievsky composite or GoF pattern destination. The discipline references the catalog
-        at refactoringintheloop.com/reference for the lookup data; for richest coverage install
-        the full Claude Code plugin above.
+        into your AGENTS.md or CLAUDE.md so any coding agent runs the six-step discipline above.
+        References the catalog at refactoringintheloop.com for the lookup data; for richer coverage
+        install the Claude Code plugin instead.
       </Typography>
       <SnippetPreviewButton
         href="/snippets/refactoring-discipline.md"
