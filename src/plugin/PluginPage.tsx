@@ -6,7 +6,6 @@ import Typography from "@mui/material/Typography";
 import { loadExtractFunctionPreview } from "./lib/loadExtractFunctionPreview";
 
 import AgentsMdSnippetSection from "./components/AgentsMdSnippetSection";
-import ClaudeMdCompanionSection from "./components/ClaudeMdCompanionSection";
 import EmbeddedSkillPreview from "./components/EmbeddedSkillPreview";
 import PluginInstallSection from "./components/PluginInstallSection";
 import WhenNotToInstallSection from "./components/WhenNotToInstallSection";
@@ -32,7 +31,6 @@ export default function PluginPage() {
           </Typography>
         </Stack>
         <PluginInstallSection />
-        <ClaudeMdCompanionSection />
         <Divider />
         <EmbeddedSkillPreview entry={entry} description={description} rawMarkdown={rawMarkdown} />
         <Divider />
