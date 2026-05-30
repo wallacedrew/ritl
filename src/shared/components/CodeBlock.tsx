@@ -18,6 +18,7 @@ interface CodeBlockProps {
   code: string;
   label?: string;
   tone?: CodeBlockTone;
+  language?: string;
 }
 
 const DOT_COLORS: Record<CodeBlockTone, string> = {
@@ -26,7 +27,12 @@ const DOT_COLORS: Record<CodeBlockTone, string> = {
   none: "#999999",
 };
 
-export default function CodeBlock({ code, label, tone = "none" }: CodeBlockProps) {
+export default function CodeBlock({
+  code,
+  label,
+  tone = "none",
+  language = "javascript",
+}: CodeBlockProps) {
   const [copied, setCopied] = useState(false);
 
   async function handleCopy() {
@@ -87,7 +93,7 @@ export default function CodeBlock({ code, label, tone = "none" }: CodeBlockProps
           </IconButton>
         </Stack>
       )}
-      <Highlight code={code} language="javascript" theme={themes.vsLight}>
+      <Highlight code={code} language={language} theme={themes.vsLight}>
         {({ className, tokens, getLineProps, getTokenProps }) => (
           <Box
             component="pre"
