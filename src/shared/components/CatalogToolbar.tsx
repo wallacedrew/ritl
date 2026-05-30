@@ -4,6 +4,7 @@ import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
 import NextLink from "next/link";
 import { usePathname } from "next/navigation";
+import { Fragment } from "react";
 
 import { useAnalytics } from "@/shared/hooks/useAnalytics";
 
@@ -19,6 +20,7 @@ interface NavLink {
   view: CatalogView;
   label: string;
   href: string;
+  precededBySeparator?: boolean;
 }
 
 const NAV_LINKS: readonly NavLink[] = [
@@ -26,7 +28,7 @@ const NAV_LINKS: readonly NavLink[] = [
   { view: "smells", label: "Smells", href: "/refactoring/smells" },
   { view: "patterns", label: "Patterns", href: "/refactoring-to-patterns" },
   { view: "design-patterns", label: "Design Patterns", href: "/design-patterns" },
-  { view: "plugin", label: "Plugin", href: "/plugin" },
+  { view: "plugin", label: "Plugin", href: "/plugin", precededBySeparator: true },
   { view: "reference", label: "Reference", href: "/reference" },
 ];
 
@@ -80,30 +82,42 @@ export default function CatalogToolbar() {
         {NAV_LINKS.map((link) => {
           const isActive = link.view === active;
           return (
-            <Box
-              key={link.view}
-              component={NextLink}
-              href={link.href}
-              onClick={() => handleNavClick(link.view)}
-              aria-current={isActive ? "page" : undefined}
-              sx={{
-                py: 1.5,
-                color: isActive ? "text.primary" : "text.secondary",
-                fontSize: "0.9375rem",
-                fontWeight: isActive ? 600 : 500,
-                textDecoration: "none",
-                whiteSpace: "nowrap",
-                borderBottom: 2,
-                borderColor: isActive ? "primary.main" : "transparent",
-                marginBottom: "-1px",
-                transition: "color 150ms, border-color 150ms",
-                "&:hover": {
-                  color: isActive ? "text.primary" : "text.primary",
-                },
-              }}
-            >
-              {link.label}
-            </Box>
+            <Fragment key={link.view}>
+              {link.precededBySeparator && (
+                <Box
+                  aria-hidden="true"
+                  sx={{
+                    width: "1px",
+                    bgcolor: "divider",
+                    my: 1,
+                    alignSelf: "stretch",
+                  }}
+                />
+              )}
+              <Box
+                component={NextLink}
+                href={link.href}
+                onClick={() => handleNavClick(link.view)}
+                aria-current={isActive ? "page" : undefined}
+                sx={{
+                  py: 1.5,
+                  color: isActive ? "text.primary" : "text.secondary",
+                  fontSize: "0.9375rem",
+                  fontWeight: isActive ? 600 : 500,
+                  textDecoration: "none",
+                  whiteSpace: "nowrap",
+                  borderBottom: 2,
+                  borderColor: isActive ? "primary.main" : "transparent",
+                  marginBottom: "-1px",
+                  transition: "color 150ms, border-color 150ms",
+                  "&:hover": {
+                    color: isActive ? "text.primary" : "text.primary",
+                  },
+                }}
+              >
+                {link.label}
+              </Box>
+            </Fragment>
           );
         })}
       </Stack>
