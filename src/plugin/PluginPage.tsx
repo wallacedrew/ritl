@@ -20,9 +20,13 @@ export default function PluginPage() {
           <Typography component="h1" variant="h4" sx={visuallyHidden}>
             Plugin
           </Typography>
-          <Typography variant="body1" color="text.secondary">
-            Two ways to use Refactoring In The Loop with your coding agent — pick the higher one
-            your environment supports.
+          <Typography variant="body1">
+            Your agent ships better code when it has a named vocabulary for what&apos;s wrong and
+            what to do — and only the matching skill loads per query.
+          </Typography>
+          <Typography variant="body2" color="text.secondary">
+            Two ways to install: the Claude Code plugin (auto-invoking skills) or an AGENTS.md
+            drop-in for other agents. Pick the higher one your environment supports.
           </Typography>
         </Stack>
         <EmbeddedSkillPreview entry={entry} description={description} />
