@@ -37,9 +37,9 @@ export default function PluginPage() {
         <PluginInstallSection />
         <ClaudeMdCompanionSection />
         <Divider />
-        <EmbeddedSkillPreview entry={entry} description={description} />
-        <Divider />
         <SixStepDisciplineSection />
+        <Divider />
+        <EmbeddedSkillPreview entry={entry} description={description} />
         <Divider />
         <AgentsMdSnippetSection />
         <Divider />
