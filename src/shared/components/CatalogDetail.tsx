@@ -1,11 +1,9 @@
 import Container from "@mui/material/Container";
 import Stack from "@mui/material/Stack";
 
-import BeforeAfterCodeBlocks from "@/shared/components/BeforeAfterCodeBlocks";
 import CatalogBreadcrumb from "@/shared/components/CatalogBreadcrumb";
+import CatalogDetailBody from "@/shared/components/CatalogDetailBody";
 import CatalogEntryHeader from "@/shared/components/CatalogEntryHeader";
-import CatalogExampleSource from "@/shared/components/CatalogExampleSource";
-import CatalogSection from "@/shared/components/CatalogSection";
 import LensSwitcher from "@/shared/components/LensSwitcher";
 import SnippetPreviewButton from "@/shared/components/SnippetPreviewButton";
 import type { CatalogEntry, Lens } from "@/shared/lib/CatalogEntry";
@@ -38,8 +36,6 @@ export default function CatalogDetail({
   incomingSources,
   inboundPatterns,
 }: CatalogDetailProps) {
-  const forces = entry.forcesFor(lens);
-
   return (
     <Container maxWidth="lg" sx={{ py: 4 }}>
       <Stack spacing={4}>
@@ -74,19 +70,12 @@ export default function CatalogDetail({
           />
           <SnippetPreviewButton href={entry.name.toSnippetHref()} label="Preview markdown" />
         </Stack>
-        <CatalogSection label="Symptom" body={forces.symptom} />
-        <CatalogSection label="Goal" body={forces.goal} />
-        <BeforeAfterCodeBlocks
+        <CatalogDetailBody
+          entry={entry}
+          lens={lens}
           beforeLabel={beforeLabel}
           afterLabel={afterLabel}
-          beforeCode={entry.before}
-          afterCode={entry.after}
         />
-        {entry.exampleSource && <CatalogExampleSource note={entry.exampleSource} />}
-        <CatalogSection label="Pressure" body={forces.pressure} />
-        <CatalogSection label="Tradeoff" body={forces.tradeoff} />
-        <CatalogSection label="Relief" body={forces.relief} />
-        <CatalogSection label="Trap" body={forces.trap} />
       </Stack>
     </Container>
   );
