@@ -10,3 +10,4 @@ Chronological index of ADRs. Numbers are immutable; superseded ADRs stay in plac
 | ADR-0004 | Composite patterns use single before/after         | accepted               | 2026-05-27 | Kerievsky composite patterns keep the single `before`/`after` schema; prose and nemesis links carry the journey.    |
 | ADR-0005 | Compare-view differentials use voice rubric        | superseded by ADR-0006 | 2026-05-29 | Every `compareDifferential` names one specific mechanical failure mode; banned hedge words and abstract nouns.      |
 | ADR-0006 | Agent-side forces carry the contrast               | accepted               | 2026-05-29 | Remove the `compareDifferential` strapline; the six agent-side force fields carry the human-vs-agent contrast.      |
+| ADR-0007 | Kerievsky entries are refactorings, not patterns   | accepted               | 2026-05-31 | Move the 27 Kerievsky entries from `patterns` catalog to `refactorings` catalog; `patterns` becomes GoF-only.       |
