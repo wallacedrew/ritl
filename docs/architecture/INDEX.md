@@ -11,3 +11,4 @@ Chronological index of ADRs. Numbers are immutable; superseded ADRs stay in plac
 | ADR-0005 | Compare-view differentials use voice rubric        | superseded by ADR-0006 | 2026-05-29 | Every `compareDifferential` names one specific mechanical failure mode; banned hedge words and abstract nouns.      |
 | ADR-0006 | Agent-side forces carry the contrast               | accepted               | 2026-05-29 | Remove the `compareDifferential` strapline; the six agent-side force fields carry the human-vs-agent contrast.      |
 | ADR-0007 | Kerievsky entries are refactorings, not patterns   | accepted               | 2026-05-31 | Move the 27 Kerievsky entries from `patterns` catalog to `refactorings` catalog; `patterns` becomes GoF-only.       |
+| ADR-0008 | Domain-first `src/` layout                         | accepted               | 2026-05-31 | Three top-level domain folders; sub-site landings colocate with data; `CatalogKind` value matches the URL slug.     |
