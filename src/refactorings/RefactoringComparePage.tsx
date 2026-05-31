@@ -1,10 +1,9 @@
 import { notFound } from "next/navigation";
 
-import { loadPatterns } from "@/design-patterns/lib/loadPatterns";
 import CatalogCompareDetail from "@/shared/components/CatalogCompareDetail";
 import type { RefactoringBook } from "@/shared/lib/CatalogEntry";
 import { findCatalogEntryBySlug } from "@/shared/lib/findCatalogEntryBySlug";
-import { findInboundPatterns } from "@/shared/lib/findInboundPatterns";
+import { findInboundPatternsForRefactoring } from "@/shared/lib/findInboundPatternsForRefactoring";
 import { generateCatalogStaticParams } from "@/shared/lib/generateCatalogStaticParams";
 
 import { getRefactoringNeighbors } from "./lib/getRefactoringNeighbors";
@@ -27,19 +26,11 @@ export default async function RefactoringComparePage({
   if (found === undefined) notFound();
 
   const { entry: refactoring, number } = found;
-  // Kerievsky entries can also nemesise a refactoring; feed them in
-  // alongside GoF patterns so a Fowler refactoring's "Referenced by
-  // patterns" group keeps listing its Kerievsky inbound references
-  // after the ADR-0007 catalog move.
-  const inboundPatternNames = findInboundPatterns(refactoring.name, [
-    ...loadPatterns(),
-    ...loadKerievsky(),
-  ]).map((pattern) => pattern.name);
   const viewModel = toRefactoringCompareDetailViewModel({
     refactoring,
     number,
     book,
-    inboundPatternNames,
+    inboundPatternNames: findInboundPatternsForRefactoring(refactoring.name),
     neighbors: getRefactoringNeighbors(number, book),
   });
 
