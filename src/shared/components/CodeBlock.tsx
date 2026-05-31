@@ -7,8 +7,8 @@ import IconButton from "@mui/material/IconButton";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import { Highlight, themes } from "prism-react-renderer";
-import { useState } from "react";
 
+import { useClipboardCopy } from "@/shared/hooks/useClipboardCopy";
 import { MONOSPACE_FONT } from "@/shared/theme/monospace";
 import { SURFACE_TINT } from "@/shared/theme/surfaces";
 
@@ -33,13 +33,11 @@ export default function CodeBlock({
   tone = "none",
   language = "javascript",
 }: CodeBlockProps) {
-  const [copied, setCopied] = useState(false);
+  const { copied, copy } = useClipboardCopy();
 
   async function handleCopy() {
     try {
-      await navigator.clipboard.writeText(code);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 1500);
+      await copy(code);
     } catch {
       // Browsers that block clipboard.writeText silently no-op; the icon
       // just doesn't switch to the success state.
