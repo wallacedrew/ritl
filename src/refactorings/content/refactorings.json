@@ -886,17 +886,17 @@
     "after": "class Party       { name; id; }\nclass Employee   extends Party { salary; }\nclass Department extends Party { budget; }",
     "forces": {
       "human": {
-        "symptom": "Two classes with substantial shared structure — `Employee` and `Department` both carrying `name`, `id`, and similar id-management methods.",
-        "goal": "Two classes with substantial shared structure get a common parent that owns the shared bits.",
-        "pressure": "Bug fixes must land in both; future shared behavior has no obvious home; the relationship between the classes is invisible to readers.",
+        "symptom": "Two classes or interfaces with substantial shared structure — `Employee` and `Department` both carrying `name`, `id`, and similar id-management methods.",
+        "goal": "Two types with substantial shared structure get a common parent that owns the shared bits.",
+        "pressure": "Bug fixes must land in both; future shared behavior has no obvious home; the relationship between the types is invisible to readers.",
         "tradeoff": "Inheritance is inflexible — if the duplication is shallow, prefer Extract Class (composition) over Extract Superclass.",
-        "relief": "Bug fixes and new shared behavior land in one place; the relationship between the classes is documented in code.",
+        "relief": "Bug fixes and new shared behavior land in one place; the relationship between the types is documented in code.",
         "trap": "Extracting a superclass for shallow duplication — inheritance is inflexible, and the parent becomes a constraint on future divergence that composition (Extract Class) would have avoided."
       },
       "agent": {
-        "symptom": "Two classes with substantial shared structure (fields, methods); the agent verifying changes must update both consistently.",
+        "symptom": "Two classes or interfaces with substantial shared structure (fields, methods); the agent verifying changes must update both consistently.",
         "goal": "Shared structure lives on the parent with one declaration; queries about either subclass load the parent's contract once instead of paying the cost of loading N near-identical subclass declarations.",
-        "pressure": "Bug fixes must land in both classes; the agent's reasoning about shared invariants must verify they hold identically across both.",
+        "pressure": "Bug fixes must land in both types; the agent's reasoning about shared invariants must verify they hold identically across both.",
         "tradeoff": "Inheritance is inflexible; for shallow duplication, the agent's downstream changes are constrained by the parent in ways composition (Extract Class) would have avoided.",
         "relief": "Shared behavior lives on the parent with one definition; edits to the shared method land once and propagate to every subclass through inheritance, removing the N-copy synchronization cost.",
         "trap": "Extracting superclasses for shallow duplication locks the agent into inheritance constraints when composition would have left both classes free to diverge."
@@ -961,20 +961,20 @@
     "after": "class Phone {\n  areaCode;\n  number;\n  toString() { return `(${this.areaCode}) ${this.number}`; }\n}\nclass Person { name; phone; }",
     "forces": {
       "human": {
-        "symptom": "A class with multiple cohesive sub-concepts inside it — Person carrying officeAreaCode + officeNumber + telephoneNumber() method, where Phone is hiding.",
-        "goal": "A cohesive sub-concept inside a class becomes its own class with its own name, fields, and methods.",
-        "pressure": "The parent class's surface grows past what one type should own; tests touch unrelated concerns together; changes to one concept risk side effects on another.",
-        "tradeoff": "Premature class extraction adds ceremony — extract when 3+ fields and at least one operation cluster around a single concept that the parent class doesn't own.",
-        "relief": "Each class has one purpose; tests target the small unit; the parent class shrinks.",
-        "trap": "Extracting a class when the candidate concept is just 1-2 fields without behavior — adds a class file with no encapsulation gain."
+        "symptom": "A class or interface with multiple cohesive sub-concepts inside it — Person carrying officeAreaCode + officeNumber + telephoneNumber() method, where Phone is hiding.",
+        "goal": "A cohesive sub-concept inside a class or interface becomes its own type with its own name, fields, and methods.",
+        "pressure": "The parent type's surface grows past what one type should own; tests touch unrelated concerns together; changes to one concept risk side effects on another.",
+        "tradeoff": "Premature extraction adds ceremony — extract when 3+ fields and at least one operation cluster around a single concept that the parent type doesn't own.",
+        "relief": "Each type has one purpose; tests target the small unit; the parent type shrinks.",
+        "trap": "Extracting when the candidate concept is just 1-2 fields without behavior — adds a file with no encapsulation gain."
       },
       "agent": {
-        "symptom": "A class whose surface mixes multiple cohesive sub-concepts; the agent reasoning about any single concept must skim past the others to find what it needs.",
-        "goal": "Each class has one purpose; the agent loads a small focused file to reason about any single concept.",
+        "symptom": "A class or interface whose surface mixes multiple cohesive sub-concepts; the agent reasoning about any single concept must skim past the others to find what it needs.",
+        "goal": "Each type has one purpose; the agent loads a small focused file to reason about any single concept.",
         "pressure": "The agent's reasoning context per method inflates with unrelated members; changes to one concept require reasoning about all of them.",
-        "tradeoff": "Extracting too eagerly — 1-2 fields with no behavior — adds a class file the agent must load with no encapsulation gain.",
-        "relief": "Each class holds one responsibility's data and methods; queries about one responsibility load only its file, and the unrelated payload that previously sat in the same window for every read is gone.",
-        "trap": "Extracting candidate concepts that are just trivial field groups creates class files the agent must navigate without buying any encapsulation gain."
+        "tradeoff": "Extracting too eagerly — 1-2 fields with no behavior — adds a file the agent must load with no encapsulation gain.",
+        "relief": "Each type holds one responsibility's data and methods; queries about one responsibility load only its file, and the unrelated payload that previously sat in the same window for every read is gone.",
+        "trap": "Extracting candidate concepts that are just trivial field groups creates files the agent must navigate without buying any encapsulation gain."
       }
     }
   },
