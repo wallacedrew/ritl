@@ -2,6 +2,8 @@ import {
   CatalogEntry,
   LEGAL_CATALOGS,
   LEGAL_PATTERN_BOOKS,
+  LEGAL_REFACTORING_BOOKS,
+  type Book,
   type CatalogKind,
   type PatternBook,
 } from "./CatalogEntry";
@@ -130,7 +132,7 @@ function readOptionalExampleSource(record: Record<string, unknown>): string | un
 function readDestinationPattern(
   record: Record<string, unknown>,
   ownCatalog: CatalogKind,
-  ownBook: PatternBook | undefined,
+  ownBook: Book | undefined,
 ): CatalogEntryName | undefined {
   const raw = record.destinationPattern;
   if (raw === undefined) {
@@ -165,26 +167,34 @@ function readDestinationPattern(
   return CatalogEntryName.pattern(name, book as PatternBook);
 }
 
-function readPatternBook(
-  record: Record<string, unknown>,
-  catalog: CatalogKind,
-): PatternBook | undefined {
+function readBook(record: Record<string, unknown>, catalog: CatalogKind): Book | undefined {
   const raw = record.book;
-  if (catalog !== "patterns") {
+  if (catalog === "smells") {
     if (raw !== undefined) {
-      throw new Error('parseCatalogEntry: field "book" is only allowed on pattern entries');
+      throw new Error('parseCatalogEntry: field "book" is not allowed on smell entries');
     }
     return undefined;
+  }
+  if (catalog === "refactorings") {
+    if (raw === undefined) {
+      return "fowler";
+    }
+    if (typeof raw !== "string" || !(LEGAL_REFACTORING_BOOKS as readonly string[]).includes(raw)) {
+      throw new Error(
+        `parseCatalogEntry: field "book" on a refactoring must be one of ${LEGAL_REFACTORING_BOOKS.join(", ")}`,
+      );
+    }
+    return raw as Book;
   }
   if (raw === undefined) {
     throw new Error('parseCatalogEntry: pattern entries must declare a "book"');
   }
   if (typeof raw !== "string" || !(LEGAL_PATTERN_BOOKS as readonly string[]).includes(raw)) {
     throw new Error(
-      `parseCatalogEntry: field "book" must be one of ${LEGAL_PATTERN_BOOKS.join(", ")}`,
+      `parseCatalogEntry: field "book" on a pattern must be one of ${LEGAL_PATTERN_BOOKS.join(", ")}`,
     );
   }
-  return raw as PatternBook;
+  return raw as Book;
 }
 
 export function parseCatalogEntry(raw: unknown): CatalogEntry {
@@ -193,7 +203,7 @@ export function parseCatalogEntry(raw: unknown): CatalogEntry {
   }
   const record = raw as Record<string, unknown>;
   const catalog = readCatalog(record);
-  const book = readPatternBook(record, catalog);
+  const book = readBook(record, catalog);
   const name = readCatalogEntryName(record, catalog, book);
 
   return CatalogEntry.from({
@@ -212,7 +222,7 @@ export function parseCatalogEntry(raw: unknown): CatalogEntry {
 function readCatalogEntryName(
   record: Record<string, unknown>,
   catalog: CatalogKind,
-  book: PatternBook | undefined,
+  book: Book | undefined,
 ): CatalogEntryName {
   const rawName = readStringField(record, "name");
   switch (catalog) {
@@ -221,9 +231,9 @@ function readCatalogEntryName(
     case "refactorings":
       return CatalogEntryName.refactoring(rawName);
     case "patterns":
-      if (book === undefined) {
+      if (book === undefined || !(LEGAL_PATTERN_BOOKS as readonly string[]).includes(book)) {
         throw new Error('parseCatalogEntry: pattern entries must declare a "book"');
       }
-      return CatalogEntryName.pattern(rawName, book);
+      return CatalogEntryName.pattern(rawName, book as PatternBook);
   }
 }

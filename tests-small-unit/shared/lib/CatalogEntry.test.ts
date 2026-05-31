@@ -119,9 +119,9 @@ describe("CatalogEntry", () => {
     ).toThrow(/unknown pattern book "fowler"/i);
   });
 
-  it("rejects a non-pattern entry that carries a book field", () => {
+  it("rejects a smell entry that carries a book field", () => {
     expect(() => makeEntry({ book: "kerievsky" })).toThrow(
-      /"book" is only allowed on pattern entries/i,
+      /"book" is only allowed on pattern or refactoring entries/i,
     );
   });
 
@@ -135,7 +135,38 @@ describe("CatalogEntry", () => {
     expect(entry.book).toBe("gof");
   });
 
-  it("leaves book undefined on smells and refactorings", () => {
+  it("leaves book undefined on smells", () => {
     expect(makeEntry().book).toBeUndefined();
+  });
+
+  it('accepts book="fowler" on a refactoring', () => {
+    const entry = makeEntry({
+      catalog: "refactorings",
+      name: CatalogEntryName.refactoring("Extract Function"),
+      nemeses: [CatalogEntryName.smell("Long Function")],
+      book: "fowler",
+    });
+    expect(entry.book).toBe("fowler");
+  });
+
+  it('accepts book="kerievsky" on a refactoring', () => {
+    const entry = makeEntry({
+      catalog: "refactorings",
+      name: CatalogEntryName.refactoring("Replace Conditional Logic with Strategy"),
+      nemeses: [CatalogEntryName.smell("Repeated Switches")],
+      book: "kerievsky",
+    });
+    expect(entry.book).toBe("kerievsky");
+  });
+
+  it('rejects book="gof" on a refactoring', () => {
+    expect(() =>
+      makeEntry({
+        catalog: "refactorings",
+        name: CatalogEntryName.refactoring("Extract Function"),
+        nemeses: [CatalogEntryName.smell("Long Function")],
+        book: "gof",
+      }),
+    ).toThrow(/unknown refactoring book "gof"/i);
   });
 });

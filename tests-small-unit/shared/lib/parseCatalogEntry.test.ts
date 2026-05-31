@@ -150,12 +150,36 @@ describe("parseCatalogEntry", () => {
         after: "y",
         forces: { human: validForcesRecord, agent: validForcesRecord },
       }),
-    ).toThrow(/field "book" must be one of/i);
+    ).toThrow(/field "book" on a pattern must be one of/i);
   });
 
-  it("rejects a non-pattern entry that carries a book field", () => {
+  it("rejects a smell entry that carries a book field", () => {
     expect(() => parseCatalogEntry({ ...validSmell, book: "kerievsky" })).toThrow(
-      /"book" is only allowed on pattern entries/i,
+      /"book" is not allowed on smell entries/i,
+    );
+  });
+
+  it('parses a refactoring with book="fowler" explicitly declared', () => {
+    const entry = parseCatalogEntry({ ...validRefactoring, book: "fowler" });
+
+    expect(entry.book).toBe("fowler");
+  });
+
+  it('parses a refactoring with book="kerievsky"', () => {
+    const entry = parseCatalogEntry({ ...validRefactoring, book: "kerievsky" });
+
+    expect(entry.book).toBe("kerievsky");
+  });
+
+  it('defaults a refactoring\'s book to "fowler" when the field is omitted', () => {
+    const entry = parseCatalogEntry(validRefactoring);
+
+    expect(entry.book).toBe("fowler");
+  });
+
+  it('rejects a refactoring with book="gof"', () => {
+    expect(() => parseCatalogEntry({ ...validRefactoring, book: "gof" })).toThrow(
+      /field "book" on a refactoring must be one of/i,
     );
   });
 
