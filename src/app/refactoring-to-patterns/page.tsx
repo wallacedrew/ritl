@@ -1,1 +1,1 @@
-export { default } from "@/refactoring-to-patterns/KerievskyLandingPage";
+export { default } from "@/refactorings/KerievskyLandingPage";

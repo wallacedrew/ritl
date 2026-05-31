@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { screen } from "@testing-library/react";
 
 import { renderWithTheme } from "../../tests-small-unit/_helpers/renderWithTheme";
-import KerievskyLandingPage from "@/refactoring-to-patterns/KerievskyLandingPage";
+import KerievskyLandingPage from "@/refactorings/KerievskyLandingPage";
 import RefactoringDetailPage from "@/refactorings/RefactoringDetailPage";
 
 describe("user reads Replace Conditional Logic with Strategy", () => {

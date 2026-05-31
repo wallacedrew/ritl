@@ -3,7 +3,7 @@ import { screen } from "@testing-library/react";
 
 import { renderWithTheme } from "../../tests-small-unit/_helpers/renderWithTheme";
 import HomePage from "@/home/HomePage";
-import KerievskyLandingPage from "@/refactoring-to-patterns/KerievskyLandingPage";
+import KerievskyLandingPage from "@/refactorings/KerievskyLandingPage";
 import RefactoringDetailPage from "@/refactorings/RefactoringDetailPage";
 
 describe("user reads Compose Method via the Kerievsky sub-site", () => {
