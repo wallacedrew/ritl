@@ -11,7 +11,7 @@ export type Book = RefactoringBook | "gof";
  * Granular source label for an entry. Names what each entry actually
  * is: a smell, a Fowler refactoring, a Kerievsky refactoring (which
  * targets a GoF pattern), or a Gang of Four pattern. The chip-color
- * map in `catalogChipColor.ts` translates tone → CSS palette key.
+ * map in `src/shared/theme/catalogChipColor.ts` translates tone → CSS palette key.
  */
 export type CatalogEntryTone = "smell" | "fowler-refactoring" | "kerievsky-refactoring" | "pattern";
 

@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { chipColorForTone, dotBgForTone } from "@/shared/lib/catalogChipColor";
+import { chipColorForTone, dotBgForTone } from "@/shared/theme/catalogChipColor";
 
 describe("chipColorForTone", () => {
   it("maps fowler-refactoring → success (green)", () => {

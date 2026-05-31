@@ -6,7 +6,7 @@ import Typography from "@mui/material/Typography";
 import CatalogNumber from "@/shared/components/CatalogNumber";
 import ExpandableCatalogChip from "@/shared/components/ExpandableCatalogChip";
 import type { CatalogListItem } from "@/shared/lib/CatalogListItem";
-import { chipColorForTone } from "@/shared/lib/catalogChipColor";
+import { chipColorForTone } from "@/shared/theme/catalogChipColor";
 
 interface CatalogCardProps {
   item: CatalogListItem;

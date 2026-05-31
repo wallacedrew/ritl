@@ -5,7 +5,7 @@ import type { SxProps, Theme } from "@mui/material/styles";
 import NextLink from "next/link";
 
 import type { CatalogEntryTone } from "@/shared/lib/CatalogEntry";
-import { tonedChipSx } from "@/shared/lib/catalogChipColor";
+import { tonedChipSx } from "@/shared/theme/catalogChipColor";
 
 interface LinkedChipProps {
   label: string;

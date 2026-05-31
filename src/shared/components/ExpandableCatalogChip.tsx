@@ -11,7 +11,7 @@ import NextLink from "next/link";
 import LinkedChip from "@/shared/components/LinkedChip";
 import type { CatalogEntryTone } from "@/shared/lib/CatalogEntry";
 import { computeCrossReferencesForHref } from "@/shared/lib/CatalogGraph";
-import { badgePaletteKey, type BadgePaletteKey } from "@/shared/lib/catalogChipColor";
+import { badgePaletteKey, type BadgePaletteKey } from "@/shared/theme/catalogChipColor";
 import { useCatalogGraph } from "@/shared/hooks/useCatalogGraph";
 import { useOpenPopover } from "@/shared/hooks/useOpenPopover";
 

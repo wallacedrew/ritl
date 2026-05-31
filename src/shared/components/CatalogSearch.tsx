@@ -13,7 +13,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useAnalytics } from "@/shared/hooks/useAnalytics";
 
 import type { CatalogItem } from "../lib/CatalogItem";
-import { dotBgForTone } from "../lib/catalogChipColor";
+import { dotBgForTone } from "@/shared/theme/catalogChipColor";
 import CatalogNumber from "./CatalogNumber";
 
 function slugFromHref(href: string): string {

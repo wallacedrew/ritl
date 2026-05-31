@@ -1,6 +1,6 @@
 import { alpha, type SxProps, type Theme } from "@mui/material/styles";
 
-import type { CatalogEntryTone } from "./CatalogEntry";
+import type { CatalogEntryTone } from "@/shared/lib/CatalogEntry";
 
 /**
  * MUI ChipOwnProps["color"] union, restated here so this file does not
