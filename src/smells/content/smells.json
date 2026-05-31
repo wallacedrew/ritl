@@ -540,16 +540,16 @@
     "after": "class Order    { /* lineItems, totals */ }\nclass Customer { /* name, email */ }\nclass Shipping { /* address, track */ }",
     "forces": {
       "human": {
-        "symptom": "A class with too many fields and methods — multiple unrelated responsibilities under one type.",
-        "goal": "Each class has one cohesive purpose; methods cluster around fields they actually use.",
+        "symptom": "A type — class or interface — with too many fields and methods; multiple unrelated responsibilities under one name.",
+        "goal": "Each type has one cohesive purpose; methods cluster around fields they actually use.",
         "pressure": "Cognitive load: every reader pays for fields they don't care about; merge conflicts spike; testing is unfocused.",
-        "tradeoff": "Splitting a large class creates collaborator relationships that the team must learn; some classes are large because they encode a genuinely large domain concept that resists decomposition.",
+        "tradeoff": "Splitting a large type creates collaborator relationships that the team must learn; some types are large because they encode a genuinely large domain concept that resists decomposition.",
         "relief": "Smaller, more testable units; clearer ownership; faster reading.",
         "trap": "Splitting every large class on superficial groupings (methods that happen to share a prefix, fields that happen to be related) without honoring real cohesion boundaries — produces fragments that don't make sense apart."
       },
       "agent": {
-        "symptom": "A class file with so many fields and methods that the agent cannot load it as a coherent unit; multiple unrelated responsibilities sit under one name.",
-        "goal": "Each class has one cohesive purpose; the agent loads a small focused file to reason about any single behavior.",
+        "symptom": "A type definition — class or interface — with so many fields and methods that the agent cannot load it as a coherent unit; multiple unrelated responsibilities sit under one name.",
+        "goal": "Each type has one cohesive purpose; the agent loads a small focused file to reason about any single behavior.",
         "pressure": "Cognitive context inflates with every irrelevant member; the agent reading any single method must skim past unrelated fields and helpers to find what it needs.",
         "tradeoff": "Splitting creates new collaborator relationships the agent must trace across files; what was one load now becomes N loads and the agent must understand how the pieces interact.",
         "relief": "Smaller, focused units; the agent's reasoning context per method is tight; tests target one concern at a time.",
