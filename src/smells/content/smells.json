@@ -267,7 +267,7 @@
     "after": "class Address { /* street, city, zip */ }\nfunction send(name, email, address) {\n  // ...\n}",
     "forces": {
       "human": {
-        "symptom": "The same group of fields travels together everywhere — (street, city, zip), (start, end), (firstName, lastName) — appearing as parameters, fields, or method args.",
+        "symptom": "The same group of fields travels together everywhere — (street, city, zip), (start, end), (firstName, lastName) — appearing as parameters, class fields, interface properties, or method args.",
         "goal": "The clump becomes a value object with its own name and its own behavior.",
         "pressure": "Adding or removing a field of the clump means touching every site; the clump's identity is invisible.",
         "tradeoff": "Introducing the value object forces every consumer to construct and destructure it; for short-lived clumps the ceremony can outweigh the gain.",
@@ -275,7 +275,7 @@
         "trap": "Wrapping field groups that don't actually represent a coherent domain concept — the object exists only to shrink signatures and has no real behavior to attract."
       },
       "agent": {
-        "symptom": "The agent sees the same field group appearing across multiple signatures (parameters, fields, args) — every site re-parses the same shape and verifies the same ordering.",
+        "symptom": "The agent sees the same field group appearing across multiple signatures (parameters, class fields, interface properties, args) — every site re-parses the same shape and verifies the same ordering.",
         "goal": "The clump becomes a named value object the agent passes through as a single token; structure validation happens once at construction.",
         "pressure": "Adding or removing a field of the clump means touching every site; the agent must find them all and update each consistently or risk silent shape drift.",
         "tradeoff": "Constructing the value object on every call adds an allocation and a name the agent must learn; if the bundle isn't reused it's pure ceremony.",
