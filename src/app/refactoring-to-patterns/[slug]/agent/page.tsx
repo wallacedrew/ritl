@@ -1,13 +1,15 @@
-import PatternsAgentPage, { patternsAgentStaticParams } from "@/patterns/PatternsAgentPage";
+import RefactoringAgentPage, {
+  refactoringAgentStaticParams,
+} from "@/refactorings/RefactoringAgentPage";
 
 interface RouteProps {
   params: Promise<{ slug: string }>;
 }
 
 export default async function Page({ params }: RouteProps) {
-  return PatternsAgentPage({ params, book: "kerievsky" });
+  return RefactoringAgentPage({ params, book: "kerievsky" });
 }
 
 export function generateStaticParams() {
-  return patternsAgentStaticParams("kerievsky");
+  return refactoringAgentStaticParams("kerievsky");
 }

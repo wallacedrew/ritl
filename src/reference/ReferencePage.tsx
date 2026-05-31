@@ -40,7 +40,7 @@ export default function ReferencePage() {
           title="Refactoring to Patterns"
           attribution="Joshua Kerievsky, Refactoring to Patterns (2004) — composite refactorings that lead to a design-pattern destination."
         >
-          <FlatChipStrip items={sections.kerievskyPatterns} />
+          <FlatChipStrip items={sections.kerievskyRefactorings} />
         </BookSection>
 
         <Divider />

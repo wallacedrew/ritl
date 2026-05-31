@@ -30,8 +30,8 @@ describe("CatalogEntryName", () => {
     expect(kerievsky.equals(gof)).toBe(false);
   });
 
-  it("routes a kerievsky pattern URL under /refactoring-to-patterns", () => {
-    const name = CatalogEntryName.pattern("Compose Method", "kerievsky");
+  it("routes a kerievsky refactoring URL under /refactoring-to-patterns", () => {
+    const name = CatalogEntryName.refactoring("Compose Method", "kerievsky");
 
     expect(name.toCatalogHref()).toBe("/refactoring-to-patterns/compose-method");
   });

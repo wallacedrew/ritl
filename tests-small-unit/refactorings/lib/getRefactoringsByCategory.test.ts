@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { loadRefactorings } from "@/refactorings/lib/loadRefactorings";
+import { loadFowlerRefactorings } from "@/refactorings/lib/loadFowlerRefactorings";
 import { getRefactoringsByCategory } from "@/refactorings/lib/getRefactoringsByCategory";
 
 describe("getRefactoringsByCategory", () => {
@@ -38,8 +38,8 @@ describe("getRefactoringsByCategory", () => {
     expect(extractFunction?.tone).toBe("fowler-refactoring");
   });
 
-  it("categorizes every refactoring in the catalog (no orphans)", () => {
-    const allNames = loadRefactorings().map((r) => r.name.toString());
+  it("categorizes every Fowler refactoring in the catalog (no orphans)", () => {
+    const allNames = loadFowlerRefactorings().map((r) => r.name.toString());
     const categorizedNames = getRefactoringsByCategory().flatMap((g) => g.items.map((i) => i.name));
 
     for (const name of allNames) {

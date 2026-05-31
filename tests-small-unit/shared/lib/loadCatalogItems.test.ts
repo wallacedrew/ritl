@@ -3,23 +3,23 @@ import { describe, expect, it } from "vitest";
 import { loadCatalogItems } from "@/shared/lib/loadCatalogItems";
 
 describe("loadCatalogItems", () => {
-  it("combines 24 smells, 66 refactorings, and 50 patterns into a single 140-item catalog", () => {
+  it("combines 24 smells, 93 refactorings, and 23 patterns into a single 140-item catalog", () => {
     const items = loadCatalogItems();
 
     expect(items).toHaveLength(140);
     expect(items.filter((i) => i.kind === "smell")).toHaveLength(24);
-    expect(items.filter((i) => i.kind === "refactoring")).toHaveLength(66);
-    expect(items.filter((i) => i.kind === "pattern")).toHaveLength(50);
+    expect(items.filter((i) => i.kind === "refactoring")).toHaveLength(93);
+    expect(items.filter((i) => i.kind === "pattern")).toHaveLength(23);
   });
 
   it("lists refactorings, then smells, then patterns", () => {
     const items = loadCatalogItems();
 
     expect(items[0]?.kind).toBe("refactoring");
-    expect(items[65]?.kind).toBe("refactoring");
-    expect(items[66]?.kind).toBe("smell");
-    expect(items[89]?.kind).toBe("smell");
-    expect(items[90]?.kind).toBe("pattern");
+    expect(items[92]?.kind).toBe("refactoring");
+    expect(items[93]?.kind).toBe("smell");
+    expect(items[116]?.kind).toBe("smell");
+    expect(items[117]?.kind).toBe("pattern");
     expect(items[139]?.kind).toBe("pattern");
   });
 

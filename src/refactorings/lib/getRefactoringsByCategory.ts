@@ -1,7 +1,7 @@
 import type { CatalogListItem } from "@/shared/lib/CatalogListItem";
 
 import { REFACTORING_CATEGORIES } from "./categories";
-import { loadRefactorings } from "./loadRefactorings";
+import { loadFowlerRefactorings } from "./loadFowlerRefactorings";
 import { toRefactoringListItem } from "./toRefactoringListItem";
 
 export interface RefactoringCategoryGroup {
@@ -10,9 +10,9 @@ export interface RefactoringCategoryGroup {
 }
 
 export function getRefactoringsByCategory(): RefactoringCategoryGroup[] {
-  const allRefactorings = loadRefactorings();
+  const fowlerRefactorings = loadFowlerRefactorings();
   const byName = new Map(
-    allRefactorings.map((refactoring, index) => [
+    fowlerRefactorings.map((refactoring, index) => [
       refactoring.name.toString(),
       { refactoring, number: index + 1 },
     ]),

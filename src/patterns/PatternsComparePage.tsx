@@ -1,8 +1,8 @@
+import { loadKerievsky } from "@/refactorings/lib/loadKerievsky";
 import CatalogCompareDetail from "@/shared/components/CatalogCompareDetail";
-import type { PatternBook } from "@/shared/lib/CatalogEntry";
 import { findCatalogEntryBySlug } from "@/shared/lib/findCatalogEntryBySlug";
 import { generateCatalogStaticParams } from "@/shared/lib/generateCatalogStaticParams";
-import { subSiteForPatternBook } from "@/shared/lib/subSites";
+import { GOF } from "@/shared/lib/subSites";
 
 import { findPatternSources } from "./lib/findPatternSources";
 import { getPatternNeighbors } from "./lib/getPatternNeighbors";
@@ -10,27 +10,28 @@ import { loadPatterns } from "./lib/loadPatterns";
 
 interface PatternsComparePageProps {
   params: Promise<{ slug: string }>;
-  book: PatternBook;
 }
 
-export default async function PatternsComparePage({ params, book }: PatternsComparePageProps) {
+export default async function PatternsComparePage({ params }: PatternsComparePageProps) {
   const { slug: rawSlug } = await params;
-  const { entry: pattern, number } = findCatalogEntryBySlug(rawSlug, loadPatterns(book));
-  const sources = findPatternSources(pattern.name, loadPatterns()).map((source) => source.name);
+  const { entry: pattern, number } = findCatalogEntryBySlug(rawSlug, loadPatterns());
+  // Sources of a GoF pattern are now Kerievsky refactorings (post-ADR-0007)
+  // — entries that declare `destinationPattern: { book: "gof", ... }`.
+  const sources = findPatternSources(pattern.name, loadKerievsky()).map((source) => source.name);
   return (
     <CatalogCompareDetail
       entry={pattern}
       number={number}
-      backLinkHref={subSiteForPatternBook(book).href()}
+      backLinkHref={GOF.href()}
       backLinkLabel="Patterns"
       beforeLabel="Before the pattern"
       afterLabel="After the pattern"
-      neighbors={getPatternNeighbors(number, book)}
+      neighbors={getPatternNeighbors(number)}
       incomingSources={sources}
     />
   );
 }
 
-export function patternsCompareStaticParams(book: PatternBook) {
-  return generateCatalogStaticParams(loadPatterns(book));
+export function patternsCompareStaticParams() {
+  return generateCatalogStaticParams(loadPatterns());
 }

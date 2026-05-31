@@ -5,9 +5,9 @@ interface RouteProps {
 }
 
 export default async function Page({ params }: RouteProps) {
-  return PatternsAgentPage({ params, book: "gof" });
+  return PatternsAgentPage({ params });
 }
 
 export function generateStaticParams() {
-  return patternsAgentStaticParams("gof");
+  return patternsAgentStaticParams();
 }

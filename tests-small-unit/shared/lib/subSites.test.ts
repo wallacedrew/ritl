@@ -16,10 +16,10 @@ describe("subSites registry", () => {
     expect(FOWLER.catalogs).toEqual(["refactorings", "smells"]);
   });
 
-  it("declares Kerievsky at /refactoring-to-patterns with the patterns catalog", () => {
+  it("declares Kerievsky at /refactoring-to-patterns with the refactorings catalog", () => {
     expect(KERIEVSKY.slug).toBe("refactoring-to-patterns");
     expect(KERIEVSKY.title).toBe("Refactoring to Patterns");
-    expect(KERIEVSKY.catalogs).toEqual(["patterns"]);
+    expect(KERIEVSKY.catalogs).toEqual(["refactorings"]);
   });
 
   it("declares GoF at /design-patterns with the patterns catalog", () => {

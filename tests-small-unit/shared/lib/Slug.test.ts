@@ -91,9 +91,15 @@ describe("Slug.toCatalogHref", () => {
     );
   });
 
-  it("builds a kerievsky pattern href under /refactoring-to-patterns", () => {
-    expect(Slug.from("Compose Method").toCatalogHref("patterns", "kerievsky")).toBe(
+  it("builds a kerievsky refactoring href under /refactoring-to-patterns", () => {
+    expect(Slug.from("Compose Method").toCatalogHref("refactorings", "kerievsky")).toBe(
       "/refactoring-to-patterns/compose-method",
+    );
+  });
+
+  it("builds a fowler refactoring href under /refactoring/canon", () => {
+    expect(Slug.from("Extract Function").toCatalogHref("refactorings", "fowler")).toBe(
+      "/refactoring/canon/extract-function",
     );
   });
 

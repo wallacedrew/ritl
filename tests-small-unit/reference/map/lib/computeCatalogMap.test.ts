@@ -62,9 +62,9 @@ const replaceTempWithQuery = entry({
 });
 
 const composeMethod = entry({
-  catalog: "patterns",
+  catalog: "refactorings",
   book: "kerievsky",
-  name: CatalogEntryName.pattern("Compose Method", "kerievsky"),
+  name: CatalogEntryName.refactoring("Compose Method", "kerievsky"),
   nemeses: [
     CatalogEntryName.smell("Long Function"),
     CatalogEntryName.refactoring("Extract Function"),
@@ -73,9 +73,9 @@ const composeMethod = entry({
 });
 
 const encapsulateClassesWithFactory = entry({
-  catalog: "patterns",
+  catalog: "refactorings",
   book: "kerievsky",
-  name: CatalogEntryName.pattern("Encapsulate Classes With Factory", "kerievsky"),
+  name: CatalogEntryName.refactoring("Encapsulate Classes With Factory", "kerievsky"),
   destinationPattern: CatalogEntryName.pattern("Factory Method", "gof"),
 });
 
@@ -86,9 +86,15 @@ const factoryMethod = entry({
 });
 
 const snapshot: CatalogSnapshot = {
-  refactorings: [extractFunction, splitLoop, replaceTempWithQuery],
+  refactorings: [
+    extractFunction,
+    splitLoop,
+    replaceTempWithQuery,
+    composeMethod,
+    encapsulateClassesWithFactory,
+  ],
   smells: [longFunction, isolatedSmell],
-  patterns: [composeMethod, encapsulateClassesWithFactory, factoryMethod],
+  patterns: [factoryMethod],
 };
 
 describe("computeCatalogMap", () => {

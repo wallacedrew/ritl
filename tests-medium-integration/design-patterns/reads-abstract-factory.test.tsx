@@ -16,7 +16,6 @@ describe("user reads Abstract Factory via the GoF sub-site", () => {
   it("Abstract Factory detail renders with the family-of-products before/after and back-links to /design-patterns", async () => {
     const ui = await PatternsDetailPage({
       params: Promise.resolve({ slug: "abstract-factory" }),
-      book: "gof",
     });
     renderWithTheme(ui);
 
@@ -45,7 +44,6 @@ describe("user reads Abstract Factory via the GoF sub-site", () => {
   it("Composite detail surfaces 'Reached from' inverse links to the three Kerievsky composite refactorings", async () => {
     const ui = await PatternsDetailPage({
       params: Promise.resolve({ slug: "composite" }),
-      book: "gof",
     });
     renderWithTheme(ui);
 

@@ -3,7 +3,7 @@ import { screen } from "@testing-library/react";
 
 import { renderWithTheme } from "../../tests-small-unit/_helpers/renderWithTheme";
 import KerievskyLandingPage from "@/refactoring-to-patterns/KerievskyLandingPage";
-import PatternsDetailPage from "@/patterns/PatternsDetailPage";
+import RefactoringDetailPage from "@/refactorings/RefactoringDetailPage";
 
 describe("user reads Replace Conditional Logic with Strategy", () => {
   it("Kerievsky landing browseably lists the new pattern alongside Compose Method", () => {
@@ -22,7 +22,7 @@ describe("user reads Replace Conditional Logic with Strategy", () => {
   });
 
   it("detail page renders the loan-calculator before/after with cross-sub-site nemesis links", async () => {
-    const ui = await PatternsDetailPage({
+    const ui = await RefactoringDetailPage({
       params: Promise.resolve({ slug: "replace-conditional-logic-with-strategy" }),
       book: "kerievsky",
     });
@@ -52,7 +52,7 @@ describe("user reads Replace Conditional Logic with Strategy", () => {
   });
 
   it("detail page surfaces the GoF destination as a Strategy chip linking to /design-patterns/strategy", async () => {
-    const ui = await PatternsDetailPage({
+    const ui = await RefactoringDetailPage({
       params: Promise.resolve({ slug: "replace-conditional-logic-with-strategy" }),
       book: "kerievsky",
     });

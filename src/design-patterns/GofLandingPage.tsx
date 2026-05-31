@@ -3,7 +3,7 @@ import { toPatternListItem } from "@/patterns/lib/toPatternListItem";
 import CatalogListPage from "@/shared/components/CatalogListPage";
 
 export default function GofLandingPage() {
-  const items = loadPatterns("gof").map((pattern, index) => toPatternListItem(pattern, index + 1));
+  const items = loadPatterns().map((pattern, index) => toPatternListItem(pattern, index + 1));
 
   return (
     <CatalogListPage

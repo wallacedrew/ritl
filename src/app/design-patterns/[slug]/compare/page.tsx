@@ -5,9 +5,9 @@ interface RouteProps {
 }
 
 export default async function Page({ params }: RouteProps) {
-  return PatternsComparePage({ params, book: "gof" });
+  return PatternsComparePage({ params });
 }
 
 export function generateStaticParams() {
-  return patternsCompareStaticParams("gof");
+  return patternsCompareStaticParams();
 }

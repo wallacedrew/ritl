@@ -36,19 +36,22 @@ export function computeCatalogMap(snapshot: CatalogSnapshot): CatalogMap {
 }
 
 function collectCrossBookBridges(snapshot: CatalogSnapshot): readonly CatalogMapBridge[] {
-  return snapshot.patterns.flatMap((pattern) => {
-    const destination = pattern.destinationPattern;
+  return snapshot.refactorings.flatMap((refactoring) => {
+    const destination = refactoring.destinationPattern;
     if (destination === undefined) return [];
-    return [{ source: toChip(pattern.name), destination: toChip(destination) }];
+    return [{ source: toChip(refactoring.name), destination: toChip(destination) }];
   });
 }
 
 function collectKerievskyWithoutDestination(
   snapshot: CatalogSnapshot,
 ): readonly CrossReferenceChip[] {
-  return snapshot.patterns
-    .filter((pattern) => pattern.book === "kerievsky" && pattern.destinationPattern === undefined)
-    .map((pattern) => toChip(pattern.name));
+  return snapshot.refactorings
+    .filter(
+      (refactoring) =>
+        refactoring.book === "kerievsky" && refactoring.destinationPattern === undefined,
+    )
+    .map((refactoring) => toChip(refactoring.name));
 }
 
 function rankEntriesByConnections(snapshot: CatalogSnapshot): readonly RankedEntry[] {

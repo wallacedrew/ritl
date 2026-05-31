@@ -5,7 +5,7 @@ interface CatalogStatsProps {
   smellCount: number;
   refactoringCount: number;
   categoryCount: number;
-  kerievskyPatternCount?: number;
+  kerievskyRefactoringCount?: number;
   gofPatternCount?: number;
 }
 
@@ -13,7 +13,7 @@ export default function CatalogStats({
   smellCount,
   refactoringCount,
   categoryCount,
-  kerievskyPatternCount,
+  kerievskyRefactoringCount,
   gofPatternCount,
 }: CatalogStatsProps) {
   return (
@@ -27,9 +27,9 @@ export default function CatalogStats({
       <Typography variant="body2">
         <strong>{categoryCount}</strong> categories
       </Typography>
-      {kerievskyPatternCount !== undefined && (
+      {kerievskyRefactoringCount !== undefined && (
         <Typography variant="body2">
-          <strong>{kerievskyPatternCount}</strong> Kerievsky patterns
+          <strong>{kerievskyRefactoringCount}</strong> Kerievsky refactorings
         </Typography>
       )}
       {gofPatternCount !== undefined && (

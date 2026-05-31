@@ -53,9 +53,9 @@ const replaceTempWithQuery = entry({
 });
 
 const composeMethod = entry({
-  catalog: "patterns",
+  catalog: "refactorings",
   book: "kerievsky",
-  name: CatalogEntryName.pattern("Compose Method", "kerievsky"),
+  name: CatalogEntryName.refactoring("Compose Method", "kerievsky"),
   nemeses: [
     CatalogEntryName.smell("Long Function"),
     CatalogEntryName.refactoring("Extract Function"),
@@ -63,9 +63,9 @@ const composeMethod = entry({
 });
 
 const encapsulateClassesWithFactory = entry({
-  catalog: "patterns",
+  catalog: "refactorings",
   book: "kerievsky",
-  name: CatalogEntryName.pattern("Encapsulate Classes With Factory", "kerievsky"),
+  name: CatalogEntryName.refactoring("Encapsulate Classes With Factory", "kerievsky"),
   destinationPattern: CatalogEntryName.pattern("Factory Method", "gof"),
 });
 
@@ -76,9 +76,14 @@ const factoryMethod = entry({
 });
 
 const snapshot: CatalogSnapshot = {
-  refactorings: [extractFunction, replaceTempWithQuery],
+  refactorings: [
+    extractFunction,
+    replaceTempWithQuery,
+    composeMethod,
+    encapsulateClassesWithFactory,
+  ],
   smells: [longFunction],
-  patterns: [composeMethod, encapsulateClassesWithFactory, factoryMethod],
+  patterns: [factoryMethod],
 };
 
 describe("buildCatalogGraph", () => {
@@ -142,7 +147,7 @@ describe("computeCrossReferencesForHref", () => {
     expect(labels).toEqual(["Removes smells", "Referenced by patterns"]);
   });
 
-  it("emits Triggered by + Destination for a Kerievsky pattern that has a destination", () => {
+  it("emits Triggered by + Destination for a Kerievsky refactoring that has a destination", () => {
     const result = computeCrossReferencesForHref(
       "/refactoring-to-patterns/encapsulate-classes-with-factory",
       graph,

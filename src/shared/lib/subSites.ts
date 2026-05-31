@@ -10,7 +10,7 @@ export const FOWLER: SubSite = SubSite.from({
 export const KERIEVSKY: SubSite = SubSite.from({
   slug: "refactoring-to-patterns",
   title: "Refactoring to Patterns",
-  catalogs: ["patterns"],
+  catalogs: ["refactorings"],
 });
 
 export const GOF: SubSite = SubSite.from({

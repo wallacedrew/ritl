@@ -16,8 +16,8 @@ export default function ReferencePageHeader({ counts }: Props) {
       </Typography>
       <Typography variant="body1" color="text.secondary">
         Every refactoring, smell, and pattern in the catalog, grouped by its source book.{" "}
-        {counts.refactorings} refactorings · {counts.smells} smells · {counts.kerievskyPatterns}{" "}
-        Kerievsky patterns · {counts.gofPatterns} GoF design patterns.
+        {counts.refactorings} refactorings · {counts.smells} smells · {counts.kerievskyRefactorings}{" "}
+        Kerievsky refactorings · {counts.gofPatterns} GoF design patterns.
       </Typography>
     </Stack>
   );

@@ -1,5 +1,7 @@
 import type { RefactoringCategoryGroup } from "@/refactorings/lib/getRefactoringsByCategory";
 import { getRefactoringsByCategory } from "@/refactorings/lib/getRefactoringsByCategory";
+import { loadKerievsky } from "@/refactorings/lib/loadKerievsky";
+import { toRefactoringListItem } from "@/refactorings/lib/toRefactoringListItem";
 import { loadPatterns } from "@/patterns/lib/loadPatterns";
 import { toPatternListItem } from "@/patterns/lib/toPatternListItem";
 import type { CatalogListItem } from "@/shared/lib/CatalogListItem";
@@ -9,14 +11,14 @@ import { toSmellListItem } from "@/smells/lib/toSmellListItem";
 export interface ReferenceCatalogCounts {
   refactorings: number;
   smells: number;
-  kerievskyPatterns: number;
+  kerievskyRefactorings: number;
   gofPatterns: number;
 }
 
 export interface ReferenceSections {
   refactoringsByCategory: RefactoringCategoryGroup[];
   smells: CatalogListItem[];
-  kerievskyPatterns: CatalogListItem[];
+  kerievskyRefactorings: CatalogListItem[];
   gofPatternsByBand: RefactoringCategoryGroup[];
   counts: ReferenceCatalogCounts;
 }
@@ -36,12 +38,10 @@ const GOF_BANDS: readonly GofBand[] = [
 export function getReferenceSections(): ReferenceSections {
   const refactoringsByCategory = getRefactoringsByCategory();
   const smells = loadSmells().map((entry, index) => toSmellListItem(entry, index + 1));
-  const kerievskyPatterns = loadPatterns("kerievsky").map((pattern, index) =>
-    toPatternListItem(pattern, index + 1),
+  const kerievskyRefactorings = loadKerievsky().map((refactoring, index) =>
+    toRefactoringListItem(refactoring, index + 1),
   );
-  const gofItems = loadPatterns("gof").map((pattern, index) =>
-    toPatternListItem(pattern, index + 1),
-  );
+  const gofItems = loadPatterns().map((pattern, index) => toPatternListItem(pattern, index + 1));
   const gofPatternsByBand = GOF_BANDS.map((band) => ({
     category: band.name,
     items: gofItems.filter(
@@ -56,12 +56,12 @@ export function getReferenceSections(): ReferenceSections {
   return {
     refactoringsByCategory,
     smells,
-    kerievskyPatterns,
+    kerievskyRefactorings,
     gofPatternsByBand,
     counts: {
       refactorings: refactoringCount,
       smells: smells.length,
-      kerievskyPatterns: kerievskyPatterns.length,
+      kerievskyRefactorings: kerievskyRefactorings.length,
       gofPatterns: gofItems.length,
     },
   };

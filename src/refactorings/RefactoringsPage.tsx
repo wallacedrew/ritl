@@ -1,10 +1,10 @@
 import CatalogListPage from "@/shared/components/CatalogListPage";
 
-import { loadRefactorings } from "./lib/loadRefactorings";
+import { loadFowlerRefactorings } from "./lib/loadFowlerRefactorings";
 import { toRefactoringListItem } from "./lib/toRefactoringListItem";
 
 export default function RefactoringsPage() {
-  const items = loadRefactorings().map((refactoring, index) =>
+  const items = loadFowlerRefactorings().map((refactoring, index) =>
     toRefactoringListItem(refactoring, index + 1),
   );
 

@@ -1,13 +1,15 @@
-import PatternsDetailPage, { patternsStaticParams } from "@/patterns/PatternsDetailPage";
+import RefactoringDetailPage, {
+  refactoringStaticParams,
+} from "@/refactorings/RefactoringDetailPage";
 
 interface RouteProps {
   params: Promise<{ slug: string }>;
 }
 
 export default async function Page({ params }: RouteProps) {
-  return PatternsDetailPage({ params, book: "kerievsky" });
+  return RefactoringDetailPage({ params, book: "kerievsky" });
 }
 
 export function generateStaticParams() {
-  return patternsStaticParams("kerievsky");
+  return refactoringStaticParams("kerievsky");
 }

@@ -4,7 +4,7 @@ import { screen } from "@testing-library/react";
 import { renderWithTheme } from "../../tests-small-unit/_helpers/renderWithTheme";
 import HomePage from "@/home/HomePage";
 import KerievskyLandingPage from "@/refactoring-to-patterns/KerievskyLandingPage";
-import PatternsDetailPage from "@/patterns/PatternsDetailPage";
+import RefactoringDetailPage from "@/refactorings/RefactoringDetailPage";
 
 describe("user reads Compose Method via the Kerievsky sub-site", () => {
   it("home page offers a Refactoring to Patterns card linking to /refactoring-to-patterns", () => {
@@ -25,7 +25,7 @@ describe("user reads Compose Method via the Kerievsky sub-site", () => {
   });
 
   it("Compose Method detail renders at /refactoring-to-patterns/compose-method with cross-sub-site nemesis links into Fowler", async () => {
-    const ui = await PatternsDetailPage({
+    const ui = await RefactoringDetailPage({
       params: Promise.resolve({ slug: "compose-method" }),
       book: "kerievsky",
     });
