@@ -5,7 +5,7 @@ import userEvent from "@testing-library/user-event";
 import { renderWithTheme } from "../../tests-small-unit/_helpers/renderWithTheme";
 import CatalogSearch from "@/shared/components/CatalogSearch";
 import type { CatalogItem } from "@/shared/lib/CatalogItem";
-import { RecordingAnalyticsTracker } from "@/shared/lib/RecordingAnalyticsTracker";
+import { RecordingAnalyticsTracker } from "@/shared/adapters/RecordingAnalyticsTracker";
 
 const pushMock = vi.fn();
 const pathnameMock = vi.fn<() => string>(() => "/");

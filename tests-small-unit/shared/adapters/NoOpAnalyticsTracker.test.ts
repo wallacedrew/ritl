@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { NoOpAnalyticsTracker } from "@/shared/lib/NoOpAnalyticsTracker";
+import { NoOpAnalyticsTracker } from "@/shared/adapters/NoOpAnalyticsTracker";
 
 describe("NoOpAnalyticsTracker", () => {
   it("track() returns without throwing for any event", () => {

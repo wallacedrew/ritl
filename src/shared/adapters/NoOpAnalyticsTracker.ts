@@ -1,4 +1,4 @@
-import type { AnalyticsEvent, AnalyticsTracker } from "./AnalyticsTracker";
+import type { AnalyticsEvent, AnalyticsTracker } from "@/shared/lib/AnalyticsTracker";
 
 export class NoOpAnalyticsTracker implements AnalyticsTracker {
   // Parameter declared so the signature matches AnalyticsTracker.track exactly

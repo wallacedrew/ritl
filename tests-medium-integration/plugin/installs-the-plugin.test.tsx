@@ -4,7 +4,7 @@ import userEvent from "@testing-library/user-event";
 
 import { renderWithTheme } from "../../tests-small-unit/_helpers/renderWithTheme";
 import PluginPage from "@/plugin/PluginPage";
-import { RecordingAnalyticsTracker } from "@/shared/lib/RecordingAnalyticsTracker";
+import { RecordingAnalyticsTracker } from "@/shared/adapters/RecordingAnalyticsTracker";
 
 describe("user installs the plugin from /plugin", () => {
   it("leads with the Claude Code marketplace install command", () => {

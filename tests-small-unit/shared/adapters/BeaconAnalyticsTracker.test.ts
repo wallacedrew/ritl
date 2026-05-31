@@ -1,6 +1,6 @@
 import { describe, expect, it, vi, beforeEach, afterEach } from "vitest";
 
-import { BeaconAnalyticsTracker } from "@/shared/lib/BeaconAnalyticsTracker";
+import { BeaconAnalyticsTracker } from "@/shared/adapters/BeaconAnalyticsTracker";
 
 describe("BeaconAnalyticsTracker", () => {
   let sendBeaconSpy: ReturnType<typeof vi.fn>;

@@ -1,4 +1,4 @@
-import type { AnalyticsEvent, AnalyticsTracker } from "./AnalyticsTracker";
+import type { AnalyticsEvent, AnalyticsTracker } from "@/shared/lib/AnalyticsTracker";
 
 const TRACK_ENDPOINT = "/api/track";
 

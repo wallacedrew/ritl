@@ -3,8 +3,8 @@
 import { createContext, useMemo, type ReactNode } from "react";
 
 import type { AnalyticsTracker } from "@/shared/lib/AnalyticsTracker";
-import { BeaconAnalyticsTracker } from "@/shared/lib/BeaconAnalyticsTracker";
-import { NoOpAnalyticsTracker } from "@/shared/lib/NoOpAnalyticsTracker";
+import { BeaconAnalyticsTracker } from "@/shared/adapters/BeaconAnalyticsTracker";
+import { NoOpAnalyticsTracker } from "@/shared/adapters/NoOpAnalyticsTracker";
 
 export const AnalyticsContext = createContext<AnalyticsTracker | null>(null);
 

@@ -4,7 +4,7 @@ import userEvent from "@testing-library/user-event";
 
 import { renderWithTheme } from "../../tests-small-unit/_helpers/renderWithTheme";
 import PluginPage from "@/plugin/PluginPage";
-import { RecordingAnalyticsTracker } from "@/shared/lib/RecordingAnalyticsTracker";
+import { RecordingAnalyticsTracker } from "@/shared/adapters/RecordingAnalyticsTracker";
 
 const STUB_SNIPPET_CONTENT = "# Refactoring discipline\n\nApply this cycle to every change.";
 

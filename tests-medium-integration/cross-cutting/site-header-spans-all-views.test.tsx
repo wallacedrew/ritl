@@ -4,7 +4,7 @@ import userEvent from "@testing-library/user-event";
 
 import { renderWithTheme } from "../../tests-small-unit/_helpers/renderWithTheme";
 import SiteHeader from "@/shared/components/SiteHeader";
-import { RecordingAnalyticsTracker } from "@/shared/lib/RecordingAnalyticsTracker";
+import { RecordingAnalyticsTracker } from "@/shared/adapters/RecordingAnalyticsTracker";
 
 vi.mock("next/navigation", () => ({
   usePathname: () => "/",

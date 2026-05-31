@@ -1,4 +1,4 @@
-import type { AnalyticsEvent, AnalyticsTracker } from "./AnalyticsTracker";
+import type { AnalyticsEvent, AnalyticsTracker } from "@/shared/lib/AnalyticsTracker";
 
 export class RecordingAnalyticsTracker implements AnalyticsTracker {
   private readonly recorded: AnalyticsEvent[] = [];

@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { RecordingAnalyticsTracker } from "@/shared/lib/RecordingAnalyticsTracker";
+import { RecordingAnalyticsTracker } from "@/shared/adapters/RecordingAnalyticsTracker";
 
 describe("RecordingAnalyticsTracker", () => {
   it("records calls in order with their event + properties", () => {
