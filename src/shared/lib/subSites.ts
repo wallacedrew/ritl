@@ -1,4 +1,4 @@
-import type { CatalogKind, PatternBook } from "./CatalogEntry";
+import type { CatalogKind, PatternBook, RefactoringBook } from "./CatalogEntry";
 import { SubSite } from "./SubSite";
 
 export const FOWLER: SubSite = SubSite.from({
@@ -39,5 +39,14 @@ export function subSiteForPatternBook(book: PatternBook): SubSite {
       return KERIEVSKY;
     case "gof":
       return GOF;
+  }
+}
+
+export function subSiteForRefactoringBook(book: RefactoringBook): SubSite {
+  switch (book) {
+    case "fowler":
+      return FOWLER;
+    case "kerievsky":
+      return KERIEVSKY;
   }
 }

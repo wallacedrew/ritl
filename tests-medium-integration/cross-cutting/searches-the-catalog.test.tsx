@@ -24,14 +24,14 @@ const items: CatalogItem[] = [
   },
   {
     kind: "refactoring",
-    tone: "refactoring",
+    tone: "fowler-refactoring",
     number: 1,
     name: "Extract Function",
     href: "/refactoring/canon/extract-function",
   },
   {
     kind: "refactoring",
-    tone: "refactoring",
+    tone: "fowler-refactoring",
     number: 12,
     name: "Extract Class",
     href: "/refactoring/canon/extract-class",

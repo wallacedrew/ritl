@@ -67,11 +67,11 @@ export function computeCrossReferencesForHref(href: string, graph: CatalogGraph)
   switch (node.tone) {
     case "smell":
       return smellCrossReferences(node, graph);
-    case "refactoring":
+    case "fowler-refactoring":
       return refactoringCrossReferences(node, graph);
-    case "kerievsky-pattern":
+    case "kerievsky-refactoring":
       return kerievskyCrossReferences(node, graph);
-    case "gof-pattern":
+    case "pattern":
       return gofCrossReferences(node, graph);
   }
 }
@@ -129,14 +129,14 @@ function patternsReferencing(targetHref: string, graph: CatalogGraph): readonly 
   const allInbound = graph.inboundByHref.get(targetHref) ?? [];
   return allInbound.filter((sourceHref) => {
     const source = graph.nodes.get(sourceHref);
-    return source?.tone === "kerievsky-pattern" || source?.tone === "gof-pattern";
+    return source?.tone === "kerievsky-refactoring" || source?.tone === "pattern";
   });
 }
 
 function chipFromGraph(href: string, graph: CatalogGraph): CrossReferenceChip {
   const node = graph.nodes.get(href);
   if (!node) {
-    return { label: href, href, tone: "refactoring" };
+    return { label: href, href, tone: "fowler-refactoring" };
   }
   return { label: node.name, href: node.href, tone: node.tone };
 }

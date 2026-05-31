@@ -38,12 +38,12 @@ interface CatalogEntryHeaderProps {
 
 function nemesesLabel(name: CatalogEntryName): string {
   switch (name.tone()) {
-    case "refactoring":
+    case "fowler-refactoring":
       return "Removes smells";
     case "smell":
       return "Apply refactorings";
-    case "kerievsky-pattern":
-    case "gof-pattern":
+    case "kerievsky-refactoring":
+    case "pattern":
       return "Triggered by";
   }
 }

@@ -1,5 +1,5 @@
-import type { CatalogKind, PatternBook } from "./CatalogEntry";
-import { subSiteForCatalog, subSiteForPatternBook } from "./subSites";
+import type { Book, CatalogKind, PatternBook, RefactoringBook } from "./CatalogEntry";
+import { subSiteForCatalog, subSiteForPatternBook, subSiteForRefactoringBook } from "./subSites";
 
 const SLUG_FORMAT = /^[a-z0-9]+(-[a-z0-9]+)*$/;
 
@@ -25,12 +25,16 @@ export class Slug {
     return this.value === other.value;
   }
 
-  toCatalogHref(kind: CatalogKind, book?: PatternBook): string {
+  toCatalogHref(kind: CatalogKind, book?: Book): string {
     if (kind === "patterns") {
       if (book === undefined) {
         throw new Error('Slug.toCatalogHref: "book" is required when kind is "patterns"');
       }
-      return subSiteForPatternBook(book).hrefForEntry(kind, this.value);
+      return subSiteForPatternBook(book as PatternBook).hrefForEntry(kind, this.value);
+    }
+    if (kind === "refactorings") {
+      const refactoringBook: RefactoringBook = book === "kerievsky" ? "kerievsky" : "fowler";
+      return subSiteForRefactoringBook(refactoringBook).hrefForEntry(kind, this.value);
     }
     return subSiteForCatalog(kind).hrefForEntry(kind, this.value);
   }

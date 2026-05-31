@@ -23,14 +23,14 @@ function slugFromHref(href: string): string {
 
 function captionFor(tone: CatalogItem["tone"]): string {
   switch (tone) {
-    case "refactoring":
+    case "fowler-refactoring":
       return "refactoring";
     case "smell":
       return "smell";
-    case "kerievsky-pattern":
-      return "kerievsky pattern";
-    case "gof-pattern":
-      return "gof pattern";
+    case "kerievsky-refactoring":
+      return "kerievsky refactoring";
+    case "pattern":
+      return "pattern";
   }
 }
 

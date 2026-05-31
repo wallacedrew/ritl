@@ -43,7 +43,7 @@ describe("toRefactoringListItem", () => {
     const item = toRefactoringListItem(baseRefactoring, 1);
 
     expect(item.name).toBe("Extract Function");
-    expect(item.tone).toBe("refactoring");
+    expect(item.tone).toBe("fowler-refactoring");
     expect(item.caption).toContain("single named");
   });
 

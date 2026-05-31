@@ -18,23 +18,23 @@ export type ChipColor =
 
 /**
  * Mapping of catalog tone → MUI palette key. Tone is the granular
- * source label (refactoring / smell / kerievsky-pattern / gof-pattern);
- * colors are the user-chosen tones:
+ * source label (smell / fowler-refactoring / kerievsky-refactoring /
+ * pattern); colors are preserved across the post-ADR-0007 rename:
  *
- *   refactoring        → success  (green)
- *   smell              → error    (red)
- *   kerievsky-pattern  → warning  (orange)
- *   gof-pattern        → info     (blue)
+ *   fowler-refactoring     → success  (green)
+ *   smell                  → error    (red)
+ *   kerievsky-refactoring  → warning  (orange)
+ *   pattern                → info     (blue)
  */
 export function chipColorForTone(tone: CatalogEntryTone): ChipColor {
   switch (tone) {
-    case "refactoring":
+    case "fowler-refactoring":
       return "success";
     case "smell":
       return "error";
-    case "kerievsky-pattern":
+    case "kerievsky-refactoring":
       return "warning";
-    case "gof-pattern":
+    case "pattern":
       return "info";
   }
 }
@@ -57,13 +57,13 @@ export type BadgePaletteKey = "success" | "error" | "warning" | "info";
 
 export function badgePaletteKey(tone: CatalogEntryTone): BadgePaletteKey {
   switch (tone) {
-    case "refactoring":
+    case "fowler-refactoring":
       return "success";
     case "smell":
       return "error";
-    case "kerievsky-pattern":
+    case "kerievsky-refactoring":
       return "warning";
-    case "gof-pattern":
+    case "pattern":
       return "info";
   }
 }

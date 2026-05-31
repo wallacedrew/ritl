@@ -8,11 +8,12 @@ export type RefactoringBook = "fowler" | "kerievsky";
 export type Book = RefactoringBook | "gof";
 
 /**
- * Granular source label for an entry. Distinguishes Kerievsky from GoF
- * patterns (both of which have CatalogKind "patterns") so the UI can
- * color-code chips and search dots by source.
+ * Granular source label for an entry. Names what each entry actually
+ * is: a smell, a Fowler refactoring, a Kerievsky refactoring (which
+ * targets a GoF pattern), or a Gang of Four pattern. The chip-color
+ * map in `catalogChipColor.ts` translates tone → CSS palette key.
  */
-export type CatalogEntryTone = "refactoring" | "smell" | "kerievsky-pattern" | "gof-pattern";
+export type CatalogEntryTone = "smell" | "fowler-refactoring" | "kerievsky-refactoring" | "pattern";
 
 export const LEGAL_CATALOGS: readonly CatalogKind[] = ["smells", "refactorings", "patterns"];
 export const LEGAL_PATTERN_BOOKS: readonly PatternBook[] = ["kerievsky", "gof"];
@@ -59,8 +60,14 @@ export class CatalogEntry {
     } else if (book !== undefined) {
       throw new Error('CatalogEntry: "book" is only allowed on pattern or refactoring entries');
     }
-    if (destinationPattern !== undefined && catalog !== "patterns") {
-      throw new Error('CatalogEntry: "destinationPattern" is only allowed on pattern entries');
+    if (destinationPattern !== undefined) {
+      const isPattern = catalog === "patterns";
+      const isKerievskyRefactoring = catalog === "refactorings" && book === "kerievsky";
+      if (!isPattern && !isKerievskyRefactoring) {
+        throw new Error(
+          'CatalogEntry: "destinationPattern" is only allowed on patterns or refactorings with book="kerievsky"',
+        );
+      }
     }
     if (before.trim().length === 0) {
       throw new Error('CatalogEntry: field "before" cannot be empty');

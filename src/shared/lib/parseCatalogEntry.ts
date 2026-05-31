@@ -153,9 +153,11 @@ function readDestinationPattern(
   if (raw === undefined) {
     return undefined;
   }
-  if (ownCatalog !== "patterns") {
+  const isPattern = ownCatalog === "patterns";
+  const isKerievskyRefactoring = ownCatalog === "refactorings" && ownBook === "kerievsky";
+  if (!isPattern && !isKerievskyRefactoring) {
     throw new Error(
-      'parseCatalogEntry: field "destinationPattern" is only allowed on pattern entries',
+      'parseCatalogEntry: field "destinationPattern" is only allowed on patterns or refactorings with book="kerievsky"',
     );
   }
   if (raw === null || typeof raw !== "object" || Array.isArray(raw)) {
@@ -244,7 +246,7 @@ function readCatalogEntryName(
     case "smells":
       return CatalogEntryName.smell(rawName);
     case "refactorings":
-      return CatalogEntryName.refactoring(rawName);
+      return CatalogEntryName.refactoring(rawName, book === "kerievsky" ? "kerievsky" : "fowler");
     case "patterns":
       if (book === undefined || !(LEGAL_PATTERN_BOOKS as readonly string[]).includes(book)) {
         throw new Error('parseCatalogEntry: pattern entries must declare a "book"');

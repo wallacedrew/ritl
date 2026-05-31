@@ -15,7 +15,7 @@ describe("relationshipGroup", () => {
       {
         label: "Extract Function",
         href: "/refactoring/canon/extract-function",
-        tone: "refactoring",
+        tone: "fowler-refactoring",
       },
     ]);
 
@@ -47,7 +47,7 @@ describe("crossReferences", () => {
       {
         label: "Extract Function",
         href: "/refactoring/canon/extract-function",
-        tone: "refactoring",
+        tone: "fowler-refactoring",
       },
     ]);
     const empty = relationshipGroup("referenced-by-patterns", []);
@@ -68,19 +68,19 @@ describe("crossReferences", () => {
       {
         label: "Extract Function",
         href: "/refactoring/canon/extract-function",
-        tone: "refactoring",
+        tone: "fowler-refactoring",
       },
       {
         label: "Replace Temp with Query",
         href: "/refactoring/canon/replace-temp-with-query",
-        tone: "refactoring",
+        tone: "fowler-refactoring",
       },
     ]);
     const patterns = relationshipGroup("referenced-by-patterns", [
       {
         label: "Compose Method",
         href: "/refactoring-to-patterns/compose-method",
-        tone: "kerievsky-pattern",
+        tone: "kerievsky-refactoring",
       },
     ]);
 

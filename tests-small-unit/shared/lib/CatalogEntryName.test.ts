@@ -75,11 +75,17 @@ describe("CatalogEntryName", () => {
   });
 
   it("derives the chip tone from kind and book", () => {
-    expect(CatalogEntryName.refactoring("Extract Function").tone()).toBe("refactoring");
+    expect(CatalogEntryName.refactoring("Extract Function").tone()).toBe("fowler-refactoring");
+    expect(CatalogEntryName.refactoring("Extract Function", "fowler").tone()).toBe(
+      "fowler-refactoring",
+    );
+    expect(
+      CatalogEntryName.refactoring("Replace Conditional Logic with Strategy", "kerievsky").tone(),
+    ).toBe("kerievsky-refactoring");
     expect(CatalogEntryName.smell("Long Function").tone()).toBe("smell");
     expect(CatalogEntryName.pattern("Compose Method", "kerievsky").tone()).toBe(
-      "kerievsky-pattern",
+      "kerievsky-refactoring",
     );
-    expect(CatalogEntryName.pattern("Strategy", "gof").tone()).toBe("gof-pattern");
+    expect(CatalogEntryName.pattern("Strategy", "gof").tone()).toBe("pattern");
   });
 });

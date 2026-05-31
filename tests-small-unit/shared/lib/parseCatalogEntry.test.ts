@@ -270,7 +270,7 @@ describe("parseCatalogEntry", () => {
         ...validSmell,
         destinationPattern: { book: "gof", name: "Strategy" },
       }),
-    ).toThrow(/destinationPattern.*only allowed on pattern entries/i);
+    ).toThrow(/destinationPattern.*only allowed on patterns or refactorings/i);
   });
 
   it("rejects a destinationPattern whose book matches the entry's own book", () => {

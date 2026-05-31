@@ -35,7 +35,7 @@ describe("getRefactoringsByCategory", () => {
     const extractFunction = composing?.items.find((i) => i.name === "Extract Function");
     expect(extractFunction?.href).toBe("/refactoring/canon/extract-function");
     expect(extractFunction?.number).toBe(1);
-    expect(extractFunction?.tone).toBe("refactoring");
+    expect(extractFunction?.tone).toBe("fowler-refactoring");
   });
 
   it("categorizes every refactoring in the catalog (no orphans)", () => {

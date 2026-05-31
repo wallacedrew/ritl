@@ -1,11 +1,17 @@
-import type { CatalogEntryTone, CatalogKind, PatternBook } from "./CatalogEntry";
+import type {
+  Book,
+  CatalogEntryTone,
+  CatalogKind,
+  PatternBook,
+  RefactoringBook,
+} from "./CatalogEntry";
 import { Slug } from "./Slug";
 
 export class CatalogEntryName {
   private constructor(
     private readonly value: string,
     private readonly kind: CatalogKind,
-    private readonly book?: PatternBook,
+    private readonly book?: Book,
   ) {
     if (value.trim().length === 0) {
       throw new Error("CatalogEntryName: value cannot be empty");
@@ -13,13 +19,13 @@ export class CatalogEntryName {
     if (kind === "patterns" && book === undefined) {
       throw new Error('CatalogEntryName: pattern names must declare a "book"');
     }
-    if (kind !== "patterns" && book !== undefined) {
-      throw new Error('CatalogEntryName: "book" is only allowed on pattern names');
+    if (kind === "smells" && book !== undefined) {
+      throw new Error('CatalogEntryName: "book" is not allowed on smell names');
     }
   }
 
-  static refactoring(value: string): CatalogEntryName {
-    return new CatalogEntryName(value, "refactorings");
+  static refactoring(value: string, book: RefactoringBook = "fowler"): CatalogEntryName {
+    return new CatalogEntryName(value, "refactorings", book);
   }
 
   static smell(value: string): CatalogEntryName {
@@ -53,11 +59,11 @@ export class CatalogEntryName {
   tone(): CatalogEntryTone {
     switch (this.kind) {
       case "refactorings":
-        return "refactoring";
+        return this.book === "kerievsky" ? "kerievsky-refactoring" : "fowler-refactoring";
       case "smells":
         return "smell";
       case "patterns":
-        return this.book === "gof" ? "gof-pattern" : "kerievsky-pattern";
+        return this.book === "kerievsky" ? "kerievsky-refactoring" : "pattern";
     }
   }
 }
