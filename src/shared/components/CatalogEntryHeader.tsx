@@ -5,14 +5,9 @@ import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 import NextLink from "next/link";
 
-import LabeledChipRow, { type LabeledChipRowChip } from "@/shared/components/LabeledChipRow";
+import LabeledChipRow from "@/shared/components/LabeledChipRow";
+import type { CatalogEntryHeaderViewModel } from "@/shared/lib/CatalogDetailViewModel";
 import { MONOSPACE_FONT } from "@/shared/theme/monospace";
-import type { CatalogEntryName } from "@/shared/lib/CatalogEntryName";
-import type { CatalogNeighbors } from "@/shared/lib/CatalogNeighbors";
-
-function toChip(name: CatalogEntryName): LabeledChipRowChip {
-  return { label: name.toString(), href: name.toCatalogHref(), tone: name.tone() };
-}
 
 const NAV_ARROW_STYLE = {
   display: "inline-flex" as const,
@@ -27,38 +22,12 @@ const NAV_ARROW_STYLE = {
 };
 
 interface CatalogEntryHeaderProps {
-  name: CatalogEntryName;
-  number: number;
-  relatedNames: readonly CatalogEntryName[];
-  destinationPattern?: CatalogEntryName;
-  incomingSources?: readonly CatalogEntryName[];
-  inboundPatterns?: readonly CatalogEntryName[];
-  neighbors?: CatalogNeighbors;
+  header: CatalogEntryHeaderViewModel;
 }
 
-function nemesesLabel(name: CatalogEntryName): string {
-  switch (name.tone()) {
-    case "fowler-refactoring":
-      return "Removes smells";
-    case "smell":
-      return "Apply refactorings";
-    case "kerievsky-refactoring":
-    case "pattern":
-      return "Triggered by";
-  }
-}
-
-export default function CatalogEntryHeader({
-  name,
-  number,
-  relatedNames,
-  destinationPattern,
-  incomingSources,
-  inboundPatterns,
-  neighbors,
-}: CatalogEntryHeaderProps) {
-  const prev = neighbors?.prev ?? null;
-  const next = neighbors?.next ?? null;
+export default function CatalogEntryHeader({ header }: CatalogEntryHeaderProps) {
+  const prev = header.neighbors?.prev ?? null;
+  const next = header.neighbors?.next ?? null;
 
   return (
     <Stack spacing={3}>
@@ -73,7 +42,7 @@ export default function CatalogEntryHeader({
             fontSize: { xs: "1.375rem", sm: "1.625rem", md: "2.125rem" },
           }}
         >
-          {name.toString()}
+          {header.title}
         </Typography>
         <Stack direction="row" spacing={0.5} sx={{ alignItems: "center", flexShrink: 0 }}>
           {prev ? (
@@ -100,7 +69,7 @@ export default function CatalogEntryHeader({
               lineHeight: 1.5,
             }}
           >
-            {String(number).padStart(2, "0")}
+            {String(header.number).padStart(2, "0")}
           </Box>
           {next ? (
             <NextLink href={next.href} aria-label={`Next: ${next.name}`} style={NAV_ARROW_STYLE}>
@@ -111,15 +80,15 @@ export default function CatalogEntryHeader({
           )}
         </Stack>
       </Stack>
-      <LabeledChipRow label={nemesesLabel(name)} chips={relatedNames.map(toChip)} />
-      {destinationPattern && (
-        <LabeledChipRow label="Destination" chips={[toChip(destinationPattern)]} />
+      <LabeledChipRow label={header.nemesesLabel} chips={header.relatedChips} />
+      {header.destinationChip && (
+        <LabeledChipRow label="Destination" chips={[header.destinationChip]} />
       )}
-      {incomingSources && (
-        <LabeledChipRow label="Reached from" chips={incomingSources.map(toChip)} />
+      {header.incomingSourceChips && (
+        <LabeledChipRow label="Reached from" chips={header.incomingSourceChips} />
       )}
-      {inboundPatterns && (
-        <LabeledChipRow label="Referenced by patterns" chips={inboundPatterns.map(toChip)} />
+      {header.inboundPatternChips && (
+        <LabeledChipRow label="Referenced by patterns" chips={header.inboundPatternChips} />
       )}
     </Stack>
   );

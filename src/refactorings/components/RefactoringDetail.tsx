@@ -3,9 +3,9 @@ import CatalogDetail from "@/shared/components/CatalogDetail";
 import type { CatalogEntry, Lens, RefactoringBook } from "@/shared/lib/CatalogEntry";
 import { findInboundPatterns } from "@/shared/lib/findInboundPatterns";
 
-import { backLinkForRefactoringBook } from "../lib/backLinkForRefactoringBook";
 import { getRefactoringNeighbors } from "../lib/getRefactoringNeighbors";
 import { loadKerievsky } from "../lib/loadKerievsky";
+import { toRefactoringDetailViewModel } from "../lib/toRefactoringDetailViewModel";
 
 interface RefactoringDetailProps {
   refactoring: CatalogEntry;
@@ -20,23 +20,18 @@ export default function RefactoringDetail({
   lens,
   book = "fowler",
 }: RefactoringDetailProps) {
-  const inboundPatterns = findInboundPatterns(refactoring.name, [
+  const inboundPatternNames = findInboundPatterns(refactoring.name, [
     ...loadPatterns(),
     ...loadKerievsky(),
   ]).map((pattern) => pattern.name);
-  const backLink = backLinkForRefactoringBook(book);
+  const viewModel = toRefactoringDetailViewModel({
+    refactoring,
+    number,
+    lens,
+    book,
+    inboundPatternNames,
+    neighbors: getRefactoringNeighbors(number, book),
+  });
 
-  return (
-    <CatalogDetail
-      entry={refactoring}
-      number={number}
-      lens={lens}
-      backLinkHref={backLink.href}
-      backLinkLabel={backLink.label}
-      beforeLabel="Before the refactoring"
-      afterLabel="After the refactoring"
-      neighbors={getRefactoringNeighbors(number, book)}
-      inboundPatterns={inboundPatterns}
-    />
-  );
+  return <CatalogDetail viewModel={viewModel} lens={lens} />;
 }

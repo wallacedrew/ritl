@@ -12,6 +12,7 @@ import SnippetPreviewButton from "@/shared/components/SnippetPreviewButton";
 import type { CatalogEntry } from "@/shared/lib/CatalogEntry";
 import type { CatalogEntryName } from "@/shared/lib/CatalogEntryName";
 import type { CatalogNeighbors } from "@/shared/lib/CatalogNeighbors";
+import { toCatalogEntryHeaderViewModel } from "@/shared/lib/toCatalogEntryHeaderViewModel";
 
 interface CatalogCompareDetailProps {
   entry: CatalogEntry;
@@ -38,6 +39,15 @@ export default function CatalogCompareDetail({
 }: CatalogCompareDetailProps) {
   const human = entry.forcesFor("human");
   const agent = entry.forcesFor("agent");
+  const header = toCatalogEntryHeaderViewModel({
+    name: entry.name,
+    number,
+    relatedNames: entry.nemeses,
+    destinationPattern: entry.destinationPattern,
+    incomingSourceNames: incomingSources,
+    inboundPatternNames: inboundPatterns,
+    neighbors,
+  });
 
   return (
     <Container maxWidth="lg" sx={{ py: 4 }}>
@@ -47,15 +57,7 @@ export default function CatalogCompareDetail({
           parentLabel={backLinkLabel}
           currentLabel={entry.name.toString()}
         />
-        <CatalogEntryHeader
-          name={entry.name}
-          number={number}
-          relatedNames={entry.nemeses}
-          destinationPattern={entry.destinationPattern}
-          incomingSources={incomingSources}
-          inboundPatterns={inboundPatterns}
-          neighbors={neighbors}
-        />
+        <CatalogEntryHeader header={header} />
         <Stack
           direction="row"
           sx={{

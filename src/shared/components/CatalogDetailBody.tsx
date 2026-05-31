@@ -3,23 +3,25 @@ import Stack from "@mui/material/Stack";
 import BeforeAfterCodeBlocks from "@/shared/components/BeforeAfterCodeBlocks";
 import CatalogExampleSource from "@/shared/components/CatalogExampleSource";
 import CatalogSection from "@/shared/components/CatalogSection";
-import type { CatalogEntry, Lens } from "@/shared/lib/CatalogEntry";
+import type { ForcesRecord } from "@/shared/lib/Forces";
 
 interface CatalogDetailBodyProps {
-  entry: CatalogEntry;
-  lens: Lens;
+  forces: ForcesRecord;
   beforeLabel: string;
   afterLabel: string;
+  beforeCode: string;
+  afterCode: string;
+  exampleSource?: string;
 }
 
 export default function CatalogDetailBody({
-  entry,
-  lens,
+  forces,
   beforeLabel,
   afterLabel,
+  beforeCode,
+  afterCode,
+  exampleSource,
 }: CatalogDetailBodyProps) {
-  const forces = entry.forcesFor(lens);
-
   return (
     <Stack spacing={4}>
       <CatalogSection label="Symptom" body={forces.symptom} />
@@ -27,10 +29,10 @@ export default function CatalogDetailBody({
       <BeforeAfterCodeBlocks
         beforeLabel={beforeLabel}
         afterLabel={afterLabel}
-        beforeCode={entry.before}
-        afterCode={entry.after}
+        beforeCode={beforeCode}
+        afterCode={afterCode}
       />
-      {entry.exampleSource && <CatalogExampleSource note={entry.exampleSource} />}
+      {exampleSource && <CatalogExampleSource note={exampleSource} />}
       <CatalogSection label="Pressure" body={forces.pressure} />
       <CatalogSection label="Tradeoff" body={forces.tradeoff} />
       <CatalogSection label="Relief" body={forces.relief} />

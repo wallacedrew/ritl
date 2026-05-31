@@ -4,6 +4,7 @@ import type { CatalogEntry, Lens } from "@/shared/lib/CatalogEntry";
 import { findInboundPatterns } from "@/shared/lib/findInboundPatterns";
 
 import { getSmellNeighbors } from "../lib/getSmellNeighbors";
+import { toSmellDetailViewModel } from "../lib/toSmellDetailViewModel";
 
 interface SmellDetailProps {
   smell: CatalogEntry;
@@ -12,21 +13,16 @@ interface SmellDetailProps {
 }
 
 export default function SmellDetail({ smell, number, lens }: SmellDetailProps) {
-  const inboundPatterns = findInboundPatterns(smell.name, loadPatterns()).map(
+  const inboundPatternNames = findInboundPatterns(smell.name, loadPatterns()).map(
     (pattern) => pattern.name,
   );
+  const viewModel = toSmellDetailViewModel({
+    smell,
+    number,
+    lens,
+    inboundPatternNames,
+    neighbors: getSmellNeighbors(number),
+  });
 
-  return (
-    <CatalogDetail
-      entry={smell}
-      number={number}
-      lens={lens}
-      backLinkHref="/refactoring/smells"
-      backLinkLabel="Smells"
-      beforeLabel="Smellier version"
-      afterLabel="Fresher version"
-      neighbors={getSmellNeighbors(number)}
-      inboundPatterns={inboundPatterns}
-    />
-  );
+  return <CatalogDetail viewModel={viewModel} lens={lens} />;
 }

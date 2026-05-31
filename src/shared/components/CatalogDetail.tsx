@@ -6,53 +6,24 @@ import CatalogDetailBody from "@/shared/components/CatalogDetailBody";
 import CatalogEntryHeader from "@/shared/components/CatalogEntryHeader";
 import LensSwitcher from "@/shared/components/LensSwitcher";
 import SnippetPreviewButton from "@/shared/components/SnippetPreviewButton";
-import type { CatalogEntry, Lens } from "@/shared/lib/CatalogEntry";
-import type { CatalogNeighbors } from "@/shared/lib/CatalogNeighbors";
-
-import type { CatalogEntryName } from "@/shared/lib/CatalogEntryName";
+import type { Lens } from "@/shared/lib/CatalogEntry";
+import type { CatalogDetailViewModel } from "@/shared/lib/CatalogDetailViewModel";
 
 interface CatalogDetailProps {
-  entry: CatalogEntry;
-  number: number;
+  viewModel: CatalogDetailViewModel;
   lens: Lens;
-  backLinkHref: string;
-  backLinkLabel: string;
-  beforeLabel: string;
-  afterLabel: string;
-  neighbors: CatalogNeighbors;
-  incomingSources?: readonly CatalogEntryName[];
-  inboundPatterns?: readonly CatalogEntryName[];
 }
 
-export default function CatalogDetail({
-  entry,
-  number,
-  lens,
-  backLinkHref,
-  backLinkLabel,
-  beforeLabel,
-  afterLabel,
-  neighbors,
-  incomingSources,
-  inboundPatterns,
-}: CatalogDetailProps) {
+export default function CatalogDetail({ viewModel, lens }: CatalogDetailProps) {
   return (
     <Container maxWidth="lg" sx={{ py: 4 }}>
       <Stack spacing={4}>
         <CatalogBreadcrumb
-          parentHref={backLinkHref}
-          parentLabel={backLinkLabel}
-          currentLabel={entry.name.toString()}
+          parentHref={viewModel.backLinkHref}
+          parentLabel={viewModel.backLinkLabel}
+          currentLabel={viewModel.header.title}
         />
-        <CatalogEntryHeader
-          name={entry.name}
-          number={number}
-          relatedNames={entry.nemeses}
-          destinationPattern={entry.destinationPattern}
-          incomingSources={incomingSources}
-          inboundPatterns={inboundPatterns}
-          neighbors={neighbors}
-        />
+        <CatalogEntryHeader header={viewModel.header} />
         <Stack
           direction="row"
           sx={{
@@ -63,18 +34,20 @@ export default function CatalogDetail({
           }}
         >
           <LensSwitcher
-            humanHref={entry.href()}
-            compareHref={entry.compareHref()}
-            agentHref={entry.agentHref()}
+            humanHref={viewModel.humanHref}
+            compareHref={viewModel.compareHref}
+            agentHref={viewModel.agentHref}
             currentView={lens}
           />
-          <SnippetPreviewButton href={entry.name.toSnippetHref()} label="Preview markdown" />
+          <SnippetPreviewButton href={viewModel.snippetHref} label="Preview markdown" />
         </Stack>
         <CatalogDetailBody
-          entry={entry}
-          lens={lens}
-          beforeLabel={beforeLabel}
-          afterLabel={afterLabel}
+          forces={viewModel.forces}
+          beforeLabel={viewModel.beforeLabel}
+          afterLabel={viewModel.afterLabel}
+          beforeCode={viewModel.beforeCode}
+          afterCode={viewModel.afterCode}
+          exampleSource={viewModel.exampleSource}
         />
       </Stack>
     </Container>

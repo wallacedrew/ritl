@@ -4,6 +4,7 @@ import Typography from "@mui/material/Typography";
 import CatalogDetailBody from "@/shared/components/CatalogDetailBody";
 import CodeBlock from "@/shared/components/CodeBlock";
 import type { CatalogEntry } from "@/shared/lib/CatalogEntry";
+import { toForcesRecord } from "@/shared/lib/toForcesRecord";
 
 import SkillViewToggle from "./SkillViewToggle";
 
@@ -20,6 +21,7 @@ export default function EmbeddedSkillPreview({
 }: EmbeddedSkillPreviewProps) {
   const skillName = entry.name.toString();
   const previewHeading = `What a skill looks like: ${skillName}`;
+  const forces = toForcesRecord(entry.forcesFor("agent"));
 
   const renderedView = (
     <Stack spacing={3}>
@@ -30,10 +32,12 @@ export default function EmbeddedSkillPreview({
         <Typography variant="body1">{description}</Typography>
       </Stack>
       <CatalogDetailBody
-        entry={entry}
-        lens="agent"
+        forces={forces}
         beforeLabel="Before the refactoring"
         afterLabel="After the refactoring"
+        beforeCode={entry.before}
+        afterCode={entry.after}
+        exampleSource={entry.exampleSource}
       />
     </Stack>
   );
