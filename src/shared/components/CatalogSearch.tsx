@@ -28,7 +28,7 @@ function captionFor(tone: CatalogItem["tone"]): string {
     case "smell":
       return "smell";
     case "kerievsky-refactoring":
-      return "kerievsky refactoring";
+      return "refactoring to pattern";
     case "pattern":
       return "pattern";
   }
