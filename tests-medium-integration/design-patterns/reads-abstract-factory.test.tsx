@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { screen } from "@testing-library/react";
 
 import { renderWithTheme } from "../../tests-small-unit/_helpers/renderWithTheme";
-import GofLandingPage from "@/design-patterns/GofLandingPage";
+import GofLandingPage from "@/patterns/GofLandingPage";
 import PatternsDetailPage from "@/patterns/PatternsDetailPage";
 
 describe("user reads Abstract Factory via the GoF sub-site", () => {

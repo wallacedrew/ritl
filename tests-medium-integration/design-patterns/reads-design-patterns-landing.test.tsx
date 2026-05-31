@@ -2,7 +2,7 @@ import { describe, expect, it } from "vitest";
 import { screen } from "@testing-library/react";
 
 import { renderWithTheme } from "../../tests-small-unit/_helpers/renderWithTheme";
-import GofLandingPage from "@/design-patterns/GofLandingPage";
+import GofLandingPage from "@/patterns/GofLandingPage";
 import HomePage from "@/home/HomePage";
 
 describe("user reaches the GoF Design Patterns sub-site", () => {

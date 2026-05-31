@@ -1,1 +1,1 @@
-export { default } from "@/design-patterns/GofLandingPage";
+export { default } from "@/patterns/GofLandingPage";
