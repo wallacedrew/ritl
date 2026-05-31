@@ -15,8 +15,8 @@ import SnippetHintCaption from "@/shared/components/SnippetHintCaption";
 import SnippetInstallBanner from "@/shared/components/SnippetInstallBanner";
 import { useAnalytics } from "@/shared/hooks/useAnalytics";
 import { useClipboardCopy } from "@/shared/hooks/useClipboardCopy";
+import { useDownloadMarkdown } from "@/shared/hooks/useDownloadMarkdown";
 import { useSnippetFetch } from "@/shared/hooks/useSnippetFetch";
-import { downloadMarkdown } from "@/shared/lib/downloadMarkdown";
 
 interface SnippetPreviewDialogProps {
   open: boolean;
@@ -39,6 +39,7 @@ export default function SnippetPreviewDialog({
 }: SnippetPreviewDialogProps) {
   const { content, error, isEdited, setContent, resetContent } = useSnippetFetch(href, open);
   const { copied, copy } = useClipboardCopy();
+  const downloadMarkdown = useDownloadMarkdown();
   const analytics = useAnalytics();
 
   async function handleCopy() {
