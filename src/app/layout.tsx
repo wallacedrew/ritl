@@ -8,6 +8,7 @@ import { buildCatalogGraph } from "@/shared/lib/CatalogGraph";
 import { loadCatalogSnapshot } from "@/shared/lib/loadCatalogSnapshot";
 import { AnalyticsProvider } from "@/shared/theme/AnalyticsProvider";
 import { CatalogGraphProvider } from "@/shared/theme/CatalogGraphProvider";
+import { SnippetSourceProvider } from "@/shared/theme/SnippetSourceProvider";
 import ThemeRegistry from "@/shared/theme/ThemeRegistry";
 
 export const metadata: Metadata = {
@@ -23,17 +24,19 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     <html lang="en" suppressHydrationWarning>
       <body suppressHydrationWarning>
         <AnalyticsProvider>
-          <CatalogGraphProvider graph={catalogGraph}>
-            <ThemeRegistry>
-              <Box sx={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
-                <SiteHeader />
-                <Box component="main" sx={{ flexGrow: 1 }}>
-                  {children}
+          <SnippetSourceProvider>
+            <CatalogGraphProvider graph={catalogGraph}>
+              <ThemeRegistry>
+                <Box sx={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
+                  <SiteHeader />
+                  <Box component="main" sx={{ flexGrow: 1 }}>
+                    {children}
+                  </Box>
+                  <SiteFooter />
                 </Box>
-                <SiteFooter />
-              </Box>
-            </ThemeRegistry>
-          </CatalogGraphProvider>
+              </ThemeRegistry>
+            </CatalogGraphProvider>
+          </SnippetSourceProvider>
         </AnalyticsProvider>
         {/*
           Pageviews + Core Web Vitals are auto-injected by Cloudflare Pages

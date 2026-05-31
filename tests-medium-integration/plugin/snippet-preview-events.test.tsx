@@ -4,16 +4,19 @@ import userEvent from "@testing-library/user-event";
 
 import { renderWithTheme } from "../../tests-small-unit/_helpers/renderWithTheme";
 import PluginPage from "@/plugin/PluginPage";
+import { InMemorySnippetSource } from "@/shared/adapters/InMemorySnippetSource";
 import { RecordingAnalyticsTracker } from "@/shared/adapters/RecordingAnalyticsTracker";
 
 const STUB_SNIPPET_CONTENT = "# Refactoring discipline\n\nApply this cycle to every change.";
 
+function snippetSource(): InMemorySnippetSource {
+  return new InMemorySnippetSource(
+    new Map([["/snippets/refactoring-discipline.md", STUB_SNIPPET_CONTENT]]),
+  );
+}
+
 describe("snippet preview events", () => {
   beforeEach(() => {
-    vi.stubGlobal(
-      "fetch",
-      vi.fn(async () => new Response(STUB_SNIPPET_CONTENT, { status: 200 })),
-    );
     Object.defineProperty(navigator, "clipboard", {
       value: { writeText: vi.fn(async () => {}) },
       configurable: true,
@@ -28,7 +31,7 @@ describe("snippet preview events", () => {
     const analytics = new RecordingAnalyticsTracker();
     const user = userEvent.setup();
 
-    renderWithTheme(<PluginPage />, { analytics });
+    renderWithTheme(<PluginPage />, { analytics, snippetSource: snippetSource() });
 
     const triggerButton = screen.getByRole("button", { name: /refactoring-discipline\.md/i });
     await user.click(triggerButton);
@@ -43,7 +46,7 @@ describe("snippet preview events", () => {
     const analytics = new RecordingAnalyticsTracker();
     const user = userEvent.setup();
 
-    renderWithTheme(<PluginPage />, { analytics });
+    renderWithTheme(<PluginPage />, { analytics, snippetSource: snippetSource() });
 
     await user.click(screen.getByRole("button", { name: /refactoring-discipline\.md/i }));
     await waitFor(() => expect(screen.getByRole("button", { name: /^Copy$/ })).toBeEnabled());
@@ -59,7 +62,7 @@ describe("snippet preview events", () => {
     const analytics = new RecordingAnalyticsTracker();
     const user = userEvent.setup();
 
-    renderWithTheme(<PluginPage />, { analytics });
+    renderWithTheme(<PluginPage />, { analytics, snippetSource: snippetSource() });
 
     await user.click(screen.getByRole("button", { name: /refactoring-discipline\.md/i }));
     await waitFor(() => expect(screen.getByRole("button", { name: /^Download$/ })).toBeEnabled());

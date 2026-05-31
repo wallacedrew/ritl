@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 
+import { useSnippetSource } from "./useSnippetSource";
+
 interface SnippetFetchState {
   content: string | null;
   error: string | null;
@@ -9,6 +11,7 @@ interface SnippetFetchState {
 }
 
 export function useSnippetFetch(href: string, open: boolean): SnippetFetchState {
+  const source = useSnippetSource();
   const [original, setOriginal] = useState<string | null>(null);
   const [content, setContent] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -16,11 +19,8 @@ export function useSnippetFetch(href: string, open: boolean): SnippetFetchState 
   useEffect(() => {
     if (!open || original !== null) return;
     let cancelled = false;
-    fetch(href)
-      .then((response) => {
-        if (!response.ok) throw new Error(`HTTP ${response.status}`);
-        return response.text();
-      })
+    source
+      .fetch(href)
       .then((text) => {
         if (cancelled) return;
         setOriginal(text);
@@ -32,7 +32,7 @@ export function useSnippetFetch(href: string, open: boolean): SnippetFetchState 
     return () => {
       cancelled = true;
     };
-  }, [open, original, href]);
+  }, [open, original, href, source]);
 
   function resetContent() {
     setContent(original);
