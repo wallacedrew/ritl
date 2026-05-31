@@ -1,4 +1,6 @@
-import PatternsComparePage, { patternsCompareStaticParams } from "@/patterns/PatternsComparePage";
+import PatternsComparePage, {
+  patternsCompareStaticParams,
+} from "@/design-patterns/PatternsComparePage";
 
 interface RouteProps {
   params: Promise<{ slug: string }>;

@@ -5,7 +5,7 @@ import { describe, expect, it } from "vitest";
 
 import { loadKerievsky } from "@/refactorings/lib/loadKerievsky";
 import { loadFowlerRefactorings } from "@/refactorings/lib/loadFowlerRefactorings";
-import { loadPatterns } from "@/patterns/lib/loadPatterns";
+import { loadPatterns } from "@/design-patterns/lib/loadPatterns";
 import { loadSmells } from "@/smells/lib/loadSmells";
 
 const FIXTURE_PATH = resolve(__dirname, "../../_fixtures/url-inventory.json");

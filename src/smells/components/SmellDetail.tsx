@@ -1,4 +1,4 @@
-import { loadPatterns } from "@/patterns/lib/loadPatterns";
+import { loadPatterns } from "@/design-patterns/lib/loadPatterns";
 import CatalogDetail from "@/shared/components/CatalogDetail";
 import type { CatalogEntry, Lens } from "@/shared/lib/CatalogEntry";
 import { findInboundPatterns } from "@/shared/lib/findInboundPatterns";

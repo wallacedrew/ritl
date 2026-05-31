@@ -1,4 +1,4 @@
-import { loadPatterns } from "@/patterns/lib/loadPatterns";
+import { loadPatterns } from "@/design-patterns/lib/loadPatterns";
 import CatalogCompareDetail from "@/shared/components/CatalogCompareDetail";
 import type { RefactoringBook } from "@/shared/lib/CatalogEntry";
 import { findCatalogEntryBySlug } from "@/shared/lib/findCatalogEntryBySlug";

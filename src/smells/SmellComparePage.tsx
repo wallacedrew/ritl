@@ -1,4 +1,4 @@
-import { loadPatterns } from "@/patterns/lib/loadPatterns";
+import { loadPatterns } from "@/design-patterns/lib/loadPatterns";
 import CatalogCompareDetail from "@/shared/components/CatalogCompareDetail";
 import { findCatalogEntryBySlug } from "@/shared/lib/findCatalogEntryBySlug";
 import { findInboundPatterns } from "@/shared/lib/findInboundPatterns";

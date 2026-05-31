@@ -1,4 +1,4 @@
-import PatternsAgentPage, { patternsAgentStaticParams } from "@/patterns/PatternsAgentPage";
+import PatternsAgentPage, { patternsAgentStaticParams } from "@/design-patterns/PatternsAgentPage";
 
 interface RouteProps {
   params: Promise<{ slug: string }>;

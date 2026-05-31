@@ -1,5 +1,5 @@
-import { loadPatterns } from "@/patterns/lib/loadPatterns";
-import { toPatternListItem } from "@/patterns/lib/toPatternListItem";
+import { loadPatterns } from "@/design-patterns/lib/loadPatterns";
+import { toPatternListItem } from "@/design-patterns/lib/toPatternListItem";
 import CatalogListPage from "@/shared/components/CatalogListPage";
 
 export default function GofLandingPage() {

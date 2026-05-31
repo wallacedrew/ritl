@@ -1,4 +1,4 @@
-import { loadPatterns } from "@/patterns/lib/loadPatterns";
+import { loadPatterns } from "@/design-patterns/lib/loadPatterns";
 import { loadRefactorings } from "@/refactorings/lib/loadRefactorings";
 import { loadSmells } from "@/smells/lib/loadSmells";
 

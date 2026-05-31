@@ -2,8 +2,8 @@ import type { RefactoringCategoryGroup } from "@/refactorings/lib/getRefactoring
 import { getRefactoringsByCategory } from "@/refactorings/lib/getRefactoringsByCategory";
 import { loadKerievsky } from "@/refactorings/lib/loadKerievsky";
 import { toRefactoringListItem } from "@/refactorings/lib/toRefactoringListItem";
-import { loadPatterns } from "@/patterns/lib/loadPatterns";
-import { toPatternListItem } from "@/patterns/lib/toPatternListItem";
+import { loadPatterns } from "@/design-patterns/lib/loadPatterns";
+import { toPatternListItem } from "@/design-patterns/lib/toPatternListItem";
 import type { CatalogListItem } from "@/shared/lib/CatalogListItem";
 import { loadSmells } from "@/smells/lib/loadSmells";
 import { toSmellListItem } from "@/smells/lib/toSmellListItem";
