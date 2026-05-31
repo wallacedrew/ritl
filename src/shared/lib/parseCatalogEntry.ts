@@ -46,9 +46,21 @@ function parseFowlerNemesis(
   candidate: unknown,
   ownCatalog: "refactorings" | "smells",
 ): CatalogEntryName {
-  if (typeof candidate !== "string") {
-    throw new Error('parseCatalogEntry: every entry in "nemeses" must be a string');
+  if (typeof candidate === "string") {
+    return nemesisFromImpliedOpposite(candidate, ownCatalog);
   }
+  if (candidate !== null && typeof candidate === "object" && !Array.isArray(candidate)) {
+    return nemesisFromExplicitCatalog(candidate as Record<string, unknown>);
+  }
+  throw new Error(
+    'parseCatalogEntry: every entry in "nemeses" must be a string or an object { catalog: "refactorings" | "smells", name: string }',
+  );
+}
+
+function nemesisFromImpliedOpposite(
+  candidate: string,
+  ownCatalog: "refactorings" | "smells",
+): CatalogEntryName {
   const oppositeCatalog: "refactorings" | "smells" =
     ownCatalog === "smells" ? "refactorings" : "smells";
   return oppositeCatalog === "refactorings"
@@ -62,16 +74,19 @@ function parsePatternNemesis(candidate: unknown): CatalogEntryName {
       'parseCatalogEntry: pattern nemeses must be objects { catalog: "refactorings" | "smells", name: string }',
     );
   }
-  const record = candidate as Record<string, unknown>;
+  return nemesisFromExplicitCatalog(candidate as Record<string, unknown>);
+}
+
+function nemesisFromExplicitCatalog(record: Record<string, unknown>): CatalogEntryName {
   const target = record.catalog;
   const name = record.name;
   if (target !== "refactorings" && target !== "smells") {
     throw new Error(
-      `parseCatalogEntry: pattern nemesis "catalog" must be "refactorings" or "smells", got ${JSON.stringify(target)}`,
+      `parseCatalogEntry: nemesis "catalog" must be "refactorings" or "smells", got ${JSON.stringify(target)}`,
     );
   }
   if (typeof name !== "string") {
-    throw new Error('parseCatalogEntry: pattern nemesis "name" must be a string');
+    throw new Error('parseCatalogEntry: nemesis "name" must be a string');
   }
   return target === "refactorings"
     ? CatalogEntryName.refactoring(name)

@@ -123,7 +123,58 @@ describe("parseCatalogEntry", () => {
         after: "y",
         forces: { human: validForcesRecord, agent: validForcesRecord },
       }),
-    ).toThrow(/pattern nemesis "catalog".*refactorings.*smells/i);
+    ).toThrow(/nemesis "catalog".*refactorings.*smells/i);
+  });
+
+  it("parses a refactoring nemesis declared in object shape targeting a smell", () => {
+    const entry = parseCatalogEntry({
+      ...validRefactoring,
+      nemeses: [{ catalog: "smells", name: "Long Function" }],
+    });
+
+    expect(entry.nemeses.map((n) => n.toCatalogHref())).toEqual([
+      "/refactoring/smells/long-function",
+    ]);
+  });
+
+  it("parses a refactoring nemesis declared in object shape targeting another refactoring", () => {
+    const entry = parseCatalogEntry({
+      ...validRefactoring,
+      nemeses: [{ catalog: "refactorings", name: "Replace Temp with Query" }],
+    });
+
+    expect(entry.nemeses.map((n) => n.toCatalogHref())).toEqual([
+      "/refactoring/canon/replace-temp-with-query",
+    ]);
+  });
+
+  it("parses a smell nemesis declared in object shape targeting another smell", () => {
+    const entry = parseCatalogEntry({
+      ...validSmell,
+      nemeses: [{ catalog: "smells", name: "Mysterious Name" }],
+    });
+
+    expect(entry.nemeses.map((n) => n.toCatalogHref())).toEqual([
+      "/refactoring/smells/mysterious-name",
+    ]);
+  });
+
+  it("rejects a refactoring nemesis object whose catalog is patterns", () => {
+    expect(() =>
+      parseCatalogEntry({
+        ...validRefactoring,
+        nemeses: [{ catalog: "patterns", name: "Strategy" }],
+      }),
+    ).toThrow(/nemesis "catalog".*refactorings.*smells/i);
+  });
+
+  it("rejects a refactoring nemesis that is neither a string nor a {catalog, name} object", () => {
+    expect(() =>
+      parseCatalogEntry({
+        ...validRefactoring,
+        nemeses: [42],
+      }),
+    ).toThrow(/must be a string or an object/i);
   });
 
   it("rejects a pattern entry that does not declare a book", () => {
