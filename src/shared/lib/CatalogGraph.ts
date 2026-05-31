@@ -5,6 +5,7 @@ import {
   crossReferences,
   type CrossReferenceChip,
   type CrossReferences,
+  type RelationshipKind,
   relationshipGroup,
 } from "./RelationshipGroup";
 
@@ -61,76 +62,62 @@ function appendTo<K, V>(map: Map<K, V[]>, key: K, value: V): void {
   }
 }
 
-export function computeCrossReferencesForHref(href: string, graph: CatalogGraph): CrossReferences {
-  const node = graph.nodes.get(href);
-  if (!node) return crossReferences([]);
-  switch (node.tone) {
-    case "smell":
-      return smellCrossReferences(node, graph);
-    case "fowler-refactoring":
-      return refactoringCrossReferences(node, graph);
-    case "kerievsky-refactoring":
-      return kerievskyCrossReferences(node, graph);
-    case "pattern":
-      return gofCrossReferences(node, graph);
-  }
+/**
+ * Cross-reference dispatch table. Each tone declares the relationship
+ * groups its detail view should render, and how to source the related
+ * hrefs from the graph. Replaces four near-identical per-tone helpers
+ * with one consult-then-render pass.
+ */
+type RelatedHrefsFor = (node: CatalogNode, graph: CatalogGraph) => readonly string[];
+
+interface RelationshipGroupDescriptor {
+  readonly kind: RelationshipKind;
+  readonly hrefsFor: RelatedHrefsFor;
 }
 
-function smellCrossReferences(node: CatalogNode, graph: CatalogGraph): CrossReferences {
-  return crossReferences([
-    relationshipGroup(
-      "apply-refactorings",
-      node.nemesisHrefs.map((nemesisHref) => chipFromGraph(nemesisHref, graph)),
-    ),
-    relationshipGroup(
-      "referenced-by-patterns",
-      patternsReferencing(node.href, graph).map((sourceHref) => chipFromGraph(sourceHref, graph)),
-    ),
-  ]);
-}
+const outboundNemesisHrefs: RelatedHrefsFor = (node) => node.nemesisHrefs;
 
-function refactoringCrossReferences(node: CatalogNode, graph: CatalogGraph): CrossReferences {
-  return crossReferences([
-    relationshipGroup(
-      "removes-smells",
-      node.nemesisHrefs.map((nemesisHref) => chipFromGraph(nemesisHref, graph)),
-    ),
-    relationshipGroup(
-      "referenced-by-patterns",
-      patternsReferencing(node.href, graph).map((sourceHref) => chipFromGraph(sourceHref, graph)),
-    ),
-  ]);
-}
+const destinationHrefAsList: RelatedHrefsFor = (node) =>
+  node.destinationHref ? [node.destinationHref] : [];
 
-function kerievskyCrossReferences(node: CatalogNode, graph: CatalogGraph): CrossReferences {
-  return crossReferences([
-    relationshipGroup(
-      "triggered-by",
-      node.nemesisHrefs.map((nemesisHref) => chipFromGraph(nemesisHref, graph)),
-    ),
-    relationshipGroup(
-      "destination",
-      node.destinationHref ? [chipFromGraph(node.destinationHref, graph)] : [],
-    ),
-  ]);
-}
-
-function gofCrossReferences(node: CatalogNode, graph: CatalogGraph): CrossReferences {
-  const sources = graph.destinationSourcesByHref.get(node.href) ?? [];
-  return crossReferences([
-    relationshipGroup(
-      "reached-from",
-      sources.map((sourceHref) => chipFromGraph(sourceHref, graph)),
-    ),
-  ]);
-}
-
-function patternsReferencing(targetHref: string, graph: CatalogGraph): readonly string[] {
-  const allInbound = graph.inboundByHref.get(targetHref) ?? [];
+const patternHrefsReferencing: RelatedHrefsFor = (node, graph) => {
+  const allInbound = graph.inboundByHref.get(node.href) ?? [];
   return allInbound.filter((sourceHref) => {
     const source = graph.nodes.get(sourceHref);
     return source?.tone === "kerievsky-refactoring" || source?.tone === "pattern";
   });
+};
+
+const destinationSourceHrefs: RelatedHrefsFor = (node, graph) =>
+  graph.destinationSourcesByHref.get(node.href) ?? [];
+
+const TONE_GROUPS: Readonly<Record<CatalogEntryTone, readonly RelationshipGroupDescriptor[]>> = {
+  smell: [
+    { kind: "apply-refactorings", hrefsFor: outboundNemesisHrefs },
+    { kind: "referenced-by-patterns", hrefsFor: patternHrefsReferencing },
+  ],
+  "fowler-refactoring": [
+    { kind: "removes-smells", hrefsFor: outboundNemesisHrefs },
+    { kind: "referenced-by-patterns", hrefsFor: patternHrefsReferencing },
+  ],
+  "kerievsky-refactoring": [
+    { kind: "triggered-by", hrefsFor: outboundNemesisHrefs },
+    { kind: "destination", hrefsFor: destinationHrefAsList },
+  ],
+  pattern: [{ kind: "reached-from", hrefsFor: destinationSourceHrefs }],
+};
+
+export function computeCrossReferencesForHref(href: string, graph: CatalogGraph): CrossReferences {
+  const node = graph.nodes.get(href);
+  if (!node) return crossReferences([]);
+  return crossReferences(
+    TONE_GROUPS[node.tone].map((descriptor) =>
+      relationshipGroup(
+        descriptor.kind,
+        descriptor.hrefsFor(node, graph).map((targetHref) => chipFromGraph(targetHref, graph)),
+      ),
+    ),
+  );
 }
 
 function chipFromGraph(href: string, graph: CatalogGraph): CrossReferenceChip {
