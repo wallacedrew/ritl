@@ -1,3 +1,5 @@
+import { notFound } from "next/navigation";
+
 import type { RefactoringBook } from "@/shared/lib/CatalogEntry";
 import { findCatalogEntryBySlug } from "@/shared/lib/findCatalogEntryBySlug";
 import { generateCatalogStaticParams } from "@/shared/lib/generateCatalogStaticParams";
@@ -16,7 +18,11 @@ export default async function RefactoringAgentPage({
   book = "fowler",
 }: RefactoringAgentPageProps) {
   const { slug: rawSlug } = await params;
-  const { entry: refactoring, number } = findCatalogEntryBySlug(rawSlug, entriesFor(book));
+  const found = findCatalogEntryBySlug(rawSlug, entriesFor(book));
+
+  if (found === undefined) notFound();
+
+  const { entry: refactoring, number } = found;
   return <RefactoringDetail refactoring={refactoring} number={number} lens="agent" book={book} />;
 }
 

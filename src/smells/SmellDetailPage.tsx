@@ -1,3 +1,5 @@
+import { notFound } from "next/navigation";
+
 import { findCatalogEntryBySlug } from "@/shared/lib/findCatalogEntryBySlug";
 import { generateCatalogStaticParams } from "@/shared/lib/generateCatalogStaticParams";
 
@@ -10,7 +12,11 @@ interface SmellDetailPageProps {
 
 export default async function SmellDetailPage({ params }: SmellDetailPageProps) {
   const { slug: rawSlug } = await params;
-  const { entry: smell, number } = findCatalogEntryBySlug(rawSlug, loadSmells());
+  const found = findCatalogEntryBySlug(rawSlug, loadSmells());
+
+  if (found === undefined) notFound();
+
+  const { entry: smell, number } = found;
   return <SmellDetail smell={smell} number={number} lens="human" />;
 }
 

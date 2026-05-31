@@ -1,3 +1,5 @@
+import { notFound } from "next/navigation";
+
 import { loadPatterns } from "@/design-patterns/lib/loadPatterns";
 import CatalogCompareDetail from "@/shared/components/CatalogCompareDetail";
 import type { RefactoringBook } from "@/shared/lib/CatalogEntry";
@@ -20,7 +22,11 @@ export default async function RefactoringComparePage({
   book = "fowler",
 }: RefactoringComparePageProps) {
   const { slug: rawSlug } = await params;
-  const { entry: refactoring, number } = findCatalogEntryBySlug(rawSlug, entriesFor(book));
+  const found = findCatalogEntryBySlug(rawSlug, entriesFor(book));
+
+  if (found === undefined) notFound();
+
+  const { entry: refactoring, number } = found;
   // Kerievsky entries can also nemesise a refactoring; feed them in
   // alongside GoF patterns so a Fowler refactoring's "Referenced by
   // patterns" group keeps listing its Kerievsky inbound references

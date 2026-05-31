@@ -1,3 +1,5 @@
+import { notFound } from "next/navigation";
+
 import { findCatalogEntryBySlug } from "@/shared/lib/findCatalogEntryBySlug";
 import { generateCatalogStaticParams } from "@/shared/lib/generateCatalogStaticParams";
 
@@ -10,7 +12,11 @@ interface PatternsAgentPageProps {
 
 export default async function PatternsAgentPage({ params }: PatternsAgentPageProps) {
   const { slug: rawSlug } = await params;
-  const { entry: pattern, number } = findCatalogEntryBySlug(rawSlug, loadPatterns());
+  const found = findCatalogEntryBySlug(rawSlug, loadPatterns());
+
+  if (found === undefined) notFound();
+
+  const { entry: pattern, number } = found;
   return <PatternDetail pattern={pattern} number={number} lens="agent" />;
 }
 

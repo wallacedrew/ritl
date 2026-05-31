@@ -15,7 +15,13 @@ const EXTRACT_FUNCTION_SLUG = "extract-function";
 const SNIPPET_RELATIVE_PATH = ["public", "snippets", "refactorings", "extract-function.md"];
 
 export function loadExtractFunctionPreview(): ExtractFunctionSkillPreview {
-  const { entry } = findCatalogEntryBySlug(EXTRACT_FUNCTION_SLUG, loadRefactorings());
+  const found = findCatalogEntryBySlug(EXTRACT_FUNCTION_SLUG, loadRefactorings());
+  if (found === undefined) {
+    throw new Error(
+      `loadExtractFunctionPreview: "${EXTRACT_FUNCTION_SLUG}" not found in the refactorings catalog`,
+    );
+  }
+  const { entry } = found;
   const snippetPath = path.join(process.cwd(), ...SNIPPET_RELATIVE_PATH);
   const rawMarkdown = readFileSync(snippetPath, "utf8");
   const description = parseFrontmatterDescription(rawMarkdown);
