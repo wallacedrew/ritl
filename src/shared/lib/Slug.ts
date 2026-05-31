@@ -26,9 +26,9 @@ export class Slug {
   }
 
   toCatalogHref(kind: CatalogKind, book?: Book): string {
-    if (kind === "patterns") {
+    if (kind === "design-patterns") {
       if (book === undefined) {
-        throw new Error('Slug.toCatalogHref: "book" is required when kind is "patterns"');
+        throw new Error('Slug.toCatalogHref: "book" is required when kind is "design-patterns"');
       }
       return subSiteForPatternBook(book as PatternBook).hrefForEntry(kind, this.value);
     }

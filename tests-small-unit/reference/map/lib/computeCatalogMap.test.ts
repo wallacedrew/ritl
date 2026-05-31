@@ -80,7 +80,7 @@ const encapsulateClassesWithFactory = entry({
 });
 
 const factoryMethod = entry({
-  catalog: "patterns",
+  catalog: "design-patterns",
   book: "gof",
   name: CatalogEntryName.pattern("Factory Method", "gof"),
 });

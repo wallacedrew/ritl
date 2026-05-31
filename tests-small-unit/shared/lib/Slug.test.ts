@@ -104,14 +104,14 @@ describe("Slug.toCatalogHref", () => {
   });
 
   it("builds a gof pattern href under /design-patterns", () => {
-    expect(Slug.from("Strategy").toCatalogHref("patterns", "gof")).toBe(
+    expect(Slug.from("Strategy").toCatalogHref("design-patterns", "gof")).toBe(
       "/design-patterns/strategy",
     );
   });
 
   it("rejects a patterns href when book is not supplied", () => {
-    expect(() => Slug.from("Strategy").toCatalogHref("patterns")).toThrow(
-      /"book" is required when kind is "patterns"/i,
+    expect(() => Slug.from("Strategy").toCatalogHref("design-patterns")).toThrow(
+      /"book" is required when kind is "design-patterns"/i,
     );
   });
 });

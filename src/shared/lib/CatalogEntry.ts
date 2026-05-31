@@ -1,7 +1,7 @@
 import type { CatalogEntryName } from "./CatalogEntryName";
 import type { Forces } from "./Forces";
 
-export type CatalogKind = "smells" | "refactorings" | "patterns";
+export type CatalogKind = "smells" | "refactorings" | "design-patterns";
 export type Lens = "human" | "agent";
 export type PatternBook = "kerievsky" | "gof";
 export type RefactoringBook = "fowler" | "kerievsky";
@@ -15,7 +15,7 @@ export type Book = RefactoringBook | "gof";
  */
 export type CatalogEntryTone = "smell" | "fowler-refactoring" | "kerievsky-refactoring" | "pattern";
 
-export const LEGAL_CATALOGS: readonly CatalogKind[] = ["smells", "refactorings", "patterns"];
+export const LEGAL_CATALOGS: readonly CatalogKind[] = ["smells", "refactorings", "design-patterns"];
 export const LEGAL_PATTERN_BOOKS: readonly PatternBook[] = ["kerievsky", "gof"];
 export const LEGAL_REFACTORING_BOOKS: readonly RefactoringBook[] = ["fowler", "kerievsky"];
 
@@ -46,7 +46,7 @@ export class CatalogEntry {
     if (!LEGAL_CATALOGS.includes(catalog)) {
       throw new Error(`CatalogEntry: unknown catalog "${catalog}"`);
     }
-    if (catalog === "patterns") {
+    if (catalog === "design-patterns") {
       if (book === undefined) {
         throw new Error('CatalogEntry: pattern entries must declare a "book"');
       }
@@ -61,7 +61,7 @@ export class CatalogEntry {
       throw new Error('CatalogEntry: "book" is only allowed on pattern or refactoring entries');
     }
     if (destinationPattern !== undefined) {
-      const isPattern = catalog === "patterns";
+      const isPattern = catalog === "design-patterns";
       const isKerievskyRefactoring = catalog === "refactorings" && book === "kerievsky";
       if (!isPattern && !isKerievskyRefactoring) {
         throw new Error(

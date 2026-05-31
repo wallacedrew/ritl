@@ -16,7 +16,7 @@ export class CatalogEntryName {
     if (value.trim().length === 0) {
       throw new Error("CatalogEntryName: value cannot be empty");
     }
-    if (kind === "patterns" && book === undefined) {
+    if (kind === "design-patterns" && book === undefined) {
       throw new Error('CatalogEntryName: pattern names must declare a "book"');
     }
     if (kind === "smells" && book !== undefined) {
@@ -33,7 +33,7 @@ export class CatalogEntryName {
   }
 
   static pattern(value: string, book: PatternBook): CatalogEntryName {
-    return new CatalogEntryName(value, "patterns", book);
+    return new CatalogEntryName(value, "design-patterns", book);
   }
 
   toString(): string {
@@ -62,7 +62,7 @@ export class CatalogEntryName {
         return this.book === "kerievsky" ? "kerievsky-refactoring" : "fowler-refactoring";
       case "smells":
         return "smell";
-      case "patterns":
+      case "design-patterns":
         return this.book === "kerievsky" ? "kerievsky-refactoring" : "pattern";
     }
   }

@@ -1,6 +1,6 @@
 [
   {
-    "catalog": "patterns",
+    "catalog": "design-patterns",
     "book": "gof",
     "name": "Abstract Factory",
     "nemeses": [
@@ -40,7 +40,7 @@
     }
   },
   {
-    "catalog": "patterns",
+    "catalog": "design-patterns",
     "book": "gof",
     "name": "Builder",
     "nemeses": [
@@ -80,7 +80,7 @@
     }
   },
   {
-    "catalog": "patterns",
+    "catalog": "design-patterns",
     "book": "gof",
     "name": "Factory Method",
     "nemeses": [
@@ -120,7 +120,7 @@
     }
   },
   {
-    "catalog": "patterns",
+    "catalog": "design-patterns",
     "book": "gof",
     "name": "Prototype",
     "nemeses": [
@@ -160,7 +160,7 @@
     }
   },
   {
-    "catalog": "patterns",
+    "catalog": "design-patterns",
     "book": "gof",
     "name": "Singleton",
     "nemeses": [
@@ -200,7 +200,7 @@
     }
   },
   {
-    "catalog": "patterns",
+    "catalog": "design-patterns",
     "book": "gof",
     "name": "Adapter",
     "nemeses": [
@@ -240,7 +240,7 @@
     }
   },
   {
-    "catalog": "patterns",
+    "catalog": "design-patterns",
     "book": "gof",
     "name": "Bridge",
     "nemeses": [
@@ -280,7 +280,7 @@
     }
   },
   {
-    "catalog": "patterns",
+    "catalog": "design-patterns",
     "book": "gof",
     "name": "Composite",
     "nemeses": [
@@ -320,7 +320,7 @@
     }
   },
   {
-    "catalog": "patterns",
+    "catalog": "design-patterns",
     "book": "gof",
     "name": "Decorator",
     "nemeses": [
@@ -360,7 +360,7 @@
     }
   },
   {
-    "catalog": "patterns",
+    "catalog": "design-patterns",
     "book": "gof",
     "name": "Facade",
     "nemeses": [
@@ -400,7 +400,7 @@
     }
   },
   {
-    "catalog": "patterns",
+    "catalog": "design-patterns",
     "book": "gof",
     "name": "Flyweight",
     "nemeses": [
@@ -440,7 +440,7 @@
     }
   },
   {
-    "catalog": "patterns",
+    "catalog": "design-patterns",
     "book": "gof",
     "name": "Proxy",
     "nemeses": [
@@ -480,7 +480,7 @@
     }
   },
   {
-    "catalog": "patterns",
+    "catalog": "design-patterns",
     "book": "gof",
     "name": "Chain of Responsibility",
     "nemeses": [
@@ -520,7 +520,7 @@
     }
   },
   {
-    "catalog": "patterns",
+    "catalog": "design-patterns",
     "book": "gof",
     "name": "Command",
     "nemeses": [
@@ -560,7 +560,7 @@
     }
   },
   {
-    "catalog": "patterns",
+    "catalog": "design-patterns",
     "book": "gof",
     "name": "Interpreter",
     "nemeses": [
@@ -600,7 +600,7 @@
     }
   },
   {
-    "catalog": "patterns",
+    "catalog": "design-patterns",
     "book": "gof",
     "name": "Iterator",
     "nemeses": [
@@ -640,7 +640,7 @@
     }
   },
   {
-    "catalog": "patterns",
+    "catalog": "design-patterns",
     "book": "gof",
     "name": "Mediator",
     "nemeses": [
@@ -680,7 +680,7 @@
     }
   },
   {
-    "catalog": "patterns",
+    "catalog": "design-patterns",
     "book": "gof",
     "name": "Memento",
     "nemeses": [
@@ -720,7 +720,7 @@
     }
   },
   {
-    "catalog": "patterns",
+    "catalog": "design-patterns",
     "book": "gof",
     "name": "Observer",
     "nemeses": [
@@ -760,7 +760,7 @@
     }
   },
   {
-    "catalog": "patterns",
+    "catalog": "design-patterns",
     "book": "gof",
     "name": "State",
     "nemeses": [
@@ -800,7 +800,7 @@
     }
   },
   {
-    "catalog": "patterns",
+    "catalog": "design-patterns",
     "book": "gof",
     "name": "Strategy",
     "nemeses": [
@@ -840,7 +840,7 @@
     }
   },
   {
-    "catalog": "patterns",
+    "catalog": "design-patterns",
     "book": "gof",
     "name": "Template Method",
     "nemeses": [
@@ -880,7 +880,7 @@
     }
   },
   {
-    "catalog": "patterns",
+    "catalog": "design-patterns",
     "book": "gof",
     "name": "Visitor",
     "nemeses": [

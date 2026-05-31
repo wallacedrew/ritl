@@ -75,7 +75,7 @@ describe("parseCatalogEntry", () => {
 
   it("parses a pattern with object-shape nemeses targeting refactorings or smells", () => {
     const validPattern = {
-      catalog: "patterns",
+      catalog: "design-patterns",
       book: "kerievsky",
       name: "Compose Method",
       nemeses: [
@@ -89,7 +89,7 @@ describe("parseCatalogEntry", () => {
 
     const entry = parseCatalogEntry(validPattern);
 
-    expect(entry.catalog).toBe("patterns");
+    expect(entry.catalog).toBe("design-patterns");
     expect(entry.name.toString()).toBe("Compose Method");
     expect(entry.book).toBe("kerievsky");
     expect(entry.nemeses.map((n) => n.toCatalogHref())).toEqual([
@@ -101,7 +101,7 @@ describe("parseCatalogEntry", () => {
   it("rejects a pattern nemesis that is a bare string instead of {catalog, name}", () => {
     expect(() =>
       parseCatalogEntry({
-        catalog: "patterns",
+        catalog: "design-patterns",
         book: "kerievsky",
         name: "Compose Method",
         nemeses: ["Extract Function"],
@@ -115,10 +115,10 @@ describe("parseCatalogEntry", () => {
   it("rejects a pattern nemesis whose catalog field is not refactorings or smells", () => {
     expect(() =>
       parseCatalogEntry({
-        catalog: "patterns",
+        catalog: "design-patterns",
         book: "kerievsky",
         name: "Compose Method",
-        nemeses: [{ catalog: "patterns", name: "Strategy" }],
+        nemeses: [{ catalog: "design-patterns", name: "Strategy" }],
         before: "x",
         after: "y",
         forces: { human: validForcesRecord, agent: validForcesRecord },
@@ -163,7 +163,7 @@ describe("parseCatalogEntry", () => {
     expect(() =>
       parseCatalogEntry({
         ...validRefactoring,
-        nemeses: [{ catalog: "patterns", name: "Strategy" }],
+        nemeses: [{ catalog: "design-patterns", name: "Strategy" }],
       }),
     ).toThrow(/nemesis "catalog".*refactorings.*smells/i);
   });
@@ -180,7 +180,7 @@ describe("parseCatalogEntry", () => {
   it("rejects a pattern entry that does not declare a book", () => {
     expect(() =>
       parseCatalogEntry({
-        catalog: "patterns",
+        catalog: "design-patterns",
         name: "Strategy",
         nemeses: [],
         before: "x",
@@ -193,7 +193,7 @@ describe("parseCatalogEntry", () => {
   it("rejects a pattern entry with an unknown book value", () => {
     expect(() =>
       parseCatalogEntry({
-        catalog: "patterns",
+        catalog: "design-patterns",
         book: "fowler",
         name: "Strategy",
         nemeses: [],
@@ -236,7 +236,7 @@ describe("parseCatalogEntry", () => {
 
   it("parses gof as a valid pattern book", () => {
     const entry = parseCatalogEntry({
-      catalog: "patterns",
+      catalog: "design-patterns",
       book: "gof",
       name: "Strategy",
       nemeses: [],
@@ -250,7 +250,7 @@ describe("parseCatalogEntry", () => {
 
   it("parses a destinationPattern pointing across books from kerievsky to gof", () => {
     const entry = parseCatalogEntry({
-      catalog: "patterns",
+      catalog: "design-patterns",
       book: "kerievsky",
       name: "Replace Conditional Logic with Strategy",
       nemeses: [{ catalog: "refactorings", name: "Replace Conditional with Polymorphism" }],
@@ -276,7 +276,7 @@ describe("parseCatalogEntry", () => {
   it("rejects a destinationPattern whose book matches the entry's own book", () => {
     expect(() =>
       parseCatalogEntry({
-        catalog: "patterns",
+        catalog: "design-patterns",
         book: "kerievsky",
         name: "Replace Conditional Logic with Strategy",
         nemeses: [],
@@ -291,7 +291,7 @@ describe("parseCatalogEntry", () => {
   it("rejects a destinationPattern with an unknown book", () => {
     expect(() =>
       parseCatalogEntry({
-        catalog: "patterns",
+        catalog: "design-patterns",
         book: "kerievsky",
         name: "Replace Conditional Logic with Strategy",
         nemeses: [],

@@ -25,7 +25,7 @@ describe("subSites registry", () => {
   it("declares GoF at /design-patterns with the patterns catalog", () => {
     expect(GOF.slug).toBe("design-patterns");
     expect(GOF.title).toBe("Design Patterns");
-    expect(GOF.catalogs).toEqual(["patterns"]);
+    expect(GOF.catalogs).toEqual(["design-patterns"]);
   });
 
   it("exposes Fowler, Kerievsky, and GoF as the registered sub-sites", () => {

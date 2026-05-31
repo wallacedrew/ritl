@@ -9,7 +9,7 @@ import type { CatalogKind } from "./CatalogEntry";
 const CATALOG_URL_SEGMENT: Record<CatalogKind, string> = {
   refactorings: "canon",
   smells: "smells",
-  patterns: "patterns",
+  "design-patterns": "design-patterns",
 };
 
 function urlSegmentFor(catalog: CatalogKind): string {

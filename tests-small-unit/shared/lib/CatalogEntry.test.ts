@@ -101,7 +101,7 @@ describe("CatalogEntry", () => {
   it("rejects a pattern entry that does not declare a book", () => {
     expect(() =>
       makeEntry({
-        catalog: "patterns",
+        catalog: "design-patterns",
         name: CatalogEntryName.pattern("Strategy", "kerievsky"),
         nemeses: [],
       }),
@@ -111,7 +111,7 @@ describe("CatalogEntry", () => {
   it("rejects a pattern entry with an unknown book", () => {
     expect(() =>
       makeEntry({
-        catalog: "patterns",
+        catalog: "design-patterns",
         name: CatalogEntryName.pattern("Strategy", "kerievsky"),
         nemeses: [],
         book: "fowler" as never,
@@ -127,7 +127,7 @@ describe("CatalogEntry", () => {
 
   it("exposes the declared book on a pattern entry", () => {
     const entry = makeEntry({
-      catalog: "patterns",
+      catalog: "design-patterns",
       name: CatalogEntryName.pattern("Strategy", "kerievsky"),
       nemeses: [],
       book: "gof",

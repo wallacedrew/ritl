@@ -16,16 +16,16 @@ export const KERIEVSKY: SubSite = SubSite.from({
 export const GOF: SubSite = SubSite.from({
   slug: "design-patterns",
   title: "Design Patterns",
-  catalogs: ["patterns"],
+  catalogs: ["design-patterns"],
 });
 
 export const SUB_SITES: readonly SubSite[] = [FOWLER, KERIEVSKY, GOF];
 
-export type NonPatternCatalog = Exclude<CatalogKind, "patterns">;
+export type NonPatternCatalog = Exclude<CatalogKind, "design-patterns">;
 
 export function subSiteForCatalog(catalog: NonPatternCatalog): SubSite {
   const owner = SUB_SITES.find(
-    (subSite) => subSite.containsCatalog(catalog) && !subSite.containsCatalog("patterns"),
+    (subSite) => subSite.containsCatalog(catalog) && !subSite.containsCatalog("design-patterns"),
   );
   if (owner === undefined) {
     throw new Error(`subSiteForCatalog: no sub-site hosts catalog "${catalog}"`);

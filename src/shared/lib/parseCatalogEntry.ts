@@ -36,7 +36,7 @@ function readNemeses(
   if (!Array.isArray(raw)) {
     throw new Error('parseCatalogEntry: field "nemeses" must be an array');
   }
-  if (ownCatalog === "patterns") {
+  if (ownCatalog === "design-patterns") {
     return raw.map(parsePatternNemesis);
   }
   return raw.map((candidate) => parseFowlerNemesis(candidate, ownCatalog));
@@ -153,7 +153,7 @@ function readDestinationPattern(
   if (raw === undefined) {
     return undefined;
   }
-  const isPattern = ownCatalog === "patterns";
+  const isPattern = ownCatalog === "design-patterns";
   const isKerievskyRefactoring = ownCatalog === "refactorings" && ownBook === "kerievsky";
   if (!isPattern && !isKerievskyRefactoring) {
     throw new Error(
@@ -247,7 +247,7 @@ function readCatalogEntryName(
       return CatalogEntryName.smell(rawName);
     case "refactorings":
       return CatalogEntryName.refactoring(rawName, book === "kerievsky" ? "kerievsky" : "fowler");
-    case "patterns":
+    case "design-patterns":
       if (book === undefined || !(LEGAL_PATTERN_BOOKS as readonly string[]).includes(book)) {
         throw new Error('parseCatalogEntry: pattern entries must declare a "book"');
       }
