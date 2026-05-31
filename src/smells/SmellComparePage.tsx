@@ -8,6 +8,7 @@ import { generateCatalogStaticParams } from "@/shared/lib/generateCatalogStaticP
 
 import { getSmellNeighbors } from "./lib/getSmellNeighbors";
 import { loadSmells } from "./lib/loadSmells";
+import { toSmellCompareDetailViewModel } from "./lib/toSmellCompareDetailViewModel";
 
 interface SmellComparePageProps {
   params: Promise<{ slug: string }>;
@@ -20,21 +21,17 @@ export default async function SmellComparePage({ params }: SmellComparePageProps
   if (found === undefined) notFound();
 
   const { entry: smell, number } = found;
-  const inboundPatterns = findInboundPatterns(smell.name, loadPatterns()).map(
+  const inboundPatternNames = findInboundPatterns(smell.name, loadPatterns()).map(
     (pattern) => pattern.name,
   );
-  return (
-    <CatalogCompareDetail
-      entry={smell}
-      number={number}
-      backLinkHref="/refactoring/smells"
-      backLinkLabel="Smells"
-      beforeLabel="Smellier version"
-      afterLabel="Fresher version"
-      neighbors={getSmellNeighbors(number)}
-      inboundPatterns={inboundPatterns}
-    />
-  );
+  const viewModel = toSmellCompareDetailViewModel({
+    smell,
+    number,
+    inboundPatternNames,
+    neighbors: getSmellNeighbors(number),
+  });
+
+  return <CatalogCompareDetail viewModel={viewModel} />;
 }
 
 export function generateStaticParams() {

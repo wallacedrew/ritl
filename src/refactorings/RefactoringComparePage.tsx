@@ -7,10 +7,10 @@ import { findCatalogEntryBySlug } from "@/shared/lib/findCatalogEntryBySlug";
 import { findInboundPatterns } from "@/shared/lib/findInboundPatterns";
 import { generateCatalogStaticParams } from "@/shared/lib/generateCatalogStaticParams";
 
-import { backLinkForRefactoringBook } from "./lib/backLinkForRefactoringBook";
 import { getRefactoringNeighbors } from "./lib/getRefactoringNeighbors";
 import { loadFowlerRefactorings } from "./lib/loadFowlerRefactorings";
 import { loadKerievsky } from "./lib/loadKerievsky";
+import { toRefactoringCompareDetailViewModel } from "./lib/toRefactoringCompareDetailViewModel";
 
 interface RefactoringComparePageProps {
   params: Promise<{ slug: string }>;
@@ -31,23 +31,19 @@ export default async function RefactoringComparePage({
   // alongside GoF patterns so a Fowler refactoring's "Referenced by
   // patterns" group keeps listing its Kerievsky inbound references
   // after the ADR-0007 catalog move.
-  const inboundPatterns = findInboundPatterns(refactoring.name, [
+  const inboundPatternNames = findInboundPatterns(refactoring.name, [
     ...loadPatterns(),
     ...loadKerievsky(),
   ]).map((pattern) => pattern.name);
-  const backLink = backLinkForRefactoringBook(book);
-  return (
-    <CatalogCompareDetail
-      entry={refactoring}
-      number={number}
-      backLinkHref={backLink.href}
-      backLinkLabel={backLink.label}
-      beforeLabel="Before the refactoring"
-      afterLabel="After the refactoring"
-      neighbors={getRefactoringNeighbors(number, book)}
-      inboundPatterns={inboundPatterns}
-    />
-  );
+  const viewModel = toRefactoringCompareDetailViewModel({
+    refactoring,
+    number,
+    book,
+    inboundPatternNames,
+    neighbors: getRefactoringNeighbors(number, book),
+  });
+
+  return <CatalogCompareDetail viewModel={viewModel} />;
 }
 
 export function generateStaticParams() {

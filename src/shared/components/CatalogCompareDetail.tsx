@@ -5,59 +5,27 @@ import BeforeAfterCodeBlocks from "@/shared/components/BeforeAfterCodeBlocks";
 import CatalogBreadcrumb from "@/shared/components/CatalogBreadcrumb";
 import CatalogEntryHeader from "@/shared/components/CatalogEntryHeader";
 import CatalogExampleSource from "@/shared/components/CatalogExampleSource";
-import CatalogSection from "@/shared/components/CatalogSection";
 import CatalogSectionCompare from "@/shared/components/CatalogSectionCompare";
 import LensSwitcher from "@/shared/components/LensSwitcher";
 import SnippetPreviewButton from "@/shared/components/SnippetPreviewButton";
-import type { CatalogEntry } from "@/shared/lib/CatalogEntry";
-import type { CatalogEntryName } from "@/shared/lib/CatalogEntryName";
-import type { CatalogNeighbors } from "@/shared/lib/CatalogNeighbors";
-import { toCatalogEntryHeaderViewModel } from "@/shared/lib/toCatalogEntryHeaderViewModel";
+import type { CatalogCompareDetailViewModel } from "@/shared/lib/CatalogDetailViewModel";
 
 interface CatalogCompareDetailProps {
-  entry: CatalogEntry;
-  number: number;
-  backLinkHref: string;
-  backLinkLabel: string;
-  beforeLabel: string;
-  afterLabel: string;
-  neighbors: CatalogNeighbors;
-  incomingSources?: readonly CatalogEntryName[];
-  inboundPatterns?: readonly CatalogEntryName[];
+  viewModel: CatalogCompareDetailViewModel;
 }
 
-export default function CatalogCompareDetail({
-  entry,
-  number,
-  backLinkHref,
-  backLinkLabel,
-  beforeLabel,
-  afterLabel,
-  neighbors,
-  incomingSources,
-  inboundPatterns,
-}: CatalogCompareDetailProps) {
-  const human = entry.forcesFor("human");
-  const agent = entry.forcesFor("agent");
-  const header = toCatalogEntryHeaderViewModel({
-    name: entry.name,
-    number,
-    relatedNames: entry.nemeses,
-    destinationPattern: entry.destinationPattern,
-    incomingSourceNames: incomingSources,
-    inboundPatternNames: inboundPatterns,
-    neighbors,
-  });
+export default function CatalogCompareDetail({ viewModel }: CatalogCompareDetailProps) {
+  const { humanForces, agentForces } = viewModel;
 
   return (
     <Container maxWidth="lg" sx={{ py: 4 }}>
       <Stack spacing={4}>
         <CatalogBreadcrumb
-          parentHref={backLinkHref}
-          parentLabel={backLinkLabel}
-          currentLabel={entry.name.toString()}
+          parentHref={viewModel.backLinkHref}
+          parentLabel={viewModel.backLinkLabel}
+          currentLabel={viewModel.header.title}
         />
-        <CatalogEntryHeader header={header} />
+        <CatalogEntryHeader header={viewModel.header} />
         <Stack
           direction="row"
           sx={{
@@ -68,26 +36,42 @@ export default function CatalogCompareDetail({
           }}
         >
           <LensSwitcher
-            humanHref={entry.href()}
-            compareHref={entry.compareHref()}
-            agentHref={entry.agentHref()}
+            humanHref={viewModel.humanHref}
+            compareHref={viewModel.compareHref}
+            agentHref={viewModel.agentHref}
             currentView="compare"
           />
-          <SnippetPreviewButton href={entry.name.toSnippetHref()} label="Preview markdown" />
+          <SnippetPreviewButton href={viewModel.snippetHref} label="Preview markdown" />
         </Stack>
-        <CatalogSectionCompare label="Symptom" human={human.symptom} agent={agent.symptom} />
-        <CatalogSectionCompare label="Goal" human={human.goal} agent={agent.goal} />
-        <BeforeAfterCodeBlocks
-          beforeLabel={beforeLabel}
-          afterLabel={afterLabel}
-          beforeCode={entry.before}
-          afterCode={entry.after}
+        <CatalogSectionCompare
+          label="Symptom"
+          human={humanForces.symptom}
+          agent={agentForces.symptom}
         />
-        {entry.exampleSource && <CatalogExampleSource note={entry.exampleSource} />}
-        <CatalogSectionCompare label="Pressure" human={human.pressure} agent={agent.pressure} />
-        <CatalogSectionCompare label="Tradeoff" human={human.tradeoff} agent={agent.tradeoff} />
-        <CatalogSectionCompare label="Relief" human={human.relief} agent={agent.relief} />
-        <CatalogSectionCompare label="Trap" human={human.trap} agent={agent.trap} />
+        <CatalogSectionCompare label="Goal" human={humanForces.goal} agent={agentForces.goal} />
+        <BeforeAfterCodeBlocks
+          beforeLabel={viewModel.beforeLabel}
+          afterLabel={viewModel.afterLabel}
+          beforeCode={viewModel.beforeCode}
+          afterCode={viewModel.afterCode}
+        />
+        {viewModel.exampleSource && <CatalogExampleSource note={viewModel.exampleSource} />}
+        <CatalogSectionCompare
+          label="Pressure"
+          human={humanForces.pressure}
+          agent={agentForces.pressure}
+        />
+        <CatalogSectionCompare
+          label="Tradeoff"
+          human={humanForces.tradeoff}
+          agent={agentForces.tradeoff}
+        />
+        <CatalogSectionCompare
+          label="Relief"
+          human={humanForces.relief}
+          agent={agentForces.relief}
+        />
+        <CatalogSectionCompare label="Trap" human={humanForces.trap} agent={agentForces.trap} />
       </Stack>
     </Container>
   );
