@@ -26,7 +26,7 @@ interface NavLink {
 const NAV_LINKS: readonly NavLink[] = [
   { view: "refactorings", label: "Refactorings", href: "/refactoring/canon" },
   { view: "smells", label: "Smells", href: "/refactoring/smells" },
-  { view: "patterns", label: "Patterns", href: "/refactoring-to-patterns" },
+  { view: "patterns", label: "Refactorings to Patterns", href: "/refactoring-to-patterns" },
   { view: "design-patterns", label: "Design Patterns", href: "/design-patterns" },
   { view: "plugin", label: "Plugin", href: "/plugin", precededBySeparator: true },
   { view: "reference", label: "Reference", href: "/reference" },
