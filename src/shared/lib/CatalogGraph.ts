@@ -53,16 +53,20 @@ function buildEdgeIndexes(entries: readonly CatalogEntry[]): EdgeIndexes {
 function buildNodeIndex(entries: readonly CatalogEntry[]): Map<string, CatalogNode> {
   const nodes = new Map<string, CatalogNode>();
   for (const entry of entries) {
-    const href = entry.name.toCatalogHref();
-    nodes.set(href, {
-      href,
-      name: entry.name.toString(),
-      tone: entry.name.tone(),
-      nemesisHrefs: entry.nemeses.map((nemesis) => nemesis.toCatalogHref()),
-      destinationHref: entry.destinationPattern?.toCatalogHref(),
-    });
+    const node = toCatalogNode(entry);
+    nodes.set(node.href, node);
   }
   return nodes;
+}
+
+function toCatalogNode(entry: CatalogEntry): CatalogNode {
+  return {
+    href: entry.name.toCatalogHref(),
+    name: entry.name.toString(),
+    tone: entry.name.tone(),
+    nemesisHrefs: entry.nemeses.map((nemesis) => nemesis.toCatalogHref()),
+    destinationHref: entry.destinationPattern?.toCatalogHref(),
+  };
 }
 
 function appendTo<K, V>(map: Map<K, V[]>, key: K, value: V): void {
