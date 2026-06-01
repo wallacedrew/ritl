@@ -39,6 +39,10 @@ Apply one refactoring at a time. Don't chain three together in one commit; each 
 
 ## 4a. When you decline
 
+**Sketch first.** Before naming a decline, write the after-state — in your reply or in scratch. Compare it to the current shape side by side. If the after reads cleaner and the smell skill's recommended chain points at the move, default to applying. Reserve declines for cases where the sketch itself shows the cost: more lines without more clarity, loss of a language idiom you can see disappearing in the after-shape, a contract that would actually break.
+
+Without sketching, abstract arguments about cost ("this adds ceremony," "the shared X argues for keeping them together") are easy to construct and hard to dispute. The sketch makes the trade-off concrete.
+
 If you decide **not** to apply a refactoring, do not just stay silent — name which kind of decline you're doing. Silent non-action loses the user's ability to argue. Pick one:
 
 - **Catalog miss** — checked the 24 smells; nothing matches. Will not invent an ad-hoc name. *Example:* "I checked the 24 smells; this doesn't match any of them. I won't invent a refactoring name for an unnamed shape."
@@ -48,6 +52,8 @@ If you decide **not** to apply a refactoring, do not just stay silent — name w
 - **Insufficient context** — you can't decide without more information. *Example:* "Before deciding, I'd need to know whether this method is called from outside the package. Asking before applying."
 
 The taxonomy matters because each decline is arguable in a different way: catalog miss is a checkable claim, taste calls are open to argument, cost-benefit names two estimates the user can challenge separately, constraint-blocked points at the constraint to dispute, and insufficient context asks before deciding. Conflating them all into "I'm not refactoring this" hides which counterargument the user could make.
+
+One common over-decline trap to watch for: citing a "shared X" or "common Y" argument without testing whether the share is a domain concept (which Beck's third rule defends) or just a shared expression result (which it does not). A method call result computed once and reused, or a local variable assigned from a single expression, is mechanical sharing — not a domain concept said twice. If the sketch of the split form recomputes that expression a second time, the recomputation is a non-concern. "No duplication" defends concepts, not method-call results.
 
 ## 5. Stay green
 
