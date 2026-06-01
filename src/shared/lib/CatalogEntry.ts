@@ -33,22 +33,35 @@ export type CatalogEntryProps = {
   destinationPattern?: CatalogEntryName;
 };
 
-export class CatalogEntry {
-  private constructor(
-    readonly catalog: CatalogKind,
-    readonly name: CatalogEntryName,
-    readonly nemeses: readonly CatalogEntryName[],
-    readonly before: string,
-    readonly after: string,
-    readonly forces: LensedForces,
-    readonly exampleSource?: string,
-    readonly book?: Book,
-    readonly destinationPattern?: CatalogEntryName,
-  ) {
-    CatalogEntry.assertCatalogIsLegal(catalog);
-    CatalogEntry.assertBookMatchesCatalog(catalog, book);
-    CatalogEntry.assertDestinationPatternIsLegal(catalog, book, destinationPattern);
-    CatalogEntry.assertContentIsNonEmpty(before, after);
+export class CatalogEntry implements Readonly<CatalogEntryProps> {
+  readonly catalog: CatalogKind;
+  readonly name: CatalogEntryName;
+  readonly nemeses: readonly CatalogEntryName[];
+  readonly before: string;
+  readonly after: string;
+  readonly forces: LensedForces;
+  readonly exampleSource?: string;
+  readonly book?: Book;
+  readonly destinationPattern?: CatalogEntryName;
+
+  private constructor(props: CatalogEntryProps) {
+    CatalogEntry.assertCatalogIsLegal(props.catalog);
+    CatalogEntry.assertBookMatchesCatalog(props.catalog, props.book);
+    CatalogEntry.assertDestinationPatternIsLegal(
+      props.catalog,
+      props.book,
+      props.destinationPattern,
+    );
+    CatalogEntry.assertContentIsNonEmpty(props.before, props.after);
+    this.catalog = props.catalog;
+    this.name = props.name;
+    this.nemeses = props.nemeses;
+    this.before = props.before;
+    this.after = props.after;
+    this.forces = props.forces;
+    this.exampleSource = props.exampleSource;
+    this.book = props.book;
+    this.destinationPattern = props.destinationPattern;
   }
 
   private static assertCatalogIsLegal(catalog: CatalogKind): void {
@@ -103,17 +116,7 @@ export class CatalogEntry {
   }
 
   static from(props: CatalogEntryProps): CatalogEntry {
-    return new CatalogEntry(
-      props.catalog,
-      props.name,
-      props.nemeses,
-      props.before,
-      props.after,
-      props.forces,
-      props.exampleSource,
-      props.book,
-      props.destinationPattern,
-    );
+    return new CatalogEntry(props);
   }
 
   forcesFor(lens: Lens): Forces {
