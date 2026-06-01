@@ -1,4 +1,5 @@
-import PatternsDetailPage, { patternsStaticParams } from "@/design-patterns/PatternsDetailPage";
+import PatternsDetailPage from "@/design-patterns/PatternsDetailPage";
+import { patternsStaticParams } from "@/design-patterns/lib/patternsStaticParams";
 
 interface RouteProps {
   params: Promise<{ slug: string }>;
