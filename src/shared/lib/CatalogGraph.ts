@@ -118,6 +118,16 @@ const referencedByPatterns: RelationshipGroupDescriptor = {
   hrefsFor: patternHrefsReferencing,
 };
 
+const destination: RelationshipGroupDescriptor = {
+  kind: "destination",
+  hrefsFor: destinationHrefAsList,
+};
+
+const reachedFrom: RelationshipGroupDescriptor = {
+  kind: "reached-from",
+  hrefsFor: destinationSourceHrefs,
+};
+
 function outboundNemeses(kind: RelationshipKind): RelationshipGroupDescriptor {
   return { kind, hrefsFor: outboundNemesisHrefs };
 }
@@ -125,11 +135,8 @@ function outboundNemeses(kind: RelationshipKind): RelationshipGroupDescriptor {
 const TONE_GROUPS: Readonly<Record<CatalogEntryTone, readonly RelationshipGroupDescriptor[]>> = {
   smell: [outboundNemeses("apply-refactorings"), referencedByPatterns],
   "fowler-refactoring": [outboundNemeses("removes-smells"), referencedByPatterns],
-  "kerievsky-refactoring": [
-    outboundNemeses("triggered-by"),
-    { kind: "destination", hrefsFor: destinationHrefAsList },
-  ],
-  pattern: [{ kind: "reached-from", hrefsFor: destinationSourceHrefs }],
+  "kerievsky-refactoring": [outboundNemeses("triggered-by"), destination],
+  pattern: [reachedFrom],
 };
 
 export function computeCrossReferencesForHref(href: string, graph: CatalogGraph): CrossReferences {
