@@ -10,13 +10,19 @@ export interface RefactoringCategoryGroup {
 }
 
 export function getRefactoringsByCategory(): RefactoringCategoryGroup[] {
-  const itemByName = new Map(
+  return groupByCategory(buildFowlerItemIndex());
+}
+
+function buildFowlerItemIndex(): Map<string, CatalogListItem> {
+  return new Map(
     loadFowlerRefactorings().map((refactoring, index) => [
       refactoring.name.toString(),
       toRefactoringListItem(refactoring, index + 1),
     ]),
   );
+}
 
+function groupByCategory(itemByName: Map<string, CatalogListItem>): RefactoringCategoryGroup[] {
   return Object.entries(REFACTORING_CATEGORIES).map(([category, names]) => ({
     category,
     items: names.flatMap((name) => {
