@@ -46,6 +46,10 @@ export class CatalogEntry {
     CatalogEntry.assertCatalogIsLegal(catalog);
     CatalogEntry.assertBookMatchesCatalog(catalog, book);
     CatalogEntry.assertDestinationPatternIsLegal(catalog, book, destinationPattern);
+    CatalogEntry.assertContentIsNonEmpty(before, after);
+  }
+
+  private static assertContentIsNonEmpty(before: string, after: string): void {
     if (before.trim().length === 0) {
       throw new Error('CatalogEntry: field "before" cannot be empty');
     }
