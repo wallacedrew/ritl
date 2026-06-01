@@ -9,6 +9,7 @@ import {
 } from "./CatalogEntry";
 import { CatalogEntryName } from "./CatalogEntryName";
 import { Forces, type ForcesRecord } from "./Forces";
+import { parseCatalogNemeses } from "./parseCatalogNemeses";
 
 function readStringField(record: Record<string, unknown>, field: string): string {
   const value = record[field];
@@ -26,71 +27,6 @@ function readCatalog(record: Record<string, unknown>): CatalogKind {
     );
   }
   return raw as CatalogKind;
-}
-
-function readNemeses(
-  record: Record<string, unknown>,
-  ownCatalog: CatalogKind,
-): readonly CatalogEntryName[] {
-  const raw = record.nemeses;
-  if (!Array.isArray(raw)) {
-    throw new Error('parseCatalogEntry: field "nemeses" must be an array');
-  }
-  if (ownCatalog === "design-patterns") {
-    return raw.map(parsePatternNemesis);
-  }
-  return raw.map((candidate) => parseFowlerNemesis(candidate, ownCatalog));
-}
-
-function parseFowlerNemesis(
-  candidate: unknown,
-  ownCatalog: "refactorings" | "smells",
-): CatalogEntryName {
-  if (typeof candidate === "string") {
-    return nemesisFromImpliedOpposite(candidate, ownCatalog);
-  }
-  if (candidate !== null && typeof candidate === "object" && !Array.isArray(candidate)) {
-    return nemesisFromExplicitCatalog(candidate as Record<string, unknown>);
-  }
-  throw new Error(
-    'parseCatalogEntry: every entry in "nemeses" must be a string or an object { catalog: "refactorings" | "smells", name: string }',
-  );
-}
-
-function nemesisFromImpliedOpposite(
-  candidate: string,
-  ownCatalog: "refactorings" | "smells",
-): CatalogEntryName {
-  const oppositeCatalog: "refactorings" | "smells" =
-    ownCatalog === "smells" ? "refactorings" : "smells";
-  return oppositeCatalog === "refactorings"
-    ? CatalogEntryName.refactoring(candidate)
-    : CatalogEntryName.smell(candidate);
-}
-
-function parsePatternNemesis(candidate: unknown): CatalogEntryName {
-  if (candidate === null || typeof candidate !== "object" || Array.isArray(candidate)) {
-    throw new Error(
-      'parseCatalogEntry: pattern nemeses must be objects { catalog: "refactorings" | "smells", name: string }',
-    );
-  }
-  return nemesisFromExplicitCatalog(candidate as Record<string, unknown>);
-}
-
-function nemesisFromExplicitCatalog(record: Record<string, unknown>): CatalogEntryName {
-  const target = record.catalog;
-  const name = record.name;
-  if (target !== "refactorings" && target !== "smells") {
-    throw new Error(
-      `parseCatalogEntry: nemesis "catalog" must be "refactorings" or "smells", got ${JSON.stringify(target)}`,
-    );
-  }
-  if (typeof name !== "string") {
-    throw new Error('parseCatalogEntry: nemesis "name" must be a string');
-  }
-  return target === "refactorings"
-    ? CatalogEntryName.refactoring(name)
-    : CatalogEntryName.smell(name);
 }
 
 function readForcesRecord(record: Record<string, unknown>, lens: "human" | "agent"): ForcesRecord {
@@ -226,7 +162,7 @@ export function parseCatalogEntry(raw: unknown): CatalogEntry {
   return CatalogEntry.from({
     catalog,
     name,
-    nemeses: readNemeses(record, catalog),
+    nemeses: parseCatalogNemeses(record, catalog),
     before: readStringField(record, "before"),
     after: readStringField(record, "after"),
     forces: readForces(record),
