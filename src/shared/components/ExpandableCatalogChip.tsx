@@ -5,18 +5,23 @@ import { type MouseEvent, useId, useMemo, useState } from "react";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import Box from "@mui/material/Box";
 import Popover from "@mui/material/Popover";
-import { alpha, type SxProps, type Theme } from "@mui/material/styles";
 import NextLink from "next/link";
 
 import LinkedChip from "@/shared/components/LinkedChip";
 import type { CatalogEntryTone } from "@/shared/lib/CatalogEntry";
 import { computeCrossReferencesForHref } from "@/shared/lib/CatalogGraph";
-import { badgePaletteKey, type BadgePaletteKey } from "@/shared/theme/catalogChipColor";
+import { badgePaletteKey } from "@/shared/theme/catalogChipColor";
 import { useCatalogGraph } from "@/shared/hooks/useCatalogGraph";
 import { useOpenPopover } from "@/shared/hooks/useOpenPopover";
 
 import { isEmptyCrossReferences } from "../lib/RelationshipGroup";
 import CrossReferencePanel from "./CrossReferencePanel";
+import {
+  splitChipChevronSx,
+  splitChipContainerSx,
+  splitChipDividerSx,
+  splitChipLabelSx,
+} from "./expandableCatalogChipStyles";
 
 interface Props {
   label: string;
@@ -84,77 +89,4 @@ export default function ExpandableCatalogChip({ label, href, tone }: Props) {
       </Popover>
     </>
   );
-}
-
-function splitChipContainerSx(paletteKey: BadgePaletteKey): SxProps<Theme> {
-  return (theme) => ({
-    display: "inline-flex",
-    alignItems: "stretch",
-    height: 24,
-    borderRadius: 12,
-    border: `1px solid ${alpha(theme.palette[paletteKey].main, 0.5)}`,
-    backgroundColor: "transparent",
-    overflow: "hidden",
-    minWidth: 0,
-    maxWidth: "100%",
-  });
-}
-
-function splitChipLabelSx(paletteKey: BadgePaletteKey): SxProps<Theme> {
-  return (theme) => ({
-    display: "block",
-    flex: "1 1 auto",
-    minWidth: 0,
-    paddingLeft: "10px",
-    paddingRight: "8px",
-    color: theme.palette[paletteKey].dark,
-    fontSize: "0.8125rem",
-    fontWeight: 500,
-    textDecoration: "none",
-    lineHeight: "22px",
-    whiteSpace: "nowrap",
-    overflow: "hidden",
-    textOverflow: "ellipsis",
-    transition: "background-color 120ms",
-    "&:hover": {
-      backgroundColor: alpha(theme.palette[paletteKey].main, 0.08),
-    },
-    "&:focus-visible": {
-      outline: `2px solid ${theme.palette[paletteKey].main}`,
-      outlineOffset: -2,
-    },
-  });
-}
-
-function splitChipDividerSx(paletteKey: BadgePaletteKey): SxProps<Theme> {
-  return (theme) => ({
-    width: "1px",
-    alignSelf: "center",
-    height: "65%",
-    backgroundColor: alpha(theme.palette[paletteKey].main, 0.4),
-    flexShrink: 0,
-  });
-}
-
-function splitChipChevronSx(paletteKey: BadgePaletteKey): SxProps<Theme> {
-  return (theme) => ({
-    display: "inline-flex",
-    alignItems: "center",
-    justifyContent: "center",
-    paddingLeft: "6px",
-    paddingRight: "6px",
-    background: "transparent",
-    border: "none",
-    color: theme.palette[paletteKey].dark,
-    cursor: "pointer",
-    flexShrink: 0,
-    transition: "background-color 120ms",
-    "&:hover": {
-      backgroundColor: alpha(theme.palette[paletteKey].main, 0.08),
-    },
-    "&:focus-visible": {
-      outline: `2px solid ${theme.palette[paletteKey].main}`,
-      outlineOffset: -2,
-    },
-  });
 }
