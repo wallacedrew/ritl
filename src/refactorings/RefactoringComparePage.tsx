@@ -7,8 +7,7 @@ import { findInboundPatternsForRefactoring } from "@/shared/lib/findInboundPatte
 import { generateCatalogStaticParams } from "@/shared/lib/generateCatalogStaticParams";
 
 import { getRefactoringNeighbors } from "./lib/getRefactoringNeighbors";
-import { loadFowlerRefactorings } from "./lib/loadFowlerRefactorings";
-import { loadKerievsky } from "./lib/loadKerievsky";
+import { loadRefactoringsByBook } from "./lib/loadRefactoringsByBook";
 import { toRefactoringCompareDetailViewModel } from "./lib/toRefactoringCompareDetailViewModel";
 
 interface RefactoringComparePageProps {
@@ -21,7 +20,7 @@ export default async function RefactoringComparePage({
   book = "fowler",
 }: RefactoringComparePageProps) {
   const { slug: rawSlug } = await params;
-  const found = findCatalogEntryBySlug(rawSlug, entriesFor(book));
+  const found = findCatalogEntryBySlug(rawSlug, loadRefactoringsByBook(book));
 
   if (found === undefined) notFound();
 
@@ -42,9 +41,5 @@ export function generateStaticParams() {
 }
 
 export function refactoringCompareStaticParams(book: RefactoringBook) {
-  return generateCatalogStaticParams(entriesFor(book));
-}
-
-function entriesFor(book: RefactoringBook) {
-  return book === "kerievsky" ? loadKerievsky() : loadFowlerRefactorings();
+  return generateCatalogStaticParams(loadRefactoringsByBook(book));
 }

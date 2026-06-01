@@ -5,8 +5,7 @@ import { findCatalogEntryBySlug } from "@/shared/lib/findCatalogEntryBySlug";
 import { generateCatalogStaticParams } from "@/shared/lib/generateCatalogStaticParams";
 
 import RefactoringDetail from "./components/RefactoringDetail";
-import { loadFowlerRefactorings } from "./lib/loadFowlerRefactorings";
-import { loadKerievsky } from "./lib/loadKerievsky";
+import { loadRefactoringsByBook } from "./lib/loadRefactoringsByBook";
 
 interface RefactoringAgentPageProps {
   params: Promise<{ slug: string }>;
@@ -18,7 +17,7 @@ export default async function RefactoringAgentPage({
   book = "fowler",
 }: RefactoringAgentPageProps) {
   const { slug: rawSlug } = await params;
-  const found = findCatalogEntryBySlug(rawSlug, entriesFor(book));
+  const found = findCatalogEntryBySlug(rawSlug, loadRefactoringsByBook(book));
 
   if (found === undefined) notFound();
 
@@ -31,9 +30,5 @@ export function generateStaticParams() {
 }
 
 export function refactoringAgentStaticParams(book: RefactoringBook) {
-  return generateCatalogStaticParams(entriesFor(book));
-}
-
-function entriesFor(book: RefactoringBook) {
-  return book === "kerievsky" ? loadKerievsky() : loadFowlerRefactorings();
+  return generateCatalogStaticParams(loadRefactoringsByBook(book));
 }
