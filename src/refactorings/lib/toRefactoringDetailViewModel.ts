@@ -6,11 +6,7 @@ import { buildCatalogDetailCore } from "@/shared/lib/buildCatalogDetailCore";
 import { toForcesRecord } from "@/shared/lib/toForcesRecord";
 
 import { backLinkForRefactoringBook } from "./backLinkForRefactoringBook";
-
-const REFACTORING_BEFORE_AFTER_LABELS = {
-  beforeLabel: "Before the refactoring",
-  afterLabel: "After the refactoring",
-} as const;
+import { REFACTORING_BEFORE_AFTER_LABELS } from "./refactoringLabels";
 
 export interface RefactoringDetailViewModelArgs {
   readonly refactoring: CatalogEntry;
