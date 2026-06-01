@@ -1,11 +1,9 @@
-import { notFound } from "next/navigation";
-
 import CatalogCompareDetail from "@/shared/components/CatalogCompareDetail";
 import type { RefactoringBook } from "@/shared/lib/CatalogEntry";
-import { findCatalogEntryBySlug } from "@/shared/lib/findCatalogEntryBySlug";
 import { findInboundPatternsForRefactoring } from "@/shared/lib/findInboundPatternsForRefactoring";
 import { generateCatalogStaticParams } from "@/shared/lib/generateCatalogStaticParams";
 
+import { findRefactoringOr404 } from "./lib/findRefactoringOr404";
 import { getRefactoringNeighbors } from "./lib/getRefactoringNeighbors";
 import { loadRefactoringsByBook } from "./lib/loadRefactoringsByBook";
 import { toRefactoringCompareDetailViewModel } from "./lib/toRefactoringCompareDetailViewModel";
@@ -19,12 +17,7 @@ export default async function RefactoringComparePage({
   params,
   book = "fowler",
 }: RefactoringComparePageProps) {
-  const { slug: rawSlug } = await params;
-  const found = findCatalogEntryBySlug(rawSlug, loadRefactoringsByBook(book));
-
-  if (found === undefined) notFound();
-
-  const { entry: refactoring, number } = found;
+  const { entry: refactoring, number } = await findRefactoringOr404(params, book);
   const viewModel = toRefactoringCompareDetailViewModel({
     refactoring,
     number,
