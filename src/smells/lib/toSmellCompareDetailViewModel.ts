@@ -2,8 +2,15 @@ import type { CatalogEntry } from "@/shared/lib/CatalogEntry";
 import type { CatalogCompareDetailViewModel } from "@/shared/lib/CatalogDetailViewModel";
 import type { CatalogEntryName } from "@/shared/lib/CatalogEntryName";
 import type { CatalogNeighbors } from "@/shared/lib/CatalogNeighbors";
-import { toCatalogEntryHeaderViewModel } from "@/shared/lib/toCatalogEntryHeaderViewModel";
+import { buildCatalogDetailCore } from "@/shared/lib/buildCatalogDetailCore";
 import { toForcesRecord } from "@/shared/lib/toForcesRecord";
+
+const SMELL_LABELS = {
+  backLinkHref: "/refactoring/smells",
+  backLinkLabel: "Smells",
+  beforeLabel: "Smellier version",
+  afterLabel: "Fresher version",
+} as const;
 
 export interface SmellCompareDetailViewModelArgs {
   readonly smell: CatalogEntry;
@@ -17,24 +24,14 @@ export function toSmellCompareDetailViewModel(
 ): CatalogCompareDetailViewModel {
   const { smell, number, inboundPatternNames, neighbors } = args;
   return {
-    header: toCatalogEntryHeaderViewModel({
-      name: smell.name,
+    ...buildCatalogDetailCore({
+      entry: smell,
       number,
       relatedNames: smell.nemeses,
       inboundPatternNames,
       neighbors,
+      ...SMELL_LABELS,
     }),
-    humanHref: smell.href(),
-    agentHref: smell.agentHref(),
-    compareHref: smell.compareHref(),
-    snippetHref: smell.name.toSnippetHref(),
-    backLinkHref: "/refactoring/smells",
-    backLinkLabel: "Smells",
-    beforeLabel: "Smellier version",
-    afterLabel: "Fresher version",
-    beforeCode: smell.before,
-    afterCode: smell.after,
-    exampleSource: smell.exampleSource,
     humanForces: toForcesRecord(smell.forcesFor("human")),
     agentForces: toForcesRecord(smell.forcesFor("agent")),
   };
