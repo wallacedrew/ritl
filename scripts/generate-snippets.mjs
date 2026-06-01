@@ -26,7 +26,7 @@ const refactorings = JSON.parse(
 );
 const smells = JSON.parse(readFileSync(resolve(root, "src/smells/content/smells.json"), "utf-8"));
 const patterns = JSON.parse(
-  readFileSync(resolve(root, "src/design-patterns/content/patterns.json"), "utf-8"),
+  readFileSync(resolve(root, "src/design-patterns/content/design-patterns.json"), "utf-8"),
 );
 
 const auditSkillMd = readFileSync(resolve(root, "plugin/refactor/skills/audit/SKILL.md"), "utf-8");
