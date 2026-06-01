@@ -1,10 +1,8 @@
-import { notFound } from "next/navigation";
-
 import CatalogCompareDetail from "@/shared/components/CatalogCompareDetail";
-import { findCatalogEntryBySlug } from "@/shared/lib/findCatalogEntryBySlug";
 import { findIncomingSourcesForPattern } from "@/shared/lib/findIncomingSourcesForPattern";
 import { generateCatalogStaticParams } from "@/shared/lib/generateCatalogStaticParams";
 
+import { findPatternOr404 } from "./lib/findPatternOr404";
 import { getPatternNeighbors } from "./lib/getPatternNeighbors";
 import { loadPatterns } from "./lib/loadPatterns";
 import { toPatternCompareDetailViewModel } from "./lib/toPatternCompareDetailViewModel";
@@ -14,12 +12,7 @@ interface PatternsComparePageProps {
 }
 
 export default async function PatternsComparePage({ params }: PatternsComparePageProps) {
-  const { slug: rawSlug } = await params;
-  const found = findCatalogEntryBySlug(rawSlug, loadPatterns());
-
-  if (found === undefined) notFound();
-
-  const { entry: pattern, number } = found;
+  const { entry: pattern, number } = await findPatternOr404(params);
   const viewModel = toPatternCompareDetailViewModel({
     pattern,
     number,

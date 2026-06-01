@@ -1,9 +1,7 @@
-import { notFound } from "next/navigation";
-
-import { findCatalogEntryBySlug } from "@/shared/lib/findCatalogEntryBySlug";
 import { generateCatalogStaticParams } from "@/shared/lib/generateCatalogStaticParams";
 
 import PatternDetail from "./components/PatternDetail";
+import { findPatternOr404 } from "./lib/findPatternOr404";
 import { loadPatterns } from "./lib/loadPatterns";
 
 interface PatternsDetailPageProps {
@@ -11,12 +9,7 @@ interface PatternsDetailPageProps {
 }
 
 export default async function PatternsDetailPage({ params }: PatternsDetailPageProps) {
-  const { slug: rawSlug } = await params;
-  const found = findCatalogEntryBySlug(rawSlug, loadPatterns());
-
-  if (found === undefined) notFound();
-
-  const { entry: pattern, number } = found;
+  const { entry: pattern, number } = await findPatternOr404(params);
   return <PatternDetail pattern={pattern} number={number} lens="human" />;
 }
 
