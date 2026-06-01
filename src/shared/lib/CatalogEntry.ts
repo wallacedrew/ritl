@@ -81,12 +81,16 @@ export class CatalogEntry implements Readonly<CatalogEntryProps> {
       return;
     }
     if (catalog === "refactorings") {
-      if (book !== undefined && !(LEGAL_REFACTORING_BOOKS as readonly string[]).includes(book)) {
-        throw new Error(`CatalogEntry: unknown refactoring book "${book}"`);
-      }
+      CatalogEntry.assertRefactoringBookIsLegal(book);
       return;
     }
     CatalogEntry.assertSmellHasNoBook(book);
+  }
+
+  private static assertRefactoringBookIsLegal(book: Book | undefined): void {
+    if (book !== undefined && !(LEGAL_REFACTORING_BOOKS as readonly string[]).includes(book)) {
+      throw new Error(`CatalogEntry: unknown refactoring book "${book}"`);
+    }
   }
 
   private static assertSmellHasNoBook(book: Book | undefined): void {
