@@ -102,11 +102,16 @@ const outboundNemesisHrefs: RelatedHrefsFor = (node) => node.nemesisHrefs;
 const destinationHrefAsList: RelatedHrefsFor = (node) =>
   node.destinationHref ? [node.destinationHref] : [];
 
+const PATTERN_INBOUND_TONES: ReadonlySet<CatalogEntryTone> = new Set([
+  "kerievsky-refactoring",
+  "pattern",
+]);
+
 const patternHrefsReferencing: RelatedHrefsFor = (node, graph) => {
   const allInbound = graph.inboundByHref.get(node.href) ?? [];
   return allInbound.filter((sourceHref) => {
     const source = graph.nodes.get(sourceHref);
-    return source?.tone === "kerievsky-refactoring" || source?.tone === "pattern";
+    return source !== undefined && PATTERN_INBOUND_TONES.has(source.tone);
   });
 };
 
