@@ -44,6 +44,16 @@ export default function CatalogSearch({ items }: CatalogSearchProps) {
   const analytics = useAnalytics();
   const selected = items.find((item) => item.href === pathname) ?? null;
 
+  function handleOptionSelected(option: CatalogItem | null) {
+    if (option === null) return;
+
+    analytics.track({
+      event: "search_selected",
+      properties: { kind: option.kind, slug: slugFromHref(option.href) },
+    });
+    router.push(option.href);
+  }
+
   return (
     <Autocomplete
       options={items}
@@ -55,15 +65,7 @@ export default function CatalogSearch({ items }: CatalogSearchProps) {
       popupIcon={<KeyboardArrowDownIcon fontSize="small" sx={{ color: "text.secondary" }} />}
       getOptionLabel={(option) => option.name}
       isOptionEqualToValue={(option, value) => option.href === value.href}
-      onChange={(_, option) => {
-        if (option) {
-          analytics.track({
-            event: "search_selected",
-            properties: { kind: option.kind, slug: slugFromHref(option.href) },
-          });
-          router.push(option.href);
-        }
-      }}
+      onChange={(_, option) => handleOptionSelected(option)}
       renderInput={(params) => {
         const slotProps = {
           ...params.slotProps,
