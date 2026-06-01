@@ -26,10 +26,19 @@ export interface CatalogGraph {
 export function buildCatalogGraph(snapshot: CatalogSnapshot): CatalogGraph {
   const allEntries = [...snapshot.smells, ...snapshot.refactorings, ...snapshot.patterns];
   const nodes = buildNodeIndex(allEntries);
+  const { inboundByHref, destinationSourcesByHref } = buildEdgeIndexes(allEntries);
+  return { nodes, inboundByHref, destinationSourcesByHref };
+}
+
+interface EdgeIndexes {
+  readonly inboundByHref: Map<string, string[]>;
+  readonly destinationSourcesByHref: Map<string, string[]>;
+}
+
+function buildEdgeIndexes(entries: readonly CatalogEntry[]): EdgeIndexes {
   const inboundByHref = new Map<string, string[]>();
   const destinationSourcesByHref = new Map<string, string[]>();
-
-  for (const entry of allEntries) {
+  for (const entry of entries) {
     const sourceHref = entry.name.toCatalogHref();
     for (const nemesis of entry.nemeses) {
       appendTo(inboundByHref, nemesis.toCatalogHref(), sourceHref);
@@ -38,8 +47,7 @@ export function buildCatalogGraph(snapshot: CatalogSnapshot): CatalogGraph {
       appendTo(destinationSourcesByHref, entry.destinationPattern.toCatalogHref(), sourceHref);
     }
   }
-
-  return { nodes, inboundByHref, destinationSourcesByHref };
+  return { inboundByHref, destinationSourcesByHref };
 }
 
 function buildNodeIndex(entries: readonly CatalogEntry[]): Map<string, CatalogNode> {
