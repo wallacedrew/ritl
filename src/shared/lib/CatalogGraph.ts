@@ -113,14 +113,16 @@ const patternHrefsReferencing: RelatedHrefsFor = (node, graph) => {
 const destinationSourceHrefs: RelatedHrefsFor = (node, graph) =>
   graph.destinationSourcesByHref.get(node.href) ?? [];
 
+const referencedByPatterns: RelationshipGroupDescriptor = {
+  kind: "referenced-by-patterns",
+  hrefsFor: patternHrefsReferencing,
+};
+
 const TONE_GROUPS: Readonly<Record<CatalogEntryTone, readonly RelationshipGroupDescriptor[]>> = {
-  smell: [
-    { kind: "apply-refactorings", hrefsFor: outboundNemesisHrefs },
-    { kind: "referenced-by-patterns", hrefsFor: patternHrefsReferencing },
-  ],
+  smell: [{ kind: "apply-refactorings", hrefsFor: outboundNemesisHrefs }, referencedByPatterns],
   "fowler-refactoring": [
     { kind: "removes-smells", hrefsFor: outboundNemesisHrefs },
-    { kind: "referenced-by-patterns", hrefsFor: patternHrefsReferencing },
+    referencedByPatterns,
   ],
   "kerievsky-refactoring": [
     { kind: "triggered-by", hrefsFor: outboundNemesisHrefs },
