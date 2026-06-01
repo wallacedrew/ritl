@@ -1,4 +1,4 @@
-import type { CatalogEntryTone } from "@/shared/lib/CatalogEntry";
+import type { CatalogEntry, CatalogEntryTone } from "@/shared/lib/CatalogEntry";
 import type { CatalogSnapshot } from "@/shared/lib/loadCatalogSnapshot";
 
 import {
@@ -25,20 +25,9 @@ export interface CatalogGraph {
 
 export function buildCatalogGraph(snapshot: CatalogSnapshot): CatalogGraph {
   const allEntries = [...snapshot.smells, ...snapshot.refactorings, ...snapshot.patterns];
-  const nodes = new Map<string, CatalogNode>();
+  const nodes = buildNodeIndex(allEntries);
   const inboundByHref = new Map<string, string[]>();
   const destinationSourcesByHref = new Map<string, string[]>();
-
-  for (const entry of allEntries) {
-    const href = entry.name.toCatalogHref();
-    nodes.set(href, {
-      href,
-      name: entry.name.toString(),
-      tone: entry.name.tone(),
-      nemesisHrefs: entry.nemeses.map((nemesis) => nemesis.toCatalogHref()),
-      destinationHref: entry.destinationPattern?.toCatalogHref(),
-    });
-  }
 
   for (const entry of allEntries) {
     const sourceHref = entry.name.toCatalogHref();
@@ -51,6 +40,21 @@ export function buildCatalogGraph(snapshot: CatalogSnapshot): CatalogGraph {
   }
 
   return { nodes, inboundByHref, destinationSourcesByHref };
+}
+
+function buildNodeIndex(entries: readonly CatalogEntry[]): Map<string, CatalogNode> {
+  const nodes = new Map<string, CatalogNode>();
+  for (const entry of entries) {
+    const href = entry.name.toCatalogHref();
+    nodes.set(href, {
+      href,
+      name: entry.name.toString(),
+      tone: entry.name.tone(),
+      nemesisHrefs: entry.nemeses.map((nemesis) => nemesis.toCatalogHref()),
+      destinationHref: entry.destinationPattern?.toCatalogHref(),
+    });
+  }
+  return nodes;
 }
 
 function appendTo<K, V>(map: Map<K, V[]>, key: K, value: V): void {
