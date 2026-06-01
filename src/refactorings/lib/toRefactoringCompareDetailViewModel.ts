@@ -5,8 +5,7 @@ import type { CatalogNeighbors } from "@/shared/lib/CatalogNeighbors";
 import { buildCatalogDetailCore } from "@/shared/lib/buildCatalogDetailCore";
 import { toForcesRecord } from "@/shared/lib/toForcesRecord";
 
-import { backLinkForRefactoringBook } from "./backLinkForRefactoringBook";
-import { REFACTORING_BEFORE_AFTER_LABELS } from "./refactoringLabels";
+import { refactoringLabelsForBook } from "./refactoringLabels";
 
 export interface RefactoringCompareDetailViewModelArgs {
   readonly refactoring: CatalogEntry;
@@ -20,7 +19,6 @@ export function toRefactoringCompareDetailViewModel(
   args: RefactoringCompareDetailViewModelArgs,
 ): CatalogCompareDetailViewModel {
   const { refactoring, number, book, inboundPatternNames, neighbors } = args;
-  const backLink = backLinkForRefactoringBook(book);
   return {
     ...buildCatalogDetailCore({
       entry: refactoring,
@@ -29,9 +27,7 @@ export function toRefactoringCompareDetailViewModel(
       destinationPattern: refactoring.destinationPattern,
       inboundPatternNames,
       neighbors,
-      backLinkHref: backLink.href,
-      backLinkLabel: backLink.label,
-      ...REFACTORING_BEFORE_AFTER_LABELS,
+      ...refactoringLabelsForBook(book),
     }),
     humanForces: toForcesRecord(refactoring.forcesFor("human")),
     agentForces: toForcesRecord(refactoring.forcesFor("agent")),
