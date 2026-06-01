@@ -51,15 +51,6 @@ export class CatalogEntry {
     CatalogEntry.assertContentIsNonEmpty(before, after);
   }
 
-  private static assertContentIsNonEmpty(before: string, after: string): void {
-    if (before.trim().length === 0) {
-      throw new Error('CatalogEntry: field "before" cannot be empty');
-    }
-    if (after.trim().length === 0) {
-      throw new Error('CatalogEntry: field "after" cannot be empty');
-    }
-  }
-
   private static assertCatalogIsLegal(catalog: CatalogKind): void {
     if (!LEGAL_CATALOGS.includes(catalog)) {
       throw new Error(`CatalogEntry: unknown catalog "${catalog}"`);
@@ -99,6 +90,15 @@ export class CatalogEntry {
       throw new Error(
         'CatalogEntry: "destinationPattern" is only allowed on patterns or refactorings with book="kerievsky"',
       );
+    }
+  }
+
+  private static assertContentIsNonEmpty(before: string, after: string): void {
+    if (before.trim().length === 0) {
+      throw new Error('CatalogEntry: field "before" cannot be empty');
+    }
+    if (after.trim().length === 0) {
+      throw new Error('CatalogEntry: field "after" cannot be empty');
     }
   }
 
