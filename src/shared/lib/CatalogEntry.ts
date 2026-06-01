@@ -71,20 +71,23 @@ export class CatalogEntry implements Readonly<CatalogEntryProps> {
   }
 
   private static assertBookMatchesCatalog(catalog: CatalogKind, book: Book | undefined): void {
-    if (catalog === "design-patterns") {
-      if (book === undefined) {
-        throw new Error('CatalogEntry: pattern entries must declare a "book"');
-      }
-      if (!(LEGAL_PATTERN_BOOKS as readonly string[]).includes(book)) {
-        throw new Error(`CatalogEntry: unknown pattern book "${book}"`);
-      }
-      return;
+    switch (catalog) {
+      case "design-patterns":
+        return CatalogEntry.assertPatternBookIsLegal(book);
+      case "refactorings":
+        return CatalogEntry.assertRefactoringBookIsLegal(book);
+      case "smells":
+        return CatalogEntry.assertSmellHasNoBook(book);
     }
-    if (catalog === "refactorings") {
-      CatalogEntry.assertRefactoringBookIsLegal(book);
-      return;
+  }
+
+  private static assertPatternBookIsLegal(book: Book | undefined): void {
+    if (book === undefined) {
+      throw new Error('CatalogEntry: pattern entries must declare a "book"');
     }
-    CatalogEntry.assertSmellHasNoBook(book);
+    if (!(LEGAL_PATTERN_BOOKS as readonly string[]).includes(book)) {
+      throw new Error(`CatalogEntry: unknown pattern book "${book}"`);
+    }
   }
 
   private static assertRefactoringBookIsLegal(book: Book | undefined): void {
