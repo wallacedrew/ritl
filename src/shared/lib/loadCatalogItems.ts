@@ -2,32 +2,26 @@ import { loadPatterns } from "@/design-patterns/lib/loadPatterns";
 import { loadRefactorings } from "@/refactorings/lib/loadRefactorings";
 import { loadSmells } from "@/smells/lib/loadSmells";
 
+import type { CatalogEntry } from "./CatalogEntry";
 import type { CatalogItem } from "./CatalogItem";
 
+function toCatalogItems(
+  load: () => readonly CatalogEntry[],
+  kind: CatalogItem["kind"],
+): CatalogItem[] {
+  return load().map((entry, index) => ({
+    kind,
+    tone: entry.name.tone(),
+    number: index + 1,
+    name: entry.name.toString(),
+    href: entry.name.toCatalogHref(),
+  }));
+}
+
 export function loadCatalogItems(): CatalogItem[] {
-  const smells: CatalogItem[] = loadSmells().map((smell, index) => ({
-    kind: "smell",
-    tone: smell.name.tone(),
-    number: index + 1,
-    name: smell.name.toString(),
-    href: smell.name.toCatalogHref(),
-  }));
-
-  const refactorings: CatalogItem[] = loadRefactorings().map((refactoring, index) => ({
-    kind: "refactoring",
-    tone: refactoring.name.tone(),
-    number: index + 1,
-    name: refactoring.name.toString(),
-    href: refactoring.name.toCatalogHref(),
-  }));
-
-  const patterns: CatalogItem[] = loadPatterns().map((pattern, index) => ({
-    kind: "pattern",
-    tone: pattern.name.tone(),
-    number: index + 1,
-    name: pattern.name.toString(),
-    href: pattern.name.toCatalogHref(),
-  }));
-
-  return [...refactorings, ...smells, ...patterns];
+  return [
+    ...toCatalogItems(loadRefactorings, "refactoring"),
+    ...toCatalogItems(loadSmells, "smell"),
+    ...toCatalogItems(loadPatterns, "pattern"),
+  ];
 }
