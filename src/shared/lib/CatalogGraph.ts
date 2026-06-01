@@ -36,18 +36,29 @@ interface EdgeIndexes {
 }
 
 function buildEdgeIndexes(entries: readonly CatalogEntry[]): EdgeIndexes {
-  const inboundByHref = new Map<string, string[]>();
+  const inboundByHref = buildInboundIndex(entries);
   const destinationSourcesByHref = new Map<string, string[]>();
+  for (const entry of entries) {
+    if (entry.destinationPattern) {
+      appendTo(
+        destinationSourcesByHref,
+        entry.destinationPattern.toCatalogHref(),
+        entry.name.toCatalogHref(),
+      );
+    }
+  }
+  return { inboundByHref, destinationSourcesByHref };
+}
+
+function buildInboundIndex(entries: readonly CatalogEntry[]): Map<string, string[]> {
+  const inboundByHref = new Map<string, string[]>();
   for (const entry of entries) {
     const sourceHref = entry.name.toCatalogHref();
     for (const nemesis of entry.nemeses) {
       appendTo(inboundByHref, nemesis.toCatalogHref(), sourceHref);
     }
-    if (entry.destinationPattern) {
-      appendTo(destinationSourcesByHref, entry.destinationPattern.toCatalogHref(), sourceHref);
-    }
   }
-  return { inboundByHref, destinationSourcesByHref };
+  return inboundByHref;
 }
 
 function buildNodeIndex(entries: readonly CatalogEntry[]): Map<string, CatalogNode> {
