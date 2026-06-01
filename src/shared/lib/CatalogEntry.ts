@@ -45,15 +45,7 @@ export class CatalogEntry {
   ) {
     CatalogEntry.assertCatalogIsLegal(catalog);
     CatalogEntry.assertBookMatchesCatalog(catalog, book);
-    if (destinationPattern !== undefined) {
-      const isPattern = catalog === "design-patterns";
-      const isKerievskyRefactoring = catalog === "refactorings" && book === "kerievsky";
-      if (!isPattern && !isKerievskyRefactoring) {
-        throw new Error(
-          'CatalogEntry: "destinationPattern" is only allowed on patterns or refactorings with book="kerievsky"',
-        );
-      }
-    }
+    CatalogEntry.assertDestinationPatternIsLegal(catalog, book, destinationPattern);
     if (before.trim().length === 0) {
       throw new Error('CatalogEntry: field "before" cannot be empty');
     }
@@ -86,6 +78,21 @@ export class CatalogEntry {
     }
     if (book !== undefined) {
       throw new Error('CatalogEntry: "book" is only allowed on pattern or refactoring entries');
+    }
+  }
+
+  private static assertDestinationPatternIsLegal(
+    catalog: CatalogKind,
+    book: Book | undefined,
+    destinationPattern: CatalogEntryName | undefined,
+  ): void {
+    if (destinationPattern === undefined) return;
+    const isPattern = catalog === "design-patterns";
+    const isKerievskyRefactoring = catalog === "refactorings" && book === "kerievsky";
+    if (!isPattern && !isKerievskyRefactoring) {
+      throw new Error(
+        'CatalogEntry: "destinationPattern" is only allowed on patterns or refactorings with book="kerievsky"',
+      );
     }
   }
 
