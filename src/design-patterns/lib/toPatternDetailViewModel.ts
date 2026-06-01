@@ -3,15 +3,9 @@ import type { CatalogDetailViewModel } from "@/shared/lib/CatalogDetailViewModel
 import type { CatalogEntryName } from "@/shared/lib/CatalogEntryName";
 import type { CatalogNeighbors } from "@/shared/lib/CatalogNeighbors";
 import { buildCatalogDetailCore } from "@/shared/lib/buildCatalogDetailCore";
-import { GOF } from "@/shared/lib/subSites";
 import { toForcesRecord } from "@/shared/lib/toForcesRecord";
 
-const PATTERN_LABELS = {
-  backLinkHref: GOF.href(),
-  backLinkLabel: "Patterns",
-  beforeLabel: "Before the pattern",
-  afterLabel: "After the pattern",
-} as const;
+import { PATTERN_LABELS } from "./patternLabels";
 
 export interface PatternDetailViewModelArgs {
   readonly pattern: CatalogEntry;
