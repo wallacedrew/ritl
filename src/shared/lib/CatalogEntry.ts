@@ -43,9 +43,7 @@ export class CatalogEntry {
     readonly book?: Book,
     readonly destinationPattern?: CatalogEntryName,
   ) {
-    if (!LEGAL_CATALOGS.includes(catalog)) {
-      throw new Error(`CatalogEntry: unknown catalog "${catalog}"`);
-    }
+    CatalogEntry.assertCatalogIsLegal(catalog);
     if (catalog === "design-patterns") {
       if (book === undefined) {
         throw new Error('CatalogEntry: pattern entries must declare a "book"');
@@ -74,6 +72,12 @@ export class CatalogEntry {
     }
     if (after.trim().length === 0) {
       throw new Error('CatalogEntry: field "after" cannot be empty');
+    }
+  }
+
+  private static assertCatalogIsLegal(catalog: CatalogKind): void {
+    if (!LEGAL_CATALOGS.includes(catalog)) {
+      throw new Error(`CatalogEntry: unknown catalog "${catalog}"`);
     }
   }
 
