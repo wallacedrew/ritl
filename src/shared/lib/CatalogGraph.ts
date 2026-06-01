@@ -135,7 +135,7 @@ export function computeCrossReferencesForHref(href: string, graph: CatalogGraph)
 function chipFromGraph(href: string, graph: CatalogGraph): CrossReferenceChip {
   const node = graph.nodes.get(href);
   if (!node) {
-    return { label: href, href, tone: "fowler-refactoring" };
+    throw new Error(`CatalogGraph: chipFromGraph called with unresolved href "${href}"`);
   }
   return { label: node.name, href: node.href, tone: node.tone };
 }
