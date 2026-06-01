@@ -1,12 +1,9 @@
-import CatalogCompareDetail from "@/shared/components/CatalogCompareDetail";
 import type { RefactoringBook } from "@/shared/lib/CatalogEntry";
-import { findInboundPatternsForRefactoring } from "@/shared/lib/findInboundPatternsForRefactoring";
 import { generateCatalogStaticParams } from "@/shared/lib/generateCatalogStaticParams";
 
+import RefactoringCompare from "./components/RefactoringCompare";
 import { findRefactoringOr404 } from "./lib/findRefactoringOr404";
-import { getRefactoringNeighbors } from "./lib/getRefactoringNeighbors";
 import { loadRefactoringsByBook } from "./lib/loadRefactoringsByBook";
-import { toRefactoringCompareDetailViewModel } from "./lib/toRefactoringCompareDetailViewModel";
 
 interface RefactoringComparePageProps {
   params: Promise<{ slug: string }>;
@@ -18,15 +15,7 @@ export default async function RefactoringComparePage({
   book = "fowler",
 }: RefactoringComparePageProps) {
   const { entry: refactoring, number } = await findRefactoringOr404(params, book);
-  const viewModel = toRefactoringCompareDetailViewModel({
-    refactoring,
-    number,
-    book,
-    inboundPatternNames: findInboundPatternsForRefactoring(refactoring.name),
-    neighbors: getRefactoringNeighbors(number, book),
-  });
-
-  return <CatalogCompareDetail viewModel={viewModel} />;
+  return <RefactoringCompare refactoring={refactoring} number={number} book={book} />;
 }
 
 export function generateStaticParams() {
