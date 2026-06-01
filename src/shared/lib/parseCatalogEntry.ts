@@ -8,7 +8,7 @@ import {
   type PatternBook,
 } from "./CatalogEntry";
 import { CatalogEntryName } from "./CatalogEntryName";
-import { Forces, type ForcesRecord } from "./Forces";
+import { parseCatalogForces } from "./parseCatalogForces";
 import { parseCatalogNemeses } from "./parseCatalogNemeses";
 
 function readStringField(record: Record<string, unknown>, field: string): string {
@@ -27,46 +27,6 @@ function readCatalog(record: Record<string, unknown>): CatalogKind {
     );
   }
   return raw as CatalogKind;
-}
-
-function readForcesRecord(record: Record<string, unknown>, lens: "human" | "agent"): ForcesRecord {
-  const raw = record[lens];
-  if (raw === null || typeof raw !== "object" || Array.isArray(raw)) {
-    throw new Error(`parseCatalogEntry: field "forces.${lens}" must be an object`);
-  }
-  const lensRecord = raw as Record<string, unknown>;
-  return {
-    symptom: readForcesField(lensRecord, lens, "symptom"),
-    goal: readForcesField(lensRecord, lens, "goal"),
-    pressure: readForcesField(lensRecord, lens, "pressure"),
-    tradeoff: readForcesField(lensRecord, lens, "tradeoff"),
-    relief: readForcesField(lensRecord, lens, "relief"),
-    trap: readForcesField(lensRecord, lens, "trap"),
-  };
-}
-
-function readForcesField(
-  record: Record<string, unknown>,
-  lens: "human" | "agent",
-  field: string,
-): string {
-  const value = record[field];
-  if (typeof value !== "string") {
-    throw new Error(`parseCatalogEntry: field "forces.${lens}.${field}" must be a string`);
-  }
-  return value;
-}
-
-function readForces(record: Record<string, unknown>): { human: Forces; agent: Forces } {
-  const raw = record.forces;
-  if (raw === null || typeof raw !== "object" || Array.isArray(raw)) {
-    throw new Error('parseCatalogEntry: field "forces" must be an object');
-  }
-  const forcesRecord = raw as Record<string, unknown>;
-  return {
-    human: Forces.from(readForcesRecord(forcesRecord, "human")),
-    agent: Forces.from(readForcesRecord(forcesRecord, "agent")),
-  };
 }
 
 function readOptionalExampleSource(record: Record<string, unknown>): string | undefined {
@@ -165,7 +125,7 @@ export function parseCatalogEntry(raw: unknown): CatalogEntry {
     nemeses: parseCatalogNemeses(record, catalog),
     before: readStringField(record, "before"),
     after: readStringField(record, "after"),
-    forces: readForces(record),
+    forces: parseCatalogForces(record),
     exampleSource: readOptionalExampleSource(record),
     book,
     destinationPattern: readDestinationPattern(record, catalog, book),
