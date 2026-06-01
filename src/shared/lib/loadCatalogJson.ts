@@ -17,13 +17,19 @@ export function loadCatalogJson({
   if (!Array.isArray(raw)) {
     throw new Error(`${callerName}: ${sourceFile} must be an array of catalog entry objects`);
   }
-  return raw.map((rawEntry) => {
-    const entry = parseCatalogEntry(rawEntry);
-    if (entry.catalog !== expectedCatalog) {
-      throw new Error(
-        `${callerName}: expected catalog "${expectedCatalog}" but got "${entry.catalog}" for ${entry.name.toString()}`,
-      );
-    }
-    return entry;
-  });
+  return raw.map((rawEntry) => parseCatalogEntryOfKind(rawEntry, expectedCatalog, callerName));
+}
+
+function parseCatalogEntryOfKind(
+  rawEntry: unknown,
+  expectedCatalog: CatalogKind,
+  callerName: string,
+): CatalogEntry {
+  const entry = parseCatalogEntry(rawEntry);
+  if (entry.catalog !== expectedCatalog) {
+    throw new Error(
+      `${callerName}: expected catalog "${expectedCatalog}" but got "${entry.catalog}" for ${entry.name.toString()}`,
+    );
+  }
+  return entry;
 }
