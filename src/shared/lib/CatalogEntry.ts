@@ -44,20 +44,7 @@ export class CatalogEntry {
     readonly destinationPattern?: CatalogEntryName,
   ) {
     CatalogEntry.assertCatalogIsLegal(catalog);
-    if (catalog === "design-patterns") {
-      if (book === undefined) {
-        throw new Error('CatalogEntry: pattern entries must declare a "book"');
-      }
-      if (!(LEGAL_PATTERN_BOOKS as readonly string[]).includes(book)) {
-        throw new Error(`CatalogEntry: unknown pattern book "${book}"`);
-      }
-    } else if (catalog === "refactorings") {
-      if (book !== undefined && !(LEGAL_REFACTORING_BOOKS as readonly string[]).includes(book)) {
-        throw new Error(`CatalogEntry: unknown refactoring book "${book}"`);
-      }
-    } else if (book !== undefined) {
-      throw new Error('CatalogEntry: "book" is only allowed on pattern or refactoring entries');
-    }
+    CatalogEntry.assertBookMatchesCatalog(catalog, book);
     if (destinationPattern !== undefined) {
       const isPattern = catalog === "design-patterns";
       const isKerievskyRefactoring = catalog === "refactorings" && book === "kerievsky";
@@ -78,6 +65,27 @@ export class CatalogEntry {
   private static assertCatalogIsLegal(catalog: CatalogKind): void {
     if (!LEGAL_CATALOGS.includes(catalog)) {
       throw new Error(`CatalogEntry: unknown catalog "${catalog}"`);
+    }
+  }
+
+  private static assertBookMatchesCatalog(catalog: CatalogKind, book: Book | undefined): void {
+    if (catalog === "design-patterns") {
+      if (book === undefined) {
+        throw new Error('CatalogEntry: pattern entries must declare a "book"');
+      }
+      if (!(LEGAL_PATTERN_BOOKS as readonly string[]).includes(book)) {
+        throw new Error(`CatalogEntry: unknown pattern book "${book}"`);
+      }
+      return;
+    }
+    if (catalog === "refactorings") {
+      if (book !== undefined && !(LEGAL_REFACTORING_BOOKS as readonly string[]).includes(book)) {
+        throw new Error(`CatalogEntry: unknown refactoring book "${book}"`);
+      }
+      return;
+    }
+    if (book !== undefined) {
+      throw new Error('CatalogEntry: "book" is only allowed on pattern or refactoring entries');
     }
   }
 
