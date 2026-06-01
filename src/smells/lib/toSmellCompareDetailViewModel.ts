@@ -5,12 +5,7 @@ import type { CatalogNeighbors } from "@/shared/lib/CatalogNeighbors";
 import { buildCatalogDetailCore } from "@/shared/lib/buildCatalogDetailCore";
 import { toForcesRecord } from "@/shared/lib/toForcesRecord";
 
-const SMELL_LABELS = {
-  backLinkHref: "/refactoring/smells",
-  backLinkLabel: "Smells",
-  beforeLabel: "Smellier version",
-  afterLabel: "Fresher version",
-} as const;
+import { SMELL_LABELS } from "./smellLabels";
 
 export interface SmellCompareDetailViewModelArgs {
   readonly smell: CatalogEntry;
