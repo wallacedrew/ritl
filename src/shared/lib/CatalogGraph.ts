@@ -126,14 +126,12 @@ const TONE_GROUPS: Readonly<Record<CatalogEntryTone, readonly RelationshipGroupD
 export function computeCrossReferencesForHref(href: string, graph: CatalogGraph): CrossReferences {
   const node = graph.nodes.get(href);
   if (!node) return crossReferences([]);
-  return crossReferences(
-    TONE_GROUPS[node.tone].map((descriptor) =>
-      relationshipGroup(
-        descriptor.kind,
-        descriptor.hrefsFor(node, graph).map((targetHref) => chipFromGraph(targetHref, graph)),
-      ),
-    ),
-  );
+  const groups = TONE_GROUPS[node.tone].map((descriptor) => {
+    const relatedHrefs = descriptor.hrefsFor(node, graph);
+    const chips = relatedHrefs.map((targetHref) => chipFromGraph(targetHref, graph));
+    return relationshipGroup(descriptor.kind, chips);
+  });
+  return crossReferences(groups);
 }
 
 function chipFromGraph(href: string, graph: CatalogGraph): CrossReferenceChip {
