@@ -87,8 +87,7 @@ function appendTo<K, V>(map: Map<K, V[]>, key: K, value: V): void {
 /**
  * Cross-reference dispatch table. Each tone declares the relationship
  * groups its detail view should render, and how to source the related
- * hrefs from the graph. Replaces four near-identical per-tone helpers
- * with one consult-then-render pass.
+ * hrefs from the graph.
  */
 type RelatedHrefsFor = (node: CatalogNode, graph: CatalogGraph) => readonly string[];
 
