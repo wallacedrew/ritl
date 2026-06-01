@@ -66,3 +66,13 @@ After the refactoring, run the full test suite. Three outcomes:
 Reference the `tcr` skill for the underlying discipline.
 
 When in doubt, smaller steps. A 5-line refactoring that lands green is worth more than a 50-line one that's been red for an hour.
+
+## 5a. After green, re-sense
+
+A refactoring that lands green changes the target. The same target may now exhibit a different smell that was previously hidden under what was just removed.
+
+Before moving on, walk the 24 smells against the post-refactor body. Loop until the audit produces a catalog miss against the unchanged target. Then move to a different target, or stop.
+
+Common pattern: a structural simplification (Substitute Algorithm, Replace Temp with Query, Inline Variable) collapses noise that was hiding a multi-phase or multi-concern structure. The next round finds Split Phase, Compose Method, or Extract Function on the simpler form.
+
+A single audit that delivers one refactoring and stops is the wrong default. Multi-round audits on the same target are normal — applying one refactoring per commit doesn't mean stopping after one commit.
