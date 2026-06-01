@@ -3,7 +3,7 @@ name: template-method
 description: Apply Template Method when you see Duplicated Code, Shotgun Surgery, Pull Up Method. One template method in a base class the agent reads to understand the algorithm shape.
 ---
 
-# Apply: 49 — Template Method
+# Apply: 22 — Template Method
 
 **Announce first:** name the chain of refactorings pointing at Template Method and that you're applying it before the next edit. The user reads the announcement as your contract.
 

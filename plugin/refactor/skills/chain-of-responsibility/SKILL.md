@@ -3,7 +3,7 @@ name: chain-of-responsibility
 description: Apply Chain of Responsibility when you see Long Function, Divergent Change, Replace Conditional with Polymorphism. N small handler classes the agent reads one at a time.
 ---
 
-# Apply: 40 — Chain of Responsibility
+# Apply: 13 — Chain of Responsibility
 
 **Announce first:** name the chain of refactorings pointing at Chain of Responsibility and that you're applying it before the next edit. The user reads the announcement as your contract.
 

@@ -3,7 +3,7 @@ name: composite
 description: Apply Composite when you see Repeated Switches, Replace Conditional with Polymorphism, Replace Type Code with Subclasses. A typed interface where adding a new node kind forces the type system to demand an implementation of every operation.
 ---
 
-# Apply: 35 — Composite
+# Apply: 08 — Composite
 
 **Announce first:** name the chain of refactorings pointing at Composite and that you're applying it before the next edit. The user reads the announcement as your contract.
 

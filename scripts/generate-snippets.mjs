@@ -179,9 +179,27 @@ function neutralizeColonSpace(text) {
   return text.replace(/: /g, "; ");
 }
 
+// Refactorings carry two nemeses shapes: Fowler entries use plain
+// `string[]` (every nemesis is a smell name), while Kerievsky entries
+// use `{ catalog, name }[]` because their triggers span both smells
+// and other refactorings and need the catalog tag to disambiguate.
+// These helpers normalize the read side so each formatter can stay
+// agnostic about which book it's rendering.
+function nemesisName(n) {
+  return typeof n === "string" ? n : n.name;
+}
+
+function nemesisWithCatalog(n) {
+  return typeof n === "string" ? n : `${n.name} (${n.catalog})`;
+}
+
+function isKerievsky(r) {
+  return r.book === "kerievsky";
+}
+
 function routingDescriptionForRefactoring(r) {
   const forces = agentLensForces(r);
-  const triggers = r.nemeses.join(", ");
+  const triggers = r.nemeses.map(nemesisName).join(", ");
   const goal = neutralizeColonSpace(firstSentence(forces.goal));
   return `Apply ${r.name} when you see ${triggers}. ${goal}`;
 }
@@ -201,6 +219,13 @@ function routingDescriptionForSmell(s) {
 function formatRefactoringBody(r) {
   const num = String(refactoringNumberByName.get(r.name)).padStart(2, "0");
   const forces = agentLensForces(r);
+  if (isKerievsky(r)) {
+    return formatKerievskyRefactoringBody(r, num, forces);
+  }
+  return formatFowlerRefactoringBody(r, num, forces);
+}
+
+function formatFowlerRefactoringBody(r, num, forces) {
   return [
     `# Apply: ${num} — ${r.name}`,
     "",
@@ -231,6 +256,46 @@ function formatRefactoringBody(r) {
     `**Removes smells:** ${r.nemeses.join(", ")}`,
     "",
   ].join("\n");
+}
+
+function formatKerievskyRefactoringBody(r, num, forces) {
+  const triggers = r.nemeses.map(nemesisWithCatalog).join(", ");
+  const lines = [
+    `# Apply: ${num} — ${r.name}`,
+    "",
+    `**Announce first:** name the chain of refactorings pointing at ${r.name} and that you're applying it before the next edit. The user reads the announcement as your contract.`,
+    "",
+    `**Or decline first:** if you don't see a chain pointing at ${r.name}, name the decline type — no chain, taste call, cost-benefit, constraint-blocked, or insufficient context.`,
+    "",
+    `**Symptom:** ${forces.symptom}`,
+    "",
+    `**Goal:** ${forces.goal}`,
+    "",
+    "```js",
+    "// Before:",
+    r.before,
+    "",
+    "// After:",
+    r.after,
+    "```",
+    "",
+  ];
+  if (r.exampleSource) {
+    lines.push(`_Example source: ${r.exampleSource}_`, "");
+  }
+  lines.push(
+    `**Pressure:** ${forces.pressure}`,
+    "",
+    `**Tradeoff:** ${forces.tradeoff}`,
+    "",
+    `**Relief:** ${forces.relief}`,
+    "",
+    `**Trap:** ${forces.trap}`,
+    "",
+    `**Triggered by:** ${triggers}`,
+    "",
+  );
+  return lines.join("\n");
 }
 
 function routingDescriptionForPattern(p) {

@@ -3,7 +3,7 @@ name: decorator
 description: Apply Decorator when you see Large Class, Divergent Change, Replace Subclass with Delegate. N small wrapper classes the agent reads one at a time.
 ---
 
-# Apply: 36 — Decorator
+# Apply: 09 — Decorator
 
 **Announce first:** name the chain of refactorings pointing at Decorator and that you're applying it before the next edit. The user reads the announcement as your contract.
 

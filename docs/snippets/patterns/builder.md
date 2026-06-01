@@ -3,7 +3,7 @@ name: builder
 description: Apply Builder when you see Long Parameter List, Primitive Obsession, Introduce Parameter Object. Self-describing construction the agent can read top-to-bottom without cross-file lookup.
 ---
 
-# Apply: 29 — Builder
+# Apply: 02 — Builder
 
 **Announce first:** name the chain of refactorings pointing at Builder and that you're applying it before the next edit. The user reads the announcement as your contract.
 

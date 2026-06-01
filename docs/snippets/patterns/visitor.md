@@ -3,7 +3,7 @@ name: visitor
 description: Apply Visitor when you see Divergent Change, Shotgun Surgery, Move Function. Per-operation visitors the agent reads as one file; per-node node classes the agent reads as small data + accept-dispatch.
 ---
 
-# Apply: 50 — Visitor
+# Apply: 23 — Visitor
 
 **Announce first:** name the chain of refactorings pointing at Visitor and that you're applying it before the next edit. The user reads the announcement as your contract.
 

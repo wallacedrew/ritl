@@ -3,7 +3,7 @@ name: factory-method
 description: Apply Factory Method when you see Repeated Switches, Replace Conditional with Polymorphism, Replace Type Code with Subclasses. Structural completeness via the type system; every subclass of the creator must implement the factory method, so missing-variant bugs surface as construction-time errors the agent can see during static reading.
 ---
 
-# Apply: 30 — Factory Method
+# Apply: 03 — Factory Method
 
 **Announce first:** name the chain of refactorings pointing at Factory Method and that you're applying it before the next edit. The user reads the announcement as your contract.
 

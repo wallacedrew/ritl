@@ -3,7 +3,7 @@ name: strategy
 description: Apply Strategy when you see Repeated Switches, Replace Conditional with Polymorphism, Move Function. One strategy interface and N small implementations the agent reads independently.
 ---
 
-# Apply: 48 — Strategy
+# Apply: 21 — Strategy
 
 **Announce first:** name the chain of refactorings pointing at Strategy and that you're applying it before the next edit. The user reads the announcement as your contract.
 

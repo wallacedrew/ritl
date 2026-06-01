@@ -3,7 +3,7 @@ name: state
 description: Apply State when you see Repeated Switches, Primitive Obsession, Replace Conditional with Polymorphism. One class per state, each owning its operation set exhaustively.
 ---
 
-# Apply: 47 — State
+# Apply: 20 — State
 
 **Announce first:** name the chain of refactorings pointing at State and that you're applying it before the next edit. The user reads the announcement as your contract.
 

@@ -3,7 +3,7 @@ name: abstract-factory
 description: Apply Abstract Factory when you see Shotgun Surgery, Repeated Switches, Replace Constructor with Factory Function. The agent reads one factory interface to know what products exist; concrete factories are short and exhaustive; client code is one factory pointer away from the right family.
 ---
 
-# Apply: 28 — Abstract Factory
+# Apply: 01 — Abstract Factory
 
 **Announce first:** name the chain of refactorings pointing at Abstract Factory and that you're applying it before the next edit. The user reads the announcement as your contract.
 

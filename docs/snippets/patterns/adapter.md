@@ -3,7 +3,7 @@ name: adapter
 description: Apply Adapter when you see Alternative Classes with Different Interfaces, Change Function Declaration, Replace Subclass with Delegate. The canonical interface is the agent's single anchor for reasoning about how the system uses payments; the adapter is a thin file the agent reads once to understand the translation rules.
 ---
 
-# Apply: 33 — Adapter
+# Apply: 06 — Adapter
 
 **Announce first:** name the chain of refactorings pointing at Adapter and that you're applying it before the next edit. The user reads the announcement as your contract.
 

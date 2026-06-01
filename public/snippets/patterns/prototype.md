@@ -3,7 +3,7 @@ name: prototype
 description: Apply Prototype when you see Duplicated Code, Speculative Generality, Replace Subclass with Delegate. One prototype-registry table the agent reads once to enumerate every variant and its defaults.
 ---
 
-# Apply: 31 — Prototype
+# Apply: 04 — Prototype
 
 **Announce first:** name the chain of refactorings pointing at Prototype and that you're applying it before the next edit. The user reads the announcement as your contract.
 

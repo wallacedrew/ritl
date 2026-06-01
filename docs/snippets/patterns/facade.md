@@ -3,7 +3,7 @@ name: facade
 description: Apply Facade when you see Message Chains, Insider Trading, Hide Delegate. One Facade method the agent reads end-to-end to understand the full choreography.
 ---
 
-# Apply: 37 — Facade
+# Apply: 10 — Facade
 
 **Announce first:** name the chain of refactorings pointing at Facade and that you're applying it before the next edit. The user reads the announcement as your contract.
 

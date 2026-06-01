@@ -1,6 +1,6 @@
 ---
 name: large-class
-description: Refuse Large Class when a class file with so many fields and methods that the agent cannot load it as a coherent unit; multiple unrelated responsibilities sit under one name. Apply Extract Class, Extract Superclass.
+description: Refuse Large Class when a type definition — class or interface — with so many fields and methods that the agent cannot load it as a coherent unit; multiple unrelated responsibilities sit under one name. Apply Extract Class, Extract Superclass.
 ---
 
 # Refuse: 20 — Large Class
@@ -9,9 +9,9 @@ description: Refuse Large Class when a class file with so many fields and method
 
 **Or decline first:** if you don't flag this as Large Class, name the decline type — catalog miss, taste call, cost-benefit, constraint-blocked, or insufficient context.
 
-**Symptom:** A class file with so many fields and methods that the agent cannot load it as a coherent unit; multiple unrelated responsibilities sit under one name.
+**Symptom:** A type definition — class or interface — with so many fields and methods that the agent cannot load it as a coherent unit; multiple unrelated responsibilities sit under one name.
 
-**Goal:** Each class has one cohesive purpose; the agent loads a small focused file to reason about any single behavior.
+**Goal:** Each type has one cohesive purpose; the agent loads a small focused file to reason about any single behavior.
 
 ```js
 // Smellier:

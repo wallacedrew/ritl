@@ -3,7 +3,7 @@ name: bridge
 description: Apply Bridge when you see Shotgun Surgery, Replace Subclass with Delegate, Extract Class. Two independent surfaces the agent reads separately.
 ---
 
-# Apply: 34 — Bridge
+# Apply: 07 — Bridge
 
 **Announce first:** name the chain of refactorings pointing at Bridge and that you're applying it before the next edit. The user reads the announcement as your contract.
 

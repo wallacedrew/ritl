@@ -3,7 +3,7 @@ name: interpreter
 description: Apply Interpreter when you see Primitive Obsession, Repeated Switches, Replace Conditional with Polymorphism. One class per grammar rule, each with interpret(env).
 ---
 
-# Apply: 42 — Interpreter
+# Apply: 15 — Interpreter
 
 **Announce first:** name the chain of refactorings pointing at Interpreter and that you're applying it before the next edit. The user reads the announcement as your contract.
 

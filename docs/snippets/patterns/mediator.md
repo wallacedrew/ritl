@@ -3,7 +3,7 @@ name: mediator
 description: Apply Mediator when you see Insider Trading, Shotgun Surgery, Move Function. One Mediator the agent reads to understand all relationships.
 ---
 
-# Apply: 44 — Mediator
+# Apply: 17 — Mediator
 
 **Announce first:** name the chain of refactorings pointing at Mediator and that you're applying it before the next edit. The user reads the announcement as your contract.
 

@@ -3,7 +3,7 @@ name: memento
 description: Apply Memento when you see Insider Trading, Mutable Data, Extract Class. One save / restore pair the agent reads inside the editor class.
 ---
 
-# Apply: 45 — Memento
+# Apply: 18 — Memento
 
 **Announce first:** name the chain of refactorings pointing at Memento and that you're applying it before the next edit. The user reads the announcement as your contract.
 

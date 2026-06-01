@@ -3,7 +3,7 @@ name: flyweight
 description: Apply Flyweight when you see Duplicated Code, Large Class, Extract Class. A structural separation between kind-shared data (TreeType) and per-instance data (Tree).
 ---
 
-# Apply: 38 — Flyweight
+# Apply: 11 — Flyweight
 
 **Announce first:** name the chain of refactorings pointing at Flyweight and that you're applying it before the next edit. The user reads the announcement as your contract.
 

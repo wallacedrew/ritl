@@ -3,7 +3,7 @@ name: iterator
 description: Apply Iterator when you see Insider Trading, Message Chains, Encapsulate Collection. One iterator protocol the agent reads to understand traversal semantics.
 ---
 
-# Apply: 43 — Iterator
+# Apply: 16 — Iterator
 
 **Announce first:** name the chain of refactorings pointing at Iterator and that you're applying it before the next edit. The user reads the announcement as your contract.
 

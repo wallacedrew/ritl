@@ -3,7 +3,7 @@ name: command
 description: Apply Command when you see Repeated Switches, Primitive Obsession, Replace Function with Command. One Command interface (execute + undo) the agent reads as the structural commitment.
 ---
 
-# Apply: 41 — Command
+# Apply: 14 — Command
 
 **Announce first:** name the chain of refactorings pointing at Command and that you're applying it before the next edit. The user reads the announcement as your contract.
 

@@ -3,7 +3,7 @@ name: observer
 description: Apply Observer when you see Shotgun Surgery, Divergent Change, Hide Delegate. One subscribe/notify protocol the agent reads once per subject.
 ---
 
-# Apply: 46 — Observer
+# Apply: 19 — Observer
 
 **Announce first:** name the chain of refactorings pointing at Observer and that you're applying it before the next edit. The user reads the announcement as your contract.
 

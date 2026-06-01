@@ -3,7 +3,7 @@ name: singleton
 description: Apply Singleton when you see Global Data, Duplicated Code, Encapsulate Variable. A single getInstance() access point the agent can grep for to enumerate every consumer.
 ---
 
-# Apply: 32 — Singleton
+# Apply: 05 — Singleton
 
 **Announce first:** name the chain of refactorings pointing at Singleton and that you're applying it before the next edit. The user reads the announcement as your contract.
 

@@ -3,7 +3,7 @@ name: proxy
 description: Apply Proxy when you see Insider Trading, Encapsulate Variable, Replace Subclass with Delegate. One Proxy class the agent reads to know the policy.
 ---
 
-# Apply: 39 — Proxy
+# Apply: 12 — Proxy
 
 **Announce first:** name the chain of refactorings pointing at Proxy and that you're applying it before the next edit. The user reads the announcement as your contract.
 
