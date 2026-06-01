@@ -118,14 +118,15 @@ const referencedByPatterns: RelationshipGroupDescriptor = {
   hrefsFor: patternHrefsReferencing,
 };
 
+function outboundNemeses(kind: RelationshipKind): RelationshipGroupDescriptor {
+  return { kind, hrefsFor: outboundNemesisHrefs };
+}
+
 const TONE_GROUPS: Readonly<Record<CatalogEntryTone, readonly RelationshipGroupDescriptor[]>> = {
-  smell: [{ kind: "apply-refactorings", hrefsFor: outboundNemesisHrefs }, referencedByPatterns],
-  "fowler-refactoring": [
-    { kind: "removes-smells", hrefsFor: outboundNemesisHrefs },
-    referencedByPatterns,
-  ],
+  smell: [outboundNemeses("apply-refactorings"), referencedByPatterns],
+  "fowler-refactoring": [outboundNemeses("removes-smells"), referencedByPatterns],
   "kerievsky-refactoring": [
-    { kind: "triggered-by", hrefsFor: outboundNemesisHrefs },
+    outboundNemeses("triggered-by"),
     { kind: "destination", hrefsFor: destinationHrefAsList },
   ],
   pattern: [{ kind: "reached-from", hrefsFor: destinationSourceHrefs }],
