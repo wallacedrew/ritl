@@ -1,5 +1,5 @@
 import type { CatalogEntry, CatalogEntryTone } from "@/shared/lib/CatalogEntry";
-import type { CatalogSnapshot } from "@/shared/lib/loadCatalogSnapshot";
+import { allCatalogEntries, type CatalogSnapshot } from "@/shared/lib/loadCatalogSnapshot";
 
 import {
   crossReferences,
@@ -24,7 +24,7 @@ export interface CatalogGraph {
 }
 
 export function buildCatalogGraph(snapshot: CatalogSnapshot): CatalogGraph {
-  const allEntries = [...snapshot.smells, ...snapshot.refactorings, ...snapshot.patterns];
+  const allEntries = allCatalogEntries(snapshot);
   return {
     nodes: buildNodeIndex(allEntries),
     inboundByHref: buildInboundIndex(allEntries),

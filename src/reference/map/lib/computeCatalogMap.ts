@@ -1,4 +1,4 @@
-import type { CatalogSnapshot } from "@/shared/lib/loadCatalogSnapshot";
+import { allCatalogEntries, type CatalogSnapshot } from "@/shared/lib/loadCatalogSnapshot";
 import type { CrossReferenceChip } from "@/shared/lib/RelationshipGroup";
 import type { CatalogEntry } from "@/shared/lib/CatalogEntry";
 import type { CatalogEntryName } from "@/shared/lib/CatalogEntryName";
@@ -56,8 +56,7 @@ function collectKerievskyWithoutDestination(
 
 function rankEntriesByConnections(snapshot: CatalogSnapshot): readonly RankedEntry[] {
   const inboundCounts = countInbound(snapshot);
-  const allEntries = [...snapshot.smells, ...snapshot.refactorings, ...snapshot.patterns];
-  return allEntries
+  return allCatalogEntries(snapshot)
     .map((entry) => toRankedEntry(entry, inboundCounts))
     .sort((first, second) => second.totalCount - first.totalCount);
 }
@@ -78,7 +77,7 @@ function toRankedEntry(
 
 function countInbound(snapshot: CatalogSnapshot): ReadonlyMap<string, number> {
   const counts = new Map<string, number>();
-  for (const entry of [...snapshot.refactorings, ...snapshot.smells, ...snapshot.patterns]) {
+  for (const entry of allCatalogEntries(snapshot)) {
     for (const nemesis of entry.nemeses) {
       bump(counts, nemesis.toCatalogHref());
     }

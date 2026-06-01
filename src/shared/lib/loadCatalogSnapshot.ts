@@ -16,3 +16,7 @@ export function loadCatalogSnapshot(): CatalogSnapshot {
     patterns: loadPatterns(),
   };
 }
+
+export function allCatalogEntries(snapshot: CatalogSnapshot): readonly CatalogEntry[] {
+  return [...snapshot.smells, ...snapshot.refactorings, ...snapshot.patterns];
+}
