@@ -1,6 +1,5 @@
-import RefactoringComparePage, {
-  refactoringCompareStaticParams,
-} from "@/refactorings/RefactoringComparePage";
+import RefactoringComparePage from "@/refactorings/RefactoringComparePage";
+import { refactoringStaticParams } from "@/refactorings/lib/refactoringStaticParams";
 
 interface RouteProps {
   params: Promise<{ slug: string }>;
@@ -11,5 +10,5 @@ export default async function Page({ params }: RouteProps) {
 }
 
 export function generateStaticParams() {
-  return refactoringCompareStaticParams("kerievsky");
+  return refactoringStaticParams("kerievsky");
 }

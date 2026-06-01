@@ -1,6 +1,5 @@
-import RefactoringDetailPage, {
-  refactoringStaticParams,
-} from "@/refactorings/RefactoringDetailPage";
+import RefactoringDetailPage from "@/refactorings/RefactoringDetailPage";
+import { refactoringStaticParams } from "@/refactorings/lib/refactoringStaticParams";
 
 interface RouteProps {
   params: Promise<{ slug: string }>;

@@ -1,9 +1,8 @@
 import type { RefactoringBook } from "@/shared/lib/CatalogEntry";
-import { generateCatalogStaticParams } from "@/shared/lib/generateCatalogStaticParams";
 
 import RefactoringCompare from "./components/RefactoringCompare";
 import { findRefactoringOr404 } from "./lib/findRefactoringOr404";
-import { loadRefactoringsByBook } from "./lib/loadRefactoringsByBook";
+import { refactoringStaticParams } from "./lib/refactoringStaticParams";
 
 interface RefactoringComparePageProps {
   params: Promise<{ slug: string }>;
@@ -19,9 +18,5 @@ export default async function RefactoringComparePage({
 }
 
 export function generateStaticParams() {
-  return refactoringCompareStaticParams("fowler");
-}
-
-export function refactoringCompareStaticParams(book: RefactoringBook) {
-  return generateCatalogStaticParams(loadRefactoringsByBook(book));
+  return refactoringStaticParams("fowler");
 }

@@ -1,9 +1,8 @@
 import type { RefactoringBook } from "@/shared/lib/CatalogEntry";
-import { generateCatalogStaticParams } from "@/shared/lib/generateCatalogStaticParams";
 
 import RefactoringDetail from "./components/RefactoringDetail";
 import { findRefactoringOr404 } from "./lib/findRefactoringOr404";
-import { loadRefactoringsByBook } from "./lib/loadRefactoringsByBook";
+import { refactoringStaticParams } from "./lib/refactoringStaticParams";
 
 interface RefactoringAgentPageProps {
   params: Promise<{ slug: string }>;
@@ -19,9 +18,5 @@ export default async function RefactoringAgentPage({
 }
 
 export function generateStaticParams() {
-  return refactoringAgentStaticParams("fowler");
-}
-
-export function refactoringAgentStaticParams(book: RefactoringBook) {
-  return generateCatalogStaticParams(loadRefactoringsByBook(book));
+  return refactoringStaticParams("fowler");
 }
