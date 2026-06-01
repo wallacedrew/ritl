@@ -19,13 +19,15 @@ export const LEGAL_CATALOGS: readonly CatalogKind[] = ["smells", "refactorings",
 export const LEGAL_PATTERN_BOOKS: readonly PatternBook[] = ["kerievsky", "gof"];
 export const LEGAL_REFACTORING_BOOKS: readonly RefactoringBook[] = ["fowler", "kerievsky"];
 
+export type LensedForces = { human: Forces; agent: Forces };
+
 export type CatalogEntryProps = {
   catalog: CatalogKind;
   name: CatalogEntryName;
   nemeses: readonly CatalogEntryName[];
   before: string;
   after: string;
-  forces: { human: Forces; agent: Forces };
+  forces: LensedForces;
   exampleSource?: string;
   book?: Book;
   destinationPattern?: CatalogEntryName;
@@ -38,7 +40,7 @@ export class CatalogEntry {
     readonly nemeses: readonly CatalogEntryName[],
     readonly before: string,
     readonly after: string,
-    readonly forces: { human: Forces; agent: Forces },
+    readonly forces: LensedForces,
     readonly exampleSource?: string,
     readonly book?: Book,
     readonly destinationPattern?: CatalogEntryName,

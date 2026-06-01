@@ -1,3 +1,4 @@
+import type { LensedForces } from "./CatalogEntry";
 import { Forces, type ForcesRecord } from "./Forces";
 
 /**
@@ -6,10 +7,7 @@ import { Forces, type ForcesRecord } from "./Forces";
  * Throws with a precise path (`forces.human.symptom`, etc.) on any
  * missing or non-string field.
  */
-export function parseCatalogForces(record: Record<string, unknown>): {
-  human: Forces;
-  agent: Forces;
-} {
+export function parseCatalogForces(record: Record<string, unknown>): LensedForces {
   const raw = record.forces;
   if (raw === null || typeof raw !== "object" || Array.isArray(raw)) {
     throw new Error('parseCatalogEntry: field "forces" must be an object');
