@@ -86,6 +86,10 @@ export class CatalogEntry implements Readonly<CatalogEntryProps> {
       }
       return;
     }
+    CatalogEntry.assertSmellHasNoBook(book);
+  }
+
+  private static assertSmellHasNoBook(book: Book | undefined): void {
     if (book !== undefined) {
       throw new Error('CatalogEntry: "book" is only allowed on pattern or refactoring entries');
     }
