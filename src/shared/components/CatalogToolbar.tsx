@@ -41,6 +41,8 @@ function deriveActiveView(pathname: string): CatalogView {
   if (pathname.startsWith("/refactoring/canon")) return "refactorings";
   if (pathname.startsWith("/plugin")) return "plugin";
   if (pathname.startsWith("/about")) return "about";
+  // The home route ("/") renders the About page, so it activates the About tab.
+  if (pathname === "/") return "about";
   // "/reference" is the meta reference page; default for any unmatched URL.
   return "reference";
 }

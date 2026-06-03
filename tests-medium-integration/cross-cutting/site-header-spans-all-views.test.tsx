@@ -35,6 +35,13 @@ describe("site header spans every catalog view", () => {
     expect(referenceLink).toHaveAttribute("href", "/reference");
   });
 
+  it("marks the About tab as the current page when the user is on the home route", () => {
+    renderWithTheme(<SiteHeader />);
+
+    const aboutLink = screen.getByRole("link", { name: /^About$/ });
+    expect(aboutLink).toHaveAttribute("aria-current", "page");
+  });
+
   it("fires nav_clicked with the link name when the user clicks a catalog nav link", async () => {
     const analytics = new RecordingAnalyticsTracker();
     const user = userEvent.setup();
