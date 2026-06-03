@@ -12,7 +12,7 @@ export default function WhatThisIs() {
       </Typography>
       <Stack component="ul" spacing={0.5} sx={{ pl: 3, my: 0 }}>
         <Typography component="li" variant="body1">
-          <em>Refactoring</em> (Fowler) — refactorings and code smells.
+          <em>Refactoring</em> (Fowler, Beck) — refactorings and code smells.
         </Typography>
         <Typography component="li" variant="body1">
           <em>Refactoring to Patterns</em> (Kerievsky) — composite refactorings.
