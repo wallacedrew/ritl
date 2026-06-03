@@ -7,15 +7,7 @@ import { usePathname } from "next/navigation";
 import { Fragment } from "react";
 
 import { useAnalytics } from "@/shared/hooks/useAnalytics";
-
-type CatalogView =
-  | "smells"
-  | "refactorings"
-  | "reference"
-  | "patterns"
-  | "design-patterns"
-  | "plugin"
-  | "about";
+import type { CatalogView } from "@/shared/lib/CatalogView";
 
 interface NavLink {
   view: CatalogView;
