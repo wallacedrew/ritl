@@ -16,8 +16,9 @@ export default function Attributions() {
       </Typography>
       <Stack component="ul" spacing={1} sx={{ pl: 3, my: 0 }}>
         <Typography component="li" variant="body1">
-          Martin Fowler. <em>Refactoring: Improving the Design of Existing Code</em>, 2nd ed.
-          Addison-Wesley, 2018. ISBN 978-0134757599.
+          Martin Fowler (with contributions by Kent Beck).{" "}
+          <em>Refactoring: Improving the Design of Existing Code</em>, 2nd ed. Addison-Wesley, 2018.
+          ISBN 978-0134757599.
         </Typography>
         <Typography component="li" variant="body1">
           Joshua Kerievsky. <em>Refactoring to Patterns</em>. Addison-Wesley, 2004. ISBN
