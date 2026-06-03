@@ -12,33 +12,34 @@ vi.mock("next/navigation", () => ({
 import ReferenceViewToggle from "@/reference/components/ReferenceViewToggle";
 
 describe("user switches between list and map views of the reference page", () => {
-  it("renders a List link and a Map link pointing at the matching sub-routes", () => {
+  it("shows both List and Map controls and points the inactive one at its sub-route", () => {
     pathnameMock.mockReturnValue("/reference/list");
 
     renderWithTheme(<ReferenceViewToggle />);
 
-    const listLink = screen.getByRole("link", { name: /^List$/ });
-    const mapLink = screen.getByRole("link", { name: /^Map$/ });
-    expect(listLink).toHaveAttribute("href", "/reference/list");
-    expect(mapLink).toHaveAttribute("href", "/reference/map");
+    expect(screen.getByText(/^List$/)).toBeInTheDocument();
+    expect(screen.getByText(/^Map$/)).toBeInTheDocument();
+    expect(screen.getByRole("link", { name: /Map/ })).toHaveAttribute("href", "/reference/map");
   });
 
-  it("marks the List link as the current page when the pathname is /reference/list", () => {
+  it("marks the List control as the current page when the pathname is /reference/list", () => {
     pathnameMock.mockReturnValue("/reference/list");
 
     renderWithTheme(<ReferenceViewToggle />);
 
-    expect(screen.getByRole("link", { name: /^List$/ })).toHaveAttribute("aria-current", "page");
-    expect(screen.getByRole("link", { name: /^Map$/ })).not.toHaveAttribute("aria-current");
+    expect(screen.getByText(/^List$/).closest("[aria-current='page']")).not.toBeNull();
+    expect(screen.queryByRole("link", { name: /List/ })).toBeNull();
+    expect(screen.getByRole("link", { name: /Map/ })).toHaveAttribute("href", "/reference/map");
   });
 
-  it("marks the Map link as the current page when the pathname is /reference/map", () => {
+  it("marks the Map control as the current page when the pathname is /reference/map", () => {
     pathnameMock.mockReturnValue("/reference/map");
 
     renderWithTheme(<ReferenceViewToggle />);
 
-    expect(screen.getByRole("link", { name: /^Map$/ })).toHaveAttribute("aria-current", "page");
-    expect(screen.getByRole("link", { name: /^List$/ })).not.toHaveAttribute("aria-current");
+    expect(screen.getByText(/^Map$/).closest("[aria-current='page']")).not.toBeNull();
+    expect(screen.queryByRole("link", { name: /Map/ })).toBeNull();
+    expect(screen.getByRole("link", { name: /List/ })).toHaveAttribute("href", "/reference/list");
   });
 
   it("treats the bare /reference pathname as List active (the default view)", () => {
@@ -46,7 +47,8 @@ describe("user switches between list and map views of the reference page", () =>
 
     renderWithTheme(<ReferenceViewToggle />);
 
-    expect(screen.getByRole("link", { name: /^List$/ })).toHaveAttribute("aria-current", "page");
-    expect(screen.getByRole("link", { name: /^Map$/ })).not.toHaveAttribute("aria-current");
+    expect(screen.getByText(/^List$/).closest("[aria-current='page']")).not.toBeNull();
+    expect(screen.queryByRole("link", { name: /List/ })).toBeNull();
+    expect(screen.getByRole("link", { name: /Map/ })).toHaveAttribute("href", "/reference/map");
   });
 });

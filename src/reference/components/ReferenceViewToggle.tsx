@@ -1,25 +1,21 @@
 "use client";
 
+import FormatListBulletedOutlinedIcon from "@mui/icons-material/FormatListBulletedOutlined";
+import MapOutlinedIcon from "@mui/icons-material/MapOutlined";
 import Box from "@mui/material/Box";
-import Stack from "@mui/material/Stack";
-import NextLink from "next/link";
 import { usePathname } from "next/navigation";
+
+import LensButton from "@/shared/components/LensButton";
+import PillButtonGroup from "@/shared/components/PillButtonGroup";
 
 type ReferenceView = "list" | "map";
 
-interface ToggleLink {
-  view: ReferenceView;
-  label: string;
-  href: string;
-}
-
-const TOGGLE_LINKS: readonly ToggleLink[] = [
-  { view: "list", label: "List", href: "/reference/list" },
-  { view: "map", label: "Map", href: "/reference/map" },
-];
-
 function deriveActiveView(pathname: string): ReferenceView {
   return pathname.startsWith("/reference/map") ? "map" : "list";
+}
+
+function InnerDivider() {
+  return <Box aria-hidden="true" sx={{ width: "1px", bgcolor: "divider" }} />;
 }
 
 export default function ReferenceViewToggle() {
@@ -28,37 +24,17 @@ export default function ReferenceViewToggle() {
 
   return (
     <Box component="nav" aria-label="reference view toggle">
-      <Stack
-        direction="row"
-        spacing={2}
-        sx={{ borderBottom: 1, borderColor: "divider", alignItems: "stretch" }}
-      >
-        {TOGGLE_LINKS.map((link) => {
-          const isActive = link.view === active;
-          return (
-            <Box
-              key={link.view}
-              component={NextLink}
-              href={link.href}
-              aria-current={isActive ? "page" : undefined}
-              sx={{
-                py: 1,
-                color: isActive ? "text.primary" : "text.secondary",
-                fontSize: "0.9375rem",
-                fontWeight: isActive ? 600 : 500,
-                textDecoration: "none",
-                borderBottom: 2,
-                borderColor: isActive ? "primary.main" : "transparent",
-                marginBottom: "-1px",
-                transition: "color 150ms, border-color 150ms",
-                "&:hover": { color: "text.primary" },
-              }}
-            >
-              {link.label}
-            </Box>
-          );
-        })}
-      </Stack>
+      <PillButtonGroup>
+        <LensButton isActive={active === "list"} href="/reference/list">
+          <FormatListBulletedOutlinedIcon />
+          List
+        </LensButton>
+        <InnerDivider />
+        <LensButton isActive={active === "map"} href="/reference/map">
+          <MapOutlinedIcon />
+          Map
+        </LensButton>
+      </PillButtonGroup>
     </Box>
   );
 }
