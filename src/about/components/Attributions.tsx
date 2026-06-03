@@ -44,7 +44,6 @@ export default function Attributions() {
         Portions of this site&rsquo;s prose, including the agent-side force fields, were drafted by
         AI coding agents (Anthropic Claude) working from the source books and reviewed and edited by
         the author. The architecture, voice rubric, and editorial decisions are the author&rsquo;s.
-        The full decision record lives under <code>docs/architecture/</code>.
       </Typography>
 
       <Typography component="h3" variant="subtitle1" sx={{ fontWeight: 700, pt: 1 }}>
