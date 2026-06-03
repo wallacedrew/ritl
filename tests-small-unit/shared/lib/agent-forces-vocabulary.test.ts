@@ -86,6 +86,31 @@ const BANNED_PATTERNS: readonly BannedPattern[] = [
     pattern: /\bjumps off the page\b/i,
     reason: "narrative cliché ('jumps off the page'); name what the agent reads concretely",
   },
+  {
+    pattern: /\bpaged[ -]out\b/i,
+    reason:
+      "OS-memory-management borrowing ('paged out'); ADR-0009 bans — use 'outside the context window' or 'unread' instead",
+  },
+  {
+    pattern: /\bpaging\b/i,
+    reason:
+      "OS-memory-management borrowing ('paging'); ADR-0009 bans — use 'outside the context window' instead",
+  },
+  {
+    pattern: /\bworking set\b/i,
+    reason:
+      "OS-memory-management borrowing ('working set'); ADR-0009 bans — use 'context window' instead",
+  },
+  {
+    pattern: /\bfocused-attention\b/i,
+    reason:
+      "invented compound ('focused-attention'); ADR-0009 bans — use canonical 'context window' or 'lost-in-the-middle'",
+  },
+  {
+    pattern: /\bduplicate-payload\b/i,
+    reason:
+      "invented compound ('duplicate-payload'); ADR-0009 bans — describe the token cost concretely",
+  },
 ];
 
 interface Hit {

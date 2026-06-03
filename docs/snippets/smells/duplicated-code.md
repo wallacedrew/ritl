@@ -1,6 +1,6 @@
 ---
 name: duplicated-code
-description: Refuse Duplicated Code when near-identical code in multiple files; each copy the agent loads adds duplicate-payload tokens, and each copy left out of the context window stays paged-out and unverified during the edit. Apply Extract Function, Slide Statements.
+description: Refuse Duplicated Code when near-identical code in multiple files; each copy the agent reads adds tokens to the context window without changing the edit decision, and copies left outside the window stay unread and unverified during the edit. Apply Extract Function, Slide Statements.
 ---
 
 # Refuse: 02 — Duplicated Code
@@ -9,9 +9,9 @@ description: Refuse Duplicated Code when near-identical code in multiple files; 
 
 **Or decline first:** if you don't flag this as Duplicated Code, name the decline type — catalog miss, taste call, cost-benefit, constraint-blocked, or insufficient context.
 
-**Symptom:** Near-identical code in multiple files; each copy the agent loads adds duplicate-payload tokens, and each copy left out of the context window stays paged-out and unverified during the edit.
+**Symptom:** Near-identical code in multiple files; each copy the agent reads adds tokens to the context window without changing the edit decision, and copies left outside the window stay unread and unverified during the edit.
 
-**Goal:** One canonical implementation the agent loads as a single body; edits land at one site and propagate to every caller through reference, removing the N-copy maintenance cost from the agent's working set.
+**Goal:** One canonical implementation the agent loads as a single body; edits land at one site and propagate to every caller through reference, removing the N-copy token cost from the agent's context window.
 
 ```js
 // Smellier:
@@ -28,7 +28,7 @@ function lineTotal(items) {
 }
 ```
 
-**Pressure:** Only one copy fits in the agent's focused-attention region during an edit; the others stay paged-out, so the edit lands on the copy in view and the rest ship stale behind unit tests that exercise only the edited copy.
+**Pressure:** Only the copy the agent has read into the context window participates in the edit; copies outside the window stay unread and ship stale behind unit tests that exercise only the edited copy.
 
 **Tradeoff:** Replaces N inline bodies with one definition the agent loads once and references by name at every call site; if the abstraction is wrong, every divergence ships as an additional branch the agent must load before edits at that call site.
 

@@ -31,7 +31,7 @@ logTaxCalc(tax);
 
 **Tradeoff:** Sliding can silently change behavior if statements aren't truly independent (hidden side effects, timing dependencies, observer effects); the agent verifying the slide must confirm independence at every gap.
 
-**Relief:** Statements that depend on one another sit next to each other; the agent reads each cluster as a unit without paging tokens between unrelated lines to follow data flow.
+**Relief:** Statements that depend on one another sit next to each other; the agent reads each cluster as a unit without tracking state across non-adjacent lines to follow data flow.
 
 **Trap:** Aggressive sliding without verifying side-effect ordering — observer logs, time reads, async dispatch — silently changes behavior the agent's local tests may not catch.
 
