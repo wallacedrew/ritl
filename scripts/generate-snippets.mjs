@@ -6,7 +6,7 @@
 //   docs/snippets/audit.md                           (orchestrator SKILL.md mirror)
 //   docs/snippets/refactorings/<slug>.md             (one valid SKILL.md per refactoring)
 //   docs/snippets/smells/<slug>.md                   (one valid SKILL.md per smell)
-//   docs/snippets/patterns/<slug>.md                 (one valid SKILL.md per pattern)
+//   docs/snippets/design-patterns/<slug>.md          (one valid SKILL.md per pattern)
 //   public/snippets/*                                (identical, served by Next)
 //
 // Per-entity files are well-formed Claude skills: bare-scalar YAML
@@ -482,10 +482,10 @@ for (const dest of ["docs/snippets", "public/snippets"]) {
     writeFileSync(resolve(root, `${dest}/smells/${slugify(s.name)}.md`), formatSmellSkill(s, i));
   });
 
-  mkdirSync(resolve(root, `${dest}/patterns`), { recursive: true });
+  mkdirSync(resolve(root, `${dest}/design-patterns`), { recursive: true });
   patterns.forEach((p, i) => {
     writeFileSync(
-      resolve(root, `${dest}/patterns/${slugify(p.name)}.md`),
+      resolve(root, `${dest}/design-patterns/${slugify(p.name)}.md`),
       formatPatternSkill(p, i),
     );
   });
