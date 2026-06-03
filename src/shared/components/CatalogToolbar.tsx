@@ -7,6 +7,7 @@ import { usePathname } from "next/navigation";
 import { Fragment } from "react";
 
 import { useAnalytics } from "@/shared/hooks/useAnalytics";
+import { useNavHover } from "@/shared/hooks/useNavHover";
 import type { CatalogView } from "@/shared/lib/CatalogView";
 
 interface NavLink {
@@ -43,6 +44,7 @@ export default function CatalogToolbar() {
   const pathname = usePathname();
   const active = deriveActiveView(pathname);
   const analytics = useAnalytics();
+  const { hoveredViews } = useNavHover();
 
   function handleNavClick(view: CatalogView) {
     analytics.track({ event: "nav_clicked", properties: { tab: view } });
@@ -78,6 +80,7 @@ export default function CatalogToolbar() {
       >
         {NAV_LINKS.map((link) => {
           const isActive = link.view === active;
+          const isCrossHovered = !isActive && hoveredViews.has(link.view);
           return (
             <Fragment key={link.view}>
               {link.precededBySeparator && (
@@ -96,15 +99,20 @@ export default function CatalogToolbar() {
                 href={link.href}
                 onClick={() => handleNavClick(link.view)}
                 aria-current={isActive ? "page" : undefined}
+                data-nav-hovered={isCrossHovered ? "true" : undefined}
                 sx={{
                   py: 1.5,
-                  color: isActive ? "text.primary" : "text.secondary",
+                  color: isActive || isCrossHovered ? "text.primary" : "text.secondary",
                   fontSize: "0.9375rem",
                   fontWeight: isActive ? 600 : 500,
                   textDecoration: "none",
                   whiteSpace: "nowrap",
                   borderBottom: 2,
-                  borderColor: isActive ? "primary.main" : "transparent",
+                  borderColor: isActive
+                    ? "primary.main"
+                    : isCrossHovered
+                      ? "primary.light"
+                      : "transparent",
                   marginBottom: "-1px",
                   transition: "color 150ms, border-color 150ms",
                   "&:hover": {

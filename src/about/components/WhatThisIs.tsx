@@ -2,6 +2,7 @@ import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 
 import AboutSection from "./AboutSection";
+import SubSiteHoverBullet from "./SubSiteHoverBullet";
 
 export default function WhatThisIs() {
   return (
@@ -11,15 +12,24 @@ export default function WhatThisIs() {
         side-by-side and adds a second column for AI coding agents.
       </Typography>
       <Stack component="ul" spacing={0.5} sx={{ pl: 3, my: 0 }}>
-        <Typography component="li" variant="body1">
+        <SubSiteHoverBullet
+          testId="about-bullet-refactoring"
+          relatedViews={["refactorings", "smells"]}
+        >
           <em>Refactoring</em> (Fowler, Beck) — refactorings and code smells.
-        </Typography>
-        <Typography component="li" variant="body1">
+        </SubSiteHoverBullet>
+        <SubSiteHoverBullet
+          testId="about-bullet-refactoring-to-patterns"
+          relatedViews={["patterns"]}
+        >
           <em>Refactoring to Patterns</em> (Kerievsky) — composite refactorings.
-        </Typography>
-        <Typography component="li" variant="body1">
+        </SubSiteHoverBullet>
+        <SubSiteHoverBullet
+          testId="about-bullet-design-patterns"
+          relatedViews={["design-patterns"]}
+        >
           <em>Design Patterns</em> (Gang of Four) — the 23 reusable object-oriented patterns.
-        </Typography>
+        </SubSiteHoverBullet>
       </Stack>
       <Typography variant="body1">
         The signature surface is the compare view. Every entry presents six paired force fields —

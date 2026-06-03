@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "@fontsource-variable/inter";
 import "./globals.css";
 import Box from "@mui/material/Box";
+import { NavHoverProvider } from "@/shared/components/NavHoverProvider";
 import SiteFooter from "@/shared/components/SiteFooter";
 import SiteHeader from "@/shared/components/SiteHeader";
 import { buildCatalogGraph } from "@/shared/lib/CatalogGraph";
@@ -26,15 +27,17 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <AnalyticsProvider>
           <SnippetSourceProvider>
             <CatalogGraphProvider graph={catalogGraph}>
-              <ThemeRegistry>
-                <Box sx={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
-                  <SiteHeader />
-                  <Box component="main" sx={{ flexGrow: 1 }}>
-                    {children}
+              <NavHoverProvider>
+                <ThemeRegistry>
+                  <Box sx={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
+                    <SiteHeader />
+                    <Box component="main" sx={{ flexGrow: 1 }}>
+                      {children}
+                    </Box>
+                    <SiteFooter />
                   </Box>
-                  <SiteFooter />
-                </Box>
-              </ThemeRegistry>
+                </ThemeRegistry>
+              </NavHoverProvider>
             </CatalogGraphProvider>
           </SnippetSourceProvider>
         </AnalyticsProvider>
