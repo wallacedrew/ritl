@@ -17,9 +17,6 @@ export default function AboutPage() {
           <Typography component="h1" variant="h4" sx={{ fontWeight: 700 }}>
             About
           </Typography>
-          <Typography variant="body1" color="text.secondary">
-            What Refactoring In The Loop is, who it is for, and the books and tools it stands on.
-          </Typography>
         </Stack>
 
         <WhatThisIs />
