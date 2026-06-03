@@ -38,34 +38,6 @@ export default function Attributions() {
       </Typography>
 
       <Typography component="h3" variant="subtitle1" sx={{ fontWeight: 700, pt: 1 }}>
-        Built with
-      </Typography>
-      <Stack component="ul" spacing={0.5} sx={{ pl: 3, my: 0 }}>
-        <Typography component="li" variant="body1">
-          Next.js (MIT, Vercel).
-        </Typography>
-        <Typography component="li" variant="body1">
-          React (MIT, Meta).
-        </Typography>
-        <Typography component="li" variant="body1">
-          Material UI v9 + Emotion (MIT).
-        </Typography>
-        <Typography component="li" variant="body1">
-          TypeScript (Apache 2.0, Microsoft).
-        </Typography>
-        <Typography component="li" variant="body1">
-          Geist font family (SIL Open Font License 1.1, Vercel).
-        </Typography>
-        <Typography component="li" variant="body1">
-          Vitest, ESLint, Prettier, and the wider open-source ecosystem.
-        </Typography>
-      </Stack>
-      <Typography variant="body1">
-        Hosted on Vercel. Inbound feedback email routes through Cloudflare Email Routing (see
-        ADR-0003).
-      </Typography>
-
-      <Typography component="h3" variant="subtitle1" sx={{ fontWeight: 700, pt: 1 }}>
         AI in production
       </Typography>
       <Typography variant="body1">
