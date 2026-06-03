@@ -26,7 +26,7 @@ const VIEWPORTS = [
 ];
 
 // Covers every distinct page.tsx route type under src/app/:
-// 5 static (/, /plugin, /reference, /reference/list, /reference/map)
+// 6 static (/, /plugin, /reference, /reference/list, /reference/map, /about)
 // 4 catalog landings + 4 catalog detail × 3 variants (base, /agent, /compare)
 // 1 known 404 path
 const URLS = [
@@ -35,6 +35,7 @@ const URLS = [
   "/reference",
   "/reference/list",
   "/reference/map",
+  "/about",
   "/refactoring/canon",
   "/refactoring/canon/extract-function",
   "/refactoring/canon/extract-function/compare",

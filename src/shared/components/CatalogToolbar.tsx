@@ -14,7 +14,8 @@ type CatalogView =
   | "reference"
   | "patterns"
   | "design-patterns"
-  | "plugin";
+  | "plugin"
+  | "about";
 
 interface NavLink {
   view: CatalogView;
@@ -30,6 +31,7 @@ const NAV_LINKS: readonly NavLink[] = [
   { view: "design-patterns", label: "Design Patterns", href: "/design-patterns" },
   { view: "plugin", label: "Plugin", href: "/plugin", precededBySeparator: true },
   { view: "reference", label: "Reference", href: "/reference" },
+  { view: "about", label: "About", href: "/about" },
 ];
 
 function deriveActiveView(pathname: string): CatalogView {
@@ -38,6 +40,7 @@ function deriveActiveView(pathname: string): CatalogView {
   if (pathname.startsWith("/refactoring/smells")) return "smells";
   if (pathname.startsWith("/refactoring/canon")) return "refactorings";
   if (pathname.startsWith("/plugin")) return "plugin";
+  if (pathname.startsWith("/about")) return "about";
   // "/reference" is the meta reference page; default for any unmatched URL.
   return "reference";
 }

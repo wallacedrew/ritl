@@ -6,7 +6,14 @@ export type AnalyticsEvent =
   | {
       event: "nav_clicked";
       properties: {
-        tab: "refactorings" | "smells" | "reference" | "patterns" | "design-patterns" | "plugin";
+        tab:
+          | "refactorings"
+          | "smells"
+          | "reference"
+          | "patterns"
+          | "design-patterns"
+          | "plugin"
+          | "about";
       };
     }
   | {
