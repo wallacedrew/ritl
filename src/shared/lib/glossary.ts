@@ -38,7 +38,7 @@ export type GlossaryTermKey =
   // Human-side software-engineering vocabulary (editorial-only, no lint)
   | "cognitive load"
   | "comprehension cost"
-  | "review cost"
+  | "verification cost"
   | "debugging cost"
   | "maintenance cost"
   | "enhancement cost"
@@ -179,12 +179,12 @@ export const GLOSSARY: Record<GlossaryTermKey, GlossaryEntry> = {
 
   "comprehension cost": {
     definition:
-      "The mental effort and time a reader pays to understand a piece of code well enough to reason about its behavior. Drives every downstream cost — review, debugging, editing, onboarding. Reduced by clarifying names, lower cyclomatic complexity, smaller blast radius, and stronger separation of concerns.",
+      "The mental effort and time a reader pays to understand a piece of code well enough to reason about its behavior. Drives every downstream cost — verification, debugging, editing, onboarding. Reduced by clarifying names, lower cyclomatic complexity, smaller blast radius, and stronger separation of concerns.",
   },
 
-  "review cost": {
+  "verification cost": {
     definition:
-      "The mental effort and time a reviewer pays to verify a change is correct. Scales with the change's blast radius, the cyclomatic complexity of the touched code, and the cognitive load of loading the surrounding context. Bounded by what a reviewer can hold in working memory in one sitting.",
+      "The mental effort and time required to confirm a change is correct — through review, testing, type-checking, or manual exercise. Scales with the change's blast radius, the cyclomatic complexity of the touched code, and the cognitive load of loading the surrounding context.",
   },
 
   "debugging cost": {
@@ -270,7 +270,7 @@ export const GLOSSARY: Record<GlossaryTermKey, GlossaryEntry> = {
 
   "separation of concerns": {
     definition:
-      "The design principle of dividing a system into parts where each handles one well-defined responsibility. Reduces every downstream cost — comprehension, review, debugging, edit — by ensuring any single change touches one part, not many. Dijkstra called it the most important principle of software design.",
+      "The design principle of dividing a system into parts where each handles one well-defined responsibility. Reduces every downstream cost — comprehension, verification, debugging, edit — by ensuring any single change touches one part, not many. Dijkstra called it the most important principle of software design.",
     citation: {
       text: 'Dijkstra, "On the role of scientific thought" (1974)',
     },
