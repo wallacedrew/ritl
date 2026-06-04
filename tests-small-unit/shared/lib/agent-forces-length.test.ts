@@ -6,10 +6,10 @@ import { loadSmells } from "@/smells/lib/loadSmells";
 import type { CatalogEntry, Lens } from "@/shared/lib/CatalogEntry";
 
 const FORCE_FIELDS = ["symptom", "goal", "pressure", "tradeoff", "relief", "trap"] as const;
-// Target range per ADR-0012: 50-75 words per field. The ceiling is
-// lint-enforced; the 50-word floor is editorial (the rest of the
+// Target range per ADR-0013: 40-60 words per field. The ceiling is
+// lint-enforced; the 40-word floor is editorial (the rest of the
 // corpus pre-dates this range and is being migrated incrementally).
-const HARD_CEILING_WORDS = 75;
+const HARD_CEILING_WORDS = 60;
 
 function wordCount(text: string): number {
   const trimmed = text.trim();

@@ -367,3 +367,19 @@ export function lookupTerm(term: GlossaryTermKey): GlossaryEntry {
 export function isKnownTerm(term: string): term is GlossaryTermKey {
   return Object.prototype.hasOwnProperty.call(GLOSSARY, term);
 }
+
+/**
+ * Case-insensitive lookup that returns the canonical glossary key.
+ * Lets authors write `{{Comprehension cost}}` at a sentence start and
+ * still resolve it to the lowercase canonical key. Returns null if no
+ * case-insensitive match exists in the glossary.
+ */
+export function canonicalizeTerm(term: string): GlossaryTermKey | null {
+  if (isKnownTerm(term)) return term;
+  const lower = term.toLowerCase();
+  const keys = Object.keys(GLOSSARY) as GlossaryTermKey[];
+  for (const key of keys) {
+    if (key.toLowerCase() === lower) return key;
+  }
+  return null;
+}

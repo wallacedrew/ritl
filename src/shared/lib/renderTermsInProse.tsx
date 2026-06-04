@@ -1,19 +1,21 @@
 import { type ReactNode } from "react";
 
 import Term from "@/shared/components/Term";
-import { isKnownTerm } from "@/shared/lib/glossary";
+import { canonicalizeTerm } from "@/shared/lib/glossary";
 
 /**
  * Parses `{{glossary-key}}` tokens out of a prose string and returns a
  * ReactNode tree where each known glossary key is wrapped in a `<Term>`
- * tooltip trigger. Unknown keys render as literal text (with their
- * curly braces preserved so the typo stays visible) and log a dev-mode
- * warning. Plain strings without any tokens pass through unchanged.
+ * tooltip trigger. Lookup is case-insensitive (`{{Comprehension cost}}`
+ * at a sentence start resolves to the lowercase canonical key); the
+ * displayed text preserves the author's capitalization. Unknown keys
+ * render as literal text (with their curly braces preserved so the
+ * typo stays visible) and log a dev-mode warning. Plain strings
+ * without any tokens pass through unchanged.
  *
- * Conventions: the token's contents must match a glossary key 1:1.
- * Inflected forms (e.g. plural / possessive) are out of scope for the
- * minimum viable parser — author the JSON to use the canonical form,
- * or extend this helper if a follow-up slice needs them.
+ * Conventions: the token's contents must match a glossary key 1:1
+ * up to case. Inflected forms (e.g. plural / possessive) are out of
+ * scope — author the JSON to use the canonical form.
  */
 export function renderTermsInProse(text: string): ReactNode {
   const TERM_PATTERN = /\{\{([^}]+)\}\}/g;
@@ -28,9 +30,10 @@ export function renderTermsInProse(text: string): ReactNode {
     const captured = match[1];
     if (captured === undefined) continue;
     const candidateKey = captured.trim();
-    if (isKnownTerm(candidateKey)) {
+    const canonical = canonicalizeTerm(candidateKey);
+    if (canonical !== null) {
       parts.push(
-        <Term key={`${candidateKey}-${match.index}`} term={candidateKey}>
+        <Term key={`${canonical}-${match.index}`} term={canonical}>
           {candidateKey}
         </Term>,
       );

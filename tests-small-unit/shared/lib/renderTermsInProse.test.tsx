@@ -58,4 +58,13 @@ describe("renderTermsInProse parses {{term}} tokens and wraps known keys in <Ter
 
     expect(screen.getByRole("button", { name: /Definition of tokens/i })).toBeInTheDocument();
   });
+
+  it("resolves capitalized markers (e.g. sentence start) to the canonical lowercase key", () => {
+    renderWithTheme(
+      <>{renderTermsInProse("{{Comprehension cost}} drives every downstream cost.")}</>,
+    );
+
+    const trigger = screen.getByRole("button", { name: /Definition of comprehension cost/i });
+    expect(trigger).toHaveTextContent("Comprehension cost");
+  });
 });
