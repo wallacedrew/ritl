@@ -82,6 +82,6 @@ _Example source: Illustrative example written for this site in the spirit of Des
 
 **Relief:** The Command interface is the agent's single anchor; per-operation edits scope to one Command file; cross-cutting features are tested once against the interface. Static enumeration of operations is complete and verifiable.
 
-**Trap:** Commands that mutate receiver state outside their own captured fields produce undo bugs the agent cannot localize from the Command's source alone. The agent reading TypeCommand.undo() trusts the captured text length; if execute() actually invoked side effects (autocomplete, save-on-keypress) the undo is silently incomplete. Capture every effect the execute touches, or the pattern's reversibility promise is a lie.
+**Trap:** Commands that mutate receiver state outside their captured fields produce undo bugs the agent cannot localize from the Command source alone. The agent reading TypeCommand.undo() trusts the captured text length; if execute() invoked side effects (autocomplete, save-on-keypress) the undo ships silently incomplete and the reversibility promise breaks at runtime.
 
 **Triggered by:** Repeated Switches (smells), Primitive Obsession (smells), Replace Function with Command (refactorings)

@@ -56,10 +56,10 @@ _Example source: Illustrative example written for this site in the spirit of Des
 
 **Pressure:** The agent's verification budget on creator edits scales linearly with the number of variants in the switch. Every variant must be checked for consistent treatment; partial updates produce type-compatible silent bugs the test suite may not exercise. Context cost climbs faster than feature value.
 
-**Tradeoff:** A parallel hierarchy doubles the file count the agent must navigate to understand the system. 'Which Document am I dealing with?' becomes an additional step in every reasoning trace, and refactoring across the hierarchy requires editing N files in lockstep — exactly the cross-cutting pattern the agent struggles with most.
+**Tradeoff:** A parallel hierarchy doubles the file count the agent navigates. Variant identification becomes an additional step in every reasoning trace, and refactoring across the hierarchy requires editing N files in lockstep — the cross-cutting pattern with the highest per-edit token cost.
 
 **Relief:** Adding a new variant is one new subclass that overrides the factory method; the creator's body stays constant in size, and the agent generates the new subclass by reading one sibling instead of editing dispatch logic across the codebase.
 
-**Trap:** Subclasses that override more than the factory method (extra hooks, extra state, extra invariants) reintroduce the cross-cutting verification problem in a different shape — now the agent must verify N subclasses each implement M hooks consistently. The parallel hierarchy becomes the same N×M cell-check problem the switch had, only spread across more files.
+**Trap:** Subclasses that override more than the factory method (extra hooks, extra state, extra invariants) reintroduce the cross-cutting verification problem — the agent must verify N subclasses each implement M hooks consistently. The parallel hierarchy becomes the same N×M cell-check, now spread across more files.
 
 **Triggered by:** Repeated Switches (smells), Replace Conditional with Polymorphism (refactorings), Replace Type Code with Subclasses (refactorings)

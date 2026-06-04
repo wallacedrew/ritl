@@ -63,6 +63,6 @@ _Example source: Illustrative example written for this site in the spirit of Des
 
 **Relief:** Per-axis edits scope to one file; the type system enforces the contract; combination behaviour is testable as 'this shape × this renderer' without needing a new class. The agent's edit/verify cycle on adding an axis value is bounded and local.
 
-**Trap:** Premature bridging doubles the file count and adds an indirection the agent must navigate on every read, with zero pay-off until the second axis variant ships. Watch for 'bridge with one implementation' as a sign the pattern was applied too early; the agent's reading cost is paid forever, even if the predicted second axis never arrives.
+**Trap:** Premature bridging doubles file count and adds indirection the agent navigates on every read, with zero benefit until the second axis variant ships. A bridge with one implementation signals the pattern was applied too early; the cost is paid on every read even if the second axis never ships.
 
 **Triggered by:** Shotgun Surgery (smells), Replace Subclass with Delegate (refactorings), Extract Class (refactorings)

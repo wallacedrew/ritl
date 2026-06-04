@@ -75,6 +75,6 @@ _Example source: Illustrative example written for this site in the spirit of Des
 
 **Relief:** Consumer-side traversal is one expression; collection-side representation is one file; agent edits to storage shape scope to one place and need no cross-consumer verification. Static analysis of 'where is this collection iterated' returns complete results.
 
-**Trap:** Iterators with hidden mutability (re-entrant push during iteration, snapshot-vs-live semantics) produce bugs the agent cannot localize from the iterator protocol alone. The agent reading `for (const x of coll)` trusts the consumer side; runtime ordering bugs live in the iterator's interaction with the underlying mutation. Document or freeze; do not leave ambiguous.
+**Trap:** Iterators with hidden mutability (re-entrant push during iteration, snapshot-vs-live semantics) produce bugs the agent cannot localize from the iterator protocol alone. The agent reading `for (const x of coll)` trusts the consumer side; runtime ordering bugs ship from the iterator's interaction with mutation, unseen at the call site.
 
 **Triggered by:** Insider Trading (smells), Message Chains (smells), Encapsulate Collection (refactorings)

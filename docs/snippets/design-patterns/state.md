@@ -86,6 +86,6 @@ _Example source: Illustrative example written for this site in the spirit of Des
 
 **Relief:** Each state lives at one file the agent reads in isolation; adding a new state is one new class implementing the protocol, and the type checker confirms every state handles every operation defined on the protocol.
 
-**Trap:** Shared behaviour across states (every cancel logs an audit event) repeated across state files re-creates Duplicated Code at the new layer. The agent reading the State class hierarchy must verify the shared logic per state; without a common policy or superclass, the agent loses confidence in cross-state consistency on every edit.
+**Trap:** Shared behaviour across states (every cancel logs an audit event) repeated across state files re-creates Duplicated Code at the new layer. The agent reading the State class hierarchy must verify the shared logic per state; without a common policy or superclass, cross-state consistency requires manual re-verification on every edit.
 
 **Triggered by:** Repeated Switches (smells), Primitive Obsession (smells), Replace Conditional with Polymorphism (refactorings)

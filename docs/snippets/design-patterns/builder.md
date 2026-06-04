@@ -52,7 +52,7 @@ _Example source: Illustrative example written for this site in the spirit of Des
 
 **Pressure:** Positional argument lists are the worst-case input shape for context budget — the agent must hold the parameter order in working memory while reading every call. Mis-aligned arguments produce type-compatible bugs the compiler does not catch, exactly the bug class that demands the most verification effort.
 
-**Tradeoff:** The builder's chainable method set is a second surface the agent must understand alongside the product itself. Tests for the builder cover construction paths, not the product's behaviour; the agent must distinguish 'did I build the right spec?' from 'did the spec behave correctly?' when investigating regressions.
+**Tradeoff:** The builder's chainable method set is a second surface the agent reads alongside the product itself; tests cover construction paths separately from product behaviour, so the agent must trace any regression through two surfaces instead of one.
 
 **Relief:** Call-site edits become append-or-remove single-line operations on the chain. The build() step is a structural commit the agent can rely on as the moment of validation; partial-construction bugs surface as builder-test failures, not runtime mysteries scattered across consumers of the product.
 

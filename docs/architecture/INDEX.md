@@ -13,3 +13,4 @@ Chronological index of ADRs. Numbers are immutable; superseded ADRs stay in plac
 | ADR-0007 | Kerievsky entries are refactorings, not patterns   | accepted               | 2026-05-31 | Move the 27 Kerievsky entries from `patterns` catalog to `refactorings` catalog; `patterns` becomes GoF-only.       |
 | ADR-0008 | Domain-first `src/` layout                         | accepted               | 2026-05-31 | Three top-level domain folders; sub-site landings colocate with data; `CatalogKind` value matches the URL slug.     |
 | ADR-0009 | Voice rubric: strict canonical LLM-research terms  | accepted               | 2026-06-03 | Restrict agent-side vocabulary to canonical LLM-research terms + three project exceptions; ban OS-borrow metaphors. |
+| ADR-0010 | Agent-side voice and audience contract             | accepted               | 2026-06-03 | Lock modal reader, POV ("the agent"), present-declarative mood, 50-word ceiling, six-field role contract.           |

@@ -64,7 +64,7 @@ _Example source: Illustrative example written for this site in the spirit of Des
 
 **Pressure:** Per-consumer orchestration is N consumers × M subsystems × K error-modes = N×M×K cells the agent verifies on every change. Insider Trading is the worst input shape for the agent's verification budget: every consumer must be checked for correctness against every subsystem's contract.
 
-**Tradeoff:** Facade opacity means runtime errors from inside the facade surface to the consumer as 'submitOrder failed' with no structural breadcrumb. The agent investigating a regression must trace into the facade implementation; stack traces span the facade + subsystem boundary, and the consumer's mental model is one level removed from the actual failure.
+**Tradeoff:** Facade opacity means runtime errors inside the facade reach the consumer as 'submitOrder failed' with no structural breadcrumb. The agent investigating a regression traces into the facade; stack traces span the facade + subsystem boundary, and the consumer's mental model sits one level removed from the failure.
 
 **Relief:** Edits scoped to the Facade; consumer code unchanged when subsystems are added or refactored; one set of tests covers orchestration and error recovery exhaustively. The agent's cross-consumer verification budget drops to zero on subsystem changes.
 
