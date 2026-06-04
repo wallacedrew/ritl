@@ -36,11 +36,8 @@ export type GlossaryTermKey =
   // Project-endorsed phrases (ADR-0009)
   | "context window"
   | "token cost"
-  | "hallucinations"
   // Canonical LLM-research vocabulary
   | "tokens"
-  | "lost-in-the-middle"
-  | "context overflow"
   | "chain-of-thought"
   | "retrieval"
   | "RAG"
@@ -54,7 +51,15 @@ export type GlossaryTermKey =
   | "completeness-check cost"
   | "verification-surface cost"
   // Project usage
-  | "the agent";
+  | "the agent"
+  // === Failure modes ===
+  // Human failure modes
+  | "confabulation"
+  | "inattentional blindness"
+  // Agent failure modes
+  | "hallucinations"
+  | "lost-in-the-middle"
+  | "context overflow";
 
 export interface GlossaryCitation {
   text: string;
@@ -198,30 +203,11 @@ export const GLOSSARY: Record<GlossaryTermKey, GlossaryEntry> = {
       "The per-step or per-operation token expense an agent pays for a read, write, or branch walk. Used as the unit of work for the agent's per-edit budget across the catalog.",
   },
 
-  hallucinations: {
-    definition:
-      "Model-generated content not grounded in the input. The model produces output that sounds plausible but is factually incorrect or unsupported by the prompt, retrieved context, or training data.",
-  },
-
   // --- Canonical LLM-research vocabulary ---
 
   tokens: {
     definition:
       "The discrete units the model consumes and produces. Typically a sub-word, word, or character fragment. Token count determines both input size and inference cost.",
-  },
-
-  "lost-in-the-middle": {
-    definition:
-      "The empirical finding that LLMs recall information near the start and end of a long context more reliably than information positioned in the middle.",
-    citation: {
-      text: 'Liu et al., "Lost in the Middle: How Language Models Use Long Contexts" (2023)',
-      url: "https://arxiv.org/abs/2307.03172",
-    },
-  },
-
-  "context overflow": {
-    definition:
-      "The condition where the input prompt exceeds the model's context window. Behavior on overflow varies by model: some truncate the earliest content, some refuse the request, some silently drop content without notice.",
   },
 
   "chain-of-thought": {
@@ -286,6 +272,49 @@ export const GLOSSARY: Record<GlossaryTermKey, GlossaryEntry> = {
   "the agent": {
     definition:
       "In agent-side catalog prose, an LLM-powered coding tool acting on the codebase — drafting, editing, reviewing, or verifying code under human-in-the-loop supervision. Per ADR-0010 §2, this is the canonical grammatical subject of every agent-side force field.",
+  },
+
+  // ============================================================
+  // Failure modes
+  // ============================================================
+
+  // --- Human failure modes ---
+
+  confabulation: {
+    definition:
+      "The act of filling gaps in memory with plausible but factually incorrect content, presented with conviction. Developers confabulate when they write code from a stale or incomplete mental model — the resulting code looks reasonable but breaks against the system's actual behavior. Maps to the agent's hallucinations: both ship ungrounded output as if it were grounded.",
+    citation: {
+      text: 'Schacter, "Memory distortion: History and current status" (Annual Review of Psychology, 1995)',
+    },
+  },
+
+  "inattentional blindness": {
+    definition:
+      "The failure to notice an obvious feature, change, or event in the visual field because attention is directed elsewhere. In code review, inattentional blindness explains why reviewers miss bugs in code they are carefully reading — they are focused on the change and not seeing the surrounding consequences. Maps to the agent's lost-in-the-middle: both are attention-allocation failures, not memory failures.",
+    citation: {
+      text: 'Mack & Rock, "Inattentional Blindness" (MIT Press, 1998)',
+    },
+  },
+
+  // --- Agent failure modes ---
+
+  hallucinations: {
+    definition:
+      "Model-generated content not grounded in the input. The model produces output that sounds plausible but is factually incorrect or unsupported by the prompt, retrieved context, or training data. Maps to the human's confabulation.",
+  },
+
+  "lost-in-the-middle": {
+    definition:
+      "The empirical finding that LLMs recall information near the start and end of a long context more reliably than information positioned in the middle. Maps to the human's inattentional blindness: attention allocation, not memory capacity, is the bite.",
+    citation: {
+      text: 'Liu et al., "Lost in the Middle: How Language Models Use Long Contexts" (2023)',
+      url: "https://arxiv.org/abs/2307.03172",
+    },
+  },
+
+  "context overflow": {
+    definition:
+      "The condition where the input prompt exceeds the model's context window. Behavior on overflow varies by model: some truncate the earliest content, some refuse the request, some silently drop content without notice.",
   },
 };
 

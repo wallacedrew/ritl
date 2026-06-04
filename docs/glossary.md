@@ -1,6 +1,6 @@
 # Glossary
 
-Canonical definitions for every term the catalog marks with `{{...}}` and surfaces as a tooltip on either side of the compare view. Three categories — **cost to the human**, **cost to the agent**, and **cross-cutting design principles**. The first two name what each actor pays; the third names the structural properties of code that drive both.
+Canonical definitions for every term the catalog marks with `{{...}}` and surfaces as a tooltip on either side of the compare view. Four categories — **cost to the human**, **cross-cutting design principles**, **cost to the agent**, and **failure modes**. The first three name what each actor pays and the structural properties that drive both; the fourth names the canonical failure modes each actor is prone to, with cross-actor analogs paired where they exist (`confabulation` ↔ `hallucinations`; `inattentional blindness` ↔ `lost-in-the-middle`).
 
 Cross-references: vocabulary rules in [ADR-0009](architecture/0009-strict-canonical-llm-research-terms.md); voice contract in [ADR-0010](architecture/0010-agent-side-voice-and-audience-contract.md); verb and mechanism rules in [ADR-0011](architecture/0011-no-anthropomorphism-and-mechanism-citation.md).
 
@@ -112,7 +112,7 @@ What LLM coding agents pay to read, reason about, edit, and verify code. Used on
 
 ### Project-endorsed phrases (ADR-0009)
 
-Three phrases endorsed by the catalog beyond strict canonical LLM-research terminology. Reader-Googleable in their own right.
+Two phrases endorsed by the catalog beyond strict canonical LLM-research terminology. Reader-Googleable in their own right.
 
 #### context window
 
@@ -122,10 +122,6 @@ The bounded input span the model attends to during one forward pass. Measured in
 
 The per-step or per-operation token expense an agent pays for a read, write, or branch walk. Used as the unit of work for the agent's per-edit budget across the catalog.
 
-#### hallucinations
-
-Model-generated content not grounded in the input. The model produces output that sounds plausible but is factually incorrect or unsupported by the prompt, retrieved context, or training data.
-
 ### Canonical LLM-research vocabulary (ADR-0009 allow-list)
 
 Terms with established meaning in published LLM research or industry documentation. A reader can verify each by Googling the term.
@@ -133,16 +129,6 @@ Terms with established meaning in published LLM research or industry documentati
 #### tokens
 
 The discrete units the model consumes and produces. A token is typically a sub-word, word, or character fragment. Token count determines both the model's input size and the cost of inference.
-
-#### lost-in-the-middle
-
-The empirical finding that LLMs recall information near the start and end of a long context more reliably than information positioned in the middle.
-
-> Liu et al., "Lost in the Middle: How Language Models Use Long Contexts" (2023). [arXiv:2307.03172](https://arxiv.org/abs/2307.03172)
-
-#### context overflow / overflow
-
-The condition where the input prompt exceeds the model's context window. Behavior on overflow varies by model: some truncate the earliest content, some refuse the request, some silently drop content without notice.
 
 #### chain-of-thought
 
@@ -197,6 +183,42 @@ The extra files, tests, and code paths a regression must be traced through. Larg
 #### the agent
 
 In agent-side catalog prose, "the agent" refers to an LLM-powered coding tool acting on the codebase — drafting, editing, reviewing, or verifying code under human-in-the-loop supervision. Per [ADR-0010 §2](architecture/0010-agent-side-voice-and-audience-contract.md), this is the canonical grammatical subject of every agent-side force field.
+
+---
+
+## Failure modes
+
+Failure modes specific to each actor: where humans and agents go wrong even when the structural properties are reasonable and the cost budget is intact. Each side has its own canonical failure modes; cross-actor analogs are paired explicitly in the definitions.
+
+### Human failure modes
+
+#### confabulation
+
+The act of filling gaps in memory with plausible but factually incorrect content, presented with conviction. Developers confabulate when they write code from a stale or incomplete mental model — the resulting code looks reasonable but breaks against the system's actual behavior. Maps to the agent's hallucinations: both ship ungrounded output as if it were grounded.
+
+> Schacter, "Memory distortion: History and current status" (Annual Review of Psychology, 1995)
+
+#### inattentional blindness
+
+The failure to notice an obvious feature, change, or event in the visual field because attention is directed elsewhere. In code review, inattentional blindness explains why reviewers miss bugs in code they are carefully reading — they are focused on the change and not seeing the surrounding consequences. Maps to the agent's lost-in-the-middle: both are attention-allocation failures, not memory failures.
+
+> Mack & Rock, "Inattentional Blindness" (MIT Press, 1998)
+
+### Agent failure modes
+
+#### hallucinations
+
+Model-generated content not grounded in the input. The model produces output that sounds plausible but is factually incorrect or unsupported by the prompt, retrieved context, or training data. Maps to the human's confabulation.
+
+#### lost-in-the-middle
+
+The empirical finding that LLMs recall information near the start and end of a long context more reliably than information positioned in the middle. Maps to the human's inattentional blindness: attention allocation, not memory capacity, is the bite.
+
+> Liu et al., "Lost in the Middle: How Language Models Use Long Contexts" (2023). [arXiv:2307.03172](https://arxiv.org/abs/2307.03172)
+
+#### context overflow / overflow
+
+The condition where the input prompt exceeds the model's context window. Behavior on overflow varies by model: some truncate the earliest content, some refuse the request, some silently drop content without notice.
 
 ---
 
