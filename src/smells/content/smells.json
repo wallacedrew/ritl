@@ -34,10 +34,10 @@
       "human": {
         "symptom": "The same code structure appears in two or more places — same shape with cosmetic variations, or copy-paste-modify patterns that drift over time.",
         "goal": "One canonical home per behavior, with parameters for the variations.",
-        "pressure": "Bugs need to be fixed in every copy; behavior diverges as copies age, multiplying maintenance cost.",
-        "tradeoff": "Extracting the shared form introduces a parameter list or hierarchy that all callers must learn; the abstraction has to earn its keep against the cost of indirection.",
+        "pressure": "Bug fixes carry the {{blast radius}} of every copy; behavior diverges as copies age, multiplying maintenance cost.",
+        "tradeoff": "Extracting the shared form introduces a parameter list or hierarchy that all callers must learn; the abstraction's {{cognitive load}} has to earn its keep against the cost of indirection.",
         "relief": "A bug fix or enhancement lands once, not in every clone — and the unifying name reveals shared intent.",
-        "trap": "Premature deduplication on superficial similarity — code that looks the same but means different things gets merged behind a single abstraction, and any future divergence forces awkward branches."
+        "trap": "Premature deduplication on superficial similarity — code that looks the same but means different things gets merged behind a {{leaky abstraction}}, and any future divergence forces awkward branches."
       },
       "agent": {
         "symptom": "Near-identical code in multiple files; each copy the agent reads adds {{tokens}} to the {{context window}} without changing the edit decision, and copies left outside the window stay unread and unverified during the edit.",
