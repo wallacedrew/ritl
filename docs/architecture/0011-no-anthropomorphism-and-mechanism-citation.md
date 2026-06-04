@@ -39,11 +39,13 @@ Agent-side fields describe observable operations against the codebase or against
 
 **Allowed** (verbs naming observable operations or mechanical states):
 
-- Reading and context: `reads`, `loads`, `holds in context`, `evicts`, `re-loads`, `cannot resolve`, `has no signal that`
+- Reading and context: `reads`, `loads`, `holds in context`, `re-loads`, `cannot resolve`, `has no signal that`
 - Parsing and reasoning: `parses`, `re-parses`, `re-derives`, `traces`, `chases`, `verifies`, `re-verifies`
 - Writing and shipping: `writes`, `edits`, `inlines`, `extracts`, `ships`, `commits`
-- Failure modes: `fails the type check`, `blows the context window`, `hallucinates`, `mis-aligns`, `misses`, `drops`, `ships stale`
+- Failure modes: `fails the type check`, `overflows the context window`, `hallucinates`, `mis-aligns`, `misses`, `drops`, `ships stale`
 - Cost: `pays`, `inflates`, `compounds`, `incurs`, `re-pays`
+
+ADR-0009 separately bans the OS-memory-management verbs `paged out`, `paging`, `swap`, `evict`, `cache miss` in the LLM sense. Describe context-window changes using `loads`, `re-loads`, `holds in context`, `cannot resolve`, or `overflows the context window` instead of those terms.
 
 Rule of thumb when an unlisted verb is borderline:
 
@@ -62,11 +64,18 @@ Accepted mechanisms (non-exhaustive; canonical terms per ADR-0009):
 - **Retrieval / lookup cost** — extra grep, extra cross-file hops, RAG index invalidation.
 - **Reasoning-step cost** — what a single reasoning pass can hold; what spills into chained passes.
 - **Type-checker visibility** — what static analysis catches versus what slips past as type-compatible.
-- **Cached-association cost** — embedding indexes, commit history, prior conversation context that go stale.
+- **Cache-staleness cost** — embedding indexes, RAG caches, prior conversation context that drift out of date with the underlying code.
 - **Completeness-check cost** — N call sites × M branches the agent must enumerate to prove an edit is complete.
 - **Verification-surface cost** — extra files, extra tests, extra paths a regression must be traced through.
 
 A field passes the rule when at least one of those currencies appears as a named noun phrase the field's claim depends on. A field fails when its claim could be rewritten about any tool (human IDE, linter, build system) without losing meaning.
+
+**Interaction with the ADR-0010 field-role contract.** ADR-0010 §7 classifies `symptom`, `goal`, and `relief` as descriptive (no user-visible stake required) and `pressure` and `trap` as stake-carrying. The mechanism-naming rule above applies to all six. The two rules layer:
+
+- Descriptive fields (`symptom`, `goal`, `relief`) name the mechanism as an observable noun phrase: "the agent loads N definitions per edit", "each call site costs one extra hop", "the type checker enforces every variant".
+- Stake-carrying fields (`pressure`, `trap`) name the mechanism **and** the user-visible consequence the mechanism produces: "the agent loads N definitions per edit, and a missed cell ships as a silent runtime bug".
+
+A descriptive field that names no mechanism is a candidate for promotion back to the human lens (per ADR-0010 §8 parallel structure). A stake-carrying field that names a mechanism but no stake, or a stake but no mechanism, fails this ADR.
 
 #### Worked example — what the rule catches
 
@@ -96,7 +105,7 @@ Both rules pass: every verb is observable (`adds`, `must load`, `compound`, `inc
 **Harder / new constraints:**
 
 - Drafting becomes slower. Composing a `tradeoff` that names a mechanism in 25 words is more compression work than writing prose at field length.
-- Some legacy entries will fail the rules at next-touch. The audit slice from ADR-0006's follow-up list (not yet executed) gains two more mechanical checks to run.
+- Some legacy entries will fail the rules at next-touch. The legacy vocabulary audit deferred from ADR-0009 (and the deferred audit for ADR-0010's POV and length rules) gains two more mechanical checks to run alongside the existing three.
 - The verb ban will read as overstrict on borderline cases. The rule-of-thumb test (is the operation observable in a transcript) is the escape hatch; authors should default to banning when unsure, since the canonical allow-list usually has a substitute.
 
 **Follow-up work:**
