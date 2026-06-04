@@ -19,19 +19,9 @@ export type GlossaryTermKey =
   | "hallucinations"
   // Canonical LLM-research vocabulary
   | "tokens"
-  | "attention"
   | "lost-in-the-middle"
   | "context overflow"
-  | "prompt"
-  | "completion"
-  | "system prompt"
-  | "user message"
-  | "tool result"
-  | "assistant turn"
-  | "in-context learning"
   | "chain-of-thought"
-  | "few-shot"
-  | "zero-shot"
   | "retrieval"
   | "RAG"
   | "reasoning step"
@@ -45,7 +35,6 @@ export type GlossaryTermKey =
   | "verification-surface cost"
   // Project usage
   | "the agent"
-  | "reasoning trace"
   // Human-side software-engineering vocabulary (editorial-only, no lint)
   | "cognitive load"
   | "signal-to-noise ratio"
@@ -95,11 +84,6 @@ export const GLOSSARY: Record<GlossaryTermKey, GlossaryEntry> = {
       "The discrete units the model consumes and produces. Typically a sub-word, word, or character fragment. Token count determines both input size and inference cost.",
   },
 
-  attention: {
-    definition:
-      "The transformer mechanism that weights how strongly each token influences each other token during a forward pass. The mechanism lost-in-the-middle effects emerge from.",
-  },
-
   "lost-in-the-middle": {
     definition:
       "The empirical finding that LLMs recall information near the start and end of a long context more reliably than information positioned in the middle.",
@@ -114,53 +98,9 @@ export const GLOSSARY: Record<GlossaryTermKey, GlossaryEntry> = {
       "The condition where the input prompt exceeds the model's context window. Behavior on overflow varies by model: some truncate the earliest content, some refuse the request, some silently drop content without notice.",
   },
 
-  prompt: {
-    definition:
-      "The input the model receives. Typically the concatenation of system prompt, user message, prior conversation turns, retrieved context, and tool results.",
-  },
-
-  completion: {
-    definition:
-      "The model's output for a given prompt. May be streamed (partial completions over time) or returned as a single finalized response.",
-  },
-
-  "system prompt": {
-    definition:
-      "The portion of the prompt that establishes the model's role, constraints, and operating instructions. Typically supplied by the application, not the end-user.",
-  },
-
-  "user message": {
-    definition:
-      "A turn in the conversation authored by the end-user (or by the next layer above the model in agent setups).",
-  },
-
-  "tool result": {
-    definition:
-      "The output of a tool call returned to the model so it can continue reasoning with the tool's response.",
-  },
-
-  "assistant turn": {
-    definition: "A turn in the conversation authored by the model.",
-  },
-
-  "in-context learning": {
-    definition:
-      "The model's ability to acquire a task pattern from examples included in the prompt rather than from fine-tuning. The capability that makes few-shot and zero-shot prompting effective.",
-  },
-
   "chain-of-thought": {
     definition:
       "A prompting pattern where the model emits explicit intermediate reasoning steps before the final answer. Improves accuracy on multi-step tasks at the cost of more output tokens.",
-  },
-
-  "few-shot": {
-    definition:
-      "A prompting strategy that includes a small number of input/output examples in the prompt before asking for a new output.",
-  },
-
-  "zero-shot": {
-    definition:
-      "A prompting strategy that gives no examples — only the task instruction and the new input.",
   },
 
   retrieval: {
@@ -220,11 +160,6 @@ export const GLOSSARY: Record<GlossaryTermKey, GlossaryEntry> = {
   "the agent": {
     definition:
       "In agent-side catalog prose, an LLM-powered coding tool acting on the codebase — drafting, editing, reviewing, or verifying code under human-in-the-loop supervision. Per ADR-0010 §2, this is the canonical grammatical subject of every agent-side force field.",
-  },
-
-  "reasoning trace": {
-    definition:
-      "The ordered sequence of reasoning steps the agent emits while completing a task. The observable, transcript-visible sequence of intermediate outputs — distinct from the model's internal computation.",
   },
 
   // --- Human-side software-engineering vocabulary (editorial-only) ---

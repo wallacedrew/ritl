@@ -11,14 +11,13 @@ const FORCE_FIELDS = ["symptom", "goal", "pressure", "tradeoff", "relief", "trap
 /**
  * Glossary keys eligible for the marking lint.
  *
- * Excluded keys are common English words (`attention`, `prompt`,
- * `completion`, `retrieval`) where the LLM-research sense cannot be
- * distinguished from ordinary usage without semantic analysis, plus
- * `the agent` which appears as the grammatical subject of nearly every
- * field — marking the first occurrence per entry would put a tooltip on
- * "the agent" in symptom and never elsewhere, which adds noise without
- * teaching the reader anything they don't already infer from the
- * modal-reader contract.
+ * Excluded from this list: `retrieval` (where the LLM-research sense
+ * cannot be distinguished from ordinary usage without semantic
+ * analysis) and `the agent` (which appears as the grammatical subject
+ * of nearly every field — marking the first occurrence per entry
+ * would put a tooltip on "the agent" in symptom and never elsewhere,
+ * which adds noise without teaching the reader anything they don't
+ * already infer from the modal-reader contract).
  */
 const LINTABLE_KEYS: readonly GlossaryTermKey[] = [
   "context window",
@@ -27,17 +26,9 @@ const LINTABLE_KEYS: readonly GlossaryTermKey[] = [
   "tokens",
   "lost-in-the-middle",
   "context overflow",
-  "system prompt",
-  "user message",
-  "tool result",
-  "assistant turn",
-  "in-context learning",
   "chain-of-thought",
-  "few-shot",
-  "zero-shot",
   "RAG",
   "reasoning step",
-  "reasoning trace",
   "context-window load",
   "retrieval cost",
   "reasoning-step cost",

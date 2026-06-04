@@ -38,10 +38,6 @@ Terms with established meaning in published LLM research or industry documentati
 
 The discrete units the model consumes and produces. A token is typically a sub-word, word, or character fragment. Token count determines both the model's input size and the cost of inference.
 
-### attention
-
-The transformer mechanism that weights how strongly each token influences each other token during a forward pass. The mechanism `lost-in-the-middle` effects emerge from.
-
 ### lost-in-the-middle
 
 The empirical finding that LLMs recall information near the start and end of a long context more reliably than information positioned in the middle.
@@ -52,45 +48,9 @@ The empirical finding that LLMs recall information near the start and end of a l
 
 The condition where the input prompt exceeds the model's context window. Behavior on overflow varies by model: some truncate the earliest content, some refuse the request, some silently drop content without notice.
 
-### prompt
-
-The input the model receives. Typically the concatenation of system prompt, user message, prior conversation turns, retrieved context, and tool results.
-
-### completion
-
-The model's output for a given prompt. May be streamed (partial completions over time) or returned as a single finalized response.
-
-### system prompt
-
-The portion of the prompt that establishes the model's role, constraints, and operating instructions. Typically supplied by the application, not the end-user.
-
-### user message
-
-A turn in the conversation authored by the end-user (or by the next layer above the model in agent setups).
-
-### tool result
-
-The output of a tool call returned to the model so it can continue reasoning with the tool's response.
-
-### assistant turn
-
-A turn in the conversation authored by the model.
-
-### in-context learning
-
-The model's ability to acquire a task pattern from examples included in the prompt rather than from fine-tuning. The capability that makes few-shot and zero-shot prompting effective.
-
 ### chain-of-thought
 
 A prompting pattern where the model emits explicit intermediate reasoning steps before the final answer. Improves accuracy on multi-step tasks at the cost of more output tokens.
-
-### few-shot
-
-A prompting strategy that includes a small number of input/output examples in the prompt before asking for a new output.
-
-### zero-shot
-
-A prompting strategy that gives no examples — only the task instruction and the new input.
 
 ### retrieval
 
@@ -145,10 +105,6 @@ The extra files, tests, and code paths a regression must be traced through. Larg
 ### the agent
 
 In agent-side catalog prose, "the agent" refers to an LLM-powered coding tool acting on the codebase — drafting, editing, reviewing, or verifying code under human-in-the-loop supervision. Per [ADR-0010 §2](architecture/0010-agent-side-voice-and-audience-contract.md), this is the canonical grammatical subject of every agent-side force field.
-
-### reasoning trace
-
-The ordered sequence of reasoning steps the agent emits while completing a task. Used in catalog prose to describe the work the agent does per edit. Distinct from the model's internal computation — a reasoning trace is the observable, transcript-visible sequence of intermediate outputs.
 
 ---
 
