@@ -40,6 +40,8 @@ export type GlossaryTermKey =
   | "comprehension cost"
   | "review cost"
   | "debugging cost"
+  | "maintenance cost"
+  | "enhancement cost"
   | "signal-to-noise ratio"
   | "essential complexity"
   | "accidental complexity"
@@ -188,6 +190,16 @@ export const GLOSSARY: Record<GlossaryTermKey, GlossaryEntry> = {
   "debugging cost": {
     definition:
       "The mental effort and time required to diagnose a bug — trace from observed symptom to root cause. Scales with the breadth of side effects the system permits, the number of invariants that could have been violated, and the cognitive load of modeling the system's state across time.",
+  },
+
+  "maintenance cost": {
+    definition:
+      "The ongoing mental effort and time required to keep code working as the system around it evolves — bug fixes, dependency upgrades, deprecations, behavioral drift in collaborators. Scales with the breadth of side effects, the strength of postconditions, the cyclomatic complexity of branches that must be re-verified on every change, and the cognitive load of recovering the original author's intent.",
+  },
+
+  "enhancement cost": {
+    definition:
+      "The mental effort and time required to add a new capability to existing code without breaking what's there. Scales with the blast radius of the addition, how cleanly the existing separation of concerns lets the new behavior plug in, and the cyclomatic complexity of paths the new behavior must interleave with.",
   },
 
   "signal-to-noise ratio": {
