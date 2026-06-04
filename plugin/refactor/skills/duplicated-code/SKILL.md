@@ -28,12 +28,12 @@ function lineTotal(items) {
 }
 ```
 
-**Pressure:** Only the copy the agent has read into the context window participates in the edit; copies outside the window stay unread and ship stale behind unit tests that exercise only the edited copy.
+**Pressure:** The agent edits only the copy currently in its context window; copies outside the window stay unread and ship stale behind unit tests that exercise only the edited copy.
 
-**Tradeoff:** Replaces N inline bodies with one definition the agent loads once and references by name at every call site; if the abstraction is wrong, every divergence ships as an additional branch the agent must load before edits at that call site.
+**Tradeoff:** Replaces N inline bodies with one definition the agent loads once and references by name at every call site; if the abstraction is wrong, every divergence ships as another branch the agent loads at that call site.
 
-**Relief:** Bug fixes and feature additions land in one place; the agent's plan-and-execute loop touches one definition instead of N.
+**Relief:** Bug fixes and feature additions land in one place; the agent loads one definition per edit instead of N, paying token cost once instead of N times.
 
-**Trap:** Merging superficially-similar code forces a discriminator (flag, parameter, or type tag) into the shared body; every later divergence ships as a branch the agent loads at every call site, and edits land on the wrong branch when the discriminator is not visible from the caller.
+**Trap:** Merging superficially-similar code forces a discriminator into the shared body; later divergences ship as branches the agent loads at every call site, and edits land on the wrong branch when the discriminator is not visible from the caller.
 
 **Apply refactorings:** Extract Function, Slide Statements, Pull Up Method
