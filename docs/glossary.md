@@ -22,6 +22,12 @@ The mental effort required to hold and process information in working memory. Hi
 
 > Sweller, "Cognitive load during problem solving: Effects on learning" (1988)
 
+### mental effort
+
+The unit of cognitive resource a reader spends per operation — reading a line of code, evaluating a condition, holding a state in working memory. Kahneman established mental effort as the foundational accounting unit for human cognitive cost. Maps to the agent's token cost: both name what each actor pays per operation.
+
+> Kahneman, "Attention and Effort" (1973)
+
 ### comprehension cost
 
 The mental effort and time a reader pays to understand a piece of code well enough to reason about its behavior. Drives every downstream cost — verification, debugging, editing, onboarding. Reduced by clarifying names, lower cyclomatic complexity, smaller blast radius, and stronger separation of concerns.
@@ -40,13 +46,17 @@ The ongoing mental effort and time required to keep code working as the system a
 
 ### enhancement cost
 
-The mental effort and time required to add a new capability to existing code without breaking what's there. Scales with the blast radius of the addition, how cleanly the existing separation of concerns lets the new behavior plug in, and the cyclomatic complexity of paths the new behavior must interleave with.
+The mental effort and time required to add a new capability to existing code without breaking what's there. Scales with the blast radius of the addition, how cleanly the existing separation of concerns lets the new behavior plug in, and the cyclomatic complexity of paths the new behavior must interleave with. The agent equivalent is a composite of retrieval cost, reasoning-step cost, and verification-surface cost — no single agent-side term captures it.
 
 ### search cost
 
 The mental effort and time a developer pays to find external information — reading docs, grepping the codebase, asking a colleague, searching the web. Stigler framed it as the economic cost of information acquisition; in code work, it scales with how cleanly the existing separation of concerns lets the relevant context be located. Maps to the agent's retrieval cost.
 
 > Stigler, "The Economics of Information" (Journal of Political Economy, 1961)
+
+### inference-step cost
+
+The mental effort and time a developer pays per step of reasoning — evaluating a branch, considering an edge case, applying a rule. Multi-step problems pay this cost N times. Maps to the agent's reasoning-step cost.
 
 ### knowledge-decay cost
 

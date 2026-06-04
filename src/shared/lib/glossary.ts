@@ -15,12 +15,14 @@
 export type GlossaryTermKey =
   // === Cost to the human ===
   | "cognitive load"
+  | "mental effort"
   | "comprehension cost"
   | "verification cost"
   | "debugging cost"
   | "maintenance cost"
   | "enhancement cost"
   | "search cost"
+  | "inference-step cost"
   | "knowledge-decay cost"
   // === Cross-cutting design principles ===
   | "signal-to-noise ratio"
@@ -87,6 +89,14 @@ export const GLOSSARY: Record<GlossaryTermKey, GlossaryEntry> = {
     },
   },
 
+  "mental effort": {
+    definition:
+      "The unit of cognitive resource a reader spends per operation — reading a line of code, evaluating a condition, holding a state in working memory. Kahneman established mental effort as the foundational accounting unit for human cognitive cost. Maps to the agent's token cost: both name what each actor pays per operation.",
+    citation: {
+      text: 'Kahneman, "Attention and Effort" (1973)',
+    },
+  },
+
   "comprehension cost": {
     definition:
       "The mental effort and time a reader pays to understand a piece of code well enough to reason about its behavior. Drives every downstream cost — verification, debugging, editing, onboarding. Reduced by clarifying names, lower cyclomatic complexity, smaller blast radius, and stronger separation of concerns.",
@@ -109,7 +119,7 @@ export const GLOSSARY: Record<GlossaryTermKey, GlossaryEntry> = {
 
   "enhancement cost": {
     definition:
-      "The mental effort and time required to add a new capability to existing code without breaking what's there. Scales with the blast radius of the addition, how cleanly the existing separation of concerns lets the new behavior plug in, and the cyclomatic complexity of paths the new behavior must interleave with.",
+      "The mental effort and time required to add a new capability to existing code without breaking what's there. Scales with the blast radius of the addition, how cleanly the existing separation of concerns lets the new behavior plug in, and the cyclomatic complexity of paths the new behavior must interleave with. The agent equivalent is a composite of retrieval cost, reasoning-step cost, and verification-surface cost — no single agent-side term captures it.",
   },
 
   "search cost": {
@@ -118,6 +128,11 @@ export const GLOSSARY: Record<GlossaryTermKey, GlossaryEntry> = {
     citation: {
       text: 'Stigler, "The Economics of Information" (Journal of Political Economy, 1961)',
     },
+  },
+
+  "inference-step cost": {
+    definition:
+      "The mental effort and time a developer pays per step of reasoning — evaluating a branch, considering an edge case, applying a rule. Multi-step problems pay this cost N times. Maps to the agent's reasoning-step cost.",
   },
 
   "knowledge-decay cost": {
