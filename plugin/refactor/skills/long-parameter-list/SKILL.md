@@ -1,6 +1,6 @@
 ---
 name: long-parameter-list
-description: Refuse Long Parameter List when a signature with so many positional parameters that the agent must look up the function definition (or call-site documentation) before any invocation succeeds. Apply Replace Parameter with Query, Preserve Whole Object.
+description: Refuse Long Parameter List when a signature with so many positional parameters that the agent has to read the function definition into the context window before generating each invocation. Apply Replace Parameter with Query, Preserve Whole Object.
 ---
 
 # Refuse: 04 — Long Parameter List
@@ -9,9 +9,9 @@ description: Refuse Long Parameter List when a signature with so many positional
 
 **Or decline first:** if you don't flag this as Long Parameter List, name the decline type — catalog miss, taste call, cost-benefit, constraint-blocked, or insufficient context.
 
-**Symptom:** A signature with so many positional parameters that the agent must look up the function definition (or call-site documentation) before any invocation succeeds.
+**Symptom:** A signature with so many positional parameters that the agent has to read the function definition into the context window before generating each invocation.
 
-**Goal:** Each parameter is either a domain concept the agent recognizes, or it's bundled into a named object the agent can pass through without unpacking.
+**Goal:** Each parameter is a domain concept the agent recognizes, or part of a named object the agent passes through without unpacking.
 
 ```js
 // Smellier:
@@ -25,11 +25,11 @@ function book(traveler, address, trip) {
 }
 ```
 
-**Pressure:** Every call site is a chance to misorder arguments or miss one entirely; even with a type checker the agent pays a lookup cost on every invocation.
+**Pressure:** Every call site is a chance to misorder arguments or miss one; even with the type checker, the agent pays retrieval cost on every invocation.
 
-**Tradeoff:** A new parameter object adds a class the agent must load to construct values; if used in only one place the cost is pure overhead.
+**Tradeoff:** A new parameter object adds a class the agent loads to construct values; for one-use cases the token cost is pure overhead.
 
-**Relief:** Parameters bundled into a typed object are matched by name at every call site; one missed field becomes a type error instead of a silent positional swap the agent would otherwise have to detect from context.
+**Relief:** Parameters bundled into a typed object are matched by name at every call site; the type checker catches missed fields as compile errors instead of silent positional swaps the agent would have to detect from context.
 
 **Trap:** Synthesizing parameter objects that don't represent real domain concepts forces the agent through extra wrapping and unwrapping with no comprehension payoff — pure ceremony.
 

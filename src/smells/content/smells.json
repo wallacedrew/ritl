@@ -100,17 +100,17 @@
       "human": {
         "symptom": "Functions taking five, six, or more parameters — especially when several travel together as a logical group.",
         "goal": "Related parameters travel together as one well-named value object that the function (and its callers) refer to by domain meaning.",
-        "pressure": "Callers must remember argument order and meaning; refactoring becomes a coordination exercise across every call site.",
-        "tradeoff": "Introducing a parameter object adds a class the team must learn; if the bundle isn't meaningful as a concept, the type becomes ceremony around what was already clear.",
+        "pressure": "Callers must remember argument order and meaning; refactoring has the {{blast radius}} of every call site.",
+        "tradeoff": "Introducing a parameter object adds a class the team must learn; if the bundle isn't meaningful as a concept, the type adds {{accidental complexity}} without clarity.",
         "relief": "Adding a related field is one type change instead of touching every signature; intent is named at the call site.",
         "trap": "Bundling parameters that don't actually travel together — synthetic value objects that exist only to shorten signatures, with no domain coherence behind them."
       },
       "agent": {
-        "symptom": "A signature with so many positional parameters that the agent must look up the function definition (or call-site documentation) before any invocation succeeds.",
-        "goal": "Each parameter is either a domain concept the agent recognizes, or it's bundled into a named object the agent can pass through without unpacking.",
-        "pressure": "Every call site is a chance to misorder arguments or miss one entirely; even with a type checker the agent pays a lookup cost on every invocation.",
-        "tradeoff": "A new parameter object adds a class the agent must load to construct values; if used in only one place the cost is pure overhead.",
-        "relief": "Parameters bundled into a typed object are matched by name at every call site; one missed field becomes a type error instead of a silent positional swap the agent would otherwise have to detect from context.",
+        "symptom": "A signature with so many positional parameters that the agent has to read the function definition into the {{context window}} before generating each invocation.",
+        "goal": "Each parameter is a domain concept the agent recognizes, or part of a named object the agent passes through without unpacking.",
+        "pressure": "Every call site is a chance to misorder arguments or miss one; even with the type checker, the agent pays {{retrieval cost}} on every invocation.",
+        "tradeoff": "A new parameter object adds a class the agent loads to construct values; for one-use cases the {{token cost}} is pure overhead.",
+        "relief": "Parameters bundled into a typed object are matched by name at every call site; the type checker catches missed fields as compile errors instead of silent positional swaps the agent would have to detect from context.",
         "trap": "Synthesizing parameter objects that don't represent real domain concepts forces the agent through extra wrapping and unwrapping with no comprehension payoff — pure ceremony."
       }
     }
@@ -125,18 +125,18 @@
       "human": {
         "symptom": "Module-level variables, singletons, or shared mutable state that any code can read or mutate from anywhere.",
         "goal": "Access goes through a small named function that owns the read/write contract — and ideally narrows it (read-only, validated).",
-        "pressure": "The blast radius of any change is the whole codebase; behavior depends on hidden write order between unrelated callers.",
-        "tradeoff": "Encapsulating access through a small wrapper adds indirection at every call site; if any code leaks past the wrapper, the safety promise breaks silently.",
+        "pressure": "The {{blast radius}} of any change is the whole codebase; behavior depends on hidden write order between unrelated callers.",
+        "tradeoff": "Encapsulating access through a small wrapper adds indirection at every call site; without enforcement, code leaks past the wrapper and the safety promise becomes a {{leaky abstraction}}.",
         "relief": "All access sites become trivially findable; you can add logging, validation, or a cache without touching consumers.",
         "trap": "Wrapping global access without removing the global — adds a layer of ceremony while the underlying coupling stays in place."
       },
       "agent": {
-        "symptom": "A module-level variable mutated from anywhere — the agent reading any single call site cannot bound its impact without scanning every consumer.",
+        "symptom": "A module-level variable mutated from anywhere — the agent reading any single call site cannot bound its impact without paying {{completeness-check cost}} across every consumer.",
         "goal": "All reads and writes go through a named function the agent can grep for, find every consumer of, and reason about as a closed surface.",
-        "pressure": "Behavior depends on hidden write-order between callers the agent must discover one at a time; tracing any bug requires reconstructing a global mutation timeline.",
-        "tradeoff": "Wrapping the global doesn't eliminate the coupling — every reader still depends on the same shared state, and the agent still has to model the timeline to reason about reads.",
-        "relief": "A single named function becomes the audit point; the agent can attach logging, validation, or cache logic in one place instead of chasing every consumer.",
-        "trap": "Wrapping globals without narrowing access creates a false safety signal — the agent assumes the wrapper guarantees something it doesn't, and silent leaks become harder to diagnose."
+        "pressure": "Behavior depends on hidden write-order between callers the agent discovers one at a time; tracing any bug requires reconstructing a global mutation timeline — high {{verification-surface cost}}.",
+        "tradeoff": "Wrapping the global doesn't eliminate the shared-state dependency — every reader still depends on the same value, and the agent still has to model the timeline to reason about reads.",
+        "relief": "A single named function becomes the audit point; the agent attaches logging, validation, or cache logic in one place instead of chasing every consumer.",
+        "trap": "Wrapping globals without narrowing access creates a false safety signal — the wrapper appears to guarantee something it doesn't, and silent leaks become harder to diagnose."
       }
     }
   },
@@ -161,18 +161,18 @@
       "human": {
         "symptom": "Data structures whose fields are reassigned across the codebase, with no clear owner of the mutation.",
         "goal": "Mutation happens in one place behind a named function (or returns a new value), so the moment of change is clear.",
-        "pressure": "Reasoning about state at any moment requires tracing every writer; concurrent code becomes a hazard area.",
+        "pressure": "Reasoning about state at any moment requires tracing every writer; {{cognitive load}} scales with writer count, and concurrent code becomes a hazard area.",
         "tradeoff": "Encapsulating mutation can force the team to learn a less ergonomic API for what was previously a direct write; immutability has migration cost in performance-sensitive code.",
         "relief": "Bugs stop being 'who set this field?' and become local to the encapsulating method.",
-        "trap": "Wrapping mutable fields with passthrough setters that change nothing — the encapsulation looks safe but the mutation is still everywhere, hidden behind syntactic sugar."
+        "trap": "Wrapping mutable fields with passthrough setters that change nothing — the {{leaky abstraction}} hides the same mutation everywhere behind syntactic sugar."
       },
       "agent": {
-        "symptom": "Fields the agent finds reassigned across multiple files with no obvious owner; reasoning about state at any moment requires tracing every writer.",
-        "goal": "Mutation happens behind a named function with a clear contract, or the data is replaced rather than modified — the agent can locate every change in one place.",
-        "pressure": "The agent cannot answer 'what is this value here?' without modeling the full timeline of writes; concurrent reasoning becomes practically impossible.",
-        "tradeoff": "Switching to immutable or encapsulated mutation can force the agent to construct new objects on every change; for hot-path mutation this trades reasoning clarity for runtime overhead.",
-        "relief": "State changes become locatable and bisectable; the agent reasoning about behavior traces one entry point instead of N writers.",
-        "trap": "Wrapping writes in setters that don't enforce anything (no validation, no event, no copy-on-write) keeps the mutation everywhere while pretending it's encapsulated — the agent is now misled by the API."
+        "symptom": "Fields the agent finds reassigned across multiple files with no obvious owner; reasoning about state at any moment requires {{completeness-check cost}} across every writer.",
+        "goal": "Mutation happens behind a named function with a clear contract, or the data is replaced rather than modified — the agent locates every change in one place.",
+        "pressure": "The agent cannot answer 'what is this value here?' without modeling the full timeline of writes; concurrent reasoning hits the same {{verification-surface cost}} at every read.",
+        "tradeoff": "Switching to immutable or encapsulated mutation forces the agent to construct new objects on every change; for hot-path mutation this trades reasoning clarity for runtime overhead.",
+        "relief": "State changes become locatable; the agent traces one entry point instead of N writers when reasoning about behavior.",
+        "trap": "Wrapping writes in passthrough setters leaves the mutation everywhere while looking encapsulated; the API's signature suggests safety the implementation doesn't deliver, and the verification surface stays as broad as before."
       }
     }
   },
