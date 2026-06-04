@@ -200,10 +200,6 @@ The scope of impact a change, failure, or fix has on the system. A small blast r
 
 A property of a system or value that must always hold true at well-defined points in execution — typically before and after a method, or throughout a class's lifetime. Invariants encode rules the code depends on for correctness.
 
-### conflation
-
-The act of treating two distinct concepts as one. Conflation hides differences that the system later needs to distinguish, producing bugs when the implicit assumption fails.
-
 ### side effect
 
 An observable change a function produces beyond returning a value — writing to a file, sending a request, modifying a global, mutating a parameter. Pure functions have no side effects; impure functions do.

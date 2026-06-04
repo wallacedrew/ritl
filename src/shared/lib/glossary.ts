@@ -55,7 +55,6 @@ export type GlossaryTermKey =
   | "leaky abstraction"
   | "blast radius"
   | "invariant"
-  | "conflation"
   | "side effect"
   | "precondition"
   | "postcondition"
@@ -287,11 +286,6 @@ export const GLOSSARY: Record<GlossaryTermKey, GlossaryEntry> = {
   invariant: {
     definition:
       "A property of a system or value that must always hold true at well-defined points in execution — typically before and after a method, or throughout a class's lifetime. Invariants encode rules the code depends on for correctness.",
-  },
-
-  conflation: {
-    definition:
-      "The act of treating two distinct concepts as one. Conflation hides differences that the system later needs to distinguish, producing bugs when the implicit assumption fails.",
   },
 
   "side effect": {
