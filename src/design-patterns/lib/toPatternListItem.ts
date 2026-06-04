@@ -1,5 +1,6 @@
 import type { CatalogEntry } from "@/shared/lib/CatalogEntry";
 import type { CatalogListItem } from "@/shared/lib/CatalogListItem";
+import { firstSentenceCaption } from "@/shared/lib/firstSentenceCaption";
 
 export function toPatternListItem(pattern: CatalogEntry, number: number): CatalogListItem {
   return {
@@ -7,6 +8,6 @@ export function toPatternListItem(pattern: CatalogEntry, number: number): Catalo
     href: pattern.name.toCatalogHref(),
     name: pattern.name.toString(),
     tone: pattern.name.tone(),
-    caption: pattern.forcesFor("human").goal,
+    caption: firstSentenceCaption(pattern.forcesFor("human").goal),
   };
 }

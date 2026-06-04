@@ -1,5 +1,6 @@
 import type { CatalogEntry } from "@/shared/lib/CatalogEntry";
 import type { CatalogListItem } from "@/shared/lib/CatalogListItem";
+import { firstSentenceCaption } from "@/shared/lib/firstSentenceCaption";
 
 export function toSmellListItem(smell: CatalogEntry, number: number): CatalogListItem {
   return {
@@ -7,6 +8,6 @@ export function toSmellListItem(smell: CatalogEntry, number: number): CatalogLis
     href: smell.name.toCatalogHref(),
     name: smell.name.toString(),
     tone: smell.name.tone(),
-    caption: smell.forcesFor("human").symptom,
+    caption: firstSentenceCaption(smell.forcesFor("human").symptom),
   };
 }
