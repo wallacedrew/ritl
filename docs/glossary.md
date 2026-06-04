@@ -180,6 +180,12 @@ Complexity introduced by the tools, languages, frameworks, or implementation cho
 
 > Brooks, "No Silver Bullet: Essence and Accidents of Software Engineering" (1987)
 
+### cyclomatic complexity
+
+A measurement of how many linearly independent execution paths a function contains, equal to one plus the count of branching points (if/else, loops, switch cases). Higher cyclomatic complexity means more code paths the reader must trace and more test cases to cover the function fully.
+
+> McCabe, "A Complexity Measure" (IEEE Transactions on Software Engineering, 1976)
+
 ### leaky abstraction
 
 An abstraction that fails to fully hide its underlying implementation, forcing the user to understand both layers to use it correctly. Spolsky's Law: all non-trivial abstractions, to some degree, are leaky.

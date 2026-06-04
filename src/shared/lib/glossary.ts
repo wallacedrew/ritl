@@ -51,6 +51,7 @@ export type GlossaryTermKey =
   | "signal-to-noise ratio"
   | "essential complexity"
   | "accidental complexity"
+  | "cyclomatic complexity"
   | "leaky abstraction"
   | "blast radius"
   | "invariant"
@@ -258,6 +259,14 @@ export const GLOSSARY: Record<GlossaryTermKey, GlossaryEntry> = {
       "Complexity introduced by the tools, languages, frameworks, or implementation choices used to solve a problem — not by the problem itself. Brooks argued order-of-magnitude productivity gains require attacking accidental complexity, since essential complexity cannot be reduced.",
     citation: {
       text: 'Brooks, "No Silver Bullet: Essence and Accidents of Software Engineering" (1987)',
+    },
+  },
+
+  "cyclomatic complexity": {
+    definition:
+      "A measurement of how many linearly independent execution paths a function contains, equal to one plus the count of branching points (if/else, loops, switch cases). Higher cyclomatic complexity means more code paths the reader must trace and more test cases to cover the function fully.",
+    citation: {
+      text: 'McCabe, "A Complexity Measure" (IEEE Transactions on Software Engineering, 1976)',
     },
   },
 
