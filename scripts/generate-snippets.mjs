@@ -204,8 +204,23 @@ function routingDescriptionForRefactoring(r) {
   return `Apply ${r.name} when you see ${triggers}. ${goal}`;
 }
 
+function stripGlossaryTokens(text) {
+  // Strips the `{{glossary-key}}` tooltip-marking syntax used by the
+  // website's <Term> render path. Snippets ship as plain SKILL.md to
+  // Claude Code; the marking would read as broken template syntax.
+  return text.replace(/\{\{\s*([^}]+?)\s*\}\}/g, "$1");
+}
+
 function agentLensForces(entry) {
-  return entry.forces.agent;
+  const agent = entry.forces.agent;
+  return {
+    symptom: stripGlossaryTokens(agent.symptom),
+    goal: stripGlossaryTokens(agent.goal),
+    pressure: stripGlossaryTokens(agent.pressure),
+    tradeoff: stripGlossaryTokens(agent.tradeoff),
+    relief: stripGlossaryTokens(agent.relief),
+    trap: stripGlossaryTokens(agent.trap),
+  };
 }
 
 function routingDescriptionForSmell(s) {

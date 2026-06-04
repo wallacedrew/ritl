@@ -1,6 +1,8 @@
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
 
+import { renderTermsInProse } from "@/shared/lib/renderTermsInProse";
+
 interface CatalogSectionProps {
   label: string;
   body: string;
@@ -12,7 +14,7 @@ export default function CatalogSection({ label, body }: CatalogSectionProps) {
       <Typography variant="overline" color="text.secondary">
         {label}
       </Typography>
-      <Typography variant="body1">{body}</Typography>
+      <Typography variant="body1">{renderTermsInProse(body)}</Typography>
     </Stack>
   );
 }
