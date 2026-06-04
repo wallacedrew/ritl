@@ -162,6 +162,24 @@ The mental effort required to hold and process information in working memory. Hi
 
 > Sweller, "Cognitive load during problem solving: Effects on learning" (1988)
 
+### signal-to-noise ratio
+
+The proportion of meaningful content (signal) to irrelevant or distracting content (noise) in a piece of code or prose. High signal-to-noise means most of what the reader sees matters; low signal-to-noise means readers must filter clutter to find the relevant parts.
+
+> Shannon & Weaver, "A Mathematical Theory of Communication" (1948)
+
+### essential complexity
+
+Complexity inherent to the problem being solved, independent of any particular implementation. Brooks argued essential complexity cannot be reduced through technical means — only by changing what the software is being asked to do.
+
+> Brooks, "No Silver Bullet: Essence and Accidents of Software Engineering" (1987)
+
+### accidental complexity
+
+Complexity introduced by the tools, languages, frameworks, or implementation choices used to solve a problem — not by the problem itself. Brooks argued order-of-magnitude productivity gains require attacking accidental complexity, since essential complexity cannot be reduced.
+
+> Brooks, "No Silver Bullet: Essence and Accidents of Software Engineering" (1987)
+
 ### leaky abstraction
 
 An abstraction that fails to fully hide its underlying implementation, forcing the user to understand both layers to use it correctly. Spolsky's Law: all non-trivial abstractions, to some degree, are leaky.
@@ -175,10 +193,6 @@ The scope of impact a change, failure, or fix has on the system. A small blast r
 ### invariant
 
 A property of a system or value that must always hold true at well-defined points in execution — typically before and after a method, or throughout a class's lifetime. Invariants encode rules the code depends on for correctness.
-
-### idempotent
-
-A property of an operation where applying it multiple times produces the same result as applying it once. Idempotent operations are safe to retry without producing duplicate effects.
 
 ### conflation
 

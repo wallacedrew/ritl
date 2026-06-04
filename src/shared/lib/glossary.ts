@@ -48,10 +48,12 @@ export type GlossaryTermKey =
   | "reasoning trace"
   // Human-side software-engineering vocabulary (editorial-only, no lint)
   | "cognitive load"
+  | "signal-to-noise ratio"
+  | "essential complexity"
+  | "accidental complexity"
   | "leaky abstraction"
   | "blast radius"
   | "invariant"
-  | "idempotent"
   | "conflation"
   | "side effect"
   | "precondition"
@@ -235,6 +237,30 @@ export const GLOSSARY: Record<GlossaryTermKey, GlossaryEntry> = {
     },
   },
 
+  "signal-to-noise ratio": {
+    definition:
+      "The proportion of meaningful content (signal) to irrelevant or distracting content (noise) in a piece of code or prose. High signal-to-noise means most of what the reader sees matters; low signal-to-noise means readers must filter clutter to find the relevant parts.",
+    citation: {
+      text: 'Shannon & Weaver, "A Mathematical Theory of Communication" (1948)',
+    },
+  },
+
+  "essential complexity": {
+    definition:
+      "Complexity inherent to the problem being solved, independent of any particular implementation. Brooks argued essential complexity cannot be reduced through technical means — only by changing what the software is being asked to do.",
+    citation: {
+      text: 'Brooks, "No Silver Bullet: Essence and Accidents of Software Engineering" (1987)',
+    },
+  },
+
+  "accidental complexity": {
+    definition:
+      "Complexity introduced by the tools, languages, frameworks, or implementation choices used to solve a problem — not by the problem itself. Brooks argued order-of-magnitude productivity gains require attacking accidental complexity, since essential complexity cannot be reduced.",
+    citation: {
+      text: 'Brooks, "No Silver Bullet: Essence and Accidents of Software Engineering" (1987)',
+    },
+  },
+
   "leaky abstraction": {
     definition:
       "An abstraction that fails to fully hide its underlying implementation, forcing the user to understand both layers to use it correctly. Spolsky's Law: all non-trivial abstractions, to some degree, are leaky.",
@@ -252,11 +278,6 @@ export const GLOSSARY: Record<GlossaryTermKey, GlossaryEntry> = {
   invariant: {
     definition:
       "A property of a system or value that must always hold true at well-defined points in execution — typically before and after a method, or throughout a class's lifetime. Invariants encode rules the code depends on for correctness.",
-  },
-
-  idempotent: {
-    definition:
-      "A property of an operation where applying it multiple times produces the same result as applying it once. Idempotent operations are safe to retry without producing duplicate effects.",
   },
 
   conflation: {
