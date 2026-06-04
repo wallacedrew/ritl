@@ -152,6 +152,58 @@ The ordered sequence of reasoning steps the agent emits while completing a task.
 
 ---
 
+## Human-side vocabulary (editorial-only)
+
+Software-engineering terms that may appear in **human-side** catalog prose where the modal reader might not know the precise meaning. Unlike the agent-side glossary, these terms are **editorial-only**: there is no marking lint, and authors mark at discretion.
+
+### cognitive load
+
+The mental effort required to hold and process information in working memory. Higher cognitive load reduces a reader's ability to spot subtle bugs, follow long chains of reasoning, or hold multiple interacting concerns in mind at once.
+
+> Sweller, "Cognitive load during problem solving: Effects on learning" (1988)
+
+### leaky abstraction
+
+An abstraction that fails to fully hide its underlying implementation, forcing the user to understand both layers to use it correctly. Spolsky's Law: all non-trivial abstractions, to some degree, are leaky.
+
+> Spolsky, "The Law of Leaky Abstractions" (2002). <https://www.joelonsoftware.com/2002/11/11/the-law-of-leaky-abstractions/>
+
+### blast radius
+
+The scope of impact a change, failure, or fix has on the system. A small blast radius means the change affects one file, one user, or one feature. A large blast radius means it affects many files, users, or features and is harder to validate or roll back.
+
+### invariant
+
+A property of a system or value that must always hold true at well-defined points in execution — typically before and after a method, or throughout a class's lifetime. Invariants encode rules the code depends on for correctness.
+
+### idempotent
+
+A property of an operation where applying it multiple times produces the same result as applying it once. Idempotent operations are safe to retry without producing duplicate effects.
+
+### conflation
+
+The act of treating two distinct concepts as one. Conflation hides differences that the system later needs to distinguish, producing bugs when the implicit assumption fails.
+
+### side effect
+
+An observable change a function produces beyond returning a value — writing to a file, sending a request, modifying a global, mutating a parameter. Pure functions have no side effects; impure functions do.
+
+### precondition
+
+A condition that must be true when a function or operation is invoked. Violating a precondition is the caller's bug, not the function's.
+
+### postcondition
+
+A condition the function or operation guarantees will be true after it executes. Postconditions are the contract the function offers in exchange for its preconditions being met.
+
+### separation of concerns
+
+The design principle of dividing a system into parts where each part handles one well-defined responsibility, and parts overlap as little as possible. Dijkstra named this the most important principle of software design.
+
+> Dijkstra, "On the role of scientific thought" (1974)
+
+---
+
 ## Maintenance
 
 This file is the single source of truth for the lint allow-list and the planned compare-view tooltip surface. When the catalog needs a new term:
