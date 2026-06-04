@@ -42,6 +42,18 @@ The ongoing mental effort and time required to keep code working as the system a
 
 The mental effort and time required to add a new capability to existing code without breaking what's there. Scales with the blast radius of the addition, how cleanly the existing separation of concerns lets the new behavior plug in, and the cyclomatic complexity of paths the new behavior must interleave with.
 
+### search cost
+
+The mental effort and time a developer pays to find external information — reading docs, grepping the codebase, asking a colleague, searching the web. Stigler framed it as the economic cost of information acquisition; in code work, it scales with how cleanly the existing separation of concerns lets the relevant context be located. Maps to the agent's retrieval cost.
+
+> Stigler, "The Economics of Information" (Journal of Political Economy, 1961)
+
+### knowledge-decay cost
+
+The mental effort and time a developer pays to recover knowledge that has decayed since they last touched the code — relearning subsystems, reconstructing the original author's reasoning, rebuilding mental models that have drifted. Ebbinghaus's forgetting curve describes the underlying mechanism: retention drops sharply without rehearsal. Maps to the agent's cache-staleness cost.
+
+> Ebbinghaus, "Über das Gedächtnis: Untersuchungen zur experimentellen Psychologie" (1885)
+
 ---
 
 ## Cross-cutting design principles
@@ -104,6 +116,10 @@ The design principle of dividing a system into parts where each handles one well
 
 > Dijkstra, "On the role of scientific thought" (1974)
 
+### type-checker visibility
+
+Whether a property of the code is visible to static analysis. Visible properties surface as compile-time errors any reader — human reviewer or agent — can catch in one read; invisible properties surface as runtime bugs that demand execution to discover. Drives verification cost on the human side and completeness-check cost on the agent side from the same structural property.
+
 ---
 
 ## Cost to the agent
@@ -162,10 +178,6 @@ The token and latency cost of fetching external context (file read, grep, RAG qu
 
 The token and computation cost of one reasoning step. Multi-step tasks pay this cost N times.
 
-#### type-checker visibility
-
-Whether a property of the code is visible to static analysis. Visible properties surface as compile-time errors the agent can catch in one read. Invisible properties surface as runtime bugs the agent must discover by execution.
-
 #### cache-staleness cost
 
 The cost incurred when embedding indexes, RAG caches, or prior conversation context drift out of date with the underlying code. Stale retrieval produces answers grounded in an obsolete view of the system.
@@ -203,6 +215,12 @@ The act of filling gaps in memory with plausible but factually incorrect content
 The failure to notice an obvious feature, change, or event in the visual field because attention is directed elsewhere. In code review, inattentional blindness explains why reviewers miss bugs in code they are carefully reading — they are focused on the change and not seeing the surrounding consequences. Maps to the agent's lost-in-the-middle: both are attention-allocation failures, not memory failures.
 
 > Mack & Rock, "Inattentional Blindness" (MIT Press, 1998)
+
+#### cognitive overload
+
+The failure mode when total cognitive load exceeds the reader's working memory capacity — chains of reasoning break down, attention fragments, errors surface in spots the reader was carefully covering. Maps to the agent's context overflow: both name capacity exceeded, not capacity utilized.
+
+> Sweller, "Cognitive load during problem solving: Effects on learning" (1988) — overload framing carried forward in subsequent cognitive load theory work
 
 ### Agent failure modes
 
