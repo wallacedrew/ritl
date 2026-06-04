@@ -13,8 +13,8 @@ describe("user reads the agent view of a smell", () => {
     renderWithTheme(ui);
 
     expect(screen.getByRole("heading", { name: "Mysterious Name", level: 1 })).toBeInTheDocument();
-    expect(screen.getByText(/token-level identifiers/i)).toBeInTheDocument();
-    expect(screen.getByText(/per-occurrence reading cost/i)).toBeInTheDocument();
+    expect(screen.getByText(/disambiguate scope or domain/i)).toBeInTheDocument();
+    expect(screen.getByText(/recovering meaning/i)).toBeInTheDocument();
 
     const backToHuman = screen.getByRole("link", { name: "Human" });
     expect(backToHuman).toHaveAttribute("href", "/refactoring/smells/mysterious-name");

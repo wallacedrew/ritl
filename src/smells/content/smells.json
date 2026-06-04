@@ -9,18 +9,18 @@
       "human": {
         "symptom": "Identifiers that don't reveal intent — names like aFunc(), x, theData, temp, or one-letter loop variables that force every reader to reverse-engineer the code's purpose.",
         "goal": "Names read as the domain — a function's purpose, a variable's role, a class's responsibility — visible in one glance.",
-        "pressure": "Every reading is a re-comprehension cost; bugs sneak in because what code does diverges from what its name suggests. Compounds in proportion to how many readers (humans + LLMs) touch the file.",
-        "tradeoff": "Cross-repo greps, commit history, code comments, and string-literal references to the old name silently drift stale — the team absorbs the rename in PRs they weren't planning to read.",
+        "pressure": "Every reading is a re-comprehension cost; bugs sneak in because what code does diverges from what its name suggests. The {{cognitive load}} compounds in proportion to how many readers (humans + LLMs) touch the file.",
+        "tradeoff": "Cross-repo greps, commit history, code comments, and string-literal references to the old name silently drift stale — the rename's {{blast radius}} reaches PRs the team wasn't planning to read.",
         "relief": "Reduces onboarding time, accelerates code review, and lets future-you skim instead of decode.",
         "trap": "Naming bikeshedding — endless rename churn for marginal clarity gains while the actual code structure stays unimproved."
       },
       "agent": {
-        "symptom": "Token-level identifiers don't disambiguate scope or domain — the agent must load surrounding context to answer 'what does this variable hold?' before any reasoning step succeeds.",
-        "goal": "Identifiers carry enough disambiguating information that the agent can reason about each symbol without a lookup hop.",
-        "pressure": "Every reasoning pass re-derives meaning from surrounding context; chained edits compound the cost and increase the chance of hallucinating a misread.",
-        "tradeoff": "Renames invalidate cached associations — commit history, RAG snippets, embedding indexes, and prior conversation context all carry the old name until they refresh.",
-        "relief": "Every later read of the symbol resolves to one token of name instead of name plus a context lookup; per-occurrence reading cost drops by the size of the context the agent previously had to load to recover meaning.",
-        "trap": "Renaming every variable whose current name another reviewer would also accept invalidates cached associations across RAG indexes, prior conversation context, and code comments referencing the old name, without changing what the symbol stands for."
+        "symptom": "Names that don't disambiguate scope or domain force the agent to read more code into the {{context window}} just to know what a variable holds before each {{reasoning step}}.",
+        "goal": "Identifiers carry enough information that the agent can reason about each symbol without paying {{retrieval cost}}.",
+        "pressure": "Every reasoning step re-derives meaning from surrounding code; chained edits compound the cost, and {{hallucinations}} ship as plausible-looking misreads of what symbols stand for.",
+        "tradeoff": "Renames invalidate cached associations — commit history, {{RAG}} snippets, embedding indexes, and prior conversation context all carry the old name until they refresh.",
+        "relief": "Every later read resolves to one name; the {{token cost}} of recovering meaning drops by the size of the context the agent previously had to load.",
+        "trap": "Renaming every variable whose current name another reviewer would also accept invalidates cached associations across RAG indexes, prior conversation context, and old-name references in code comments — without changing what the symbol stands for."
       }
     }
   },
@@ -69,18 +69,18 @@
       "human": {
         "symptom": "Functions whose body has dozens of lines and a mix of concerns — fetching, calculating, formatting, and logging all interwoven.",
         "goal": "Each function reads as a sequence of named single-responsibility steps; nothing does more than its name advertises.",
-        "pressure": "Each line is an opportunity for the reader to lose context; understanding requires holding the whole function in working memory.",
+        "pressure": "Each line is an opportunity for the reader to lose context; understanding the whole function at once raises {{cognitive load}} with every added line.",
         "tradeoff": "Splitting introduces a navigation cost — readers gain named outlines but pay function-jump hops to follow the implementation. The wrong granularity buys clutter without comprehension.",
         "relief": "Faster to read, easier to test, simpler to change one step without touching the others.",
-        "trap": "A maze of one-line helpers where the workflow can no longer be read linearly — extraction without earning a name fragments the procedure into pieces too small to mean anything."
+        "trap": "A maze of one-line helpers where the workflow can no longer be read linearly — extraction without earning a name introduces {{accidental complexity}} by fragmenting the procedure into pieces too small to mean anything."
       },
       "agent": {
-        "symptom": "A function whose token count exceeds the agent's reliable chunk-reasoning budget; verifying behavior preservation requires re-reading the entire span on every edit.",
+        "symptom": "The function's body has more {{tokens}} than the agent can hold in one {{reasoning step}}; verifying behavior preservation means re-reading the entire body on every edit.",
         "goal": "Each function is a verifiable unit small enough that the agent can reason about its full behavior in a single reasoning step.",
-        "pressure": "Every edit pays full re-read cost; chained changes compound context usage and increase the chance of missing a cross-statement invariant.",
-        "tradeoff": "Splitting inflates context-window usage at orchestration time — the agent now loads N function definitions to follow what was once one body. Worth it when the orchestration outline is clearer than the linear body.",
-        "relief": "Each extracted function fits inside one read; the agent verifies behavior against one signature instead of holding the full procedure in working memory across edits.",
-        "trap": "Forces the agent to chase a dozen function definitions for what was once a 20-line procedure — context cost inflates and cross-function invariants disappear."
+        "pressure": "Every edit pays the full {{context-window load}} of re-reading the body; chained edits raise the chance of missing a cross-statement invariant.",
+        "tradeoff": "Splitting inflates context-window load — the agent now loads N function definitions to follow what was once one body. Worth it when the outline is clearer than the linear body.",
+        "relief": "Each extracted function fits inside one read; the agent verifies behavior against one signature, dropping context-window load per edit.",
+        "trap": "Forces the agent to chase a dozen function definitions for what was once a 20-line procedure — context-window load inflates and cross-function invariants disappear."
       }
     }
   },

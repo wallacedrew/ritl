@@ -1,6 +1,6 @@
 ---
 name: mysterious-name
-description: Refuse Mysterious Name when token-level identifiers don't disambiguate scope or domain — the agent must load surrounding context to answer 'what does this variable hold?' before any reasoning step succeeds. Apply Change Function Declaration, Rename Variable.
+description: Refuse Mysterious Name when names that don't disambiguate scope or domain force the agent to read more code into the context window just to know what a variable holds before each reasoning step. Apply Change Function Declaration, Rename Variable.
 ---
 
 # Refuse: 01 — Mysterious Name
@@ -9,9 +9,9 @@ description: Refuse Mysterious Name when token-level identifiers don't disambigu
 
 **Or decline first:** if you don't flag this as Mysterious Name, name the decline type — catalog miss, taste call, cost-benefit, constraint-blocked, or insufficient context.
 
-**Symptom:** Token-level identifiers don't disambiguate scope or domain — the agent must load surrounding context to answer 'what does this variable hold?' before any reasoning step succeeds.
+**Symptom:** Names that don't disambiguate scope or domain force the agent to read more code into the context window just to know what a variable holds before each reasoning step.
 
-**Goal:** Identifiers carry enough disambiguating information that the agent can reason about each symbol without a lookup hop.
+**Goal:** Identifiers carry enough information that the agent can reason about each symbol without paying retrieval cost.
 
 ```js
 // Smellier:
@@ -25,12 +25,12 @@ function distance(speed, time) {
 }
 ```
 
-**Pressure:** Every reasoning pass re-derives meaning from surrounding context; chained edits compound the cost and increase the chance of hallucinating a misread.
+**Pressure:** Every reasoning step re-derives meaning from surrounding code; chained edits compound the cost, and hallucinations ship as plausible-looking misreads of what symbols stand for.
 
 **Tradeoff:** Renames invalidate cached associations — commit history, RAG snippets, embedding indexes, and prior conversation context all carry the old name until they refresh.
 
-**Relief:** Every later read of the symbol resolves to one token of name instead of name plus a context lookup; per-occurrence reading cost drops by the size of the context the agent previously had to load to recover meaning.
+**Relief:** Every later read resolves to one name; the token cost of recovering meaning drops by the size of the context the agent previously had to load.
 
-**Trap:** Renaming every variable whose current name another reviewer would also accept invalidates cached associations across RAG indexes, prior conversation context, and code comments referencing the old name, without changing what the symbol stands for.
+**Trap:** Renaming every variable whose current name another reviewer would also accept invalidates cached associations across RAG indexes, prior conversation context, and old-name references in code comments — without changing what the symbol stands for.
 
 **Apply refactorings:** Change Function Declaration, Rename Variable, Rename Field

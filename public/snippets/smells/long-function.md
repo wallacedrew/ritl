@@ -1,6 +1,6 @@
 ---
 name: long-function
-description: Refuse Long Function when a function whose token count exceeds the agent's reliable chunk-reasoning budget; verifying behavior preservation requires re-reading the entire span on every edit. Apply Extract Function, Replace Temp with Query.
+description: Refuse Long Function when the function's body has more tokens than the agent can hold in one reasoning step; verifying behavior preservation means re-reading the entire body on every edit. Apply Extract Function, Replace Temp with Query.
 ---
 
 # Refuse: 03 — Long Function
@@ -9,7 +9,7 @@ description: Refuse Long Function when a function whose token count exceeds the 
 
 **Or decline first:** if you don't flag this as Long Function, name the decline type — catalog miss, taste call, cost-benefit, constraint-blocked, or insufficient context.
 
-**Symptom:** A function whose token count exceeds the agent's reliable chunk-reasoning budget; verifying behavior preservation requires re-reading the entire span on every edit.
+**Symptom:** The function's body has more tokens than the agent can hold in one reasoning step; verifying behavior preservation means re-reading the entire body on every edit.
 
 **Goal:** Each function is a verifiable unit small enough that the agent can reason about its full behavior in a single reasoning step.
 
@@ -31,12 +31,12 @@ function ship(order) {
 }
 ```
 
-**Pressure:** Every edit pays full re-read cost; chained changes compound context usage and increase the chance of missing a cross-statement invariant.
+**Pressure:** Every edit pays the full context-window load of re-reading the body; chained edits raise the chance of missing a cross-statement invariant.
 
-**Tradeoff:** Splitting inflates context-window usage at orchestration time — the agent now loads N function definitions to follow what was once one body. Worth it when the orchestration outline is clearer than the linear body.
+**Tradeoff:** Splitting inflates context-window load — the agent now loads N function definitions to follow what was once one body. Worth it when the outline is clearer than the linear body.
 
-**Relief:** Each extracted function fits inside one read; the agent verifies behavior against one signature instead of holding the full procedure in working memory across edits.
+**Relief:** Each extracted function fits inside one read; the agent verifies behavior against one signature, dropping context-window load per edit.
 
-**Trap:** Forces the agent to chase a dozen function definitions for what was once a 20-line procedure — context cost inflates and cross-function invariants disappear.
+**Trap:** Forces the agent to chase a dozen function definitions for what was once a 20-line procedure — context-window load inflates and cross-function invariants disappear.
 
 **Apply refactorings:** Extract Function, Replace Temp with Query, Introduce Parameter Object, Preserve Whole Object, Replace Function with Command, Decompose Conditional, Split Loop, Replace Loop with Pipeline, Replace Control Flag with Break

@@ -20,8 +20,9 @@ describe("user reads the compare view of a smell", () => {
     // Human-lens content (existing migrated prose)
     expect(screen.getByText(/identifiers that don.{0,3}t reveal intent/i)).toBeInTheDocument();
 
-    // Agent-lens content (authored in batch 1 of the smell content sprint)
-    expect(screen.getByText(/token-level identifiers/i)).toBeInTheDocument();
+    // Agent-lens content (revised to humanize the prose while keeping the
+    // canonical LLM-research terms; see the smell-content revision slice).
+    expect(screen.getByText(/disambiguate scope or domain/i)).toBeInTheDocument();
 
     // Cross-lens nav: Human and Agent are links; Compare is plain text (current view)
     const toHuman = screen.getByRole("link", { name: "Human" });
