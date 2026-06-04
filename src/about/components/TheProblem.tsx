@@ -1,5 +1,7 @@
 import Typography from "@mui/material/Typography";
 
+import Term from "@/shared/components/Term";
+
 import AboutSection from "./AboutSection";
 
 export default function TheProblem() {
@@ -7,9 +9,10 @@ export default function TheProblem() {
     <AboutSection title="The problem">
       <Typography variant="body1">
         The existing canon was written for human readers. When an LLM is the editor, the binding
-        constraints shift to <strong>context window</strong> (what fits, what gets paged out,
-        lost-in-the-middle) and <strong>token cost</strong> (tokens per read, tokens per branch
-        walk, tokens for unrelated payload).
+        constraints shift to <Term term="context window">context window</Term> (what fits, what
+        falls outside, <Term term="lost-in-the-middle">lost-in-the-middle</Term>) and{" "}
+        <Term term="token cost">token cost</Term> (tokens per read, tokens per branch walk, tokens
+        for unrelated payload).
       </Typography>
       <Typography variant="body1">
         A <em>Long Function</em> is hard to read for a human. For an agent, every reasoning pass
