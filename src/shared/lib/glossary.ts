@@ -37,6 +37,9 @@ export type GlossaryTermKey =
   | "the agent"
   // Human-side software-engineering vocabulary (editorial-only, no lint)
   | "cognitive load"
+  | "comprehension cost"
+  | "review cost"
+  | "debugging cost"
   | "signal-to-noise ratio"
   | "essential complexity"
   | "accidental complexity"
@@ -172,6 +175,21 @@ export const GLOSSARY: Record<GlossaryTermKey, GlossaryEntry> = {
     },
   },
 
+  "comprehension cost": {
+    definition:
+      "The mental effort and time a reader pays to understand a piece of code well enough to reason about its behavior. Drives every downstream cost — review, debugging, editing, onboarding. Reduced by clarifying names, lower cyclomatic complexity, smaller blast radius, and stronger separation of concerns.",
+  },
+
+  "review cost": {
+    definition:
+      "The mental effort and time a reviewer pays to verify a change is correct. Scales with the change's blast radius, the cyclomatic complexity of the touched code, and the cognitive load of loading the surrounding context. Bounded by what a reviewer can hold in working memory in one sitting.",
+  },
+
+  "debugging cost": {
+    definition:
+      "The mental effort and time required to diagnose a bug — trace from observed symptom to root cause. Scales with the breadth of side effects the system permits, the number of invariants that could have been violated, and the cognitive load of modeling the system's state across time.",
+  },
+
   "signal-to-noise ratio": {
     definition:
       "The proportion of meaningful content (signal) to irrelevant or distracting content (noise) in a piece of code or prose. High signal-to-noise means most of what the reader sees matters; low signal-to-noise means readers must filter clutter to find the relevant parts.",
@@ -220,27 +238,27 @@ export const GLOSSARY: Record<GlossaryTermKey, GlossaryEntry> = {
 
   invariant: {
     definition:
-      "A property of a system or value that must always hold true at well-defined points in execution — typically before and after a method, or throughout a class's lifetime. Invariants encode rules the code depends on for correctness.",
+      "A property of a system or value that must always hold true at well-defined points in execution. When an invariant breaks, every dependent read is suspect — debugging cost scales with the number of writers and readers that touch the state.",
   },
 
   "side effect": {
     definition:
-      "An observable change a function produces beyond returning a value — writing to a file, sending a request, modifying a global, mutating a parameter. Pure functions have no side effects; impure functions do.",
+      "An observable change a function produces beyond returning a value — writing to a file, sending a request, modifying a global, mutating a parameter. Side effects raise comprehension and debugging cost: every reader must trace each side effect's downstream consequences. Pure functions have none; impure functions do.",
   },
 
   precondition: {
     definition:
-      "A condition that must be true when a function or operation is invoked. Violating a precondition is the caller's bug, not the function's.",
+      "A condition that must be true when a function is invoked. The caller pays the precondition-check cost; the function's body relies on the condition without re-verifying. Violating a precondition is the caller's bug.",
   },
 
   postcondition: {
     definition:
-      "A condition the function or operation guarantees will be true after it executes. Postconditions are the contract the function offers in exchange for its preconditions being met.",
+      "A condition the function guarantees will be true after it executes. Reduces caller-side cost — downstream logic can be composed on the guarantee without re-verifying. Postconditions and preconditions together form the function's contract.",
   },
 
   "separation of concerns": {
     definition:
-      "The design principle of dividing a system into parts where each part handles one well-defined responsibility, and parts overlap as little as possible. Dijkstra named this the most important principle of software design.",
+      "The design principle of dividing a system into parts where each handles one well-defined responsibility. Reduces every downstream cost — comprehension, review, debugging, edit — by ensuring any single change touches one part, not many. Dijkstra called it the most important principle of software design.",
     citation: {
       text: 'Dijkstra, "On the role of scientific thought" (1974)',
     },
