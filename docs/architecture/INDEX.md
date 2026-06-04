@@ -15,3 +15,4 @@ Chronological index of ADRs. Numbers are immutable; superseded ADRs stay in plac
 | ADR-0009 | Voice rubric: strict canonical LLM-research terms  | accepted               | 2026-06-03 | Restrict agent-side vocabulary to canonical LLM-research terms + three project exceptions; ban OS-borrow metaphors. |
 | ADR-0010 | Agent-side voice and audience contract             | accepted               | 2026-06-03 | Lock modal reader, POV ("the agent"), present-declarative mood, 50-word ceiling, six-field role contract.           |
 | ADR-0011 | Agent-side voice: no mentalist verbs, mechanism    | accepted               | 2026-06-03 | Ban mentalist verbs (wants/prefers/struggles); every agent-side field names an LLM-mechanical currency.             |
+| ADR-0012 | Expanded word budget: 50–75 words per field        | accepted               | 2026-06-04 | Widen ADR-0010 §5 budget from 25/50 to 50/75 words per field; same range applies to both human and agent columns.   |
