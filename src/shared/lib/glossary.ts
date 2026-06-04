@@ -13,7 +13,27 @@
  */
 
 export type GlossaryTermKey =
-  // Three project-endorsed phrases (ADR-0009)
+  // === Cost to the human ===
+  | "cognitive load"
+  | "comprehension cost"
+  | "verification cost"
+  | "debugging cost"
+  | "maintenance cost"
+  | "enhancement cost"
+  // === Cross-cutting design principles ===
+  | "signal-to-noise ratio"
+  | "essential complexity"
+  | "accidental complexity"
+  | "cyclomatic complexity"
+  | "leaky abstraction"
+  | "blast radius"
+  | "invariant"
+  | "side effect"
+  | "precondition"
+  | "postcondition"
+  | "separation of concerns"
+  // === Cost to the agent ===
+  // Project-endorsed phrases (ADR-0009)
   | "context window"
   | "token cost"
   | "hallucinations"
@@ -34,25 +54,7 @@ export type GlossaryTermKey =
   | "completeness-check cost"
   | "verification-surface cost"
   // Project usage
-  | "the agent"
-  // Human-side software-engineering vocabulary (editorial-only, no lint)
-  | "cognitive load"
-  | "comprehension cost"
-  | "verification cost"
-  | "debugging cost"
-  | "maintenance cost"
-  | "enhancement cost"
-  | "signal-to-noise ratio"
-  | "essential complexity"
-  | "accidental complexity"
-  | "cyclomatic complexity"
-  | "leaky abstraction"
-  | "blast radius"
-  | "invariant"
-  | "side effect"
-  | "precondition"
-  | "postcondition"
-  | "separation of concerns";
+  | "the agent";
 
 export interface GlossaryCitation {
   text: string;
@@ -65,6 +67,125 @@ export interface GlossaryEntry {
 }
 
 export const GLOSSARY: Record<GlossaryTermKey, GlossaryEntry> = {
+  // ============================================================
+  // Cost to the human
+  // ============================================================
+
+  "cognitive load": {
+    definition:
+      "The mental effort required to hold and process information in working memory. Higher cognitive load reduces a reader's ability to spot subtle bugs, follow long chains of reasoning, or hold multiple interacting concerns in mind at once.",
+    citation: {
+      text: 'Sweller, "Cognitive load during problem solving: Effects on learning" (1988)',
+    },
+  },
+
+  "comprehension cost": {
+    definition:
+      "The mental effort and time a reader pays to understand a piece of code well enough to reason about its behavior. Drives every downstream cost — verification, debugging, editing, onboarding. Reduced by clarifying names, lower cyclomatic complexity, smaller blast radius, and stronger separation of concerns.",
+  },
+
+  "verification cost": {
+    definition:
+      "The mental effort and time required to confirm a change is correct — through review, testing, type-checking, or manual exercise. Scales with the change's blast radius, the cyclomatic complexity of the touched code, and the cognitive load of loading the surrounding context.",
+  },
+
+  "debugging cost": {
+    definition:
+      "The mental effort and time required to diagnose a bug — trace from observed symptom to root cause. Scales with the breadth of side effects the system permits, the number of invariants that could have been violated, and the cognitive load of modeling the system's state across time.",
+  },
+
+  "maintenance cost": {
+    definition:
+      "The ongoing mental effort and time required to keep code working as the system around it evolves — bug fixes, dependency upgrades, deprecations, behavioral drift in collaborators. Scales with the breadth of side effects, the strength of postconditions, the cyclomatic complexity of branches that must be re-verified on every change, and the cognitive load of recovering the original author's intent.",
+  },
+
+  "enhancement cost": {
+    definition:
+      "The mental effort and time required to add a new capability to existing code without breaking what's there. Scales with the blast radius of the addition, how cleanly the existing separation of concerns lets the new behavior plug in, and the cyclomatic complexity of paths the new behavior must interleave with.",
+  },
+
+  // ============================================================
+  // Cross-cutting design principles
+  // ============================================================
+
+  "signal-to-noise ratio": {
+    definition:
+      "The proportion of meaningful content (signal) to irrelevant or distracting content (noise) in a piece of code or prose. High signal-to-noise means most of what the reader sees matters; low signal-to-noise means readers must filter clutter to find the relevant parts.",
+    citation: {
+      text: 'Shannon & Weaver, "A Mathematical Theory of Communication" (1948)',
+    },
+  },
+
+  "essential complexity": {
+    definition:
+      "Complexity inherent to the problem being solved, independent of any particular implementation. Brooks argued essential complexity cannot be reduced through technical means — only by changing what the software is being asked to do.",
+    citation: {
+      text: 'Brooks, "No Silver Bullet: Essence and Accidents of Software Engineering" (1987)',
+    },
+  },
+
+  "accidental complexity": {
+    definition:
+      "Complexity introduced by the tools, languages, frameworks, or implementation choices used to solve a problem — not by the problem itself. Brooks argued order-of-magnitude productivity gains require attacking accidental complexity, since essential complexity cannot be reduced.",
+    citation: {
+      text: 'Brooks, "No Silver Bullet: Essence and Accidents of Software Engineering" (1987)',
+    },
+  },
+
+  "cyclomatic complexity": {
+    definition:
+      "A measurement of how many linearly independent execution paths a function contains, equal to one plus the count of branching points (if/else, loops, switch cases). Higher cyclomatic complexity means more code paths the reader must trace and more test cases to cover the function fully.",
+    citation: {
+      text: 'McCabe, "A Complexity Measure" (IEEE Transactions on Software Engineering, 1976)',
+    },
+  },
+
+  "leaky abstraction": {
+    definition:
+      "An abstraction that fails to fully hide its underlying implementation, forcing the user to understand both layers to use it correctly. Spolsky's Law: all non-trivial abstractions, to some degree, are leaky.",
+    citation: {
+      text: 'Spolsky, "The Law of Leaky Abstractions" (2002)',
+      url: "https://www.joelonsoftware.com/2002/11/11/the-law-of-leaky-abstractions/",
+    },
+  },
+
+  "blast radius": {
+    definition:
+      "The scope of impact a change, failure, or fix has on the system. A small blast radius means the change affects one file, one user, or one feature. A large blast radius means it affects many files, users, or features and is harder to validate or roll back.",
+  },
+
+  invariant: {
+    definition:
+      "A property of a system or value that must always hold true at well-defined points in execution. When an invariant breaks, every dependent read is suspect — debugging cost scales with the number of writers and readers that touch the state.",
+  },
+
+  "side effect": {
+    definition:
+      "An observable change a function produces beyond returning a value — writing to a file, sending a request, modifying a global, mutating a parameter. Side effects raise comprehension and debugging cost: every reader must trace each side effect's downstream consequences. Pure functions have none; impure functions do.",
+  },
+
+  precondition: {
+    definition:
+      "A condition that must be true when a function is invoked. The caller pays the precondition-check cost; the function's body relies on the condition without re-verifying. Violating a precondition is the caller's bug.",
+  },
+
+  postcondition: {
+    definition:
+      "A condition the function guarantees will be true after it executes. Reduces caller-side cost — downstream logic can be composed on the guarantee without re-verifying. Postconditions and preconditions together form the function's contract.",
+  },
+
+  "separation of concerns": {
+    definition:
+      "The design principle of dividing a system into parts where each handles one well-defined responsibility. Reduces every downstream cost — comprehension, verification, debugging, edit — by ensuring any single change touches one part, not many. Dijkstra called it the most important principle of software design.",
+    citation: {
+      text: 'Dijkstra, "On the role of scientific thought" (1974)',
+    },
+  },
+
+  // ============================================================
+  // Cost to the agent
+  // ============================================================
+
   // --- Project-endorsed phrases ---
 
   "context window": {
@@ -165,115 +286,6 @@ export const GLOSSARY: Record<GlossaryTermKey, GlossaryEntry> = {
   "the agent": {
     definition:
       "In agent-side catalog prose, an LLM-powered coding tool acting on the codebase — drafting, editing, reviewing, or verifying code under human-in-the-loop supervision. Per ADR-0010 §2, this is the canonical grammatical subject of every agent-side force field.",
-  },
-
-  // --- Human-side software-engineering vocabulary (editorial-only) ---
-
-  "cognitive load": {
-    definition:
-      "The mental effort required to hold and process information in working memory. Higher cognitive load reduces a reader's ability to spot subtle bugs, follow long chains of reasoning, or hold multiple interacting concerns in mind at once.",
-    citation: {
-      text: 'Sweller, "Cognitive load during problem solving: Effects on learning" (1988)',
-    },
-  },
-
-  "comprehension cost": {
-    definition:
-      "The mental effort and time a reader pays to understand a piece of code well enough to reason about its behavior. Drives every downstream cost — verification, debugging, editing, onboarding. Reduced by clarifying names, lower cyclomatic complexity, smaller blast radius, and stronger separation of concerns.",
-  },
-
-  "verification cost": {
-    definition:
-      "The mental effort and time required to confirm a change is correct — through review, testing, type-checking, or manual exercise. Scales with the change's blast radius, the cyclomatic complexity of the touched code, and the cognitive load of loading the surrounding context.",
-  },
-
-  "debugging cost": {
-    definition:
-      "The mental effort and time required to diagnose a bug — trace from observed symptom to root cause. Scales with the breadth of side effects the system permits, the number of invariants that could have been violated, and the cognitive load of modeling the system's state across time.",
-  },
-
-  "maintenance cost": {
-    definition:
-      "The ongoing mental effort and time required to keep code working as the system around it evolves — bug fixes, dependency upgrades, deprecations, behavioral drift in collaborators. Scales with the breadth of side effects, the strength of postconditions, the cyclomatic complexity of branches that must be re-verified on every change, and the cognitive load of recovering the original author's intent.",
-  },
-
-  "enhancement cost": {
-    definition:
-      "The mental effort and time required to add a new capability to existing code without breaking what's there. Scales with the blast radius of the addition, how cleanly the existing separation of concerns lets the new behavior plug in, and the cyclomatic complexity of paths the new behavior must interleave with.",
-  },
-
-  "signal-to-noise ratio": {
-    definition:
-      "The proportion of meaningful content (signal) to irrelevant or distracting content (noise) in a piece of code or prose. High signal-to-noise means most of what the reader sees matters; low signal-to-noise means readers must filter clutter to find the relevant parts.",
-    citation: {
-      text: 'Shannon & Weaver, "A Mathematical Theory of Communication" (1948)',
-    },
-  },
-
-  "essential complexity": {
-    definition:
-      "Complexity inherent to the problem being solved, independent of any particular implementation. Brooks argued essential complexity cannot be reduced through technical means — only by changing what the software is being asked to do.",
-    citation: {
-      text: 'Brooks, "No Silver Bullet: Essence and Accidents of Software Engineering" (1987)',
-    },
-  },
-
-  "accidental complexity": {
-    definition:
-      "Complexity introduced by the tools, languages, frameworks, or implementation choices used to solve a problem — not by the problem itself. Brooks argued order-of-magnitude productivity gains require attacking accidental complexity, since essential complexity cannot be reduced.",
-    citation: {
-      text: 'Brooks, "No Silver Bullet: Essence and Accidents of Software Engineering" (1987)',
-    },
-  },
-
-  "cyclomatic complexity": {
-    definition:
-      "A measurement of how many linearly independent execution paths a function contains, equal to one plus the count of branching points (if/else, loops, switch cases). Higher cyclomatic complexity means more code paths the reader must trace and more test cases to cover the function fully.",
-    citation: {
-      text: 'McCabe, "A Complexity Measure" (IEEE Transactions on Software Engineering, 1976)',
-    },
-  },
-
-  "leaky abstraction": {
-    definition:
-      "An abstraction that fails to fully hide its underlying implementation, forcing the user to understand both layers to use it correctly. Spolsky's Law: all non-trivial abstractions, to some degree, are leaky.",
-    citation: {
-      text: 'Spolsky, "The Law of Leaky Abstractions" (2002)',
-      url: "https://www.joelonsoftware.com/2002/11/11/the-law-of-leaky-abstractions/",
-    },
-  },
-
-  "blast radius": {
-    definition:
-      "The scope of impact a change, failure, or fix has on the system. A small blast radius means the change affects one file, one user, or one feature. A large blast radius means it affects many files, users, or features and is harder to validate or roll back.",
-  },
-
-  invariant: {
-    definition:
-      "A property of a system or value that must always hold true at well-defined points in execution. When an invariant breaks, every dependent read is suspect — debugging cost scales with the number of writers and readers that touch the state.",
-  },
-
-  "side effect": {
-    definition:
-      "An observable change a function produces beyond returning a value — writing to a file, sending a request, modifying a global, mutating a parameter. Side effects raise comprehension and debugging cost: every reader must trace each side effect's downstream consequences. Pure functions have none; impure functions do.",
-  },
-
-  precondition: {
-    definition:
-      "A condition that must be true when a function is invoked. The caller pays the precondition-check cost; the function's body relies on the condition without re-verifying. Violating a precondition is the caller's bug.",
-  },
-
-  postcondition: {
-    definition:
-      "A condition the function guarantees will be true after it executes. Reduces caller-side cost — downstream logic can be composed on the guarantee without re-verifying. Postconditions and preconditions together form the function's contract.",
-  },
-
-  "separation of concerns": {
-    definition:
-      "The design principle of dividing a system into parts where each handles one well-defined responsibility. Reduces every downstream cost — comprehension, verification, debugging, edit — by ensuring any single change touches one part, not many. Dijkstra called it the most important principle of software design.",
-    citation: {
-      text: 'Dijkstra, "On the role of scientific thought" (1974)',
-    },
   },
 };
 
