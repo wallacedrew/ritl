@@ -34,3 +34,20 @@ When the agent-side prose of an entry uses a lintable glossary term (see the can
 Inflected forms (`token` vs `tokens`, possessive `'s`) are out of scope for the parser. Author the prose to use the canonical form from the glossary.
 
 **Why this exists:** the tooltip on a marked term opens a popover with the term's definition (and citation, where applicable). Readers who don't know `lost-in-the-middle` or `RAG` get the definition inline. Readers who do, ignore the dotted underline. The voice rules ensure the prose earns its claim to ground in agent mechanics; the tooltip rule ensures readers can verify that claim without leaving the page.
+
+## Voice rules for non-catalog prose (about page, home page, wrappers)
+
+Everything outside the `forces.{human,agent}` field copy — the about page, the home page, nav copy, page titles, error messages, editorial wrappers around catalog entries, ADRs, contributor docs — is governed by [ADR-0014](docs/architecture/0014-house-voice-catalog-register-family.md).
+
+**The house register is the catalog-register family.** Fowler is the spine; Beck, Kerievsky, Ottinger, and Hill are the seasoning, in that order of restraint. Each surface has a weighting — see the table in ADR-0014 §Decision. Most surfaces are Fowler-dominant with zero personality budget. The about page and home page get one sharp sentence per page, maximum.
+
+**The non-negotiables, summarized:**
+
+- Third person about the site, the catalog, and the reader's peers.
+- No first-person plural ("we built X").
+- No second-person calls to action ("learn how", "discover", "supercharge"); direct second person permitted only when describing the reader's literal next action.
+- Present-declarative mood. No future-conditional marketing tense.
+- Specificity over evocation; adjectives are taxes.
+- Banned moves (full list in ADR-0014 §Decision): tutorial-blog warmth, quip-density, academic hedge walls, corporate-authoritative, pedagogical scaffolding, stacked metaphors, slogans-as-content, founder warmth.
+
+Register is editorial, not lint-enforced. Reviewers (and future agents reviewing their own drafts) cite ADR-0014 the same way they cite ADR-0009 — by name, by section, by surface weighting.
