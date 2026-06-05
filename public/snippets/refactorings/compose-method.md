@@ -40,7 +40,7 @@ function add(item, quantity) {
 }
 ```
 
-_Example source: Illustrative example written for this site, not a quotation from the book. The pattern itself is Joshua Kerievsky's, from Refactoring to Patterns (Addison-Wesley, 2004)._
+_Example source: Illustrative example written for this site, not a quotation from the book. The pattern itself is Joshua Kerievsky's, from Refactoring to Patterns (Addison-Wesley, 2004), see the chapter on Compose Method._
 
 **Pressure:** Every edit re-loads the full method body to confirm behavior preservation. Chained orchestration changes compound context cost; reasoning about cross-step invariants gets harder as the method grows. The agent's verification-surface cost multiplies with body length — verifying any single change requires scanning every other statement to confirm it didn't shift, and retrieval cost on chained edits compounds.
 

@@ -64,7 +64,7 @@ class AdvisedLineStrategy {
 }
 ```
 
-_Example source: Adapted from Joshua Kerievsky's loan-calculator example in Refactoring to Patterns (Addison-Wesley, 2004). The Java original is translated to JavaScript and the three loan kinds are preserved as TermLoan, Revolver, and AdvisedLine strategies — same shape, different language._
+_Example source: Adapted from Joshua Kerievsky's loan-calculator example in Refactoring to Patterns (Addison-Wesley, 2004), see the chapter on Replace Conditional Logic with Strategy. The Java original is translated to JavaScript and the three loan kinds are preserved as TermLoan, Revolver, and AdvisedLine strategies — same shape, different language._
 
 **Pressure:** Every edit to one branch re-loads the entire conditional. Cross-branch invariants compound context cost; reasoning about which branch fires when requires holding the type-code rules in working memory across the full method body.
 

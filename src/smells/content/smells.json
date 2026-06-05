@@ -5,6 +5,7 @@
     "nemeses": ["Change Function Declaration", "Rename Variable", "Rename Field"],
     "before": "function calc(d, t) {\n  return d * t;\n}",
     "after": "function distance(speed, time) {\n  return speed * time;\n}",
+    "exampleSource": "Illustrative example written for this site, not a quotation from any source.",
     "forces": {
       "human": {
         "symptom": "Identifiers that don't reveal intent — names like aFunc(), x, theData, temp, or one-letter loop variables that force every reader to reverse-engineer the code's purpose. The name fails to carry meaning, so each reader pays {{search cost}} to recover it from surrounding code, comments, or git history.",
@@ -30,6 +31,7 @@
     "nemeses": ["Extract Function", "Slide Statements", "Pull Up Method"],
     "before": "function totalUSD(items) {\n  return items.reduce((s, i) => s + i.price * i.qty, 0);\n}\nfunction totalEUR(items) {\n  return items.reduce((s, i) => s + i.price * i.qty, 0);\n}",
     "after": "function lineTotal(items) {\n  return items.reduce((s, i) => s + i.price * i.qty, 0);\n}",
+    "exampleSource": "Illustrative example written for this site, not a quotation from any source.",
     "forces": {
       "human": {
         "symptom": "The same code structure appears in two or more places — same shape with cosmetic variations, or copy-paste-modify patterns that drift over time. Each copy carries its own subtle history of fixes and feature additions; the {{signal-to-noise ratio}} of the codebase drops as the duplicated structure crowds out the differences between copies that actually matter.",
@@ -65,6 +67,7 @@
     ],
     "before": "function ship(order) {\n  if (!order.id) throw new Error('missing id');\n  const tax = order.total * 0.1;\n  const grand = order.total + tax;\n  email(order.user, `Total ${grand}`);\n  log(order);\n}",
     "after": "function ship(order) {\n  validate(order);\n  const grand = withTax(order);\n  notify(order, grand);\n}",
+    "exampleSource": "Illustrative example written for this site, not a quotation from any source.",
     "forces": {
       "human": {
         "symptom": "Functions whose body has dozens of lines and a mix of concerns — fetching, calculating, formatting, and logging all interwoven. The reader must hold all of them simultaneously while tracing the path through the body, and the {{cyclomatic complexity}} of the function rises with every branching point the procedure has accumulated.",
@@ -96,6 +99,7 @@
     ],
     "before": "function book(name, email, street, city, zip, depart, arrive, seat) {\n  // ...\n}",
     "after": "function book(traveler, address, trip) {\n  // ...\n}",
+    "exampleSource": "Illustrative example written for this site, not a quotation from any source.",
     "forces": {
       "human": {
         "symptom": "Functions taking five, six, or more parameters — especially when several travel together as a logical group. The signature stops communicating intent; readers learn which arguments belong together and what each one means by reading the function body or by trial and error at the call site. The reader's {{mental effort}} per call balloons with parameter count.",
@@ -121,6 +125,7 @@
     "nemeses": ["Encapsulate Variable"],
     "before": "let currentUser = null;\n// ...some files later...\ncurrentUser = newUser;",
     "after": "function setCurrentUser(user) {\n  currentUser = validate(user);\n}\nfunction getCurrentUser() {\n  return currentUser;\n}",
+    "exampleSource": "Illustrative example written for this site, not a quotation from any source.",
     "forces": {
       "human": {
         "symptom": "Module-level variables, singletons, or shared mutable state that any code can read or mutate from anywhere. The variable's read and write contracts live in no single place; every consumer relies on its own implicit understanding of when the value is valid, and {{side effect}} hides in any call that touches the global without naming it.",
@@ -157,6 +162,7 @@
     ],
     "before": "const order = { total: 100 };\napplyDiscount(order); // mutates total\naddTax(order);        // mutates total",
     "after": "const order = { total: 100 };\nconst final = addTax(applyDiscount(order));",
+    "exampleSource": "Illustrative example written for this site, not a quotation from any source.",
     "forces": {
       "human": {
         "symptom": "Data structures whose fields are reassigned across the codebase, with no clear owner of the mutation. Every reader of the data carries a different mental model of when it's valid; the {{side effect}} surface expands with every writer, and code that looked correct in isolation breaks when a different writer runs first or runs concurrently.",
@@ -182,6 +188,7 @@
     "nemeses": ["Split Phase", "Move Function", "Extract Function", "Extract Class"],
     "before": "function checkout(cart) {\n  const tax = computeTax(cart, jurisdiction); // tax churn\n  const html = renderInvoice(cart, tax);      // UI churn\n  return postToGateway(html);                 // API churn\n}",
     "after": "function priced(cart) { return { ...cart, tax: computeTax(cart) }; }\nfunction rendered(cart) { return renderInvoice(cart); }\nfunction sent(html)    { return postToGateway(html); }",
+    "exampleSource": "Illustrative example written for this site, not a quotation from any source.",
     "forces": {
       "human": {
         "symptom": "One module changes for many unrelated reasons — tax law updates, UI changes, API shape drift. Every commit touches concerns the committer didn't intend; reviewers carrying the {{cognitive load}} of the whole module verify changes outside their expertise, paying {{comprehension cost}} on every visit, and team merges collide on lines that were never about the same thing.",
@@ -215,6 +222,7 @@
     ],
     "before": "// Five files each have:\nlog(`event=${event}, user=${user}`);",
     "after": "// One file:\nfunction logEvent({ event, user }) {\n  // one place to evolve\n}",
+    "exampleSource": "Illustrative example written for this site, not a quotation from any source.",
     "forces": {
       "human": {
         "symptom": "A single conceptual change forces edits in many small places — adding one logging field means touching 17 files spread across the codebase. The reviewer's {{cognitive load}} rises because every site has to be verified independently, the team's {{search cost}} multiplies with the count of scattered sites, and one missed site ships broken.",
@@ -240,6 +248,7 @@
     "nemeses": ["Move Function", "Extract Function"],
     "before": "class Order {\n  totalWeight() {\n    return this.items.reduce((s, i) => s + i.unitWeight * i.qty, 0);\n  }\n}",
     "after": "class Item  { weight()      { return this.unitWeight * this.qty; } }\nclass Order { totalWeight() { return this.items.reduce((s, i) => s + i.weight(), 0); } }",
+    "exampleSource": "Illustrative example written for this site, not a quotation from any source.",
     "forces": {
       "human": {
         "symptom": "A method on class A reaches deeply into class B's data via getters, then computes something B should compute. The reader's {{comprehension cost}} rises because the logic's location (class A) doesn't match its subject (class B's fields); the {{cognitive load}} of holding both class shapes in mind compounds across every read.",
@@ -265,6 +274,7 @@
     "nemeses": ["Extract Class", "Introduce Parameter Object", "Preserve Whole Object"],
     "before": "function send(name, email, street, city, zip) {\n  // ...\n}",
     "after": "class Address { /* street, city, zip */ }\nfunction send(name, email, address) {\n  // ...\n}",
+    "exampleSource": "Illustrative example written for this site, not a quotation from any source.",
     "forces": {
       "human": {
         "symptom": "The same group of fields travels together everywhere — (street, city, zip), (start, end), (firstName, lastName) — appearing as parameters, class fields, interface properties, or method args.",
@@ -296,6 +306,7 @@
     ],
     "before": "function priceFor(cents, currency) {\n  // ...\n}",
     "after": "class Money { /* amount + currency, with arithmetic */ }\nfunction priceFor(money) {\n  // ...\n}",
+    "exampleSource": "Illustrative example written for this site, not a quotation from any source.",
     "forces": {
       "human": {
         "symptom": "Domain concepts represented as raw strings, numbers, or booleans — phone number is a string, money is a number, status is a code.",
@@ -321,6 +332,7 @@
     "nemeses": ["Replace Conditional with Polymorphism"],
     "before": "switch (event.kind) {\n  case 'click': return onClick(event);\n  case 'key':   return onKey(event);\n  case 'drag':  return onDrag(event);\n}",
     "after": "event.handle(); // ClickEvent, KeyEvent, DragEvent each implement handle()",
+    "exampleSource": "Illustrative example written for this site, not a quotation from any source.",
     "forces": {
       "human": {
         "symptom": "The same switch (or if/else chain) over a type code appears in multiple places — adding a new case means hunting them all down.",
@@ -346,6 +358,7 @@
     "nemeses": ["Replace Loop with Pipeline"],
     "before": "const seniors = [];\nfor (const u of users) {\n  if (u.age >= 65) seniors.push(u.name);\n}",
     "after": "const seniors = users\n  .filter(u => u.age >= 65)\n  .map(u => u.name);",
+    "exampleSource": "Illustrative example written for this site, not a quotation from any source.",
     "forces": {
       "human": {
         "symptom": "Imperative for/while loops obscuring what the loop is producing — filter, map, reduce mixed together by hand.",
@@ -371,6 +384,7 @@
     "nemeses": ["Inline Function", "Inline Class", "Collapse Hierarchy"],
     "before": "function getName(user) {\n  return user.name;\n}\nconst n = getName(user);",
     "after": "const n = user.name;",
+    "exampleSource": "Illustrative example written for this site, not a quotation from any source.",
     "forces": {
       "human": {
         "symptom": "A class, function, or namespace that exists but does nothing meaningful — a one-line wrapper, an empty subclass, a passthrough method.",
@@ -402,6 +416,7 @@
     ],
     "before": "class Strategy { execute() {} }\nclass OnlyStrategy extends Strategy { execute() { /* the real one */ } }\nnew OnlyStrategy().execute();",
     "after": "function execute() {\n  // the real one\n}\nexecute();",
+    "exampleSource": "Illustrative example written for this site, not a quotation from any source.",
     "forces": {
       "human": {
         "symptom": "Hooks, abstract base classes, configuration knobs, and parameters added 'in case the team needs them' — but no real call site uses them.",
@@ -427,6 +442,7 @@
     "nemeses": ["Extract Class", "Move Function", "Introduce Special Case"],
     "before": "class Order {\n  shippingTrack = null;\n  ship() {\n    this.shippingTrack = computeTrack();\n  }\n}",
     "after": "class Order    { ship() { return new Shipment(this); } }\nclass Shipment { /* owns the track */ }",
+    "exampleSource": "Illustrative example written for this site, not a quotation from any source.",
     "forces": {
       "human": {
         "symptom": "A class field used by only one method, set to null or default the rest of the time.",
@@ -452,6 +468,7 @@
     "nemeses": ["Hide Delegate", "Extract Function", "Move Function"],
     "before": "const street = order.customer.address.street;",
     "after": "const street = order.customerStreet();",
+    "exampleSource": "Illustrative example written for this site, not a quotation from any source.",
     "forces": {
       "human": {
         "symptom": "Long dotted access paths: a.b.c.d.e — every callsite walks the entire object graph.",
@@ -482,6 +499,7 @@
     ],
     "before": "class Manager {\n  reports() {\n    return this.team.members();\n  }\n}",
     "after": "// Expose team directly when the wrapper adds nothing.\nmanager.team.members();",
+    "exampleSource": "Illustrative example written for this site, not a quotation from any source.",
     "forces": {
       "human": {
         "symptom": "A class whose methods all delegate straight through to another object — no decisions, no transformations.",
@@ -513,6 +531,7 @@
     ],
     "before": "class A { _data; }\nclass B {\n  read(a) {\n    return a._data.value;\n  }\n}",
     "after": "class A { value() { return this._data.value; } }\nclass B { read(a) { return a.value(); } }",
+    "exampleSource": "Illustrative example written for this site, not a quotation from any source.",
     "forces": {
       "human": {
         "symptom": "Modules reach into each other's internals to coordinate behavior, bypassing public interfaces.",
@@ -538,6 +557,7 @@
     "nemeses": ["Extract Class", "Extract Superclass", "Replace Type Code with Subclasses"],
     "before": "class Order {\n  // lineItems, totals, customer info, shipping address, audit log, ...\n}",
     "after": "class Order    { /* lineItems, totals */ }\nclass Customer { /* name, email */ }\nclass Shipping { /* address, track */ }",
+    "exampleSource": "Illustrative example written for this site, not a quotation from any source.",
     "forces": {
       "human": {
         "symptom": "A type — class or interface — with too many fields and methods; multiple unrelated responsibilities under one name.",
@@ -563,6 +583,7 @@
     "nemeses": ["Change Function Declaration", "Move Function", "Extract Superclass"],
     "before": "class CSVExporter  { writeAll(rows) {} }\nclass JSONExporter { dump(data)     {} }",
     "after": "class CSVExporter  implements Exporter { write(rows) {} }\nclass JSONExporter implements Exporter { write(rows) {} }",
+    "exampleSource": "Illustrative example written for this site, not a quotation from any source.",
     "forces": {
       "human": {
         "symptom": "Two classes do similar things but with mismatched method names and signatures — sortBy() vs orderUsing(), valueOf() vs evaluate().",
@@ -594,6 +615,7 @@
     ],
     "before": "class Address { street; city; zip; }\nfunction format(a) {\n  return `${a.street}, ${a.city} ${a.zip}`;\n}",
     "after": "class Address {\n  format() {\n    return `${this.street}, ${this.city} ${this.zip}`;\n  }\n}",
+    "exampleSource": "Illustrative example written for this site, not a quotation from any source.",
     "forces": {
       "human": {
         "symptom": "A class that holds fields with getters and setters but no behavior — and consumers do all the operations on it externally.",
@@ -624,6 +646,7 @@
     ],
     "before": "class Animal { fly() {} swim() {} }\nclass Dog extends Animal {\n  fly() { throw new Error('no'); }\n}",
     "after": "class Dog {\n  // composes a Mover delegate that knows it's a swimmer\n}",
+    "exampleSource": "Illustrative example written for this site, not a quotation from any source.",
     "forces": {
       "human": {
         "symptom": "A subclass inherits methods or fields it doesn't actually use — overriding to no-ops, throwing 'unsupported', or just ignoring the inheritance.",
@@ -649,6 +672,7 @@
     "nemeses": ["Extract Function", "Change Function Declaration", "Introduce Assertion"],
     "before": "// charge the customer's stored payment method, including tax\ncharge(c, t * 1.1);",
     "after": "chargeWithTax(customer, total);",
+    "exampleSource": "Illustrative example written for this site, not a quotation from any source.",
     "forces": {
       "human": {
         "symptom": "Comments explaining what the next block of code does, what a function returns, or how a parameter is meant to be used.",
