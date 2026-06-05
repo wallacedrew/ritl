@@ -48,7 +48,7 @@ describe("user installs the plugin from /plugin", () => {
     ).toBeInTheDocument();
     expect(
       screen.getByText(
-        /A function whose token count exceeds the agent's reliable chunk-reasoning budget/i,
+        /exceeds the agent's reliable chunk-reasoning budget/i,
       ),
     ).toBeInTheDocument();
     expect(document.body.textContent).toContain("let total = 0");

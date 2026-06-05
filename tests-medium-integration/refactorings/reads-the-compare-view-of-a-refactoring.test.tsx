@@ -19,7 +19,7 @@ describe("user reads the compare view of a refactoring", () => {
     expect(screen.getAllByText("Agent").length).toBeGreaterThan(0);
 
     // Human-lens content (from the authored prose)
-    expect(screen.getByText(/mental outline before you can read it/i)).toBeInTheDocument();
+    expect(screen.getByText(/mental outline before it can be read/i)).toBeInTheDocument();
 
     // Agent-lens content (from the authored prose)
     expect(screen.getByText(/chunk-reasoning budget/i)).toBeInTheDocument();
