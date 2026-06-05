@@ -30,6 +30,6 @@ const final = addTax(applyDiscount(order));
 
 **Relief:** State changes become locatable; the agent traces one entry point instead of N writers when reasoning about behavior. The verification surface contracts to the wrapper's contract; the agent verifies edits against a single named invariant rather than reconstructing the mutation timeline, and retrieval cost on state-related queries drops sharply.
 
-**Trap:** Wrapping writes in passthrough setters leaves the mutation everywhere while looking encapsulated; the API's signature suggests safety the implementation doesn't deliver, and the verification surface stays as broad as before. The agent reads the wrapper's name and reasons as if the contract holds; runtime ships behavior that violates the assumed contract.
+**Trap:** Wrapping writes in passthrough setters leaves the mutation everywhere while looking encapsulated; the API's signature suggests safety the implementation doesn't deliver, and verification-surface cost stays as broad as before. The agent reads the wrapper's name and reasons as if the contract holds; runtime ships behavior that violates the assumed contract.
 
 **Apply refactorings:** Encapsulate Variable, Split Variable, Slide Statements, Extract Function, Separate Query from Modifier, Remove Setting Method, Replace Derived Variable with Query, Combine Functions into Class, Combine Functions into Transform, Change Reference to Value

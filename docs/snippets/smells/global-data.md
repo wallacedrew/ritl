@@ -34,6 +34,6 @@ function getCurrentUser() {
 
 **Relief:** A single named function becomes the audit point; the agent attaches logging, validation, or cache logic in one place instead of chasing every consumer. The agent's per-edit search surface contracts to the wrapper and its callers; retrieval cost on any reasoning about the global drops to the single call to the wrapper.
 
-**Trap:** Wrapping globals without narrowing access creates a false safety signal — the wrapper appears to guarantee something it doesn't, and silent leaks become harder to diagnose. The agent reads the wrapper's signature and reasons as if the contract holds; runtime ships behavior that violates the assumed contract, and the agent's downstream edits inherit the violation.
+**Trap:** Wrapping globals without narrowing access creates a false safety signal — the wrapper appears to guarantee something it doesn't, and silent leaks become harder to diagnose. The agent reads the wrapper's signature and reasons as if the contract holds; verification-surface cost stays as broad as before, and the agent's downstream edits inherit the violation.
 
 **Apply refactorings:** Encapsulate Variable
