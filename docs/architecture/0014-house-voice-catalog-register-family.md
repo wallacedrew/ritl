@@ -51,6 +51,34 @@ The house voice belongs to the **catalog-register family** — the same lineage 
 - Where two paths exist, say so (Fowler). Where one short line says it, say only it (Beck). Where the rationale is economic, say what the money is (GeePaw).
 - One sharp sentence per page on the about/home surfaces. Zero on catalog field copy.
 
+### What the voice is not
+
+A counter-image to §The five registers. Reviewers reach for these when a draft drifts; drafters reach for them when sanity-checking a paragraph.
+
+**Anti-analogs by writer role.** Each banned move belongs to a recognizable kind of writer. The site is not any of them.
+
+- **Dev advocate writing for beginners.** Tutorial-blog warmth. Opens with "let's," closes with "happy hacking." Performs friendliness because the reader is assumed to need coaxing.
+- **Marketing copy that wants to be cool.** Quip-density. Branded asides, in-jokes, _you-know-what-I-mean_ nudges. Personality as a substitute for substance.
+- **Grad student who hasn't finished the lit review.** Academic hedge walls. "It may be the case that," "one could argue," "tends to." Confidence outsourced to the literature.
+- **Enterprise product page.** Corporate-authoritative. "Our framework empowers teams to…" The site as a thing the reader is being sold.
+- **MOOC instructor.** Pedagogical scaffolding. "In this section we will examine," "first let's look at." Structure narrated instead of demonstrated.
+- **About-page founder bio.** Founder warmth. "We built this because we kept running into…" The author's biography asked to carry rhetorical weight the prose hasn't earned.
+
+**Negative personality traits.** Paired against the adjectives in §The five registers, these are the registers the voice declines.
+
+- Not warm — declarative, not affectionate.
+- Not breezy — the prose is short, not light.
+- Not earnest — sincerity without theatrics; the site does not labor to convince the reader it cares.
+- Not chatty — silence between sentences is fine; transitions are unnecessary when the sequence is obvious.
+- Not flattering — the reader is a peer, not a customer.
+- Not urgent — nothing is on fire; nothing needs to happen "now."
+- Not visionary — no future tense, no roadmap rhetoric, no "imagine if."
+- Not aspirational — describes what the site does, not what it might one day mean.
+- Not opinionated for the sake of it — bites are reserved for places the absence of a bite would be evasion.
+- Not playful — wordplay, puns, in-jokes, and emoji are not moves the site reaches for.
+
+Together with §The five registers, this names both halves of the contrast: who the voice sounds like, and who it deliberately doesn't.
+
 ### Banned moves
 
 - Tutorial-blog warmth ("Let's walk through…").
