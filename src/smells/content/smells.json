@@ -11,7 +11,7 @@
         "goal": "Names read as the domain — a function's purpose, a variable's role, a class's responsibility — visible in one glance. Each identifier carries enough information that the reader builds a mental model without searching, and {{comprehension cost}} drops to the size of the name itself. The team's {{cognitive load}} compounds downward as more readers encounter the canonical names.",
         "pressure": "Every reading is a re-comprehension cost; bugs sneak in because what code does diverges from what its name suggests. Readers carry the wrong mental model into edits and ship the misread as plausible-looking code — {{confabulation}} from a stale name. The cost compounds in proportion to how many readers (humans plus LLMs) touch the file.",
         "tradeoff": "Cross-repo greps, commit history, code comments, and string-literal references to the old name silently drift stale — the rename's {{blast radius}} reaches PRs the team wasn't planning to read. New readers see the new name; old readers carry the old name in their head, paying {{knowledge-decay cost}} to recover the original intent every time they return.",
-        "relief": "Reduces onboarding time, accelerates code review, and lets future-you skim instead of decode. The {{mental effort}} per identifier drops from name-plus-context-recovery to name-only. Bug investigations stay local to the failing symbol instead of expanding into a search for what every adjacent identifier means.",
+        "relief": "Reduces onboarding time, accelerates code review, and lets future readers skim instead of decode. The {{mental effort}} per identifier drops from name-plus-context-recovery to name-only. Bug investigations stay local to the failing symbol instead of expanding into a search for what every adjacent identifier means.",
         "trap": "Naming bikeshedding — endless rename churn for marginal clarity gains while the actual code structure stays unimproved. Each rebrand invalidates the team's accumulated reading fluency; reviewers spend the rename's blast radius on cosmetic deltas instead of substantive review, and the {{leaky abstraction}} underneath the names stays unaddressed."
       },
       "agent": {
@@ -127,7 +127,7 @@
         "goal": "Access goes through a small named function that owns the read/write contract — and ideally narrows it (read-only, validated). The wrapper enforces the {{invariant}} that the global is always valid when read; every consumer of the wrapper inherits the guarantee, and the global's lifecycle becomes inspectable from a single named surface.",
         "pressure": "The {{blast radius}} of any change is the whole codebase; behavior depends on hidden write order between unrelated callers. Reasoning about state at any point requires tracing every writer; concurrent code becomes a hazard area, and reviewers ship changes that pass single-test verification but break behavior when global state arrives in a different order at runtime.",
         "tradeoff": "Encapsulating access through a small wrapper adds indirection at every call site; without enforcement, code leaks past the wrapper and the safety promise becomes a {{leaky abstraction}}. The wrapper must remain the only access path; every direct read or write that escapes resets the {{maintenance cost}} of the smell across the codebase.",
-        "relief": "All access sites become trivially findable; you can add logging, validation, or a cache without touching consumers. The team's {{debugging cost}} drops because the audit surface is one function instead of every file that touches the global, and changes to the read/write contract have a known, bounded blast radius the wrapper documents.",
+        "relief": "All access sites become trivially findable; the team can add logging, validation, or a cache without touching consumers. The team's {{debugging cost}} drops because the audit surface is one function instead of every file that touches the global, and changes to the read/write contract have a known, bounded blast radius the wrapper documents.",
         "trap": "Wrapping global access without removing the global — adds a layer of ceremony while the underlying coupling stays in place. The wrapper looks like encapsulation but leaks every direct mutation back into shared state; reviewers grant the safety presumption without verifying enforcement, and the global's hazards continue with an extra layer of indirection between them and the consumer."
       },
       "agent": {
@@ -327,7 +327,7 @@
         "goal": "Each case is a class implementing a shared interface; dispatch happens once via a virtual call.",
         "pressure": "Dispatch logic is duplicated across the codebase; new cases are easy to miss; the type-code couple amplifies.",
         "tradeoff": "Replacing the switch with polymorphism scatters dispatch across classes; adding a new case is one new file, but understanding the full dispatch surface now requires reading several.",
-        "relief": "Adding a new case is one new class; the compiler and tests tell you what's missing.",
+        "relief": "Adding a new case is one new class; the compiler and tests surface what's missing.",
         "trap": "Polymorphism worship — a switch with two stable cases becomes a class hierarchy of two trivial subclasses, paying class-hierarchy overhead with no flexibility return."
       },
       "agent": {
@@ -376,7 +376,7 @@
         "symptom": "A class, function, or namespace that exists but does nothing meaningful — a one-line wrapper, an empty subclass, a passthrough method.",
         "goal": "Trivial wrappers disappear; the call site says exactly what's happening.",
         "pressure": "Reader pays a navigation cost to discover the wrapper adds nothing; future changes are tempted to add real work to it.",
-        "tradeoff": "Inlining the wrapper at every call site can leak its body across files; if the wrapper later genuinely needs work, you'll have to re-extract it after the fact.",
+        "tradeoff": "Inlining the wrapper at every call site can leak its body across files; if the wrapper later genuinely needs work, the team will have to re-extract it after the fact.",
         "relief": "Shorter call chains, less indirection to unwrap when reading; one fewer file to maintain.",
         "trap": "Aggressive inlining of trivial-looking wrappers that actually mark a real seam — the wrapper's emptiness was the point (extension point, mocking boundary), and removing it forecloses options."
       },
@@ -404,7 +404,7 @@
     "after": "function execute() {\n  // the real one\n}\nexecute();",
     "forces": {
       "human": {
-        "symptom": "Hooks, abstract base classes, configuration knobs, and parameters added 'in case we need them' — but no real call site uses them.",
+        "symptom": "Hooks, abstract base classes, configuration knobs, and parameters added 'in case the team needs them' — but no real call site uses them.",
         "goal": "The code expresses exactly what it does today — abstraction earns its keep when a real second user shows up.",
         "pressure": "Tests are forced to cover branches no one exercises; readers learn a vocabulary they don't need; YAGNI debt compounds.",
         "tradeoff": "Removing the unused abstraction can break a real (if rare) future need; YAGNI is a useful default, but historical context sometimes justifies the option-value.",

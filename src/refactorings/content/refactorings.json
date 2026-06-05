@@ -116,7 +116,7 @@
         "pressure": "Every reader of a call site pays a comprehension cost; mismatches between name and behavior hide bugs; new callers learn the wrong abstraction from the wrong signature.",
         "tradeoff": "Every caller pays for the signature change at once, even those whose call sites were already fine; other-team callers get forced coordination.",
         "relief": "Call sites read fluently; mismatches between expectation and behavior surface immediately at the boundary.",
-        "trap": "Renaming or reshaping signatures across team boundaries without coordination — forces other teams to rebuild their code in your PR's timeline."
+        "trap": "Renaming or reshaping signatures across team boundaries without coordination — forces other teams to rebuild their code on the change's PR timeline."
       },
       "agent": {
         "symptom": "A function whose name or signature doesn't match its behavior; the agent inferring intent from the call site gets misled and must read the body to verify.",
@@ -165,7 +165,7 @@
         "goal": "Variable names match the domain role they play, not their implementation type or scratch nature.",
         "pressure": "Every reader pays a re-comprehension cost when they encounter the variable; bugs hide in the gap between what the name suggests and what the code does.",
         "tradeoff": "The IDE renames code, not the world around it — cross-repo greps, commit history, comments, and string-literal references silently drift stale.",
-        "relief": "Reading the variable's name tells you everything you need without checking its definition.",
+        "relief": "Reading the variable's name tells the reader everything needed without checking its definition.",
         "trap": "Renaming bikeshedding — endless rename churn for marginal clarity gains while the actual code structure stays unimproved."
       },
       "agent": {
@@ -389,7 +389,7 @@
         "symptom": "Imperative for/while loops where filter, map, and reduce concerns are mixed by hand — the reader must mentally execute the body to learn what's being produced.",
         "goal": "Filter / map / reduce expresses the transformation as a sequence of named operations; intent reads in domain language.",
         "pressure": "Off-by-one errors and accumulator bugs hide in the body and only surface at test time; intent is buried under the mechanism.",
-        "tradeoff": "Pipelines add a tiny per-element function-call overhead — usually negligible, but profile if you're in a hot path.",
+        "tradeoff": "Pipelines add a tiny per-element function-call overhead — usually negligible, but profile if the call is on a hot path.",
         "relief": "Off-by-one and accumulator bugs vanish; each step is independently testable.",
         "trap": "Forcing every loop into a pipeline — including ones with early-exit, side-effect accumulators, or genuinely sequential dependencies — produces .reduce() bodies harder to read than the original."
       },
@@ -414,7 +414,7 @@
         "symptom": "Functions, branches, fields, or imports that no static analysis or human reader can reach — last commented out, last touched years ago, or referenced only by code that itself was removed.",
         "goal": "Every line in the codebase is reachable and used; readers don't waste cycles on phantom branches.",
         "pressure": "Readers spend cycles understanding code that never runs; debuggers stop in places that look meaningful but aren't; refactoring proposals have to consider phantom users.",
-        "tradeoff": "You give up the option to revive without a git dive — and 'dead' under static analysis can still be reachable via reflection, dynamic dispatch, or external callers.",
+        "tradeoff": "The team gives up the option to revive without a git dive — and 'dead' under static analysis can still be reachable via reflection, dynamic dispatch, or external callers.",
         "relief": "Smaller surface, faster reading, fewer false leads when debugging.",
         "trap": "Deleting code that looks dead but is reached via reflection, dynamic dispatch, external callers, or test fixtures — the cleanup ships a regression because static analysis lied."
       },
@@ -465,7 +465,7 @@
         "goal": "Field names match the domain role they play; readers don't need to inspect usage to know what a field means.",
         "pressure": "Every reader/writer of the class must figure out what the field means from context; bugs surface when readers assume the wrong meaning.",
         "tradeoff": "Same drift as Rename Variable, amplified across the field's read/write surface and any persistence shadows (DB columns, JSON schemas, APIs).",
-        "relief": "Stronger encapsulation; future-you reads the class definition and immediately understands its shape.",
+        "relief": "Stronger encapsulation; future readers read the class definition and immediately understand its shape.",
         "trap": "Renaming a field without updating the persistence shadow — DB columns, JSON schema, API responses still use the old name and break serialization/deserialization silently."
       },
       "agent": {
@@ -590,7 +590,7 @@
         "goal": "Each case becomes a class implementing a shared interface; dispatch happens once via virtual call.",
         "pressure": "Dispatch logic duplicates across files; new cases are easy to miss; the type-code coupling amplifies with every additional consumer.",
         "tradeoff": "If only one switch on the type code exists, polymorphism is overkill — wait for the second or third repeat before extracting subclasses.",
-        "relief": "Adding a new case is one new class; the type system tells you what's missing.",
+        "relief": "Adding a new case is one new class; the type system surfaces what's missing.",
         "trap": "Polymorphism worship — a switch with two stable cases becomes a class hierarchy of two trivial subclasses, paying class-hierarchy overhead with no flexibility return."
       },
       "agent": {
@@ -789,7 +789,7 @@
         "symptom": "Object creation directly via `new Class(...)` where the construction logic needs validation, subclass selection, or instance caching but the constructor can't express any of it.",
         "goal": "Object creation goes through a named function that can validate, choose subclasses, or return cached instances.",
         "pressure": "Constructors can't validate, return subclasses, or cache; consumers either accept the limitation or scatter pre-construction logic at every call site.",
-        "tradeoff": "Hides the actual class from callers — make sure your factory's name still expresses the produced shape clearly.",
+        "tradeoff": "Hides the actual class from callers — the factory's name must still express the produced shape clearly.",
         "relief": "Construction can vary per case; consumers don't depend on which concrete class they're getting.",
         "trap": "Wrapping every constructor in a factory function for principle — adds a layer of indirection without buying validation, polymorphism, or caching capability."
       },
@@ -914,9 +914,9 @@
         "symptom": "A subclass that no longer differs meaningfully from its parent — an empty subclass, or one that overrides nothing the parent didn't already do.",
         "goal": "A subclass that no longer differs meaningfully from its parent merges back in.",
         "pressure": "Readers navigate a hierarchy that adds no value; ceremony around construction and dispatch persists; future maintenance must touch both classes for any change.",
-        "tradeoff": "Collapsing too eagerly destroys an extension point you'll later want — only collapse when the variant has been zero-sum for a sustained period.",
+        "tradeoff": "Collapsing too eagerly destroys an extension point the team will later want — only collapse when the variant has been zero-sum for a sustained period.",
         "relief": "Smaller hierarchy, less ceremony, fewer files to navigate.",
-        "trap": "Collapsing a hierarchy whose subclass is currently quiet but documents a real future variation — destroys an extension point you'll need to re-introduce later at higher cost."
+        "trap": "Collapsing a hierarchy whose subclass is currently quiet but documents a real future variation — destroys an extension point the team will need to re-introduce later at higher cost."
       },
       "agent": {
         "symptom": "A subclass that no longer differs meaningfully from its parent; the agent navigating the hierarchy traverses indirection for no behavioral variation.",
@@ -1114,7 +1114,7 @@
         "symptom": "A function whose body mixes its core responsibility with statements that genuinely vary per caller — different logging contexts, different post-processing, different metric labels.",
         "goal": "Statements that vary by caller move out of the function so each caller chooses its own setup or follow-up.",
         "pressure": "The function's single responsibility is obscured by per-caller variations baked in; adding a new caller forces extending the function's branches.",
-        "tradeoff": "If most callers want the moved statements, you've created duplication — the inverse of Move Statements into Function is only an improvement when callers genuinely differ.",
+        "tradeoff": "If most callers want the moved statements, the change creates duplication — the inverse of Move Statements into Function is only an improvement when callers genuinely differ.",
         "relief": "The function's body becomes about its single responsibility; callers express their differences directly.",
         "trap": "Pushing statements to callers when most callers want them anyway — creates duplication at every call site while the original function was perfectly clear."
       },
@@ -1264,7 +1264,7 @@
         "symptom": "An opaque, convoluted, or hand-rolled algorithm where a clearer and well-known pattern (often library-provided) produces the same outputs.",
         "goal": "An opaque or convoluted algorithm gets replaced by a clearer one (often from a library or well-known pattern) that produces the same outputs.",
         "pressure": "Future readers spend cycles decoding the bespoke version; correctness arguments stay local to this implementation; performance characteristics are unknown.",
-        "tradeoff": "Swapping algorithms wholesale forfeits behavioral safety — characterize the function with tests at every input boundary you care about before substituting.",
+        "tradeoff": "Swapping algorithms wholesale forfeits behavioral safety — characterize the function with tests at every relevant input boundary before substituting.",
         "relief": "Future maintainers read the well-known pattern instead of decoding the bespoke implementation; performance and correctness usually improve.",
         "trap": "Swapping algorithms without characterizing every input boundary the original handled — including the off-by-one cases the original quietly got right that the substitute might get differently."
       },
@@ -1932,7 +1932,7 @@
     "exampleSource": "Illustrative example written for this site, adapted from Kerievsky's pattern description in Refactoring to Patterns (Addison-Wesley, 2004), chapter 6. The book frames Extract Parameter as the structural move that prepares a method for Form Template Method by isolating what varies between near-duplicate methods.",
     "forces": {
       "human": {
-        "symptom": "A class carries several near-identical methods that differ only by a single literal — a field name, a constant, a threshold. The duplication is mechanical; the methods change in lockstep; the class grows linearly with the number of variants you support.",
+        "symptom": "A class carries several near-identical methods that differ only by a single literal — a field name, a constant, a threshold. The duplication is mechanical; the methods change in lockstep; the class grows linearly with the number of variants supported.",
         "goal": "One parameterized method replaces the N variants. What varies between them becomes an explicit argument; what stays the same lives in one place.",
         "pressure": "Each duplicated method must be maintained, tested, and documented separately. A bug in the iteration semantics requires N edits; adding a new variant means another near-copy, not new logic. Reviewers must scan all N methods to confirm they stayed consistent.",
         "tradeoff": "Parameterized methods can become call-site noise — the caller now passes a string or constant whose meaning isn't clear from the call site (`searchBy('author', q)` reads worse than `searchByAuthor(q)`). For two or three variants with stable, semantically distinct names, separate methods may be more intention-revealing.",
@@ -2059,9 +2059,9 @@
         "symptom": "Code is littered with `if (x !== null) x.do()` checks around the same collaborator. Each new caller adds another check; missing one ships a NullPointerException to production; the absence-handling logic duplicates across callers.",
         "goal": "A Null Object implementing the same interface stands in for the missing collaborator. Callers invoke methods unconditionally; the Null Object returns sensible defaults (return the input unchanged, return zero, do nothing).",
         "pressure": "Null checks duplicate at every call site; the rules for what 'absent' means duplicate too. Adding a new caller is one more place to remember the check; forgetting one is a runtime bug.",
-        "tradeoff": "Null Objects hide absence; downstream code may mistake the silent no-op for a real operation, especially when the Null Object's behaviour drifts from the originally-intended default. Debugging 'why did nothing happen?' requires recognizing you're holding a Null Object.",
+        "tradeoff": "Null Objects hide absence; downstream code may mistake the silent no-op for a real operation, especially when the Null Object's behaviour drifts from the originally-intended default. Debugging 'why did nothing happen?' requires recognizing that a Null Object is in hand.",
         "relief": "Call sites simplify to plain method calls; absence-handling lives in one place (the Null Object); the rules for what 'no discount' or 'no loyalty program' means are visible and testable as a single class.",
-        "trap": "A Null Object with subtly-wrong defaults silently corrupts results without throwing. The pattern pays when 'absent' has a well-defined neutral semantics; for collaborators where absence should actually halt the operation, Null Object hides the error you wanted to see."
+        "trap": "A Null Object with subtly-wrong defaults silently corrupts results without throwing. The pattern pays when 'absent' has a well-defined neutral semantics; for collaborators where absence should actually halt the operation, Null Object hides the error the caller expected to see."
       },
       "agent": {
         "symptom": "Null-check branches the agent must trace at every collaborator-using call site. The agent cannot statically verify all check sites stay consistent; new callers risk omitting the check and shipping NullPointerExceptions.",
@@ -2447,7 +2447,7 @@
         "symptom": "A class's constructor accepts several argument shapes — different counts, different types — and branches internally to figure out which intention the caller had. Reading a `new Money(x, y)` call site gives no hint of which path runs; argument-shape sniffing is brittle, easy to misuse, and resists static analysis.",
         "goal": "One canonical constructor accepts the full, unambiguous parameter set; named static creation methods (`Money.dollars`, `Money.copyOf`, `Money.zero`) express the intent at the call site. Every construction site reads as a verb in the domain.",
         "pressure": "Argument-sniffing constructors are a parameter-list smell with conditional-dispatch on top. They invite caller mistakes — passing arguments in the wrong order or with the wrong type silently produces a different object. The intent at the call site is hidden in the receiver, not the verb.",
-        "tradeoff": "Static creation methods multiply with the kinds of intention you support; the class gains a long prefix-namespace of factory entry points. For domain types with only one natural construction, a plain constructor is clearer than ceremony — creation methods earn their keep when intentions diverge.",
+        "tradeoff": "Static creation methods multiply with the kinds of intention supported; the class gains a long prefix-namespace of factory entry points. For domain types with only one natural construction, a plain constructor is clearer than ceremony — creation methods earn their keep when intentions diverge.",
         "relief": "Call sites read as domain verbs (`Money.dollars(100)`, `Money.copyOf(m1)`). The canonical constructor enforces invariants once; creation methods compose them with intent-revealing names. New intentions land as new named methods rather than as new branches inside one constructor.",
         "trap": "Creation methods that are just `static of(a, c) { return new Money(a, c); }` add a layer without buying clarity. The pattern pays when each creation method captures a distinct intention or applies a non-trivial default; when not, exposing the constructor is simpler."
       },
@@ -2492,7 +2492,7 @@
         "goal": "The publisher emits events; listeners subscribe at the composition root and receive notifications without the publisher knowing they exist. Adding a consumer is a new listener + one subscription line, with no publisher edit.",
         "pressure": "Hard-coded notifications are Insider Trading — the publisher knows too much about who cares about what, and tests can't isolate the publisher from its consumers. Each new consumer couples the publisher to more of the domain it shouldn't have to know.",
         "tradeoff": "Observer scatters the system's reactive logic across loosely-coupled listeners; the agent or developer must read the subscription site to know what runs when an event fires. Event ordering becomes implicit; debugging requires recovering subscription order. Memory leaks via uncleaned subscriptions are a real failure mode.",
-        "relief": "The publisher's responsibilities shrink to 'do my thing, announce that I did it'; consumers attach without modifying the publisher. New consumers don't risk breaking existing ones; tests for the publisher mock no consumers, tests for consumers exercise event handling in isolation.",
+        "relief": "The publisher's responsibilities shrink to 'do the work, announce completion'; consumers attach without modifying the publisher. New consumers don't risk breaking existing ones; tests for the publisher mock no consumers, tests for consumers exercise event handling in isolation.",
         "trap": "An Observer system without explicit event types or ordering guarantees turns into a debugging nightmare — the agent must trace 'who listens to what, in what order' across the whole subscription graph. The pattern earns its keep when subscribers are stable, semantic event types are documented, and ordering doesn't matter."
       },
       "agent": {
@@ -2706,7 +2706,7 @@
       "human": {
         "symptom": "An integer or string field encodes a domain concept; every consumer of the field knows the magic values and branches on them. New status values land as new magic literals; comparisons duplicate across the codebase; the type system treats `status === 2` and `status === 'shipped'` as equally valid.",
         "goal": "The type code becomes a value object class with named instances. Comparisons become method calls (`status.canCancel()`); new statuses land as new instances + tests; the type system distinguishes order statuses from arbitrary integers.",
-        "pressure": "Magic-literal type codes are Primitive Obsession at scale. Bugs ship as 'I used 2 when I meant 3' or 'I compared status to 'shipped' when the convention is 'SHIPPED'. The compiler/runtime cannot help; tests and code review carry the full enforcement burden.",
+        "pressure": "Magic-literal type codes are Primitive Obsession at scale. Bugs ship as 'used 2 when 3 was intended' or 'compared status to lowercase 'shipped' when the convention is uppercase'. The compiler/runtime cannot help; tests and code review carry the full enforcement burden.",
         "tradeoff": "A value object class is one more domain class to learn; serializing/deserializing requires explicit translation between the primitive and the value object form. For status fields that flow through many database round-trips, the translation boundary is real work.",
         "relief": "Comparisons become typed method calls; new statuses are one named instance with one row of test coverage; consumers don't need to know the underlying primitive at all. Adding behaviour to a status (e.g., 'is terminal?') is one method on the class.",
         "trap": "If the value object simply wraps the primitive without offering methods (no `describe`, no `canCancel`, no `isTerminal`), it adds a layer without buying anything. The pattern earns its keep when the type code carries behaviour worth promoting — not when it's just a name for the primitive."
