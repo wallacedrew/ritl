@@ -242,20 +242,20 @@
     "after": "class Item  { weight()      { return this.unitWeight * this.qty; } }\nclass Order { totalWeight() { return this.items.reduce((s, i) => s + i.weight(), 0); } }",
     "forces": {
       "human": {
-        "symptom": "A method on class A reaches deeply into class B's data via getters, then computes something B should compute.",
-        "goal": "Methods live with the data they care about — B owns the logic over B's fields.",
-        "pressure": "Domain logic lives where it's least expected; B's internals leak through public surfaces just to support A's method.",
-        "tradeoff": "Moving the method may pull collaborators with it — A's other internals that the moved method referenced now need to travel too, or get passed in as parameters. Sometimes the move uncovers a missing third class.",
-        "relief": "Encapsulation tightens, getters can shrink or disappear, and the method's name clarifies once it's on the right class.",
-        "trap": "Moving every method that reads another class's data — even legitimate cross-class queries — over-tightens encapsulation and forces a fan-out of moves that breaks the original design's intent."
+        "symptom": "A method on class A reaches deeply into class B's data via getters, then computes something B should compute. The reader's {{comprehension cost}} rises because the logic's location (class A) doesn't match its subject (class B's fields); the team carries the cost of looking in two places to understand what reads as one calculation.",
+        "goal": "Methods live with the data they care about — B owns the logic over B's fields, in line with {{separation of concerns}} at the class boundary. Readers find the calculation where the data sits; B's public surface shrinks to what callers actually need, and A no longer reaches across to assemble a B-shaped answer.",
+        "pressure": "Domain logic lives where it's least expected; B's internals leak through public surfaces just to support A's method, and any change to B's representation cascades to A. The {{blast radius}} of a B-side rename or refactor stretches into A's body; reviewers verifying the change inspect two classes instead of one.",
+        "tradeoff": "Moving the method may pull collaborators with it — A's other internals that the moved method referenced now travel too, or get passed in as parameters. Sometimes the move uncovers a missing third class. The team's {{maintenance cost}} reshapes rather than vanishes; the new home for the logic may surface coupling the old position concealed.",
+        "relief": "Encapsulation tightens, getters can shrink or disappear, and the method's name clarifies once it's on the right class. The team's {{verification cost}} drops because B-side changes now stay inside B; the team's {{enhancement cost}} also drops because adding a new B-derived value is one edit on B rather than a coordinated change across A and B.",
+        "trap": "Moving every method that reads another class's data — even legitimate cross-class queries — over-tightens encapsulation and forces a fan-out of moves that breaks the original design's intent. The cure adds {{accidental complexity}} as classes acquire methods they wouldn't have grown on their own, and the team chases the move across every collaborator."
       },
       "agent": {
-        "symptom": "A method's body references foreign-class data more than its own; the agent loading this method must also load the foreign class to verify any change.",
-        "goal": "Method bodies stay close to the data they read — the agent loads one class to reason about one behavior.",
-        "pressure": "Each call to the envious method pulls a second class into the agent's working context; chained reasoning across the boundary compounds the load.",
-        "tradeoff": "Moving the method may force additional cross-class dependencies the original boundary hid; the agent verifying the move must trace the new coupling at the destination class.",
-        "relief": "The method's data sits inside the agent's current reasoning context; verifying behavior touches one class instead of two.",
-        "trap": "Mechanical move-the-method-to-the-data on every cross-class read creates a fan-out the agent must follow at every call site — the cure becomes a worse smell than the original."
+        "symptom": "A method's body references foreign-class data more than its own; the agent loading this method also loads the foreign class to verify any change. The agent's {{context-window load}} doubles for what reads as one operation, and the {{retrieval cost}} of pulling B's surface into reasoning about A's method pays no information dividend.",
+        "goal": "Method bodies stay close to the data they read — the agent loads one class to reason about one behavior. The agent's {{context window}} holds the class that owns both the data and the calculation; the {{reasoning step}} count drops because the agent doesn't jump between two surfaces to assemble the meaning of one method.",
+        "pressure": "Each call to the envious method pulls a second class into the agent's working context; chained reasoning across the boundary compounds the load. The agent's {{verification-surface cost}} rises because verifying the method requires verifying invariants on B that A's caller can't see; an edit to B's representation surfaces only after a downstream test fails.",
+        "tradeoff": "Moving the method may force additional cross-class dependencies the original boundary hid; the agent verifying the move traces the new coupling at the destination class. The agent's {{completeness-check cost}} rises during the move itself — every caller must be updated, and the agent re-reads each site to confirm the dispatch now points at B.",
+        "relief": "The method's data sits inside the agent's current reasoning context; verifying behavior touches one class instead of two. The agent's {{token cost}} per edit drops because the relevant surface fits in one read, and the {{reasoning-step cost}} of cross-class reasoning disappears — invariants on B's fields are checkable from B's body alone.",
+        "trap": "Mechanical move-the-method-to-the-data on every cross-class read creates a fan-out the agent follows at every call site — the cure becomes a worse smell than the original. Context-window load now rises on B's class as it accumulates methods that belong elsewhere; B becomes a god-class the agent loads as a tangle."
       }
     }
   },
