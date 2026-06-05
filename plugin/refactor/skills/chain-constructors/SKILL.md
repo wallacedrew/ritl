@@ -1,6 +1,6 @@
 ---
 name: chain-constructors
-description: Apply Chain Constructors when you see Duplicated Code, Extract Function, Combine Functions into Class. One construction path the agent reads to know what a fully-initialized object looks like; all other paths are one-line delegations the agent can skip past during reasoning.
+description: Apply Chain Constructors when you see Duplicated Code, Extract Function, Combine Functions into Class. One construction path the agent reads to know what a fully-initialized object looks like; all other paths are one-line delegations the agent skips past during reasoning.
 ---
 
 # Apply: 67 — Chain Constructors
@@ -9,9 +9,9 @@ description: Apply Chain Constructors when you see Duplicated Code, Extract Func
 
 **Or decline first:** if you don't see a chain pointing at Chain Constructors, name the decline type — no chain, taste call, cost-benefit, constraint-blocked, or insufficient context.
 
-**Symptom:** Multiple construction paths the agent must scan in parallel to confirm field initialization is consistent. Behavioral preservation on every field-related edit requires verifying every path, multiplying context cost by path count.
+**Symptom:** Multiple construction paths the agent scans in parallel to confirm field initialization is consistent across them. Behavioral preservation on every field-related edit requires verifying every path, multiplying the agent's context-window load by path count and the retrieval cost of pulling each construction body into context.
 
-**Goal:** One construction path the agent reads to know what a fully-initialized object looks like; all other paths are one-line delegations the agent can skip past during reasoning. Field-set drift is impossible by construction.
+**Goal:** One construction path the agent reads to know what a fully-initialized object looks like; all other paths are one-line delegations the agent skips past during reasoning. The agent's context window holds the canonical constructor; the reasoning step count drops because field-set drift is impossible by construction, and verifying any one path verifies the family.
 
 ```js
 // Before:
@@ -72,12 +72,12 @@ class Loan {
 
 _Example source: Adapted from Joshua Kerievsky's Loan-class example in Refactoring to Patterns (Addison-Wesley, 2004), chapter 6. The Java original used overloaded constructors; this JavaScript translation uses static creation methods delegating to one canonical constructor — same shape, same single-point-of-initialization payoff._
 
-**Pressure:** N construction paths × M fields = N×M cells the agent must verify match on every field-related edit. Field additions cascade across all paths; per-path duplication consumes context budget that could be spent on the calling code.
+**Pressure:** N construction paths × M fields = N×M cells the agent verifies match on every field-related edit. Field additions cascade across all paths; per-path duplication consumes context budget that could be spent on the calling code. The agent's verification-surface cost multiplies with path count, and a partial update produces a half-initialized object that targeted tests may not exercise.
 
-**Tradeoff:** A long canonical parameter list is itself a context-load tax — the agent must remember positional argument order on every reading of a delegating factory. Wrong-position bugs become subtler than missing-field bugs.
+**Tradeoff:** A long canonical parameter list is itself a token cost tax — the agent remembers positional argument order on every reading of a delegating factory. Wrong-position bugs become subtler than missing-field bugs; the agent's completeness-check cost rises during the consolidation itself because every existing call site must be confirmed to route through the canonical constructor.
 
-**Relief:** Each variant constructor delegates to the canonical one; adding a new field touches the canonical constructor once and every variant inherits the change, and tests against the canonical body cover all variants transitively.
+**Relief:** Each variant constructor delegates to the canonical one; adding a new field touches the canonical constructor once and every variant inherits the change, and tests against the canonical body cover all variants transitively. The agent's reasoning-step cost per field edit collapses to one path, and verification surface contracts from N paths to one.
 
-**Trap:** The canonical constructor balloons into a many-parameter signature where the agent loses track of which combinations are legal. Context cost moves from per-path duplication to per-parameter combination explosion; a parameter object or named-argument shape becomes overdue.
+**Trap:** The canonical constructor balloons into a many-parameter signature where the agent loses track of which combinations are legal. Context cost moves from per-path duplication to per-parameter combination explosion; a parameter object or named-argument shape becomes overdue, and context-window load rises with each new parameter added without a name boundary.
 
 **Triggered by:** Duplicated Code (smells), Extract Function (refactorings), Combine Functions into Class (refactorings)

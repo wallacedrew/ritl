@@ -1,6 +1,6 @@
 ---
 name: encapsulate-classes-with-factory
-description: Apply Encapsulate Classes With Factory when you see Shotgun Surgery, Replace Constructor with Factory Function, Hide Delegate. One factory module the agent verifies once; all construction sites read as named factory calls the agent can treat opaquely.
+description: Apply Encapsulate Classes With Factory when you see Shotgun Surgery, Replace Constructor with Factory Function, Hide Delegate. One factory module the agent verifies once; all construction sites read as named factory calls the agent treats opaquely.
 ---
 
 # Apply: 69 — Encapsulate Classes With Factory
@@ -9,9 +9,9 @@ description: Apply Encapsulate Classes With Factory when you see Shotgun Surgery
 
 **Or decline first:** if you don't see a chain pointing at Encapsulate Classes With Factory, name the decline type — no chain, taste call, cost-benefit, constraint-blocked, or insufficient context.
 
-**Symptom:** Concrete subclass type names appear at every construction site the agent must scan. Renaming or restructuring a subclass requires the agent to enumerate every `new SubclassName(...)` call in scope and update each one; static type-name coupling is brittle across files.
+**Symptom:** Concrete subclass type names appear at every construction site the agent scans. Renaming or restructuring a subclass requires the agent to enumerate every `new SubclassName(...)` call in scope and update each one; static type-name coupling is brittle across files. The agent's context-window load doubles across every client file just to confirm subclass references are consistent.
 
-**Goal:** One factory module the agent verifies once; all construction sites read as named factory calls the agent can treat opaquely. Restructuring the hierarchy is a one-file diff verified locally.
+**Goal:** One factory module the agent verifies once; all construction sites read as named factory calls the agent treats opaquely. Restructuring the hierarchy is a one-file diff verified locally. The agent's context window holds only the factory and the calling code; the reasoning step count drops because the subclass taxonomy stays inside the factory.
 
 ```js
 // Before:
@@ -63,12 +63,12 @@ const loan3 = Loan.newAdvisedLine(75000, '2026-06-30');
 
 _Example source: Adapted from Joshua Kerievsky's Loan-hierarchy example in Refactoring to Patterns (Addison-Wesley, 2004), chapter 6. The Java original used package-private constructors and a public factory; this JavaScript translation relies on module-local class declarations to achieve the same hiding of concrete subclasses from clients._
 
-**Pressure:** Every client-side `new SubclassName(...)` couples the call site to the concrete identity. The agent must hold the subclass taxonomy in working context across many files just to verify construction sites are consistent with the hierarchy's current shape.
+**Pressure:** Every client-side `new SubclassName(...)` couples the call site to the concrete identity. The agent holds the subclass taxonomy in working context across many files just to verify construction sites are consistent with the hierarchy's current shape. The agent's retrieval cost across the client population multiplies with subclass count, and a partial rename produces a runtime construction error.
 
-**Tradeoff:** Factory methods are an extra indirection the agent must hop through to know what kind of object a call returns. Static call-graph analysis loses precision; the agent may need to read the factory body to determine which concrete type comes back from a given factory call.
+**Tradeoff:** Factory methods are an extra indirection the agent hops through to know what kind of object a call returns. Static call-graph analysis loses precision; the agent may need to read the factory body to determine which concrete type comes back from a given factory call. The agent's verification-surface cost rises for behaviors that depend on the concrete identity.
 
-**Relief:** The factory holds the construction recipe for every variant at one file; adding a subclass touches the factory plus the new class, and existing callers do not move because they reach for the factory's named methods rather than constructors.
+**Relief:** The factory holds the construction recipe for every variant at one file; adding a subclass touches the factory plus the new class, and existing callers do not move because they reach for the factory's named methods rather than constructors. The agent's completeness-check cost on hierarchy edits collapses from the client population to the factory itself.
 
-**Trap:** A factory with one method per subclass and no other logic just renames `new` to `factory.new`. Context cost rises by one definition layer without proportional reasoning gain; the encapsulation pays only when the factory can hide non-trivial creation choices.
+**Trap:** A factory with one method per subclass and no other logic just renames `new` to `factory.new`. The agent's token cost rises by one definition layer without proportional reasoning gain; the encapsulation pays only when the factory can hide non-trivial creation choices, and context-window load on the factory file adds without benefit.
 
 **Triggered by:** Shotgun Surgery (smells), Replace Constructor with Factory Function (refactorings), Hide Delegate (refactorings)

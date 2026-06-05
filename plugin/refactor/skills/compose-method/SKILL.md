@@ -1,6 +1,6 @@
 ---
 name: compose-method
-description: Apply Compose Method when you see Long Function, Extract Function, Replace Temp with Query. The method reads as a sequence of named operations the agent can verify against without re-deriving the algorithm.
+description: Apply Compose Method when you see Long Function, Extract Function, Replace Temp with Query. The method reads as a sequence of named operations the agent verifies against without re-deriving the algorithm.
 ---
 
 # Apply: 68 — Compose Method
@@ -9,9 +9,9 @@ description: Apply Compose Method when you see Long Function, Extract Function, 
 
 **Or decline first:** if you don't see a chain pointing at Compose Method, name the decline type — no chain, taste call, cost-benefit, constraint-blocked, or insufficient context.
 
-**Symptom:** A method whose body the agent must trace line-by-line to understand the algorithm; the high-level shape is obscured by interleaved details. Verifying behavior preservation requires re-reading the entire span on every edit.
+**Symptom:** A method whose body the agent traces line-by-line to understand the algorithm; the high-level shape is obscured by interleaved details. Verifying behavior preservation requires re-reading the entire span on every edit. The agent's context-window load carries the unstructured body, and the reasoning step count rises as the agent re-derives the structure on each read.
 
-**Goal:** The method reads as a sequence of named operations the agent can verify against without re-deriving the algorithm. Each helper is small enough to reason about in a single step.
+**Goal:** The method reads as a sequence of named operations the agent verifies against without re-deriving the algorithm. Each helper is small enough to reason about in a single reasoning step. The agent's context window holds the orchestrator and the relevant helper; the reasoning-step cost of any edit drops because the relevant unit is named.
 
 ```js
 // Before:
@@ -42,12 +42,12 @@ function add(item, quantity) {
 
 _Example source: Illustrative example written for this site, not a quotation from the book. The pattern itself is Joshua Kerievsky's, from Refactoring to Patterns (Addison-Wesley, 2004)._
 
-**Pressure:** Every edit re-loads the full method body to confirm behavior preservation. Chained orchestration changes compound context cost; reasoning about cross-step invariants gets harder as the method grows.
+**Pressure:** Every edit re-loads the full method body to confirm behavior preservation. Chained orchestration changes compound context cost; reasoning about cross-step invariants gets harder as the method grows. The agent's verification-surface cost multiplies with body length — verifying any single change requires scanning every other statement to confirm it didn't shift, and retrieval cost on chained edits compounds.
 
-**Tradeoff:** Each helper inflates context-window cost by one definition the next reasoning step must load. Over-decomposing fragments a single procedure across many files.
+**Tradeoff:** Each helper inflates the agent's context-window load by one definition the next reasoning step must load. Over-decomposing fragments a single procedure across many files. The agent's completeness-check cost rises during the decomposition itself — every reference to the body must be confirmed to route through the new helper rather than continuing to inline what's left.
 
-**Relief:** The composed method captures the algorithm as a list of named steps the agent reads at one indent; each helper has one signature and one body the agent verifies independently, and edits to one step do not need the others loaded.
+**Relief:** The composed method captures the algorithm as a list of named steps the agent reads at one indent; each helper has one signature and one body the agent verifies independently, and edits to one step do not need the others loaded. The agent's token cost per edit drops because the relevant unit is the helper, not the parent.
 
-**Trap:** A deeply-nested hierarchy of helpers where the agent must chase multiple definitions to understand a single original method — context cost multiplies and cross-helper invariants vanish from view.
+**Trap:** A deeply-nested hierarchy of helpers where the agent must chase multiple definitions to understand a single original method — context cost multiplies and cross-helper invariants vanish from view. The agent's retrieval cost across the call graph rises faster than the per-helper context-window load drops; tiny helpers cost more to assemble than to inline.
 
 **Triggered by:** Long Function (smells), Extract Function (refactorings), Replace Temp with Query (refactorings)
