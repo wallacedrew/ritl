@@ -26,10 +26,9 @@ export default function TheProblem() {
         token-cost frame (voice rubric, ADR-0005 → ADR-0006).
       </Typography>
       <Typography variant="body1">
-        The catalog covers around 140 entries across the three books. Six force fields per entry,
-        two actors, neutral facts-only voice. Hedge words (<em>can, may, might, tends to</em>) and
-        load-bearing abstract nouns (<em>complexity, coupling, coordination, ergonomics</em>) are
-        banned. A user-visible stake lands in every <em>pressure</em> and <em>trap</em>.
+        Hedge words (<em>can, may, might, tends to</em>) and load-bearing abstract nouns (
+        <em>complexity, coupling, coordination, ergonomics</em>) are banned. A user-visible stake
+        lands in every <em>pressure</em> and <em>trap</em>.
       </Typography>
       <Typography variant="body1">
         A reader who knows Fowler can look up <em>Mysterious Name</em> and see, in the same

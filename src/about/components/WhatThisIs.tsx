@@ -32,9 +32,26 @@ export default function WhatThisIs() {
         </SubSiteHoverBullet>
       </Stack>
       <Typography variant="body1">
-        The signature surface is the compare view. Every entry presents six paired force fields —
-        Symptom, Goal, Pressure, Tradeoff, Relief, Trap — for humans on one side and AI coding
-        agents on the other.
+        The signature surface is the compare view. Each entry sits in a two-column layout: the human
+        column on the left, the agent column on the right. Both columns carry the same six force
+        fields — Symptom, Goal, Pressure, Tradeoff, Relief, Trap — so any row reads as a direct
+        contrast. The names match Fowler, Kerievsky, or the Gang of Four; the agent row names a
+        token-cost or context-window mechanism for the same name.
+      </Typography>
+      <Typography variant="body1">
+        Entries cross-link by role. A smell links to the refactorings that relieve it; a refactoring
+        links to the smells it targets and to any composite refactoring or design pattern it
+        composes into. The catalog reads as a graph you can walk in either direction — from a
+        symptom to its remedy, or from a target shape back to the smells it resolves.
+      </Typography>
+      <Typography variant="body1">
+        Terms from LLM research — <em>context window</em>, <em>lost-in-the-middle</em>,{" "}
+        <em>token cost</em> — carry inline definitions throughout the catalog. Hover or tap any
+        underlined term to read the definition and its citation without leaving the entry.
+      </Typography>
+      <Typography variant="body1">
+        The catalog spans roughly 140 entries across the three books. Six force fields per entry,
+        two actors, neutral facts-only voice.
       </Typography>
     </AboutSection>
   );
