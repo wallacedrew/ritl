@@ -40,9 +40,9 @@ export default function WhatThisIs() {
       </Typography>
       <Typography variant="body1">
         Entries cross-link by role. A smell links to the refactorings that relieve it; a refactoring
-        links to the smells it targets and to any composite refactoring or design pattern it
-        composes into. The catalog reads as a graph you can walk in either direction — from a
-        symptom to its remedy, or from a target shape back to the smells it resolves.
+        links back to the smells it targets and to any composite refactoring or design pattern it
+        composes into. The catalog forms a bidirectional graph — symptom to remedy in one direction,
+        target shape back to smells in the other.
       </Typography>
       <Typography variant="body1">
         Terms from LLM research — <em>context window</em>, <em>lost-in-the-middle</em>,{" "}
@@ -51,7 +51,7 @@ export default function WhatThisIs() {
       </Typography>
       <Typography variant="body1">
         The catalog spans roughly 140 entries across the three books. Six force fields per entry,
-        two actors, neutral facts-only voice.
+        two actors per entry.
       </Typography>
     </AboutSection>
   );
