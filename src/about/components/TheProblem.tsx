@@ -14,8 +14,8 @@ export default function TheProblem() {
         says why each smell costs an agent something different from what it costs a person.
       </Typography>
       <Typography variant="body1">
-        Generic &ldquo;AI is bad at long files&rdquo; advice is slop. It names no mechanism, picks
-        no entry, gives no remedy.
+        Generic &ldquo;AI is bad at long files&rdquo; advice does no work. It names no mechanism,
+        picks no entry, gives no remedy.
       </Typography>
       <Typography variant="body1">
         When an LLM is the editor, the binding constraints shift to{" "}

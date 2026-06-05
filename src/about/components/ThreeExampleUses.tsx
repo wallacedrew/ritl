@@ -22,8 +22,8 @@ export default function ThreeExampleUses() {
       </Typography>
       <Typography variant="body1">
         <strong>Recognizing a smell the agent just produced.</strong> A fourth{" "}
-        <code>switch (kind)</code> block lands in the codebase and quietly breaks one of the older
-        three. Search for &ldquo;switch&rdquo;, land on <em>Repeated Switches</em>, and read the
+        <code>switch (kind)</code> block appears in the codebase and quietly breaks one of the older
+        three. Search for &ldquo;switch&rdquo;, open <em>Repeated Switches</em>, and read the
         human-side <em>symptom</em>. The agent-side <em>trap</em> lands the stake: adding a new case
         requires the agent to find and modify every site, and missing one ships a silent bug. The
         entry links to <em>Replace Conditional with Polymorphism</em>; the agent-side{" "}
