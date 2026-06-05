@@ -99,10 +99,10 @@
     ],
     "before": "function book(name, email, street, city, zip, depart, arrive, seat) {\n  // ...\n}",
     "after": "function book(traveler, address, trip) {\n  // ...\n}",
-    "exampleSource": "Illustrative example written for this site, not a quotation from any source.",
+    "exampleSource": "Illustrative example written for this site; the smell itself is catalogued in Martin Fowler's Refactoring (Addison-Wesley, 2018), see the chapter on Bad Smells in Code.",
     "forces": {
       "human": {
-        "symptom": "Functions taking five, six, or more parameters — especially when several travel together as a logical group. The signature stops communicating intent; readers learn which arguments belong together and what each one means by reading the function body or by trial and error at the call site. The reader's {{mental effort}} per call balloons with parameter count.",
+        "symptom": "Functions taking five, six, or more parameters — especially when several travel together as a logical group. The signature stops communicating intent; readers learn which arguments belong together and what each one means by reading the function body or by trial and error at the call site. The reader's {{mental effort}} per call scales with parameter count.",
         "goal": "Related parameters travel together as one well-named value object the function and its callers refer to by domain meaning. The signature becomes self-documenting at the call site; reviewers see the domain concept rather than a list of primitives they must compose mentally. The reader's {{comprehension cost}} per call drops to the size of the object's name.",
         "pressure": "Callers must remember argument order and meaning; refactoring has the {{blast radius}} of every call site. Adding a new parameter is a coordination exercise across the team — every caller pays {{verification cost}} to confirm the new argument lands in the right slot, and silent positional swaps escape review when the types coincidentally line up.",
         "tradeoff": "Introducing a parameter object adds a class the team must learn; if the bundle isn't meaningful as a concept, the type adds {{accidental complexity}} without clarity. The object's contract becomes the shared {{invariant}} every caller and callee rely on; if the bundle is wrong, the {{enhancement cost}} of adding parameter variations spikes.",

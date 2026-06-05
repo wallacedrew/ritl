@@ -9,9 +9,9 @@ description: Apply Prototype when you see Duplicated Code, Speculative Generalit
 
 **Or decline first:** if you don't see a chain pointing at Prototype, name the decline type — no chain, taste call, cost-benefit, constraint-blocked, or insufficient context.
 
-**Symptom:** N near-identical create methods the agent must scan in parallel to verify field-setting consistency. Adding a shared field requires the agent to find and update every method; missing one is a structurally-invisible bug the type checker doesn't see.
+**Symptom:** N near-identical create methods the agent scans in parallel to verify field-setting consistency. Adding a shared field requires the agent to find and update every method, multiplying the agent's retrieval cost by method count. A missed update escapes type-checker visibility because the shape contract is convention-only, not type-enforced.
 
-**Goal:** One prototype-registry table the agent reads once to enumerate every variant and its defaults. Cloning is a structural operation: the agent verifies clone() once, then trusts every per-variant change is data-only.
+**Goal:** One prototype-registry table the agent reads once to enumerate every variant and its defaults. Cloning is a structural operation: the agent verifies clone() once, then trusts every per-variant change is data-only. The agent's context window holds the registry and the clone implementation; the reasoning step count drops because variant shape is data the agent reads, not code it must analyze.
 
 ```js
 // Before:
@@ -66,12 +66,12 @@ function createShape(kind, x, y) {
 
 _Example source: Illustrative example written for this site in the spirit of Design Patterns (Gamma, Helm, Johnson, Vlissides, Addison-Wesley, 1994), chapter 3. The book's running example is a graphic editor's shape palette; this JavaScript adaptation keeps the registry-of-prototypes shape so adding a new shape variant is data, not a new createX method._
 
-**Pressure:** Field additions cascade across every create method; the agent's edit cost grows linearly with variant count. The shared-by-convention shape is invisible to static analysis; the agent must compare methods pairwise to be sure they stay in sync.
+**Pressure:** Field additions cascade across every create method; the agent's edit cost grows linearly with variant count. The shared-by-convention shape is invisible to static analysis; the agent must compare methods pairwise to be sure they stay in sync. The agent's verification-surface cost multiplies with variant count, and the context-window load of holding every method body in parallel saturates.
 
-**Tradeoff:** Shallow-clone aliasing bugs are the worst kind for the agent — symptoms appear far from the cause, in code that 'just reads a field'. Verifying clone semantics requires reasoning across the full clone graph; partial verification produces flaky-looking tests.
+**Tradeoff:** Shallow-clone aliasing bugs are the worst kind for the agent — symptoms appear far from the cause, in code that 'just reads a field'. Verifying clone semantics requires reasoning across the full clone graph; partial verification produces flaky-looking tests. The agent's completeness-check cost on clone correctness scales with the depth of the cloned graph.
 
-**Relief:** Adding a new variant is one new entry in the prototype registry; the clone operation works against every variant through the shared interface, and the agent reads one prototype's configuration to predict any clone's initial state.
+**Relief:** Adding a new variant is one new entry in the prototype registry; the clone operation works against every variant through the shared interface, and the agent reads one prototype's configuration to predict any clone's initial state. The agent's token cost per variant addition drops to the registry entry; existing call sites stay unchanged.
 
-**Trap:** Optional fields and conditional cloning logic accreting onto the prototype mask divergent variant shapes. The agent reading the registry sees a uniform table; the runtime sees branching behaviour that depends on which fields a prototype happens to have set. The structural promise the pattern made stops holding.
+**Trap:** Optional fields and conditional cloning logic accreting onto the prototype mask divergent variant shapes. The agent reading the registry sees a uniform table; the runtime sees branching behaviour that depends on which fields a prototype happens to have set. The structural promise the pattern made stops holding, and the reasoning-step cost of clone correctness rises with each conditional path.
 
 **Triggered by:** Duplicated Code (smells), Speculative Generality (smells), Replace Subclass with Delegate (refactorings)

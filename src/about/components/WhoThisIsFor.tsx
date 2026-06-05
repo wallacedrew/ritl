@@ -1,5 +1,5 @@
 import PersonIcon from "@mui/icons-material/Person";
-import PsychologyAltIcon from "@mui/icons-material/PsychologyAlt";
+import SchoolIcon from "@mui/icons-material/School";
 import SupervisorAccountIcon from "@mui/icons-material/SupervisorAccount";
 import Box from "@mui/material/Box";
 import Stack from "@mui/material/Stack";
@@ -33,7 +33,7 @@ export default function WhoThisIsFor() {
           </Typography>
         </Box>
         <Box component="li" sx={{ display: "flex", alignItems: "flex-start", gap: 1.5 }}>
-          <PsychologyAltIcon
+          <SchoolIcon
             aria-hidden
             sx={{ fontSize: 24, color: "text.secondary", mt: 0.25, flexShrink: 0 }}
           />

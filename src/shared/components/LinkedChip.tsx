@@ -23,7 +23,11 @@ export default function LinkedChip({ label, href, tone, sx }: LinkedChipProps) {
       label={label}
       size="small"
       clickable
-      sx={[tonedStyles, ...(Array.isArray(sx) ? sx : sx ? [sx] : [])]}
+      sx={[
+        tonedStyles,
+        { position: "relative", zIndex: 1 },
+        ...(Array.isArray(sx) ? sx : sx ? [sx] : []),
+      ]}
     />
   );
 }

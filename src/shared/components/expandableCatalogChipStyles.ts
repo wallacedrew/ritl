@@ -32,6 +32,8 @@ export function splitChipLabelSx(paletteKey: BadgePaletteKey): SxProps<Theme> {
     overflow: "hidden",
     textOverflow: "ellipsis",
     transition: "background-color 120ms",
+    position: "relative",
+    zIndex: 1,
     "&:hover": {
       backgroundColor: alpha(theme.palette[paletteKey].main, 0.08),
     },
@@ -49,6 +51,7 @@ export function splitChipDividerSx(paletteKey: BadgePaletteKey): SxProps<Theme> 
     height: "65%",
     backgroundColor: alpha(theme.palette[paletteKey].main, 0.4),
     flexShrink: 0,
+    pointerEvents: "none",
   });
 }
 
@@ -65,6 +68,8 @@ export function splitChipChevronSx(paletteKey: BadgePaletteKey): SxProps<Theme> 
     cursor: "pointer",
     flexShrink: 0,
     transition: "background-color 120ms",
+    position: "relative",
+    zIndex: 1,
     "&:hover": {
       backgroundColor: alpha(theme.palette[paletteKey].main, 0.08),
     },
