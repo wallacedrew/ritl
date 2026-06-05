@@ -10,9 +10,9 @@
         "symptom": "A function body that needs a mental outline before it can be read — multiple concerns interleaved, or chunks of statements that share a single domain purpose without a name. The reader's {{comprehension cost}} rises because every read reconstructs the outline; small edits to one concern require holding all the others in working memory.",
         "goal": "Each function reads as a single named domain step — what it does, not how. The calling code becomes a sequence of named intentions; readers verify the workflow at the top level and drill into helpers only when the named step's body is the point of interest, supporting {{separation of concerns}} at the procedural level.",
         "pressure": "Every reader pays the outline cost on every read; small edits to one concern require holding all the others in working memory, and PRs touch the same function for unrelated reasons. The team's {{verification cost}} compounds across reviewers who must re-derive the function's structure each time; merge conflicts collect at the same body.",
-        "tradeoff": "Over-eager extraction can produce a maze of one-line functions; aim for extractions that earn their name with at least one decision or transformation. The team's {{maintenance cost}} can rise rather than drop if the extractions don't carry domain meaning, because every helper becomes a name to find, load, and verify on every traversal.",
+        "tradeoff": "Over-eager extraction can produce a fan-out of one-line functions; aim for extractions that earn their name with at least one decision or transformation. The team's {{maintenance cost}} can rise rather than drop if the extractions don't carry domain meaning, because every helper becomes a name to find, load, and verify on every traversal.",
         "relief": "Calling code becomes a sequence of named intentions; bugs concentrate inside the now-named subroutines because the reader can localize the failure to one named step. The team's {{enhancement cost}} drops because adding a new step is one new function rather than a new branch inside an already-cluttered body, and tests target the helper directly.",
-        "trap": "A maze of one-line helpers where the workflow can no longer be read linearly — extraction that doesn't earn its name fragments the procedure into pieces too small to mean anything. The fan-out adds {{accidental complexity}} to the call graph; readers carry the {{cognitive load}} of jumping between trivial helpers to reconstruct the original procedure."
+        "trap": "Tiny one-line helpers where the workflow can no longer be read linearly — extraction that doesn't earn its name fragments the procedure into pieces too small to mean anything. The fan-out adds {{accidental complexity}} to the call graph; readers carry the {{cognitive load}} of jumping between trivial helpers to reconstruct the original procedure."
       },
       "agent": {
         "symptom": "A function whose {{token cost}} exceeds the agent's reliable chunk-reasoning budget; verifying behavior preservation requires re-reading the entire span on every edit. The {{context-window load}} of the unstructured body crowds out other reasoning, and the {{reasoning step}} count rises as the agent re-derives the function's internal structure on each read.",
@@ -387,11 +387,11 @@
     "forces": {
       "human": {
         "symptom": "Imperative for/while loops where filter, map, and reduce concerns are mixed by hand — the reader must mentally execute the body to learn what's being produced.",
-        "goal": "Filter / map / reduce expresses the transformation as a sequence of named operations; intent jumps off the page.",
+        "goal": "Filter / map / reduce expresses the transformation as a sequence of named operations; intent reads in domain language.",
         "pressure": "Off-by-one errors and accumulator bugs hide in the body and only surface at test time; intent is buried under the mechanism.",
         "tradeoff": "Pipelines add a tiny per-element function-call overhead — usually negligible, but profile if you're in a hot path.",
         "relief": "Off-by-one and accumulator bugs vanish; each step is independently testable.",
-        "trap": "Forcing every loop into a pipeline — including ones with early-exit, side-effect accumulators, or genuinely sequential dependencies — produces twisted .reduce() bodies harder to read than the original."
+        "trap": "Forcing every loop into a pipeline — including ones with early-exit, side-effect accumulators, or genuinely sequential dependencies — produces .reduce() bodies harder to read than the original."
       },
       "agent": {
         "symptom": "Imperative for/while loops where the agent must mentally execute the body to learn the result; the loop's purpose isn't readable from its shape.",
@@ -707,7 +707,7 @@
     "catalog": "refactorings",
     "name": "Remove Flag Argument",
     "nemeses": ["Long Parameter List"],
-    "before": "function setDimension(name, value) {\n  if (name === 'height') /* ... */\n  else if (name === 'width') /* ... */\n}",
+    "before": "function setDimension(name, value) {\n  if (name === 'height') { /* ... */ }\n  else if (name === 'width') { /* ... */ }\n}",
     "after": "function setHeight(value) { /* ... */ }\nfunction setWidth(value)  { /* ... */ }",
     "forces": {
       "human": {
@@ -1565,7 +1565,7 @@
         "goal": "A field declared identically in two or more subclasses moves to the shared superclass.",
         "pressure": "The shared field's type and default are duplicated; refactoring its shape means touching every subclass; the field's true ownership is muddy.",
         "tradeoff": "Pulling up a field that subclasses use differently (different default, different visibility) creates surprise — verify the field semantics are identical.",
-        "relief": "One source of truth for the field's type and default; subclasses focus on what they actually specialize.",
+        "relief": "One canonical declaration of the field's type and default; subclasses focus on what they actually specialize.",
         "trap": "Pulling up a field that subclasses use differently — different defaults, different visibility, different semantic role — creates surprises where the shared declaration masks divergent uses."
       },
       "agent": {
@@ -1678,7 +1678,7 @@
       "human": {
         "symptom": "Multiple ways to construct an object — overloaded constructors, factory methods, copy helpers — each repeat field assignments, defaults, and validation. Adding a new field forces edits in every construction path, and a field missed in one path silently produces partly-initialized objects. The team's {{verification cost}} compounds across paths no test inspects together.",
         "goal": "A single canonical constructor owns all field assignment and validation. Every other construction path is a one-line delegation that supplies the variant-specific arguments. Adding a new field is a one-place change; the team's {{enhancement cost}} drops from N parallel edits to one, and {{separation of concerns}} between construction-as-orchestration and construction-as-initialization becomes structural.",
-        "pressure": "Constructor duplication is Shotgun Surgery in the worst place — the field set of a class. Each new variant adds a parallel copy of the initialization rules; subtle divergence between paths is easy to miss in review and easy to ship to production unnoticed. The team's {{maintenance cost}} compounds across every variant that has its own way to forget a field.",
+        "pressure": "Constructor duplication is Shotgun Surgery on the field set of a class. Each new variant adds a parallel copy of the initialization rules; subtle divergence between paths is easy to miss in review and easy to ship to production unnoticed. The team's {{maintenance cost}} compounds across every variant that has its own way to forget a field.",
         "tradeoff": "Chaining couples every construction path to the canonical constructor's parameter list, and that list grows as variants accumulate. Call sites pass null or default sentinels for parameters that don't apply to their variant, eroding intention-revealing names at the call site. The {{cognitive load}} of decoding which parameter applies to which variant rises with the signature's length.",
         "relief": "One place to read what 'constructing a Loan' means; new fields land in one constructor; each variant reads as the parameters it cares about. Validation runs once per construction, not once per path. The team's {{comprehension cost}} per construction site drops because the canonical body is the only authority, and review focuses on the variant-specific argument list.",
         "trap": "The canonical constructor degenerates into a long-parameter-list monster as variants accumulate. Readers no longer know which parameters matter for which variant, and the centralization stops paying — at that point Replace Constructors With Creation Methods or a parameter object becomes the next move. The cure adds {{accidental complexity}} when the canonical signature grows beyond what the variant set justifies."
@@ -2788,7 +2788,7 @@
     "exampleSource": "Illustrative example written for this site, faithful to Kerievsky's pattern shape in Refactoring to Patterns (Addison-Wesley, 2004), chapter 6. Distinct from Unify Interfaces With Adapter (#26): that pattern is for when you cannot edit one of the classes (typically a vendor); Unify Interfaces is for when both classes are yours and the divergence is accidental.",
     "forces": {
       "human": {
-        "symptom": "Two or more classes in your own codebase do similar work but use different method names, parameter shapes, or return types for the same operation. The divergence is accidental — they were written at different times by different people — not intrinsic to what they do. Callers can't treat them uniformly; tests for each one duplicate setup; cross-class refactoring requires synchronized edits.",
+        "symptom": "Two or more classes in the codebase do similar work but use different method names, parameter shapes, or return types for the same operation. The divergence is accidental — they were written at different times by different people. Callers can't treat them uniformly; tests for each one duplicate setup; cross-class refactoring requires synchronized edits.",
         "goal": "All variants share one method-name vocabulary for the same operations. Callers operate against either interchangeably; tests can share helpers; future variants land with the same vocabulary.",
         "pressure": "Accidental interface divergence is a tax on every consumer that handles both. The divergence often grew from copy-paste with renames; each rename created another inconsistency to navigate. Reviewers and agents must remember which class uses which name.",
         "tradeoff": "Renaming methods is a wide ripple — every call site moves. For classes with public APIs or vendor consumers, the breaking-change cost may exceed the consistency gain. Sometimes a single adapter call site is cheaper than a rename across N consumers.",

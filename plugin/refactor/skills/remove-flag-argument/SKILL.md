@@ -16,8 +16,8 @@ description: Apply Remove Flag Argument when you see Long Parameter List. Each f
 ```js
 // Avoid:
 function setDimension(name, value) {
-  if (name === 'height') /* ... */
-  else if (name === 'width') /* ... */
+  if (name === 'height') { /* ... */ }
+  else if (name === 'width') { /* ... */ }
 }
 
 // Prefer:

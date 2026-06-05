@@ -20,7 +20,7 @@ describe("user reads a refactoring detail with smell cross-links", () => {
     const duplicatedCodeLink = screen.getByRole("link", { name: "Duplicated Code" });
     expect(duplicatedCodeLink).toHaveAttribute("href", "/refactoring/smells/duplicated-code");
 
-    expect(screen.getByText(/maze of one-line functions/i)).toBeInTheDocument();
+    expect(screen.getByText(/fan-out of one-line functions/i)).toBeInTheDocument();
     expect(screen.getByText(/single named domain step/i)).toBeInTheDocument();
     expect(screen.getByText(/named subroutines/i)).toBeInTheDocument();
     // Code is rendered through prism-react-renderer which tokenizes into

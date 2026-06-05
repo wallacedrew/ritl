@@ -72,7 +72,7 @@
         "pressure": "Each line is an opportunity for the reader to lose context; understanding the whole function at once raises {{cognitive load}} with every added line. Bugs sneak in where one concern's state collides with another's — and reviewers ship the merge because the function's signature gave them no way to see which lines belonged to which concern.",
         "tradeoff": "Splitting introduces a navigation cost — readers gain named outlines but pay function-jump hops to follow the implementation. The wrong granularity buys clutter without comprehension; the right granularity makes the workflow visible at signature level while leaving the per-step logic inside each helper. The team's {{verification cost}} drops only when the names earn their keep.",
         "relief": "Faster to read, easier to test, simpler to change one step without touching the others. The team's {{debugging cost}} drops because the failing concern is named at the call site; each helper's contract is independently testable, so a regression in one step doesn't require re-verifying the whole procedure.",
-        "trap": "A maze of one-line helpers where the workflow can no longer be read linearly — extraction without earning a name introduces {{accidental complexity}} by fragmenting the procedure into pieces too small to mean anything. The reader pays the function-jump cost on every line while gaining nothing in {{comprehension cost}}."
+        "trap": "A fan-out of one-line helpers where the workflow can no longer be read linearly — extraction without earning a name introduces {{accidental complexity}} by fragmenting the procedure into pieces too small to mean anything. The reader pays the function-jump cost on every line while gaining nothing in {{comprehension cost}}."
       },
       "agent": {
         "symptom": "The function's body has more {{tokens}} than the agent can hold in one {{reasoning step}}; verifying behavior preservation means re-reading the entire body on every edit. Long bodies push the agent into chained reasoning passes where each pass re-establishes the parts of the procedure relevant to the current edit, paying full {{context-window load}} every time.",
@@ -352,8 +352,8 @@
         "goal": "The transformation reads as a sequence of named operations: filter, map, reduce.",
         "pressure": "Reader must mentally execute the loop to learn the result; off-by-one errors and accumulator bugs hide in the body.",
         "tradeoff": "Pipelines (filter/map/reduce) introduce per-element function-call overhead and force the reader to track intermediate collection shapes; in tight loops the overhead is real.",
-        "relief": "Intent jumps off the page; bugs concentrate on individual steps that are independently testable.",
-        "trap": "Forcing every loop into a pipeline — including loops with early-exit, accumulator-with-side-effects, or genuinely sequential dependencies — produces twisted .reduce() bodies that are harder to read than the original."
+        "relief": "Intent reads in domain language; bugs concentrate on individual steps that are independently testable.",
+        "trap": "Forcing every loop into a pipeline — including loops with early-exit, accumulator-with-side-effects, or genuinely sequential dependencies — produces .reduce() bodies that are harder to read than the original."
       },
       "agent": {
         "symptom": "Imperative for/while loops where filter, map, and reduce concerns are mixed by hand; the agent cannot tell what the loop is producing without mentally executing it.",
@@ -655,7 +655,7 @@
         "goal": "Names of functions, variables, and types tell the reader what the comment was trying to say. Comments survive only when WHY is non-obvious.",
         "pressure": "The code didn't reveal its intent — the comment is patching an unnamed function or unclear variable; comment and code drift over time.",
         "tradeoff": "Renaming to express what a comment said increases churn across consumers and history; some legitimate comments (non-obvious WHY, hidden invariants, workaround references) are harder to convey through names alone.",
-        "relief": "No more stale comments; readers trust names; the code is the documentation.",
+        "relief": "No more stale comments; readers trust names; reading the code is the path to the answer.",
         "trap": "Deleting every comment as part of a cleanup pass — including ones that document hidden constraints, historical context, or invariants that names genuinely can't express."
       },
       "agent": {
