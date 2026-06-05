@@ -40,7 +40,10 @@ The house voice belongs to the **catalog-register family** — the same lineage 
 - Third person about the site, the catalog, the reader's peers (developers, tech leads, self-taught builders).
 - No first-person plural — no "we built X," no "our catalog." The site is described, not narrated by its maker.
 - No second-person calls to action — no "learn how," no "discover," no "supercharge."
-- Direct second person ("hover any underlined term to read the definition") permitted only when the reader's literal next action is being described.
+- Direct second person is permitted in two narrow cases:
+  - **Instructional** — describing the reader's literal next action ("hover any underlined term to read the definition"). Permitted on any surface.
+  - **Identifying** — naming the reader on an audience-fit surface ("You are a tech lead writing AI coding standards"). Permitted on _Who this is for_ sections, persona checklists, and anywhere the reader is genuinely being asked "is this you?" — not for general descriptive prose elsewhere on the page.
+- Neither form of second person is permitted as marketing CTA. "Discover," "unlock," "supercharge," "level up" remain banned regardless of grammatical person.
 - Present-declarative mood throughout. No future-conditional marketing tense ("you'll be able to…").
 
 ### Affordances
