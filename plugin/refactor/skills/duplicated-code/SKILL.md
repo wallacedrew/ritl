@@ -28,7 +28,7 @@ function lineTotal(items) {
 }
 ```
 
-**Pressure:** The agent edits only the copy currently in its context window; copies outside the window stay unread and ship stale behind unit tests that test only the edited copy. The user receives correct behavior on the code path the edit covered and stale behavior everywhere else — a silent partial fix shipped as a complete one.
+**Pressure:** The agent edits only the copy currently in its context window; copies outside the window stay unread, so the agent's completeness-check cost spans the full duplicate population while only the edited copy gets verified. The user receives correct behavior on the path the edit covered and stale behavior everywhere else — a silent partial fix shipped as complete.
 
 **Tradeoff:** Replaces N copies of the same code with one shared definition the agent reads once; if the abstraction is wrong, every exception ships as a branch the agent has to load — extra token cost at every call site. Wrong abstractions inflate the per-call reasoning step count and reintroduce the partial-fix risk the deduplication was meant to remove.
 

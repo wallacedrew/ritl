@@ -50,7 +50,7 @@ class HttpRequestBuilder {
 
 _Example source: Illustrative example written for this site in the spirit of Design Patterns (Gamma, Helm, Johnson, Vlissides, Addison-Wesley, 1994), chapter 3. The book's running example is a maze builder; this JavaScript adaptation uses HTTP request construction to show the same step-by-step assembly with named, optional inputs and a single terminating build() that produces the immutable product._
 
-**Pressure:** Positional argument lists are the worst-case input shape for context budget — the agent holds the parameter order in context while reading every call. Mis-aligned arguments produce type-compatible bugs the compiler does not catch, exactly the bug class that demands the most verification effort. The agent's verification-surface cost multiplies with parameter count.
+**Pressure:** Positional argument lists are the worst-case input shape for context budget — the agent holds the parameter order in context while reading every call. Mis-aligned arguments produce type-compatible bugs that escape type-checker visibility, exactly the bug class that demands the most verification effort. The agent's verification-surface cost multiplies with parameter count.
 
 **Tradeoff:** The builder's chainable method set is a second surface the agent reads alongside the product itself; tests cover construction paths separately from product behaviour, so the agent traces any regression through two surfaces instead of one. The agent's completeness-check cost rises during the migration itself as every existing constructor call must be confirmed to route through the builder.
 

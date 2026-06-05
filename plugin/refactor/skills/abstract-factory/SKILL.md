@@ -52,6 +52,6 @@ _Example source: Illustrative example written for this site in the spirit of Des
 
 **Relief:** Adding a new family of products is one new factory implementation; the type checker confirms every factory produces the full family. The agent's token cost per family addition drops because the existing call-site population stays unchanged, and type-checker visibility of missing methods catches partial updates at compile time rather than runtime.
 
-**Trap:** Factory interface bloat — over many edits the agent cannot enumerate which products are still in use. Dead factory methods accumulate; cleanup requires touching every concrete factory in lockstep, exactly the cross-cutting edit the pattern was supposed to eliminate. Context-window load on the interface file grows monotonically as the product set drifts.
+**Trap:** The factory interface accretes product methods over time — over many edits the agent cannot enumerate which products are still in use. Dead factory methods accumulate; cleanup requires touching every concrete factory in lockstep, exactly the cross-cutting edit the pattern was supposed to eliminate. Context-window load on the interface file grows monotonically as the product set drifts.
 
 **Triggered by:** Shotgun Surgery (smells), Repeated Switches (smells), Replace Constructor with Factory Function (refactorings)

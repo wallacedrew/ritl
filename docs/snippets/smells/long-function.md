@@ -31,7 +31,7 @@ function ship(order) {
 }
 ```
 
-**Pressure:** Every edit pays the full context-window load of re-reading the body; chained edits raise the chance of missing a cross-statement invariant. The agent ships an edit that satisfies the part of the function it focused on while breaking a cross-statement invariant elsewhere in the body — a partial fix that passes the targeted test and silently breaks an adjacent one.
+**Pressure:** Every edit pays the full context-window load of re-reading the body; chained edits raise the chance of missing a cross-statement invariant. The agent's completeness-check cost multiplies across statements the edit didn't touch — an edit that satisfies the part of the function it focused on while breaking an adjacent invariant ships as a partial fix that passes the targeted test.
 
 **Tradeoff:** Splitting inflates context-window load — the agent now loads N function definitions to follow what was once one body. Worth it when the outline is clearer than the linear body; not worth it when the helpers fragment the procedure into pieces that demand more reasoning-step cost to assemble than the original body did to read.
 

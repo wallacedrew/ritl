@@ -78,6 +78,6 @@ _Example source: Adapted from Joshua Kerievsky's Loan-class example in Refactori
 
 **Relief:** Each variant constructor delegates to the canonical one; adding a new field touches the canonical constructor once and every variant inherits the change, and tests against the canonical body cover all variants transitively. The agent's reasoning-step cost per field edit collapses to one path, and verification surface contracts from N paths to one.
 
-**Trap:** The canonical constructor balloons into a many-parameter signature where the agent loses track of which combinations are legal. Context cost moves from per-path duplication to per-parameter combination explosion; a parameter object or named-argument shape becomes overdue, and context-window load rises with each new parameter added without a name boundary.
+**Trap:** The canonical constructor grows into a many-parameter signature where the agent loses track of which combinations are legal. Context cost moves from per-path duplication to per-parameter combination explosion; a parameter object or named-argument shape becomes overdue, and context-window load rises with each new parameter added without a name boundary.
 
 **Triggered by:** Duplicated Code (smells), Extract Function (refactorings), Combine Functions into Class (refactorings)

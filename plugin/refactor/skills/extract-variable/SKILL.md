@@ -29,6 +29,6 @@ if (basePrice - bulkDiscount > 1000) { /* ... */ }
 
 **Relief:** Subsequent reads of the value pay one token of name instead of re-evaluating the expression at every use; the binding's definition site is the only place the expression appears. The agent's reasoning step on downstream edits operates on the name as an opaque token, and verification surface contracts to the binding rather than the expanded calculation.
 
-**Trap:** Extracting every sub-expression — including ones already obvious — bloats the agent's scope table with names that document nothing the agent didn't already know. Context-window load rises with one-shot bindings the agent reads to confirm they aren't load-bearing, and the scope-table navigation cost exceeds the per-reference token cost the extraction was meant to save.
+**Trap:** Extracting every sub-expression — including ones already obvious — inflates the agent's scope table with names that document nothing the agent didn't already know. Context-window load rises with one-shot bindings the agent reads to confirm they aren't load-bearing, and the scope-table navigation cost exceeds the per-reference token cost the extraction was meant to save.
 
 **Removes smells:** Mysterious Name, Comments
