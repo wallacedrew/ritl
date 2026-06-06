@@ -41,7 +41,7 @@ describe("buildCatalogDetailCore", () => {
       afterLabel: "Fresher version",
     });
 
-    expect(core.humanHref).toBe("/refactoring/smells/long-function");
+    expect(core.humanHref).toBe("/refactoring/smells/long-function/human");
     expect(core.agentHref).toBe("/refactoring/smells/long-function/agent");
     expect(core.compareHref).toBe("/refactoring/smells/long-function/compare");
     expect(core.snippetHref).toBe("/snippets/smells/long-function.md");

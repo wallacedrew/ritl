@@ -17,7 +17,7 @@ describe("user reads the agent view of a smell", () => {
     expect(screen.getByText(/recovering meaning/i)).toBeInTheDocument();
 
     const backToHuman = screen.getByRole("link", { name: "Human" });
-    expect(backToHuman).toHaveAttribute("href", "/refactoring/smells/mysterious-name");
+    expect(backToHuman).toHaveAttribute("href", "/refactoring/smells/mysterious-name/human");
 
     const toCompare = screen.getByRole("link", { name: "Compare" });
     expect(toCompare).toHaveAttribute("href", "/refactoring/smells/mysterious-name/compare");

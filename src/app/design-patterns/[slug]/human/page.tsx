@@ -1,4 +1,4 @@
-import PatternsComparePage from "@/design-patterns/PatternsComparePage";
+import PatternsDetailPage from "@/design-patterns/PatternsDetailPage";
 import { patternsStaticParams } from "@/design-patterns/lib/patternsStaticParams";
 
 interface RouteProps {
@@ -6,7 +6,7 @@ interface RouteProps {
 }
 
 export default async function Page({ params }: RouteProps) {
-  return PatternsComparePage({ params });
+  return PatternsDetailPage({ params });
 }
 
 export function generateStaticParams() {

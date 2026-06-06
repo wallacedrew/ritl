@@ -1,1 +1,1 @@
-export { default, generateStaticParams } from "@/refactorings/RefactoringDetailPage";
+export { default, generateStaticParams } from "@/refactorings/RefactoringComparePage";

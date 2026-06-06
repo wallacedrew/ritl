@@ -74,7 +74,7 @@ export function buildCatalogDetailCore(args: CatalogDetailCoreArgs): CatalogDeta
       inboundPatternNames,
       neighbors,
     }),
-    humanHref: entry.href(),
+    humanHref: entry.humanHref(),
     agentHref: entry.agentHref(),
     compareHref: entry.compareHref(),
     snippetHref: entry.name.toSnippetHref(),

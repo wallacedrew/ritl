@@ -84,7 +84,7 @@ describe("toPatternDetailViewModel", () => {
       neighbors,
     });
 
-    expect(viewModel.humanHref).toBe("/design-patterns/strategy");
+    expect(viewModel.humanHref).toBe("/design-patterns/strategy/human");
     expect(viewModel.agentHref).toBe("/design-patterns/strategy/agent");
     expect(viewModel.compareHref).toBe("/design-patterns/strategy/compare");
     expect(viewModel.snippetHref).toBe("/snippets/design-patterns/strategy.md");

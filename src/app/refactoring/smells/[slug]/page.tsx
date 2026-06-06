@@ -1,1 +1,1 @@
-export { default, generateStaticParams } from "@/smells/SmellDetailPage";
+export { default, generateStaticParams } from "@/smells/SmellComparePage";

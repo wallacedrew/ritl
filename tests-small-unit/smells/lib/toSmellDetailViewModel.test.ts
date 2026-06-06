@@ -45,7 +45,7 @@ describe("toSmellDetailViewModel", () => {
       neighbors,
     });
 
-    expect(viewModel.humanHref).toBe("/refactoring/smells/long-function");
+    expect(viewModel.humanHref).toBe("/refactoring/smells/long-function/human");
     expect(viewModel.agentHref).toBe("/refactoring/smells/long-function/agent");
     expect(viewModel.compareHref).toBe("/refactoring/smells/long-function/compare");
     expect(viewModel.snippetHref).toBe("/snippets/smells/long-function.md");

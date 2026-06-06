@@ -138,6 +138,10 @@ export class CatalogEntry implements Readonly<CatalogEntryProps> {
     return this.name.toCatalogHref();
   }
 
+  humanHref(): string {
+    return `${this.href()}/human`;
+  }
+
   agentHref(): string {
     return `${this.href()}/agent`;
   }

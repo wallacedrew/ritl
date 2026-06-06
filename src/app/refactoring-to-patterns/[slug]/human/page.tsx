@@ -1,4 +1,4 @@
-import RefactoringComparePage from "@/refactorings/RefactoringComparePage";
+import RefactoringDetailPage from "@/refactorings/RefactoringDetailPage";
 import { refactoringStaticParams } from "@/refactorings/lib/refactoringStaticParams";
 
 interface RouteProps {
@@ -6,7 +6,7 @@ interface RouteProps {
 }
 
 export default async function Page({ params }: RouteProps) {
-  return RefactoringComparePage({ params, book: "kerievsky" });
+  return RefactoringDetailPage({ params, book: "kerievsky" });
 }
 
 export function generateStaticParams() {

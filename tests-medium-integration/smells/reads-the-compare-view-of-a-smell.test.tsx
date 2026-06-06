@@ -26,7 +26,7 @@ describe("user reads the compare view of a smell", () => {
 
     // Cross-lens nav: Human and Agent are links; Compare is plain text (current view)
     const toHuman = screen.getByRole("link", { name: "Human" });
-    expect(toHuman).toHaveAttribute("href", "/refactoring/smells/mysterious-name");
+    expect(toHuman).toHaveAttribute("href", "/refactoring/smells/mysterious-name/human");
 
     const toAgent = screen.getByRole("link", { name: "Agent" });
     expect(toAgent).toHaveAttribute("href", "/refactoring/smells/mysterious-name/agent");
