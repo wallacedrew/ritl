@@ -9,7 +9,9 @@ The full refactoring audit, end to end. Follow the five steps in order; each ste
 
 ## 1. Sense the smell
 
-Read the code in context. Match what you see against the 24 known smells in this plugin: long-function, mysterious-name, duplicated-code, long-parameter-list, global-data, mutable-data, divergent-change, shotgun-surgery, feature-envy, data-clumps, primitive-obsession, repeated-switches, loops, lazy-element, speculative-generality, temporary-field, message-chains, middle-man, insider-trading, large-class, alternative-classes-with-different-interfaces, data-class, refused-bequest, comments. Each smell's description names its trigger.
+**Scan the target comprehensively.** Walk every variable, function signature, block, file, function, class, and method. For each one, check fan-in (who calls or reads it) and fan-out (what it calls or depends on). Some smells show only from one angle — Feature Envy from a method's fan-out, Shotgun Surgery from a concept's fan-in across files, Mysterious Name from a confused call site, Divergent Change from a file's fan-in concentrating multiple reasons-to-change. A glance misses these; the comprehensive scan finds them.
+
+Match what you see against the 24 known smells in this plugin: long-function, mysterious-name, duplicated-code, long-parameter-list, global-data, mutable-data, divergent-change, shotgun-surgery, feature-envy, data-clumps, primitive-obsession, repeated-switches, loops, lazy-element, speculative-generality, temporary-field, message-chains, middle-man, insider-trading, large-class, alternative-classes-with-different-interfaces, data-class, refused-bequest, comments. Each smell's description names its trigger.
 
 Pick the strongest match. If multiple smells apply, prefer the one whose recommended refactorings are smallest first — easier moves expose more shape.
 
@@ -20,6 +22,21 @@ If nothing matches a named smell, say so. Don't invent a refactoring name for an
 Pinpoint the exact code: file path + line range. State both explicitly in your reply so the user can follow. The smell skill's "trigger" line tells you what shape to look for; the file + line range tells the user where.
 
 If the smell appears in multiple places, pick the one with the fewest external dependencies and refactor it first. Repeat for the others if the user wants.
+
+## 2a. Map smells to a decision table
+
+Before writing any safety-net tests or applying any refactoring, summarize the audit as a decision table. One row per detected smell. The table commits the audit to a plan the user can argue with before any code changes.
+
+| Smell | Proposed refactoring(s) | Decision | Rationale |
+| ----- | ----------------------- | -------- | --------- |
+| Long Function | Extract Function; Split Phase | accept | Three phases in one body; parse phase extracts cleanly. |
+| Mysterious Name | Rename Function | accept | Body required to decode `calc`. Single call site, low blast radius. |
+| Primitive Obsession | Replace Primitive with Object | decline — cost-benefit | 14 call sites for a 3-line clarification. Cost > value here. |
+| Speculative Generality | Remove Dead Code | decline — insufficient context | Can't tell from this file whether the `factory` param is used downstream. Asking before removing. |
+
+Decisions use the decline vocabulary from Step 4a (catalog miss / taste / cost-benefit / constraint-blocked / insufficient context) or `accept`. Each `decline — *` row is arguable in the specific way Step 4a names; each `accept` row commits to safety-net + refactoring in Steps 3–5.
+
+State the table explicitly in your reply. The user can argue any row before you continue. If no objection lands, proceed to Step 3 with the accepted rows only.
 
 ## 3. Establish a safety net
 
