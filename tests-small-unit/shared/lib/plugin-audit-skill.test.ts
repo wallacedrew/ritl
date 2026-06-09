@@ -38,12 +38,13 @@ describe("refactor:audit orchestrator skill", () => {
     expect(description).not.toMatch(/: /);
   });
 
-  it("walks Claude through the five audit sections in order", () => {
-    expect(skill).toMatch(/^## 1\. Sense the smell$/m);
-    expect(skill).toMatch(/^## 2\. Identify the source$/m);
-    expect(skill).toMatch(/^## 3\. Establish a safety net$/m);
-    expect(skill).toMatch(/^## 4\. Apply the matching refactoring$/m);
+  it("walks Claude through the six audit phases in order", () => {
+    expect(skill).toMatch(/^## 1\. Sense the smells$/m);
+    expect(skill).toMatch(/^## 2\. Build \(or update\) the table$/m);
+    expect(skill).toMatch(/^## 3\. Establish a safety net for the next on the list$/m);
+    expect(skill).toMatch(/^## 4\. Apply next on the list$/m);
     expect(skill).toMatch(/^## 5\. Stay green$/m);
+    expect(skill).toMatch(/^## 6\. Re-sense$/m);
   });
 
   it("delegates safety-net + green-loop discipline to existing tdd / tcr skills by name", () => {
