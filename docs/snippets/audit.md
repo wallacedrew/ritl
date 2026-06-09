@@ -27,7 +27,7 @@ If nothing matches a named smell, say so. Don't invent a refactoring name for an
 
 **Pinpoint the exact code:** file path + line range for each detected smell. State the locations explicitly in your reply so the user can follow. The smell skill's "trigger" line tells you what shape to look for; the file + line range tells the user where. If the same smell appears in multiple places, list each instance as its own table row — the locations carry into the table's rationale.
 
-## 2. Build (or update) the table
+## 2. Build (or update and redisplay) the table
 
 Before writing any safety-net tests or applying any refactoring, summarize the audit as a decision table. One row per detected smell, grouped by target move. The table commits the audit to a plan the user can argue with before any code changes.
 

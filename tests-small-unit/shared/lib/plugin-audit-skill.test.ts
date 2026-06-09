@@ -40,7 +40,7 @@ describe("refactor:audit orchestrator skill", () => {
 
   it("walks Claude through the six audit phases in order", () => {
     expect(skill).toMatch(/^## 1\. Sense the smells$/m);
-    expect(skill).toMatch(/^## 2\. Build \(or update\) the table$/m);
+    expect(skill).toMatch(/^## 2\. Build \(or update and redisplay\) the table$/m);
     expect(skill).toMatch(/^## 3\. Establish a safety net for the next on the list$/m);
     expect(skill).toMatch(/^## 4\. Apply next on the list$/m);
     expect(skill).toMatch(/^## 5\. Stay green$/m);
