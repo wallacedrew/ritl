@@ -11,6 +11,18 @@ The audit runs a six-phase loop: **sense → table (or update the table) → saf
 
 Follow the seven steps in order; each step has to land before the next.
 
+**Deviation declaration.** If at any point you are tempted to bundle, skip, or compress a step — even when the rule's purpose appears already satisfied — stop, write `DEVIATION:` plus the rule you are about to skip and the reasoning, and wait for the human to confirm or veto. Silent shortcuts substitute prediction for procedure, and the audit's signal value depends on the procedure running unmodified. The human can grant a deviation; you cannot grant one to yourself.
+
+Common shortcuts the agent reaches for, each of which is a DEVIATION rather than a judgment call:
+
+- "These Groups are tightly coupled; one re-sense after the whole cluster will do." — Coupling is a prediction about what re-sense will find. Run the re-sense.
+- "The previous round's scan already covered this body." — Round N's signal lives in what Round N-1 missed. Trusting Round N-1 defeats Round N.
+- "I can tell this row will decline; no need to populate it." — Sense is inventory, not evaluation. The decline belongs in Step 2, not in the agent's head.
+- "Sketching is overkill for this one." — The sketch is what makes the decline arguable. Without it, "cost > value" is unfalsifiable.
+- "I'll combine the closing report instead of re-sensing per Group." — The closing report describes what the procedure produced; it is not a substitute for running the procedure.
+
+If any of these thoughts appear, the rule is: write `DEVIATION:` + the step + the reasoning + stop.
+
 ## 1. Sense the smells
 
 **Declare the scope.** Name the target the scan applies to — a function, a file, a module, a feature, a directory tree. If the user pointed at code, use that. If the invocation was ambiguous ("audit this"), pick the most likely scope (the most recently edited file, the function in focus) and state both the scope and the reason — the user corrects on the next turn if the guess was wrong. "Comprehensive" against an entire codebase is dishonest; "comprehensive within the declared scope" is achievable.
@@ -100,6 +112,8 @@ Each refactoring skill in this plugin has the same shape — a target state, a w
 
 Apply one refactoring at a time. Don't chain three together in one commit; each is its own micro-step. Run the test suite after each.
 
+**Pre-declare the apply→re-sense cadence before starting.** Before applying the first Group, write down every remaining accepted Group with its paired re-sense step immediately after it — as TODOs, tasks, or an explicit list in the reply. The structure is `apply Group N → green-check → re-sense → apply Group N+1`, never `apply Group N → apply Group N+1 → ... → re-sense once at the end`. Bundling re-senses across coupled Groups is a DEVIATION (see the top of this skill); the pre-declared list makes the bundling structurally visible if it happens.
+
 ## 5. Stay green
 
 After the refactoring, run the full test suite. Three outcomes:
@@ -117,6 +131,8 @@ When in doubt, smaller steps. A 5-line refactoring that lands green is worth mor
 A refactoring that lands green changes the target. Re-sense walks all 24 smells against the post-refactor body **as if you'd never seen it** — not as a diff against the previous round's table. The pass is looking for two things: smells newly exposed by what was just removed, AND smells the initial scan missed that the smaller body now makes visible.
 
 **The discipline is absolute, not relative.** Do not measure the current body against the previous round's shape. "Shorter than before," "cleaner than before," "we already extracted X" are not termination signals — they are progress reports. The signal is presence vs. absence: does each of the 24 smells trigger on the body in front of you now?
+
+**Re-sense after every Group, not after the cluster.** Even when two or more Groups in the table look tightly coupled — Group B consumes Group A's output, Group C consumes Group B's — each one earns its own re-sense before the next Apply begins. The temptation to bundle ("re-sensing between coupled groups will find nothing new") is itself the signal that re-sense is needed: bundling substitutes prediction for procedure, and the audit's signal value lives in what the prediction misses. If the re-sense between coupled groups consistently returns nothing, that's a finding about coupling — record it; don't preempt it. Bundling without explicit human approval is a DEVIATION.
 
 If the fresh walk finds any new accept row — whether newly-exposed or previously-missed — return to Step 2, update the table, and pick again. If the fresh walk finds zero accepts, continue down the table's remaining accepted groups, or proceed to Step 7 if the table is exhausted.
 
@@ -137,6 +153,9 @@ A single audit that delivers one refactoring and stops is the wrong default. Mul
 | "We already extracted a builder for X" | If Y, Z still have the same shape unextracted, you cleared X, not the smell. |
 | "Green tests, no new smells, done" | Tests prove behavior preservation, not smell absence. |
 | "We already moved that to the port" | Look at the call sites: does the shape still trigger Duplicated Code? Names changed don't dissolve the smell if the pattern repeats. |
+| "Groups 2 and 3 are tightly coupled; re-sensing between them won't find anything new" | Coupling is a prediction. Run the re-sense. The audit's signal value lives in what the prediction misses. |
+| "These N commits are one cluster; re-sense after all N lands" | Each commit changes the body. Each commit earns its own walk. Bundling re-senses defeats the loop's purpose. |
+| "I'll fold the per-Group re-sense findings into the closing cost section" | The closing section describes what the procedure produced. It is not a substitute for the procedure running. |
 
 ## 7. Name the cost of leaving the smells
 
