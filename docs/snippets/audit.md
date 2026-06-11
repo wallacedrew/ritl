@@ -23,9 +23,26 @@ Match what you see against the 24 known smells in this plugin: long-function, my
 
 **List every detected smell.** The inventory is the output of Step 1; ordering and accept/decline decisions happen in Step 2. Filtering down to one smell here would deliver action ahead of comprehension — the opposite of what the audit is for.
 
+**Sense is inventory, not evaluation.** A smell whose trigger condition fires goes in the inventory. The argument that it's "not really there" — that the regions you found unite at a higher level, that the idiom is canonical, that the alternative would be uglier — is a decline argument and belongs in Step 2. The user can argue a decline you record in the table; they cannot argue a finding you dismissed silently. The audit's whole purpose is shared understanding; suppressing a finding because you've already privately decided to decline it defeats that purpose.
+
+If you notice yourself thinking "this triggers, **but**…" — stop. The "but" is a decline. Put the trigger in the inventory; defer the "but" to the table.
+
 If nothing matches a named smell, say so. Don't invent a refactoring name for an unnamed shape — that's how vocabulary drifts.
 
 **Pinpoint the exact code:** file path + line range for each detected smell. State the locations explicitly in your reply so the user can follow. The smell skill's "trigger" line tells you what shape to look for; the file + line range tells the user where. If the same smell appears in multiple places, list each instance as its own table row — the locations carry into the table's rationale.
+
+**Red flags — sense-time decline-shopping. These thoughts mean you're moving a finding to the bin instead of the inventory:**
+
+| Thought | Reality |
+|---|---|
+| "It's all one concern at a higher level" | Re-abstracting up the ladder unifies everything. Record the regions you saw; argue unity as a decline rationale in Step 2. |
+| "This is the canonical idiom" | Idiom recognition is a taste-call decline. Record the trigger; argue the idiom in the table. |
+| "The codebase already has X for this" | If X isn't adopted here, that's Duplicated Code. Record it; argue cost-of-adoption in the table. |
+| "Agents recognize this pattern" | Recognition isn't absence. Record the trigger. |
+| "Inlining would be uglier" | That's a cost-benefit decline. Record the lazy element first. |
+| "Mechanical sharing, not a domain concept" | If you have to defend that the sharing is mechanical, record the trigger and let the table hold the argument. |
+| "Single use site" | Lazy Element still triggers; YAGNI is the decline rationale, not the disqualifier. |
+| "Premature abstraction" | Decline argument, not sense filter. Record the trigger. |
 
 ## 2. Build (or update and redisplay) the table
 
