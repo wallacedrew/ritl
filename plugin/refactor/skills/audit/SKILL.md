@@ -7,9 +7,9 @@ description: Audit a target for refactoring smells — primary purpose is shared
 
 **The audit's primary purpose is shared understanding** — making the smells in a target visible to both the agent and the human reader. Refactoring is the action arm of comprehension, applied only to accepted rows. A run that surfaces the smells, populates the table, and stops there is a valid audit; the decision to act belongs to the user, row by row.
 
-The audit runs a six-phase loop: **sense → table (or update the table) → safety net → apply next on the list → stay green → re-sense**. The loop repeats on the same target until every remaining row in the table is a decline; then the audit moves to a different target or stops.
+The audit runs a six-phase loop: **sense → table (or update the table) → safety net → apply next on the list → stay green → re-sense**. The loop repeats on the same target until every remaining row in the table is a decline; then a closing step **names the cost** of the un-cleared smells before the audit moves on or stops.
 
-Follow the six steps in order; each step has to land before the next.
+Follow the seven steps in order; each step has to land before the next.
 
 ## 1. Sense the smells
 
@@ -97,14 +97,40 @@ When in doubt, smaller steps. A 5-line refactoring that lands green is worth mor
 
 ## 6. Re-sense
 
-A refactoring that lands green changes the target. The same target may now exhibit a different smell that was previously hidden under what was just removed.
+A refactoring that lands green changes the target. Re-sense walks all 24 smells against the post-refactor body **as if you'd never seen it** — not as a diff against the previous round's table. The pass is looking for two things: smells newly exposed by what was just removed, AND smells the initial scan missed that the smaller body now makes visible.
 
-Walk the 24 smells against the post-refactor body. If re-sense surfaces nothing new, continue down the table's remaining accepted groups — pick the next one, return to Step 3 for its safety net, and proceed. If re-sense surfaces a new smell that supersedes a planned row, return to Step 2, update the table, and pick again.
+**The discipline is absolute, not relative.** Do not measure the current body against the previous round's shape. "Shorter than before," "cleaner than before," "we already extracted X" are not termination signals — they are progress reports. The signal is presence vs. absence: does each of the 24 smells trigger on the body in front of you now?
+
+If the fresh walk finds any new accept row — whether newly-exposed or previously-missed — return to Step 2, update the table, and pick again. If the fresh walk finds zero accepts, continue down the table's remaining accepted groups, or proceed to Step 7 if the table is exhausted.
 
 **Decline-rate sanity check.** If more than half of the current round's table rows are declines, the scope may be wrong — too large to scan honestly, or pointing at code that isn't actually unhealthy. Surface that to the user before declaring the loop terminated. The signal isn't always "stop"; sometimes it's "tighten the scope and re-scan."
 
-The loop terminates when every remaining row in the table is a decline — no accept row is left to apply. Move to a different target, or stop.
+The loop terminates only when a fresh full-smell walk finds zero accepts on the current body. "No accept row left in the table" is necessary but not sufficient — the table is only as good as the scan that populated it. Move to Step 7 once a clean fresh walk passes.
 
 Common pattern: a structural simplification (Substitute Algorithm, Replace Temp with Query, Inline Variable) collapses noise that was hiding a multi-phase or multi-concern structure. The next round finds Split Phase, Compose Method, or Extract Function on the simpler form.
 
 A single audit that delivers one refactoring and stops is the wrong default. Multi-round audits on the same target are normal — applying one refactoring per commit doesn't mean stopping after one commit.
+
+**Red flags — these thoughts mean you skipped the fresh walk:**
+
+| Thought | Reality |
+|---|---|
+| "The function got shorter" | Shorter ≠ clean. Walk the 24 smells against the current body. |
+| "Nothing new appeared in re-sense" | Re-sense finds newly-exposed AND previously-missed. The frame is fresh walk, not diff. |
+| "We already extracted a builder for X" | If Y, Z still have the same shape unextracted, you cleared X, not the smell. |
+| "Green tests, no new smells, done" | Tests prove behavior preservation, not smell absence. |
+| "We already moved that to the port" | Look at the call sites: does the shape still trigger Duplicated Code? Names changed don't dissolve the smell if the pattern repeats. |
+
+## 7. Name the cost of leaving the smells
+
+The audit closes with smells still in the table — declines, plus any accepted rows the user chose not to apply this pass. Before closing, state plainly what those un-cleared smells will cost the codebase going forward, separately for three audiences: **coding agents**, the application's **internal software quality**, and the application's **external software quality**.
+
+Each decline already carries a rationale on the cost-of-acting side ("not worth it now," "cost exceeds value"). Step 7 forces the matching question on the cost-of-not-acting side: what does the application carry forward by leaving the smell in place? A decline named without its forward cost is a half-decision.
+
+**To coding agents.** Smells inflate the agent's working cost on the next change. *Mysterious Name* forces the agent to read the body before editing a call site. *Long Function* inflates every diff that touches the file and raises the chance of a miscounted line edit. *Shotgun Surgery* multiplies search-and-edit hop count by the number of fan-in sites for one concept; the chance of missing a site grows with that count. *Duplicated Code* with subtle drift between copies is the most expensive agent failure mode — the agent reads one copy, edits it, and ships a change that diverges silently from the others. *Primitive Obsession* forces every adapter and validator to re-derive the same constraints from raw types. Name the agent-cost the smell imposes, in those mechanical terms.
+
+**To internal software quality.** Maintainability, modifiability, and testability of the code itself. The cost compounds at the next change, not the current one. *Long Parameter List* makes the next signature change harder across every call site. *Divergent Change* concentrates two stakeholders' reasons-to-change in one file, so unrelated work queues behind a shared merge conflict. *Large Class* spreads cohesion thin and makes targeted unit tests hard to write. *Speculative Generality* leaves seams the next reader has to disprove before changing the simple path. Name the change-shape that becomes harder; if no plausible next change is harder, the smell may not be load-bearing here, and the decline is well-founded.
+
+**To external software quality.** Correctness, reliability, observability — what the user perceives. Most smells are internal-only, but some leak outward. *Mutable Data* shared across a feature is the source shape of most concurrency bugs. *Repeated Switches* diverge on the next case and ship inconsistent behavior to users. *Insider Trading* lets one module change without the other and produces silent data corruption at the seam. *Global Data* couples test runs together and lets a fixture from one test bleed into the next. Name the user-visible failure mode the smell makes likelier — or note explicitly that the smell does not reach the external surface, so the decline carries no external risk.
+
+For each row left in the final table, attach the cost in those three terms (or note explicitly when a column is empty). A decline with a named cost on all three axes is a deliberate trade-off the user accepts; a decline without one is rationalization wearing a vocabulary.
