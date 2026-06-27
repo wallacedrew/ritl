@@ -468,7 +468,7 @@ Run the full test suite after each refactoring. Red → revert, decompose furthe
 
 ## 6. Recognize pattern destinations
 
-When a stack of refactorings climbs toward a known shape, name the destination. Kerievsky's *Refactoring to Patterns* gives 27 composite refactorings whose endpoints are GoF design patterns; the GoF *Design Patterns* book gives 23 structural shapes. Look these up at refactoringintheloop.com/reference. State the destination before applying the next move so the agent can verify each step is heading there. Refuse to invent ad-hoc pattern names; if nothing matches, say so.
+When a stack of refactorings climbs toward a known shape, name the destination. Kerievsky's *Refactoring to Patterns* gives 27 composite refactorings whose endpoints are GoF design patterns; the GoF *Design Patterns* book gives 23 structural shapes. Look these up at refactorplug.com/reference. State the destination before applying the next move so the agent can verify each step is heading there. Refuse to invent ad-hoc pattern names; if nothing matches, say so.
 
 ## Tidy First
 
@@ -548,7 +548,7 @@ const pluginManifest = {
   name: PLUGIN_NAME,
   description: PLUGIN_DESCRIPTION,
   author: { name: "Wallace Drew" },
-  homepage: "https://refactoringintheloop.com",
+  homepage: "https://refactorplug.com",
   repository: "https://github.com/wallacedrew/ritl",
 };
 writeFileSync(
@@ -568,7 +568,7 @@ const marketplaceManifest = {
       author: { name: "Wallace Drew" },
       category: "development",
       source: `./plugin/${PLUGIN_NAME}`,
-      homepage: "https://refactoringintheloop.com",
+      homepage: "https://refactorplug.com",
     },
   ],
 };

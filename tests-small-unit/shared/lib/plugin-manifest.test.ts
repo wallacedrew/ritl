@@ -26,7 +26,7 @@ describe("refactor plugin manifest", () => {
   });
 
   it("points at the live site and the source repo", () => {
-    expect(manifest.homepage).toBe("https://refactoringintheloop.com");
+    expect(manifest.homepage).toBe("https://refactorplug.com");
     expect(manifest.repository).toBe("https://github.com/wallacedrew/ritl");
   });
 });
