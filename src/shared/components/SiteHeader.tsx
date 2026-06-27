@@ -8,6 +8,10 @@ import { loadCatalogItems } from "../lib/loadCatalogItems";
 import CatalogSearch from "./CatalogSearch";
 import CatalogToolbar from "./CatalogToolbar";
 
+// MUI's default theme.zIndex.appBar. Inlined as a literal because SiteHeader is a
+// Server Component and a theme-callback in sx can't cross the server→client boundary.
+const STICKY_HEADER_Z_INDEX = 1100;
+
 export default function SiteHeader() {
   const items = loadCatalogItems();
 
@@ -15,6 +19,9 @@ export default function SiteHeader() {
     <Box
       component="header"
       sx={{
+        position: "sticky",
+        top: 0,
+        zIndex: STICKY_HEADER_Z_INDEX,
         bgcolor: "background.paper",
       }}
     >
