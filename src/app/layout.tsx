@@ -43,7 +43,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         </AnalyticsProvider>
         {/*
           Pageviews + Core Web Vitals are auto-injected by Cloudflare Pages
-          (Web Analytics is on by default for refactoringintheloop.com).
+          (Web Analytics is on by default for refactorplug.com).
           We don't manually load the beacon script — doing so would
           duplicate the request CF already makes server-side.
 

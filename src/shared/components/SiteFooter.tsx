@@ -46,7 +46,7 @@ export default function SiteFooter() {
           </Typography>
           <Typography variant="caption" color="text.secondary">
             <Link
-              href="mailto:feedback@refactoringintheloop.com"
+              href="mailto:feedback@refactorplug.com"
               color="inherit"
               underline="hover"
               sx={FOOTER_LINK_SX}

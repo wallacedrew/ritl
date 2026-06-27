@@ -52,7 +52,7 @@ describe("user reads the about page at /about", () => {
   it("exposes the feedback email address as a mailto link", () => {
     renderWithTheme(<AboutPage />);
 
-    const feedbackLink = screen.getByRole("link", { name: /feedback@refactoringintheloop\.com/i });
-    expect(feedbackLink).toHaveAttribute("href", "mailto:feedback@refactoringintheloop.com");
+    const feedbackLink = screen.getByRole("link", { name: /feedback@refactorplug\.com/i });
+    expect(feedbackLink).toHaveAttribute("href", "mailto:feedback@refactorplug.com");
   });
 });

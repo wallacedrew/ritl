@@ -15,6 +15,6 @@ describe("site footer offers attribution and feedback", () => {
     renderWithTheme(<SiteFooter />);
 
     const feedbackLink = screen.getByRole("link", { name: /feedback/i });
-    expect(feedbackLink).toHaveAttribute("href", "mailto:feedback@refactoringintheloop.com");
+    expect(feedbackLink).toHaveAttribute("href", "mailto:feedback@refactorplug.com");
   });
 });

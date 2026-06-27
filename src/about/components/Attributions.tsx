@@ -51,11 +51,7 @@ export default function Attributions() {
         Contact
       </Typography>
       <Typography variant="body1">
-        Feedback to{" "}
-        <Link href="mailto:feedback@refactoringintheloop.com">
-          feedback@refactoringintheloop.com
-        </Link>
-        .
+        Feedback to <Link href="mailto:feedback@refactorplug.com">feedback@refactorplug.com</Link>.
       </Typography>
     </AboutSection>
   );

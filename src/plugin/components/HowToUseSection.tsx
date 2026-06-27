@@ -21,7 +21,7 @@ const USAGE_STEPS: readonly UsageStep[] = [
   {
     title: "Click through when you don't recognise the named skill",
     summary:
-      "Every named skill has a detail page at refactoringintheloop.com with the Before/After and the agent-side forces. Two clicks to verify the agent picked the right move.",
+      "Every named skill has a detail page at refactorplug.com with the Before/After and the agent-side forces. Two clicks to verify the agent picked the right move.",
   },
   {
     title: "Watch for the destination pattern when refactorings stack",

@@ -12,7 +12,7 @@ export default function AgentsMdSnippetSection() {
       <Typography variant="body2" color="text.secondary">
         For Codex, Aider, Cursor, and other agents that read AGENTS.md or CLAUDE.md. A ~30-line
         directive snippet — sense the smell, name the refactoring, write the safety net, ship one
-        named move per commit. References the catalog at refactoringintheloop.com for the lookup
+        named move per commit. References the catalog at refactorplug.com for the lookup
         data. Skip this whole section if you installed the Claude Code plugin — the two artifacts
         do the same job.
       </Typography>
