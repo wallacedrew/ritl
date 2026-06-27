@@ -12,10 +12,26 @@ import { CatalogGraphProvider } from "@/shared/theme/CatalogGraphProvider";
 import { SnippetSourceProvider } from "@/shared/theme/SnippetSourceProvider";
 import ThemeRegistry from "@/shared/theme/ThemeRegistry";
 
+const siteName = "Refactoring In The Loop";
+const siteDescription =
+  "A catalog explorer for code smells, Fowler refactorings, Kerievsky's refactoring patterns, and the Gang of Four design patterns.";
+
 export const metadata: Metadata = {
-  title: "Refactoring In The Loop",
-  description:
-    "A catalog explorer for code smells, Fowler refactorings, Kerievsky's refactoring patterns, and the Gang of Four design patterns.",
+  metadataBase: new URL("https://refactorplug.com"),
+  title: siteName,
+  description: siteDescription,
+  openGraph: {
+    title: siteName,
+    description: siteDescription,
+    url: "/",
+    siteName,
+    type: "website",
+  },
+  twitter: {
+    card: "summary",
+    title: siteName,
+    description: siteDescription,
+  },
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
