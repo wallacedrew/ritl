@@ -1,4 +1,4 @@
-**Refactoring in the Loop — Master TODO List**
+**RefactorPlug — Master TODO List**
 
 Sequenced by leverage and dependency. The HITL thesis is the spine; everything else proves and operationalizes it.
 

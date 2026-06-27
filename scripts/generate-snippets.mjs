@@ -559,7 +559,7 @@ writeFileSync(
 const marketplaceManifest = {
   $schema: "https://anthropic.com/claude-code/marketplace.schema.json",
   name: MARKETPLACE_NAME,
-  description: "Refactoring in the Loop — catalog tools for Claude Code",
+  description: "RefactorPlug — catalog tools for Claude Code",
   owner: { name: "Wallace Drew", email: "wallace.drew@gmail.com" },
   plugins: [
     {

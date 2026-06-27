@@ -1,4 +1,6 @@
-# Refactoring In The Loop
+# RefactorPlug
+
+_refactoring in the loop_
 
 A reference site that places three classic works on code quality side-by-side and adds a second column for AI coding agents.
 

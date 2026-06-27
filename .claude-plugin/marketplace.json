@@ -1,7 +1,7 @@
 {
   "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
   "name": "ritl",
-  "description": "Refactoring in the Loop — catalog tools for Claude Code",
+  "description": "RefactorPlug — catalog tools for Claude Code",
   "owner": {
     "name": "Wallace Drew",
     "email": "wallace.drew@gmail.com"

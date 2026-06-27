@@ -15,7 +15,8 @@ describe("site header spans every catalog view", () => {
   it("shows the app title and search as a persistent banner", () => {
     renderWithTheme(<SiteHeader />);
 
-    expect(screen.getByText("Refactoring In The Loop")).toBeInTheDocument();
+    expect(screen.getByText("RefactorPlug")).toBeInTheDocument();
+    expect(screen.getByText("refactoring in the loop")).toBeInTheDocument();
     expect(screen.getByRole("combobox")).toBeInTheDocument();
   });
 

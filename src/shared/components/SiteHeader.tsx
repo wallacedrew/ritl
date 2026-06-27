@@ -26,13 +26,23 @@ export default function SiteHeader() {
             sx={{ alignItems: { xs: "stretch", md: "center" } }}
           >
             <NextLink href="/" style={{ color: "inherit", textDecoration: "none" }}>
-              <Typography
-                variant="h5"
-                component="span"
-                sx={{ fontWeight: 700, letterSpacing: "-0.01em", whiteSpace: "nowrap" }}
-              >
-                Refactoring In The Loop
-              </Typography>
+              <Stack spacing={0}>
+                <Typography
+                  variant="h5"
+                  component="span"
+                  sx={{ fontWeight: 700, letterSpacing: "-0.01em", whiteSpace: "nowrap" }}
+                >
+                  RefactorPlug
+                </Typography>
+                <Typography
+                  variant="caption"
+                  component="span"
+                  color="text.secondary"
+                  sx={{ whiteSpace: "nowrap" }}
+                >
+                  refactoring in the loop
+                </Typography>
+              </Stack>
             </NextLink>
             <Box sx={{ flex: 1, width: "100%" }}>
               <CatalogSearch items={items} />

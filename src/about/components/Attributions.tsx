@@ -33,9 +33,9 @@ export default function Attributions() {
       <Typography variant="body1">
         This site does not reproduce the books&rsquo; prose, diagrams, or code listings. The
         agent-side force fields, the compare-view commentary, and any synthesized examples are
-        original to Refactoring In The Loop. This is a reference and study aid; it is not a
-        substitute for reading the originals. Where an example is derived from a source book, the
-        entry carries a per-entry citation in its <code>exampleSource</code> field.
+        original to RefactorPlug. This is a reference and study aid; it is not a substitute for
+        reading the originals. Where an example is derived from a source book, the entry carries a
+        per-entry citation in its <code>exampleSource</code> field.
       </Typography>
 
       <Typography component="h3" variant="subtitle1" sx={{ fontWeight: 700, pt: 1 }}>

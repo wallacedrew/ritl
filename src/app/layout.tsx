@@ -12,16 +12,18 @@ import { CatalogGraphProvider } from "@/shared/theme/CatalogGraphProvider";
 import { SnippetSourceProvider } from "@/shared/theme/SnippetSourceProvider";
 import ThemeRegistry from "@/shared/theme/ThemeRegistry";
 
-const siteName = "Refactoring In The Loop";
+const siteName = "RefactorPlug";
+const siteTagline = "refactoring in the loop";
+const siteTitle = `${siteName} — ${siteTagline}`;
 const siteDescription =
   "A catalog explorer for code smells, Fowler refactorings, Kerievsky's refactoring patterns, and the Gang of Four design patterns.";
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://refactorplug.com"),
-  title: siteName,
+  title: siteTitle,
   description: siteDescription,
   openGraph: {
-    title: siteName,
+    title: siteTitle,
     description: siteDescription,
     url: "/",
     siteName,
@@ -29,7 +31,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary",
-    title: siteName,
+    title: siteTitle,
     description: siteDescription,
   },
 };
