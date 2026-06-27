@@ -19,7 +19,8 @@ export default function SiteHeader() {
     <Box
       component="header"
       sx={{
-        position: "sticky",
+        // Static on mobile so the tall stacked header scrolls away; sticky from md up.
+        position: { xs: "static", md: "sticky" },
         top: 0,
         zIndex: STICKY_HEADER_Z_INDEX,
         bgcolor: "background.paper",
