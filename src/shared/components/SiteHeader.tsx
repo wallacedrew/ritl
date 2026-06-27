@@ -12,6 +12,9 @@ import CatalogToolbar from "./CatalogToolbar";
 // Server Component and a theme-callback in sx can't cross the server→client boundary.
 const STICKY_HEADER_Z_INDEX = 1100;
 
+// Courier wordmark — typewriter register for the brand lockup, distinct from the body sans.
+const WORDMARK_FONT_FAMILY = '"Courier New", Courier, monospace';
+
 export default function SiteHeader() {
   const items = loadCatalogItems();
 
@@ -38,7 +41,12 @@ export default function SiteHeader() {
                 <Typography
                   variant="h5"
                   component="span"
-                  sx={{ fontWeight: 700, letterSpacing: "-0.01em", whiteSpace: "nowrap" }}
+                  sx={{
+                    fontFamily: WORDMARK_FONT_FAMILY,
+                    fontWeight: 700,
+                    letterSpacing: "-0.01em",
+                    whiteSpace: "nowrap",
+                  }}
                 >
                   RefactorPlug
                 </Typography>
@@ -46,7 +54,7 @@ export default function SiteHeader() {
                   variant="caption"
                   component="span"
                   color="text.secondary"
-                  sx={{ whiteSpace: "nowrap" }}
+                  sx={{ fontFamily: WORDMARK_FONT_FAMILY, whiteSpace: "nowrap" }}
                 >
                   refactoring in the loop
                 </Typography>
