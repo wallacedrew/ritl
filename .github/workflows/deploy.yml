@@ -19,7 +19,7 @@ jobs:
     timeout-minutes: 10
     environment:
       name: production
-      url: https://ritl.pages.dev
+      url: https://refactorplug.com
     steps:
       - name: Checkout
         uses: actions/checkout@v4

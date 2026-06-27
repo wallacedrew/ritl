@@ -71,7 +71,7 @@ Before anything else. This is the wedge.
 
 13. **Reframe "91 auto-invoking skills" from quantity to precision.** _"91 skills — your agent only ever sees the one that matches the smell in front of it."_ Same data, opposite sell.
 
-14. **State the coupling model between AGENTS.md and the catalog.** One sentence. Does the agent fetch refactoringintheloop.com at runtime, or is the file self-contained? Reader can't evaluate the offer without knowing.
+14. **State the coupling model between AGENTS.md and the catalog.** One sentence. Does the agent fetch refactorplug.com at runtime, or is the file self-contained? Reader can't evaluate the offer without knowing.
 
 15. **State the plugin update model.** One sentence. Pull updates, or install-and-drift?
 

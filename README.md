@@ -2,7 +2,7 @@
 
 A reference site that places three classic works on code quality side-by-side and adds a second column for AI coding agents.
 
-**Live site:** <https://refactoringintheloop.com>
+**Live site:** <https://refactorplug.com>
 
 ![Compare view of the Extract Function refactoring, showing six paired force fields (Symptom, Goal, Pressure, Tradeoff, Relief, Trap) in two columns — Human on the left, Agent on the right — with Before and After code panels in the middle.](public/screenshots/compare-view.png)
 
@@ -14,7 +14,7 @@ Three catalogs in one reference, by source book:
 - _Refactoring to Patterns_ (Kerievsky) — composite refactorings.
 - _Design Patterns_ (Gang of Four) — the 23 reusable object-oriented patterns.
 
-The signature surface is the compare view. Every entry presents six paired force fields — Symptom, Goal, Pressure, Tradeoff, Relief, Trap — for humans on one side and AI coding agents on the other. The agent column is grounded in context-window and token-cost mechanics: what fits, what gets paged out, tokens per branch walk. See [`/about`](https://refactoringintheloop.com/about) on the live site for the long-form framing.
+The signature surface is the compare view. Every entry presents six paired force fields — Symptom, Goal, Pressure, Tradeoff, Relief, Trap — for humans on one side and AI coding agents on the other. The agent column is grounded in context-window and token-cost mechanics: what fits, what gets paged out, tokens per branch walk. See [`/about`](https://refactorplug.com/about) on the live site for the long-form framing.
 
 ## Who this is for
 
@@ -78,7 +78,7 @@ tests-big-e2e/            — full-browser or full-stack; reserved for behaviors
 
 ## Feedback
 
-Send notes, corrections, or requests to [feedback@refactoringintheloop.com](mailto:feedback@refactoringintheloop.com). The address is inbound-only via Cloudflare Email Routing (see [ADR-0003](docs/architecture/0003-cloudflare-email-routing-for-inbound-feedback.md)).
+Send notes, corrections, or requests to [feedback@refactorplug.com](mailto:feedback@refactorplug.com). The address is inbound-only via Cloudflare Email Routing (see [ADR-0003](docs/architecture/0003-cloudflare-email-routing-for-inbound-feedback.md)).
 
 ## License
 
