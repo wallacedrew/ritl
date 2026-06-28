@@ -14,6 +14,6 @@ export const theme = createTheme({
     },
   },
   typography: {
-    fontFamily: '"JetBrains Mono Variable", ui-monospace, monospace',
+    fontFamily: '"Inter Variable", system-ui, sans-serif',
   },
 });
