@@ -43,6 +43,7 @@ export default function SiteHeader() {
                   component="span"
                   sx={{
                     fontFamily: WORDMARK_FONT_FAMILY,
+                    fontSize: "1.75rem",
                     fontWeight: 700,
                     letterSpacing: "-0.01em",
                     whiteSpace: "nowrap",
@@ -54,13 +55,18 @@ export default function SiteHeader() {
                   variant="caption"
                   component="span"
                   color="text.secondary"
-                  sx={{ fontFamily: WORDMARK_FONT_FAMILY, whiteSpace: "nowrap" }}
+                  sx={{
+                    fontFamily: WORDMARK_FONT_FAMILY,
+                    fontSize: "0.875rem",
+                    fontWeight: 800,
+                    whiteSpace: "nowrap",
+                  }}
                 >
                   refactoring in the loop
                 </Typography>
               </Stack>
             </NextLink>
-            <Box sx={{ flex: 1, width: "100%" }}>
+            <Box sx={{ flex: 1, width: "100%", "&&": { ml: { md: "40px" } } }}>
               <CatalogSearch items={items} />
             </Box>
           </Stack>
