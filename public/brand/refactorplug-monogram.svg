@@ -1,4 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="RP">
-  <text x="32" y="44" text-anchor="middle" font-family="'Courier New', Courier, monospace"
-        font-size="46" font-weight="700" letter-spacing="-0.04em" fill="#18181b">RP</text>
+  <g fill="#18181b" transform="translate(8.80 46) scale(0.04 -0.04)">
+    <path transform="translate(0 0)" d="M65 0L65 730L300 730Q378 730 435 703Q492 676 523.5 626Q555 576 555 508Q555 437 520.5 381Q486 325 427 300L565 0L402 0L284 276L214 276L214 0ZM214 406L300 406Q350 406 377.5 431Q405 456 405 501Q405 548 377.5 574Q350 600 300 600L214 600Z"/>
+    <path transform="translate(560 0)" d="M66 0L66 730L315 730Q392 730 449.5 701Q507 672 538.5 620Q570 568 570 498Q570 429 538 376.5Q506 324 449 295Q392 266 315 266L216 266L216 0ZM216 401L315 401Q363 401 391.5 427.5Q420 454 420 498Q420 542 391.5 568.5Q363 595 315 595L216 595Z"/>
+  </g>
 </svg>

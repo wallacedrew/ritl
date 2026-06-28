@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "@fontsource-variable/inter";
+import "@fontsource-variable/jetbrains-mono";
 import "./globals.css";
 import Box from "@mui/material/Box";
 import { NavHoverProvider } from "@/shared/components/NavHoverProvider";

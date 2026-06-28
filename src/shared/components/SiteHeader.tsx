@@ -12,8 +12,9 @@ import CatalogToolbar from "./CatalogToolbar";
 // Server Component and a theme-callback in sx can't cross the server→client boundary.
 const STICKY_HEADER_Z_INDEX = 1100;
 
-// Courier wordmark — typewriter register for the brand lockup, distinct from the body sans.
-const WORDMARK_FONT_FAMILY = '"Courier New", Courier, monospace';
+// JetBrains Mono wordmark — monospace brand register, distinct from the body sans.
+// Imported as a variable font in the root layout; weights 700/800 are both available.
+const WORDMARK_FONT_FAMILY = '"JetBrains Mono Variable", ui-monospace, monospace';
 
 export default function SiteHeader() {
   const items = loadCatalogItems();

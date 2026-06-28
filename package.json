@@ -15,6 +15,7 @@
     "test:full": "vitest run",
     "prepare": "husky",
     "snippets": "node scripts/generate-snippets.mjs",
+    "brand-assets": "node scripts/generate-brand-assets.mjs",
     "snap": "node scripts/snap.mjs"
   },
   "lint-staged": {
@@ -24,6 +25,7 @@
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.1",
     "@fontsource-variable/inter": "^5.2.8",
+    "@fontsource-variable/jetbrains-mono": "^5.2.8",
     "@mui/icons-material": "^9.0.1",
     "@mui/material": "^9.0.1",
     "@mui/material-nextjs": "^9.0.1",
@@ -33,6 +35,7 @@
     "react-dom": "19.2.4"
   },
   "devDependencies": {
+    "@fontsource/jetbrains-mono": "^5.2.8",
     "@testing-library/dom": "^10.4.1",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",
@@ -43,6 +46,7 @@
     "@vitejs/plugin-react": "^6.0.1",
     "eslint": "^9",
     "eslint-config-next": "16.2.6",
+    "fontkit": "^2.0.4",
     "husky": "^9.1.7",
     "jsdom": "^29.1.1",
     "lint-staged": "^16.4.0",
