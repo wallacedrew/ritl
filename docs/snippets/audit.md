@@ -23,9 +23,18 @@ Common shortcuts the agent reaches for, each of which is a DEVIATION rather than
 
 If any of these thoughts appear, the rule is: write `DEVIATION:` + the step + the reasoning + stop.
 
+**Precondition — a target must be named.** If the invocation carries no target — no code selection, no file path, no function name, no module identifier, and no immediately-prior conversation that names one — do not proceed to Step 1. Reply with a short guide on how to invoke the audit well:
+
+- **Name a concrete target.** A function name, a file path, or a module identifier scans cleanly. "This codebase" or "everything" does not.
+- **Prefer smaller scopes.** A single function or a single file is the sweet spot. A whole feature or a directory tree tends to skim (missing smells) or stall (never reaching the table). Widen only after a narrow scope surfaces something worth chasing.
+- **State the concern if you have one.** `audit parseCatalogEntry` runs the full 24-smell walk. `audit parseCatalogEntry for Long Function and Data Clumps` narrows the scan.
+- **Expect a decision table, not a diff.** The audit's primary output is a table of accept/decline rows the user argues with. Refactoring is optional and applies only to accepted rows.
+
+Ask the user to name the target and re-invoke. Do not sense, do not build a table, do not guess a target from ambient context. A guessed target under `/refactor:audit` is worse than an explicit prompt for one — the guess forces the user to un-argue scope before they can argue findings.
+
 ## 1. Sense the smells
 
-**Declare the scope.** Name the target the scan applies to — a function, a file, a module, a feature, a directory tree. If the user pointed at code, use that. If the invocation was ambiguous ("audit this"), pick the most likely scope (the most recently edited file, the function in focus) and state both the scope and the reason — the user corrects on the next turn if the guess was wrong. "Comprehensive" against an entire codebase is dishonest; "comprehensive within the declared scope" is achievable.
+**Declare the scope.** Name the target the scan applies to — a function, a file, a module, a feature, a directory tree. The precondition above guarantees a target was named on entry; this step commits the audit to it explicitly and states the scope in the reply so the user can correct it before Step 2. "Comprehensive" against an entire codebase is dishonest; "comprehensive within the declared scope" is achievable.
 
 **Flag oversized scopes as an FYI.** A function or a single file scans cleanly; a sprawling directory tree does not. If the declared scope spans more than a handful of files or a few hundred lines, note that in your reply and recommend the user tighten it before the scan proceeds — by feature, by recent-change hotspot, or by the specific file in question. A comprehensive scan against a large scope either skims (missing smells) or stalls (never reaching the table). The recommendation is an FYI, not a refusal; if the user confirms the scope, proceed.
 
